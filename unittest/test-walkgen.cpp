@@ -24,7 +24,7 @@ using namespace MPCWalkgen;
 void makeScilabFile(std::string type);
 void dumpTrajectory(MPCSolution & result, std::vector<std::ofstream*> & data_vec);
 bool checkFiles(std::ifstream & f1, std::ifstream & f2);
-int copyFile(char const * const source, char const * const destination);
+int copyFile(const std::string & source, const std::string & destination);
 
 int main ()
 {
@@ -229,29 +229,13 @@ bool checkFiles(std::ifstream & fich1, std::ifstream & fich2){
 	return equal;
 }
 
-int copyFile(char const * const source, char const * const destination)
+int copyFile(const std::string & source, const std::string & destination)
 {
-    FILE* fSrc;
-    FILE* fDest;
-    char buffer[512];
-    int NbLus;
-
-    if ((fSrc = fopen(source, "rb")) == NULL)
-    {
-        return 1;
-    }
-
-    if ((fDest = fopen(destination, "wb")) == NULL)
-    {
-        fclose(fSrc);
-        return 2;
-    }
-
-    while ((NbLus = fread(buffer, 1, 512, fSrc)) != 0)
-        fwrite(buffer, 1, NbLus, fDest);
-
-    fclose(fDest);
-    fclose(fSrc);
+	std::ifstream ifs(source.c_str(), std::ios::binary);
+	std::ofstream ofs(destination.c_str(), std::ios::binary);
+	ofs << ifs.rdbuf();
+	ofs.close();
+	ifs.close();
 
     return 0;
 }
