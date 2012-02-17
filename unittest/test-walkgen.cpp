@@ -29,7 +29,7 @@ int copyFile(char const * const source, char const * const destination);
 int main ()
 {
 
-	int nbFile=8;
+	const int nbFile=8;
 
 	std::vector<std::string> name_vec(nbFile);
 	name_vec[0]="CoM_X";
@@ -108,19 +108,25 @@ int main ()
 	for(unsigned i=0;i<data_vec.size();++i){
 		data_vec[i]->close();
 	}
-	std::vector<std::ifstream*> check_vec(8);
+
+	// now reopen the files
+	std::vector<std::ifstream*> check_vec(nbFile);
 	for(int i=0;i<nbFile;++i){
 		check_vec[i] = new std::ifstream((name_vec[i]+".data").c_str());
 	}
 
 
+	bool success = true;
 	for(unsigned i=0;i<check_vec.size();++i){
+		// if the reference file exists, compare with the previous version.
 		if (*ref_vec[i]){
 			if (!checkFiles(*check_vec[i],*ref_vec[i])){
-				return 1;
+				success = false;
 			}
-		}else{
-			copyFile((name_vec[i]+".data").c_str(),(name_vec[i]+".ref").c_str());
+		}
+		// otherwise, create it
+		else{
+			copyFile((name_vec[i]+".data"), (name_vec[i]+".ref"));
 		}
 		check_vec[i]->close();
 		ref_vec[i]->close();
@@ -128,7 +134,13 @@ int main ()
 	makeScilabFile("data");
 	makeScilabFile("ref");
 
-	return 0;
+	for(int i=0;i<nbFile;++i){
+		delete check_vec[i];
+		delete ref_vec[i];
+		delete data_vec[i];
+	}
+
+	return (success)?0:1;
 }
 
 void dumpTrajectory(MPCSolution & result, std::vector<std::ofstream*> & data_vec){
