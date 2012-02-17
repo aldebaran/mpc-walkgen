@@ -63,13 +63,11 @@ namespace MPCWalkgen
 		RIGHT
 	};
 
-
 	enum BodyType{
 		LEFT_FOOT,
 		RIGHT_FOOT,
 		COM
 	};
-
 	/// \}
 
 	//
@@ -78,7 +76,6 @@ namespace MPCWalkgen
 
 	/// \name Structures
 	/// \{
-
 	struct FootData{
 		double soleWidth_;
 		double soleHeight_;
@@ -98,8 +95,7 @@ namespace MPCWalkgen
 
 	};
 
-
-  struct HipYawData{
+	struct HipYawData{
 		double lowerBound_;
 		double upperBound_;
 		double lowerVelocityBound_;
@@ -108,12 +104,76 @@ namespace MPCWalkgen
 		double upperAccelerationBound_;
 
 		MPC_WALK_GEN_EXPORT HipYawData(
-			double lowerBound =  0				,   double upperBound = 0,
-			double lowerVelocityBound =  -3.54108,	double upperVelocityBound = 3.54108,
-			double lowerAccelerationBound = -0.1,	double upperAccelerationBound = 0.1
+				double lowerBound =  0				,   double upperBound = 0,
+				double lowerVelocityBound =  -3.54108,	double upperVelocityBound = 3.54108,
+				double lowerAccelerationBound = -0.1,	double upperAccelerationBound = 0.1
 		);
-  };
+	};
 
+	struct ConvexHull{
+		Eigen::VectorXd x;
+		Eigen::VectorXd y;
+
+		Eigen::VectorXd A;
+		Eigen::VectorXd B;
+		Eigen::VectorXd C;
+		Eigen::VectorXd D;
+
+		ConvexHull & operator=(const ConvexHull & hull);
+		void resize(int size);
+		void rotate(double yaw);
+		void computeLinearSystem(const Foot & foot);
+	};
+
+	struct QPPonderation {
+		std::vector<double> instantVelocity;
+		std::vector<double> CopCentering;
+		std::vector<double> JerkMin;
+
+		/// \brief Define the element of ponderation std::vector used in this iteration
+		int activePonderation;
+
+		QPPonderation(int nb = 2);
+	};
+
+	struct MPCData{
+		// The following parameters are fixed once and for all at initialization
+		/// \brief Sampling period considered in the QP
+		double QPSamplingPeriod;    //blocked - precomputeObjective
+		double MPCSamplingPeriod;   //blocked - precomputeObjective / RigidBodySystem::computeDynamicMatrix
+		double simSamplingPeriod;   //blocked - precomputeObjective / RigidBodySystem::computeDynamicMatrix
+
+		/// \brief Nb. samplings inside preview window
+		int QPNbSamplings;  //blocked - precomputeObjective
+
+		// The following parameters can be changed online
+		double stepPeriod;  //blocked by orientPrw_ ? can be solved --
+		double DSPeriod;
+		double DSSSPeriod;
+		int nbStepSSDS;
+
+		/// \brief Compute the unique feedback iteration number between two QP instants
+		int iterationNumberFeedback(double firstIterationduration) const;
+		/// \brief number of simulation iterations between two feedback call
+		int nbIterationSimulation() const;
+		/// \brief number of feedback iterations between two QP instants
+		int nbIterationFeedback() const;
+
+		QPPonderation ponderation;
+	};
+
+	struct RobotData{
+		double CoMHeight;
+		double freeFlyingFootMaxHeight;
+
+  		FootData leftFoot;
+  		FootData rightFoot;
+
+  		HipYawData leftHipYaw;
+  		HipYawData rightHipYaw;
+
+  		double robotMass;
+  	};
 
 	struct SupportState{
 		Phase phase;

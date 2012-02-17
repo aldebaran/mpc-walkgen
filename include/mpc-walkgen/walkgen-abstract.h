@@ -51,7 +51,8 @@ namespace MPCWalkgen
 
 	    virtual void init(
 	        const Eigen::Vector3d & initLeftFootAbsolutePosition,
-	        const Eigen::Vector3d & initRightFootAbsolutePosition) =0;
+	        const Eigen::Vector3d & initRightFootAbsolutePosition,
+			const RobotData & robotData, const MPCData & mpcData) =0;
 
 
 	    /// \brief Update the stacks on-line

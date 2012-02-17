@@ -37,16 +37,8 @@ namespace MPCWalkgen{
 		    		const std::string & qpParams);
 			~Walkgen();
 
-
-			/*! \name Call method to handle on-line generation of ZMP reference trajectory.
-			  @{*/
-
-			/*! Methods for on-line generation. (First version!)
-			  @param[in] initLeftFootAbsolutePosition: The initial position of the left foot.
-			  @param[in] initRightFootAbsolutePosition: The initial position of the right foot.
-			 */
-			void init(const Eigen::Vector3d & leftFootPosition, const Eigen::Vector3d & rightFootPosition);
-
+			void init(const Eigen::Vector3d & leftFootPosition, const Eigen::Vector3d & rightFootPosition,
+					const RobotData & robotData, const MPCData & mpcData);
 
 		    /// Update the stacks on-line
 			virtual const MPCSolution & online(double time, bool previewBodiesNextState=true);
@@ -58,7 +50,8 @@ namespace MPCWalkgen{
 
 
 		  public:
-			//accessors relative to the state of the robot.
+			/// \name accessors relative to the state of the robot.
+			/// \{
 			virtual inline double comHeight()const
 			{ return robotData_.CoMHeight; }
 			virtual inline void comHeight(double d)
@@ -78,6 +71,7 @@ namespace MPCWalkgen{
 
 			virtual const BodyState & bodyState(BodyType body)const;
 			virtual void bodyState(BodyType body, const BodyState & state);
+			/// \}
 
 
 			//accessors relative to the solver, modifiable on line
@@ -119,9 +113,6 @@ namespace MPCWalkgen{
 			virtual inline int QPNbSamplings()const
 			{return generalData_.QPNbSamplings;}
 			virtual void QPNbSamplings(int d);
-
-		  private:
-			void parseQPParams (const std::string & params);
 
 		  private:
 			MPCData generalData_;

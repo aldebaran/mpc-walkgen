@@ -63,7 +63,6 @@ Walkgen::Walkgen(
 	,orientPrw_(0x0)
 	,solution_()
 	,velRef_()
-	,ponderation_(2)
 	,newCurrentSupport_()
 	,isNewCurrentSupport_(false)
 	,debug_(0x0)
@@ -79,9 +78,6 @@ Walkgen::Walkgen(
 	generalData_.nbStepSSDS = 2;
 	generalData_.DSPeriod = 1e9;
 	generalData_.DSSSPeriod = 0.8;
-
-	if(qpParams != "")
-	  parseQPParams(qpParams);
 
 	robotData_.CoMHeight = comHeight;
 	robotData_.freeFlyingFootMaxHeight = 0.05;
@@ -111,7 +107,7 @@ Walkgen::Walkgen(
 
 
 Walkgen::~Walkgen(){
-	if (debug_!=0x0)
+	if (debug_ != 0x0)
 		delete debug_;
 
 	if (orientPrw_!=0x0)
@@ -134,33 +130,24 @@ Walkgen::~Walkgen(){
 
 }
 
-void Walkgen::init(const Eigen::Vector3d & leftFootPosition, const Eigen::Vector3d & rightFootPosition){
-
+void Walkgen::init(const Eigen::Vector3d& leftFootPosition, const Eigen::Vector3d& rightFootPosition,
+		const RobotData& robotData, const MPCData& mpcData){
 
 	//Check if sampling periods are defined correctly
 	assert(generalData_.simSamplingPeriod > 0);
 	assert(generalData_.MPCSamplingPeriod >= generalData_.simSamplingPeriod);
 	assert(generalData_.QPSamplingPeriod >= generalData_.MPCSamplingPeriod);
 
+	// Redistribute the X,Y vectors of variables inside the optimization problems
 	VectorXi order(QPSolver::DefaultNbVarMax_);
-	for(int i=0;i<generalData_.QPNbSamplings;++i){
-		order(i)=2*i;
-		order(i+generalData_.QPNbSamplings)=2*i+1;
+	for(int i = 0; i < generalData_.QPNbSamplings; ++i) {
+		order(i) = 2*i;
+		order(i+generalData_.QPNbSamplings) = 2*i+1;
 	}
-	for(int i=2*generalData_.QPNbSamplings;i<QPSolver::DefaultNbVarMax_;++i){
-		order(i)=i;
+	for(int i = 2*generalData_.QPNbSamplings; i < QPSolver::DefaultNbVarMax_; ++i) {
+		order(i) = i;
 	}
 	solver_->varOrder(order);
-
-	ponderation_.CopCentering[0]   =0.0001;
-	ponderation_.JerkMin[0]        =0.001;
-	ponderation_.instantVelocity[0]=1;
-
-	ponderation_.CopCentering[1]   =10;
-	ponderation_.JerkMin[1]        =0.001;
-	ponderation_.instantVelocity[1]=1;
-
-	ponderation_.activePonderation = 1;
 
 	orientPrw_->SamplingPeriod( generalData_.QPSamplingPeriod );
 	orientPrw_-> SimuPeriod(generalData_.MPCSamplingPeriod);
@@ -210,7 +197,7 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
 
 	if(time  > upperTimeLimitToFeedback_+EPS){
 
-		debug_->getTime(1,true);
+//		debug_->getTime(1,true);
 
 		solver_->reset();
 
@@ -254,20 +241,17 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
 		generator_->buildConstraints(solution_);
 		generator_->computeWarmStart(solution_);
 
-		debug_->getTime(1,false);
-		debug_->getTime(2,true);
+//		debug_->getTime(1,false);
+//		debug_->getTime(2,true);
 
 		solver_->solve(solution_);
 
-		debug_->getTime(2,false);
-		debug_->getTime(3,true);
+//		debug_->getTime(2,false);
+//		debug_->getTime(3,true);
 
 		if (enableDisplay_)
 			generator_->display(solution_, "pg-data-displayer.dat");
 
-		debug_->getTime(3,false);
-
-		debug_->getTime(4,true);
 		generator_->convertCopToJerk(solution_);
 
 
@@ -281,17 +265,17 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
 		// Only for compatibility with temporary class OrientationPreview
 		orientPrw_->interpolate_trunk_orientation(robot_);
 
-		debug_->getTime(4,false);
+//		debug_->getTime(4,false);
 
 
-		if (debug_->nbIntervals(1)==100){
-			std::cout << "prepa    :" << debug_->computeInterval(1,us) << " us" << std::endl;
-			std::cout << "solve    :" << debug_->computeInterval(2,us) << " us" << std::endl;
-			//std::cout << "print    :" << debug_->computeInterval(3,us) << " us" << std::endl;
-			std::cout << "inter    :" << debug_->computeInterval(4,us) << " us" << std::endl<< std::endl;
-
-			debug_->reset();
-		}
+//		if (debug_->nbIntervals(1)==100){
+//			std::cout << "prepa    :" << debug_->computeInterval(1,us) << " us" << std::endl;
+//			std::cout << "solve    :" << debug_->computeInterval(2,us) << " us" << std::endl;
+//			//std::cout << "print    :" << debug_->computeInterval(3,us) << " us" << std::endl;
+//			std::cout << "inter    :" << debug_->computeInterval(4,us) << " us" << std::endl<< std::endl;
+//
+//			debug_->reset();
+//		}
 
 
 	}
@@ -312,10 +296,7 @@ void Walkgen::bodyState(BodyType body, const BodyState & state){
 	robot_->body(body)->state(state);
 }
 
-void Walkgen::parseQPParams (const std::string &)
-{
-	std::cerr << " The method Walkgen::parseQPParams is not implemented yet. " << std::endl;
-}
+
 
 void Walkgen::QPSamplingPeriod(double)
 {

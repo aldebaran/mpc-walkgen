@@ -25,49 +25,6 @@
 
 namespace MPCWalkgen{
 
-//TODO: Comment needed
-	struct MPCData{
-		// The following parameters are fixed once and for all at initialization
-		/// \brief Sampling period considered in the QP
-		double QPSamplingPeriod;    //blocked - precomputeObjective
-		double MPCSamplingPeriod;   //blocked - precomputeObjective / RigidBodySystem::computeDynamicMatrix
-		double simSamplingPeriod;   //blocked - precomputeObjective / RigidBodySystem::computeDynamicMatrix
-
-		/// \brief Nb. samplings inside preview window
-		int QPNbSamplings;  //blocked - precomputeObjective
-
-		// The following parameters can be changed online
-		double stepPeriod;  //blocked by orientPrw_ ? can be solved --
-		double DSPeriod;
-		double DSSSPeriod;
-		int nbStepSSDS;
-
-		/// \brief Compute the unique feedback iteration number between two QP instants
-		int iterationNumberFeedback(double firstIterationduration) const;
-		/// \brief number of simulation iterations between two feedback call
-		int nbIterationSimulation() const;
-		/// \brief number of feedback iterations between two QP instants
-		int nbIterationFeedback() const;
-	};
-
-
-	struct RobotData{
-		//The only parameter changeable online. Watch Walkgen::init
-		double CoMHeight;
-		double freeFlyingFootMaxHeight;
-
-		//fixed paramters
-		FootData leftFoot;
-		FootData rightFoot;
-
-		HipYawData leftHipYaw;
-		HipYawData rightHipYaw;
-
-		double robotMass;
-	};
-
-
-
 	struct VelReference{
 		struct Frame{
 			double x;
@@ -85,18 +42,6 @@ namespace MPCWalkgen{
 
 		VelReference();
 	};
-
-	struct QPPonderation{
-		std::vector<double> instantVelocity;
-		std::vector<double> CopCentering;
-		std::vector<double> JerkMin;
-
-		/// \brief Define the element of ponderation std::vector used in this iteration
-		int activePonderation;
-
-		QPPonderation(int nb=1);
-	};
-
 
 	struct SelectionMatrices{
 		Eigen::MatrixXd V;
@@ -117,24 +62,6 @@ namespace MPCWalkgen{
 		Eigen::MatrixXd UInv;
 		Eigen::MatrixXd UInvT;
 	};
-
-
-
-	struct ConvexHull{
-		Eigen::VectorXd x;
-		Eigen::VectorXd y;
-
-		Eigen::VectorXd A;
-		Eigen::VectorXd B;
-		Eigen::VectorXd C;
-		Eigen::VectorXd D;
-
-		ConvexHull & operator=(const ConvexHull & hull);
-		void resize(int size);
-		void rotate(double yaw);
-		void computeLinearSystem(const Foot & foot);
-	};
-
 
 	struct RelativeInequalities{
 		Eigen::MatrixXd DX;
