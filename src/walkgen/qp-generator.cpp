@@ -352,14 +352,15 @@ void QPGenerator::convertCopToJerk(MPCSolution & result){
 	const MatrixXd & rot = preview_->rotationMatrix();
 	const BodyState & CoM = robot_->body(COM)->state();
 	const DynamicMatrix & CoP = robot_->body(COM)->dynamic(copDynamic);
-	int nbSteps =  result.supportState_vec.back().stepNumber;
+	// int nbSteps =  result.supportState_vec.back().stepNumber;
 
-	VectorXd sx = result.solution.segment(0, N);
-	VectorXd sy = result.solution.segment(N, N);
+	VectorXd sx = result.solution.segment(0, 2);
+	VectorXd sy = result.solution.segment(N, 2);
 
+	// Vpx(0,0) and Vpy(0,0) always equal to 0 because the first iteration always on the current foot and never on previewed steps
+	/*
 	const VectorXd px = result.solution.segment(2*N,         nbSteps);
 	const VectorXd py = result.solution.segment(2*N+nbSteps, nbSteps);
-
 	VectorXd Vpx;
 	VectorXd Vpy;
 	if (nbSteps>0){
@@ -369,25 +370,26 @@ void QPGenerator::convertCopToJerk(MPCSolution & result){
 		Vpx=VectorXd::Zero(N);
 		Vpy=VectorXd::Zero(N);
 	}
+	*/
 
-	VectorXd zx(N);
-	zx =rot.block(0,0,N,N)*sx -rot.block(0,N,N,N)*sy;
-	zx+=Vpx+State.VcX;
 
-	VectorXd zy(N);
-	zy =rot.block(N,N,N,N)*sy -rot.block(N,0,N,N)*sx;
-	zy+=Vpy+State.VcY;
+	double zx;
+	zx =(rot.block(0,0,1,2)*sx -rot.block(0,N,1,2)*sy)(0,0);
+	zx+=/*Vpx(0,0)+*/State.VcX(0,0);
 
-	VectorXd X;
-	VectorXd Y;
-	zx -= CoP.S * CoM.x;
-	X  =  CoP.UInv * zx;
+	double zy;
+	zy =(rot.block(N,N,1,2)*sy -rot.block(N,0,1,2)*sx)(0,0);
+	zy+=/*Vpy(0,0)+*/State.VcY(0,0);
 
-	zy -= CoP.S * CoM.y ;
-	Y  =  CoP.UInv * zy;
+	double X;
+	double Y;
+	zx -= (CoP.S.block(0,0,1,3) * CoM.x)(0,0);
+	X  =  CoP.UInv(0,0) * zx;
+	zy -= (CoP.S.block(0,0,1,3) * CoM.y)(0,0) ;
+	Y  =  CoP.UInv(0,0) * zy;
 
-	result.solution.segment(0, N) = X.segment(0, N);
-	result.solution.segment(N, N) = Y.segment(0, N);
+	result.solution.segment(0, N).fill(X);
+	result.solution.segment(N, N).fill(Y);
 
 
 }

@@ -266,8 +266,8 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
 			generator_->display(solution_, "pg-data-displayer.dat");
 
 		debug_->getTime(3,false);
-		debug_->getTime(4,true);
 
+		debug_->getTime(4,true);
 		generator_->convertCopToJerk(solution_);
 
 
@@ -289,6 +289,7 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
 			std::cout << "solve    :" << debug_->computeInterval(2,us) << " us" << std::endl;
 			//std::cout << "print    :" << debug_->computeInterval(3,us) << " us" << std::endl;
 			std::cout << "inter    :" << debug_->computeInterval(4,us) << " us" << std::endl<< std::endl;
+
 			debug_->reset();
 		}
 
