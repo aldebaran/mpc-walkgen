@@ -149,10 +149,7 @@ void Walkgen::init(const Eigen::Vector3d& leftFootPosition, const Eigen::Vector3
 	}
 	solver_->varOrder(order);
 
-	orientPrw_->SamplingPeriod( generalData_.QPSamplingPeriod );
-	orientPrw_-> SimuPeriod(generalData_.MPCSamplingPeriod);
-	orientPrw_->NbSamplingsPreviewed( generalData_.QPNbSamplings );
-	orientPrw_->SSLength( generalData_.stepPeriod );
+	orientPrw_->init(mpcData);
 
 	robot_->computeDynamics();
 

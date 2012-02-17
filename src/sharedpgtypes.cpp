@@ -40,6 +40,17 @@ namespace MPCWalkgen
 	  supportTrunkOrientation_vec.resize(0);
   }
 
+  MPCData::MPCData()
+  :QPSamplingPeriod(0.1)
+  ,MPCSamplingPeriod(0.005)
+  ,simSamplingPeriod(0.005)
+  ,QPNbSamplings(16)
+  ,stepPeriod(0.8)
+  ,DSPeriod(1e9)
+  ,DSSSPeriod(0.8)
+  ,nbStepSSDS(2){
+  }
+
   int MPCData::iterationNumberFeedback(double firstIterationduration) const{
   	return static_cast<int> (round(firstIterationduration / MPCSamplingPeriod)-1 );
   }

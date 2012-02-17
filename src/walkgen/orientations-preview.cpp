@@ -81,6 +81,13 @@ OrientationsPreview::~OrientationsPreview()
 }
 
 
+void OrientationsPreview::init(const MPCData &data) {
+	T_ 			= data.QPSamplingPeriod;
+	Ti_ 		= data.MPCSamplingPeriod;
+	N_ 			= data.QPNbSamplings;
+	SSPeriod_ 	= data.stepPeriod;
+}
+
 void
 OrientationsPreview::preview_orientations(double Time,
     const VelReference & Ref,

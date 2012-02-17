@@ -76,11 +76,10 @@ typedef struct COMState_s2 COMState2;
     //
   public:
 
-    /// \name Accessors
-    /// \{
     OrientationsPreview( const HipYawData & leftHipYaw, const HipYawData & rightHipYaw);
     ~OrientationsPreview();
-    /// \}
+
+    void init(const MPCData &mpcData);
 
     /// \brief Preview feet and trunk orientations inside the preview window
     /// The orientations of the feet are adapted to the previewed orientation of the hip.

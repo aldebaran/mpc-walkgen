@@ -80,6 +80,7 @@ int main ()
 	Eigen::Vector3d leftFootPos(0.00949035, 0.095, 0);
 	Eigen::Vector3d rightFootPos(0.00949035, -0.095, 0);
 	MPCData mpcData;
+
 	RobotData robotData;
 	walk.init(leftFootPos, rightFootPos,
 			robotData, mpcData);

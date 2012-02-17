@@ -160,6 +160,8 @@ namespace MPCWalkgen
 		int nbIterationFeedback() const;
 
 		QPPonderation ponderation;
+
+		MPCData();
 	};
 
 	struct RobotData{
