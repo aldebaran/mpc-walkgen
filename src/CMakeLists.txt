@@ -27,7 +27,7 @@ ENDIF(WIN32)
 SET(SOURCES
  sharedpgtypes.cpp 
  
- walkgen/OrientationsPreview.cpp 
+ walkgen/orientations-preview.cpp 
 
  
  walkgen/qp-solver.cpp
