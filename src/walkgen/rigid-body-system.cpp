@@ -17,7 +17,12 @@ RigidBodySystem::RigidBodySystem(const MPCData * generalData,
 	initConvexHulls();
 }
 
-RigidBodySystem::~RigidBodySystem(){}
+RigidBodySystem::~RigidBodySystem()
+{
+	delete rightFoot_;
+	delete leftFoot_;
+	delete CoM_;
+}
 
 
 void RigidBodySystem::computeDynamics(){
@@ -80,7 +85,7 @@ RigidBody * RigidBodySystem::body(BodyType type){
 	}
 }
 
-RigidBody * RigidBodySystem::body(BodyType type) const{
+const RigidBody * RigidBodySystem::body(BodyType type) const{
 	switch(type){
 		case COM:
 			return CoM_;

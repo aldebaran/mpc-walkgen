@@ -9,6 +9,6 @@ FILE_PATTERNS          = *.cc *.cpp \
 
 TAGFILES               += \
 
-WARN_LOGFILE           =
-WARN_IF_UNDOCUMENTED   = NO
+# WARN_LOGFILE           =
+# WARN_IF_UNDOCUMENTED   = NO
 

@@ -41,7 +41,7 @@ namespace MPCWalkgen{
 			ConvexHull convexHull(HullType type, const SupportState & prwSupport, bool computeLinearSystem=true, bool rotateHull=true) const;
 
 			RigidBody * body(BodyType type);
-			RigidBody * body(BodyType type) const;
+			const RigidBody * body(BodyType type) const;
 
 		private:
 			void initConvexHulls() ;

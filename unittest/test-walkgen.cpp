@@ -24,12 +24,12 @@ using namespace MPCWalkgen;
 void makeScilabFile(std::string type);
 void dumpTrajectory(MPCSolution & result, std::vector<std::ofstream*> & data_vec);
 bool checkFiles(std::ifstream & f1, std::ifstream & f2);
-int copyFile(char const * const source, char const * const destination);
+int copyFile(const std::string & source, const std::string & destination);
 
 int main ()
 {
 
-	int nbFile=8;
+	const int nbFile=8;
 
 	std::vector<std::string> name_vec(nbFile);
 	name_vec[0]="CoM_X";
@@ -111,19 +111,25 @@ int main ()
 	for(unsigned i=0;i<data_vec.size();++i){
 		data_vec[i]->close();
 	}
-	std::vector<std::ifstream*> check_vec(8);
+
+	// now reopen the files
+	std::vector<std::ifstream*> check_vec(nbFile);
 	for(int i=0;i<nbFile;++i){
 		check_vec[i] = new std::ifstream((name_vec[i]+".data").c_str());
 	}
 
 
+	bool success = true;
 	for(unsigned i=0;i<check_vec.size();++i){
+		// if the reference file exists, compare with the previous version.
 		if (*ref_vec[i]){
 			if (!checkFiles(*check_vec[i],*ref_vec[i])){
-				return 1;
+				success = false;
 			}
-		}else{
-			copyFile((name_vec[i]+".data").c_str(),(name_vec[i]+".ref").c_str());
+		}
+		// otherwise, create it
+		else{
+			copyFile((name_vec[i]+".data"), (name_vec[i]+".ref"));
 		}
 		check_vec[i]->close();
 		ref_vec[i]->close();
@@ -131,7 +137,13 @@ int main ()
 	makeScilabFile("data");
 	makeScilabFile("ref");
 
-	return 0;
+	for(int i=0;i<nbFile;++i){
+		delete check_vec[i];
+		delete ref_vec[i];
+		delete data_vec[i];
+	}
+
+	return (success)?0:1;
 }
 
 void dumpTrajectory(MPCSolution & result, std::vector<std::ofstream*> & data_vec){
@@ -220,29 +232,13 @@ bool checkFiles(std::ifstream & fich1, std::ifstream & fich2){
 	return equal;
 }
 
-int copyFile(char const * const source, char const * const destination)
+int copyFile(const std::string & source, const std::string & destination)
 {
-    FILE* fSrc;
-    FILE* fDest;
-    char buffer[512];
-    int NbLus;
-
-    if ((fSrc = fopen(source, "rb")) == NULL)
-    {
-        return 1;
-    }
-
-    if ((fDest = fopen(destination, "wb")) == NULL)
-    {
-        fclose(fSrc);
-        return 2;
-    }
-
-    while ((NbLus = fread(buffer, 1, 512, fSrc)) != 0)
-        fwrite(buffer, 1, NbLus, fDest);
-
-    fclose(fDest);
-    fclose(fSrc);
+	std::ifstream ifs(source.c_str(), std::ios::binary);
+	std::ofstream ofs(destination.c_str(), std::ios::binary);
+	ofs << ifs.rdbuf();
+	ofs.close();
+	ifs.close();
 
     return 0;
 }

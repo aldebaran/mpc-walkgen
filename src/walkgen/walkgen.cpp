@@ -1,6 +1,6 @@
 #include <mpc-walkgen/walkgen.h>
 
-#include <mpc-walkgen/OrientationsPreview.h>
+#include <mpc-walkgen/orientations-preview.h>
 
 #include <mpc-walkgen/qp-solvers/lssol-solver.h>
 #include <mpc-walkgen/qp-generator.h>

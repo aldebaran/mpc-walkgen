@@ -24,13 +24,13 @@
  *  Joint Japanese-French Robotics Laboratory (JRL)
  */
 /*
- * OrientationsPreview.cpp
+ * orientations-preview.cpp
  */
 
 #include <iostream>
 #include <fstream>
 
-#include <mpc-walkgen/OrientationsPreview.h>
+#include <mpc-walkgen/orientations-preview.h>
 #include <vector>
 
 using namespace MPCWalkgen;
