@@ -259,8 +259,6 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
 
 		solver_->solve(solution_);
 
-		generator_->convertCopToJerk(solution_);
-
 		debug_->getTime(2,false);
 		debug_->getTime(3,true);
 
@@ -269,6 +267,9 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
 
 		debug_->getTime(3,false);
 		debug_->getTime(4,true);
+
+		generator_->convertCopToJerk(solution_);
+
 
 		robot_->interpolateBodies(solution_, time, velRef_);
 

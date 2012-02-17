@@ -394,6 +394,48 @@ void QPGenerator::convertCopToJerk(MPCSolution & result){
 
 void QPGenerator::display(const MPCSolution & result, const std::string & filename) const
 {
+	int N = generalData_->QPNbSamplings;
+
+	const SelectionMatrices & State = preview_->selectionMatrices();
+	const MatrixXd & rot = preview_->rotationMatrix();
+	const BodyState & CoM = robot_->body(COM)->state();
+	const DynamicMatrix & CoP = robot_->body(COM)->dynamic(copDynamic);
+	int nbSteps =  result.supportState_vec.back().stepNumber;
+
+	VectorXd sx = result.solution.segment(0, N);
+	VectorXd sy = result.solution.segment(N, N);
+
+	const VectorXd px = result.solution.segment(2*N,         nbSteps);
+	const VectorXd py = result.solution.segment(2*N+nbSteps, nbSteps);
+
+	VectorXd Vpx;
+	VectorXd Vpy;
+	if (nbSteps>0){
+		Vpx =State.V*px;
+		Vpy =State.V*py;
+	}else{
+		Vpx=VectorXd::Zero(N);
+		Vpy=VectorXd::Zero(N);
+	}
+
+	VectorXd zx(N);
+	zx =rot.block(0,0,N,N)*sx -rot.block(0,N,N,N)*sy;
+	zx+=Vpx+State.VcX;
+
+	VectorXd zy(N);
+	zy =rot.block(N,N,N,N)*sy -rot.block(N,0,N,N)*sx;
+	zy+=Vpy+State.VcY;
+
+	VectorXd X;
+	VectorXd Y;
+	zx -= CoP.S * CoM.x;
+	X  =  CoP.UInv * zx;
+
+	zy -= CoP.S * CoM.y ;
+	Y  =  CoP.UInv * zy;
+
+
+
 	std::ofstream data(filename.c_str());
 	if (!data)
 	{
@@ -408,12 +450,10 @@ void QPGenerator::display(const MPCSolution & result, const std::string & filena
 	VectorXd CX(nbSampling);
 	VectorXd CY(nbSampling);
 
-	const BodyState & CoM = robot_->body(COM)->state();
-	const DynamicMatrix & CoP = robot_->body(COM)->dynamic(copDynamic);
+
+
 	const DynamicMatrix & CoMPos = robot_->body(COM)->dynamic(posDynamic);
 
-	VectorXd X = result.solution.segment(0,          nbSampling);
-	VectorXd Y = result.solution.segment(nbSampling, nbSampling);
 
 	// Compute previewed ZMP
 	ZX=CoP.S * CoM.x + CoP.U*X;
@@ -442,7 +482,7 @@ void QPGenerator::display(const MPCSolution & result, const std::string & filena
 
 	 int j = 0,b=0;
 
-	int nbSteps = result.supportState_vec.back().stepNumber;
+
 	double Xfoot, Yfoot;
 
 	//display current COP constraint
