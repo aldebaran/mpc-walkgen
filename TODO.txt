@@ -1,0 +1,39 @@
+This is the Todo list precising the required things before a clean release. 
+
+Complete the documentation
+
+Make a real unittest out of test-walkgen
+(Use Romeo data rather than hrp2 data)
+
+Add a switch for the displays (amelif and debug)
+
+Clean the public interface: some attributes appear twice, and the method
+CallMethod does nothing at all sometimes !
+
+It is important to know what parameters of generalData_ can be changed from the outside and when
+I think two categories can be noticed:
+1\ Those mutable "at will" by the user, ie during run time, and smartly (ie like the reference in velocity)
+2\ Those not mutable OR only at the cost of the recomputation of the precomputed matrices.
+-- Whereas in a first time they can be fixed, it leaves room for reflexion concerning the initialization of
+-- those matrices (typically, they should be initialiazed after the construction).
+
+Remove the remaining TODO in the code.
+
+/////
+// The following are important remarks (maybe not all are necessary for a(n) (urgent) release)
+
+Reintroduce class RigidBody - absolutely necessary for multiBody
+
+Move ::display(�) out of QPGenerator - generator is generating not displaying
+
+Distinguish enums from variables by changing enum naming convention - confusing
+
+MPCData and especially RobotData, shouldn't they rather point to parameters instead of containing them? - Data has often a better place (robot_ for RobotData)
+
+(Re)Introduce dump() functions in structures and classes - convenient debugging, had been (partly) implemented before
+
+Reintroduce 3d convex hulls and correspondent constraints on the com and feet - had been implemented before
+
+Initialization still hard coded
+
+Can interpolation be relative to a RigidBody? - CoM.interpolate()
