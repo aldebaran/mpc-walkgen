@@ -18,7 +18,10 @@ QPPreview::QPPreview(VelReference * velRef, RigidBodySystem * robot, const MPCDa
 	statesolver_ = new FSMSolver(velRef, generalData);
 }
 
-QPPreview::~QPPreview(){}
+QPPreview::~QPPreview()
+{
+	delete statesolver_;
+}
 
 void QPPreview::previewSupportStates(const double currentTime,
 		const double FirstIterationDynamicsDuration, MPCSolution & result, SupportState & CurrentSupport){
