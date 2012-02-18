@@ -136,6 +136,33 @@ namespace MPCWalkgen
 		QPPonderation(int nb = 2);
 	};
 
+	struct SupportState{
+		Phase phase;
+		Foot foot;
+
+		int nbStepsLeft;
+		int stepNumber;
+		int nbInstants;
+
+		double timeLimit;
+		double startTime;
+
+		double x,y,yaw;
+		double yawTrunk;//TODO: Why in SupportState? -> for compatibility with temporary previewROrientation class
+
+		bool stateChanged;
+
+		/// \brief Define if the support state is in a (transitional) double support phase
+		bool inTransitionPhase;
+
+		/// \brief The duration of the support state
+		double iterationDuration;//TODO: change name
+
+		// \brief The relative weight of this support state in the QP (A support state duration of QPSamplingTime have : iterationWeight = 1)
+		double iterationWeight;
+	};
+
+
 	struct MPCData{
 		// The following parameters are fixed once and for all at initialization
 		/// \brief Sampling period considered in the QP
@@ -178,33 +205,9 @@ namespace MPCWalkgen
   		HipYawData rightHipYaw;
 
   		double robotMass;
+
+  		SupportState *currentSupport;
   	};
-
-	struct SupportState{
-		Phase phase;
-		Foot foot;
-
-		int nbStepsLeft;
-		int stepNumber;
-		int nbInstants;
-
-		double timeLimit;
-		double startTime;
-
-		double x,y,yaw;
-		double yawTrunk;//TODO: Why in SupportState? -> for compatibility with temporary previewROrientation class
-
-		bool stateChanged;
-
-		/// \brief Define if the support state is in a (transitional) double support phase
-		bool inTransitionPhase;
-
-		/// \brief The duration of the support state
-		double iterationDuration;//TODO: change name
-
-		// \brief The relative weight of this support state in the QP (A support state duration of QPSamplingTime have : iterationWeight = 1)
-		double iterationWeight;
-	};
 
 	struct BodyState{
 		Eigen::Vector3d x;

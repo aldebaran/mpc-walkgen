@@ -77,10 +77,10 @@ namespace MPCWalkgen
 	    /* ! \brief Sets the Com Height. */
 		virtual void comHeight(double d)=0;
 
-		virtual double freeFlyingFootMaxHeight()const=0;
+		virtual double freeFlyingFootMaxHeight() const = 0;
 		virtual void freeFlyingFootMaxHeight(double d)=0;
 
-		virtual const SupportState & currentSupportState()const=0;
+		virtual const SupportState & currentSupportState() const = 0;
 		virtual void currentSupportState(const SupportState & newSupportState)=0;
 
 		virtual const BodyState & bodyState(BodyType body)const=0;

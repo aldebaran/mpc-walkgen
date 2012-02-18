@@ -50,7 +50,7 @@ namespace MPCWalkgen{
 
 
 		  public:
-			/// \name accessors relative to the state of the robot.
+			/// \name Accessors relative to the state of the robot.
 			/// \{
 			virtual inline double comHeight()const
 			{ return robotData_.CoMHeight; }
@@ -62,8 +62,8 @@ namespace MPCWalkgen{
 			virtual inline void freeFlyingFootMaxHeight(double d)
 			{ robotData_.freeFlyingFootMaxHeight=d; }
 
-			virtual inline const SupportState & currentSupportState()const
-			{ return solution_.currentSupportState; }
+			virtual inline const SupportState & currentSupportState() const {
+				return *robotData_.currentSupport; }
 			virtual inline void currentSupportState(const SupportState & newSupportState){
 				newCurrentSupport_=newSupportState;
 				isNewCurrentSupport_=true;

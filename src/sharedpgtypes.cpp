@@ -128,7 +128,7 @@ namespace MPCWalkgen
   	unsigned nbRows = x.rows();
 
   	double sign;
-  	if(foot==LEFT){
+  	if(foot == LEFT){
   		sign = 1.0;
   	}else{
   		sign = -1.0;

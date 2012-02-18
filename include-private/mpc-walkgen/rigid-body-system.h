@@ -26,7 +26,7 @@ namespace MPCWalkgen{
 
 		public:
 			RigidBodySystem(const MPCData * generalData,
-					const RobotData * robotData
+					RobotData * robotData
 					, const Interpolation * interpolation);
 			~RigidBodySystem();
 
@@ -58,7 +58,7 @@ namespace MPCWalkgen{
 
 		private:
 			const MPCData * generalData_;
-			const RobotData * robotData_;
+			RobotData * robotData_;
 
 			ConvexHull leftFootHull_;
 			ConvexHull rightFootHull_;

@@ -68,8 +68,7 @@ Walkgen::Walkgen(
 	,debug_(0x0)
 	,enableDisplay_(true)
 	,upperTimeLimitToUpdate_(0)
-	,upperTimeLimitToFeedback_(0)
-{
+	,upperTimeLimitToFeedback_(0) {
 
 	robotData_.CoMHeight = comHeight;
 	robotData_.freeFlyingFootMaxHeight = 0.05;
@@ -78,9 +77,6 @@ Walkgen::Walkgen(
 	robotData_.leftHipYaw = leftHipYaw;
 	robotData_.rightHipYaw = rightHipYaw;
 	robotData_.robotMass = robotMass;
-
-
-	
 	
 	solver_ = new LSSOLSolver();
 
@@ -174,8 +170,6 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
 
 	if(time  > upperTimeLimitToFeedback_+EPS){
 
-//		debug_->getTime(1,true);
-
 		solver_->reset();
 
 		solution_.reset();
@@ -217,19 +211,12 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
 		generator_->buildConstraints(solution_);
 		generator_->computeWarmStart(solution_);
 
-//		debug_->getTime(1,false);
-//		debug_->getTime(2,true);
-
 		solver_->solve(solution_);
-
-//		debug_->getTime(2,false);
-//		debug_->getTime(3,true);
 
 		if (enableDisplay_)
 			generator_->display(solution_, "pg-data-displayer.dat");
 
 		generator_->convertCopToJerk(solution_);
-
 
 		robot_->interpolateBodies(solution_, time, velRef_);
 
@@ -237,23 +224,7 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
 			robot_->updateBodyState(solution_);
 		}
 
-
-		// Only for compatibility with temporary class OrientationPreview
 		orientPrw_->interpolate_trunk_orientation(robot_);
-
-//		debug_->getTime(4,false);
-
-
-//		if (debug_->nbIntervals(1)==100){
-//			std::cout << "prepa    :" << debug_->computeInterval(1,us) << " us" << std::endl;
-//			std::cout << "solve    :" << debug_->computeInterval(2,us) << " us" << std::endl;
-//			//std::cout << "print    :" << debug_->computeInterval(3,us) << " us" << std::endl;
-//			std::cout << "inter    :" << debug_->computeInterval(4,us) << " us" << std::endl<< std::endl;
-//
-//			debug_->reset();
-//		}
-
-
 	}
 
 	return solution_;

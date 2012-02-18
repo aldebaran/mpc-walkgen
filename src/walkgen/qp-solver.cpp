@@ -86,7 +86,7 @@ void QPSolver::addNbCtr(const int addCtr){
 }
 
 void QPSolver::varOrder(const Eigen::VectorXi & order){
-	varOrder_=order;
+	varOrder_ = order;
 	matrixQ_.rowOrder(order);
 	matrixQ_.colOrder(order);
 	matrixA_.colOrder(order);

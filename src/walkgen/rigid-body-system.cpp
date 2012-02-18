@@ -5,11 +5,9 @@
 using namespace MPCWalkgen;
 using namespace Eigen;
 
-RigidBodySystem::RigidBodySystem(const MPCData * generalData,
-		const RobotData * robotData
-		, const Interpolation * interpolation)
-	:generalData_(generalData)
-	,robotData_(robotData) {
+RigidBodySystem::RigidBodySystem(const MPCData * generalData, RobotData * robotData, const Interpolation * interpolation)
+:generalData_(generalData)
+,robotData_(robotData) {
 	CoM_ = new CoMBody(generalData_, robotData_, interpolation);
 	leftFoot_ = new FootBody(generalData_, robotData_, interpolation, LEFT);
 	rightFoot_ = new FootBody(generalData_, robotData_, interpolation, RIGHT);
@@ -25,10 +23,10 @@ RigidBodySystem::RigidBodySystem(const MPCData * generalData,
 	currentSupport_.yaw = 0.0;
 	currentSupport_.yawTrunk = 0.0;
 	currentSupport_.startTime = 0.0;
+	robotData->currentSupport = &currentSupport_;
 }
 
-RigidBodySystem::~RigidBodySystem()
-{
+RigidBodySystem::~RigidBodySystem() {
 	delete rightFoot_;
 	delete leftFoot_;
 	delete CoM_;
@@ -52,7 +50,7 @@ void RigidBodySystem::updateBodyState(const MPCSolution & solution){
 
 	BodyState leftFoot, rightFoot, CoM;
 
-	for(int i=0;i<3;++i){
+	for(int i = 0; i < 3; ++i){
 		const MPCSolution::State & currentState = solution.state_vec[i];
 		leftFoot.x(i) = currentState.leftFootTrajX_(nextCurrentState);
 		leftFoot.y(i) = currentState.leftFootTrajY_(nextCurrentState);
