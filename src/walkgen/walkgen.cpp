@@ -17,44 +17,24 @@ using namespace MPCWalkgen;
 using namespace Eigen;
 
 
-MPCWalkgen::WalkgenAbstract * MPCWalkgen::mpcFactory(
-	const FootData & leftFoot, const FootData & rightFoot,
-	const HipYawData & leftHipYaw, const HipYawData & rightHipYaw,
-	double robotMass, double comHeight,
-	const std::string & qpParams)
-{
+MPCWalkgen::WalkgenAbstract * MPCWalkgen::mpcFactory(const RobotData & robotData) {
 	MPCWalkgen::WalkgenAbstract* zmpVra =
-		new Walkgen(
-			leftFoot, rightFoot,
-			leftHipYaw, rightHipYaw, robotMass, comHeight,
-			qpParams);
+		new Walkgen(robotData);
 	return zmpVra;
 }
 
 using namespace MPCWalkgen;
 
-WalkgenAbstract::WalkgenAbstract(
-	  const FootData & // leftFoot
-	, const FootData & // rightFoot
-	, const HipYawData & // leftHipYaw
-	, const HipYawData & // rightHipYaw
-	, double // robotMass
-	, double // comHeight
-) {}
+WalkgenAbstract::WalkgenAbstract(const RobotData &robotData) {}
 
 WalkgenAbstract::~WalkgenAbstract(){}
 
 
 // Implementation of the private interface
-Walkgen::Walkgen(
-		const FootData & leftFoot, const FootData & rightFoot,
-		const HipYawData & leftHipYaw, const HipYawData & rightHipYaw,
-		double robotMass, double comHeight,
-		const std::string & qpParams)
-	: WalkgenAbstract(leftFoot, rightFoot,
-		leftHipYaw, rightHipYaw, robotMass, comHeight)
+Walkgen::Walkgen(const RobotData &robotData)
+	: WalkgenAbstract(robotData)
 	,generalData_()
-	,robotData_()
+	,robotData_(robotData)
 	,solver_(0x0)
 	,generator_(0x0)
 	,preview_(0x0)
@@ -70,14 +50,6 @@ Walkgen::Walkgen(
 	,upperTimeLimitToUpdate_(0)
 	,upperTimeLimitToFeedback_(0) {
 
-	robotData_.CoMHeight = comHeight;
-	robotData_.freeFlyingFootMaxHeight = 0.05;
-	robotData_.leftFoot = leftFoot;
-	robotData_.rightFoot = rightFoot;
-	robotData_.leftHipYaw = leftHipYaw;
-	robotData_.rightHipYaw = rightHipYaw;
-	robotData_.robotMass = robotMass;
-	
 	solver_ = new LSSOLSolver();
 
 	orientPrw_ = new OrientationsPreview( robotData_.leftHipYaw, robotData_.rightHipYaw );

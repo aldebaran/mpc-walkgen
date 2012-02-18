@@ -10,8 +10,8 @@ RigidBody::RigidBody(const MPCData * generalData,
 	,interpolation_(interpolation)
 {}
 
-RigidBody::~RigidBody(){}
-
+RigidBody::~RigidBody()
+{}
 
 const DynamicMatrix & RigidBody::dynamic(DynamicMatrixType type) const{
 	switch (type){
@@ -40,7 +40,6 @@ const DynamicMatrix & RigidBody::dynamic(DynamicMatrixType type) const{
 void RigidBody::firstIterationDuration(double firstIterationDuration){
 	matrixNumber_ = (int)round(firstIterationDuration / generalData_->MPCSamplingPeriod)-1;
 }
-
 
 void RigidBody::computeDynamics(){
 

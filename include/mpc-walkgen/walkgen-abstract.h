@@ -30,14 +30,11 @@ namespace MPCWalkgen
 	    //
 	  public:
 
-	  WalkgenAbstract(
-	    		const FootData & leftFoot, const FootData & rightFoot,
-	    		const HipYawData & leftHipYaw, const HipYawData & rightHipYaw,
-	    		double robotMass, double comHeight);
+	  WalkgenAbstract(const RobotData &robotData);
 
 	  virtual ~WalkgenAbstract() =0;
 
-
+	  //TODO: clean
 	    /*!  \brief Set the ModulationSupportCoefficient.*/
 	    ///virtual void SetModulationSupportCoefficient(double) =0;
 
@@ -116,12 +113,7 @@ namespace MPCWalkgen
   };
 
   /*! Factory of Pattern generator interface. */
-  MPC_WALK_GEN_EXPORT WalkgenAbstract * mpcFactory(
-	const FootData & leftFoot, const FootData & rightFoot,
-	const HipYawData & leftHipYaw, const HipYawData & rightHipYaw,
-	double robotMass, double comHeight,
-	const std::string & qpParams =""
-  );
+  MPC_WALK_GEN_EXPORT WalkgenAbstract * mpcFactory(const RobotData & robotData);
 }
 
 #endif /* _WALKGEN_ABSTRACT_H_ */

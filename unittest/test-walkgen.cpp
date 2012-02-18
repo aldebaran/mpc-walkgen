@@ -48,10 +48,6 @@ int main ()
 		ref_vec[i] = new std::ifstream((name_vec[i]+".ref").c_str());
 	}
 
-
-	double robotMass = 0;
-	double comHeight = 0.814;
-
 	FootData leftFoot;
 	leftFoot.anklePositionInLocalFrame_<< 0, 0, 0.105;
 	leftFoot.soleHeight_ = 0.138;
@@ -72,18 +68,25 @@ int main ()
 
 	HipYawData rightHipYaw = leftHipYaw;
 
-	Walkgen walk(leftFoot, rightFoot,
-			leftHipYaw, rightHipYaw,
-			robotMass, comHeight, "");
+	RobotData robot;
+	robot.CoMHeight = 0.814;
+	robot.freeFlyingFootMaxHeight = 0.05;
+	robot.leftFoot = leftFoot;
+	robot.rightFoot = rightFoot;
+	robot.leftHipYaw = leftHipYaw;
+	robot.rightHipYaw = rightHipYaw;
+	robot.robotMass = 0;
+
+	Walkgen walk(robot);
 
 	// initialization
 	Eigen::Vector3d leftFootPos(0.00949035, 0.095, 0);
 	Eigen::Vector3d rightFootPos(0.00949035, -0.095, 0);
 	MPCData mpcData;
 
-	RobotData robotData;
+
 	walk.init(leftFootPos, rightFootPos,
-			robotData, mpcData);
+			robot, mpcData);
 
 	// run
 	double velocity = 0.25;

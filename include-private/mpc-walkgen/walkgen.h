@@ -30,11 +30,7 @@ namespace MPCWalkgen{
 	{
 
 		public:
-			Walkgen(
-		    		const FootData & leftFoot, const FootData & rightFoot,
-		    		const HipYawData & leftHipYaw, const HipYawData & rightHipYaw,
-		    		double robotMass, double comHeight,
-		    		const std::string & qpParams);
+			Walkgen(const RobotData & robotData);
 			~Walkgen();
 
 			void init(const Eigen::Vector3d & leftFootPosition, const Eigen::Vector3d & rightFootPosition,
@@ -74,7 +70,8 @@ namespace MPCWalkgen{
 			/// \}
 
 
-			//accessors relative to the solver, modifiable on line
+			/// \name Accessors relative to the solver, modifiable on line
+			/// \{
 		  public:
 			virtual inline double stepPeriod()const
 			{ return generalData_.stepPeriod; }
@@ -95,6 +92,7 @@ namespace MPCWalkgen{
 			{ return generalData_.nbStepSSDS; }
 			virtual inline void nbStepSSDS(int d)
 			{ generalData_.nbStepSSDS = d; }
+			/// \}
 
 			//accessors relative to the solver, should not be modified on line
 		  public:
