@@ -33,7 +33,7 @@ namespace MPCWalkgen{
 			~QPPreview();
 
 			void previewSupportStates(const double currentTime,
-					const double FirstIterationDynamicsDuration, MPCSolution & result, SupportState & CurrentSupport);
+					const double FirstIterationDynamicsDuration, MPCSolution & result);
 
 			void computeRotationMatrix(MPCSolution & result);
 
@@ -52,7 +52,7 @@ namespace MPCWalkgen{
 		private:
 			RigidBodySystem * robot_;
 			const MPCData * generalData_;
-			StateSolver * statesolver_;
+			StateSolver * statesolver_;	//TODO: Name statesolver is bad
 
 			SelectionMatrices selectionMatrices_;
 			Eigen::MatrixXd rotationMatrix_;

@@ -36,6 +36,7 @@ const DynamicMatrix & RigidBody::dynamic(DynamicMatrixType type) const{
 	}
 }
 
+//TODO: firstSamplingPeriod
 void RigidBody::firstIterationDuration(double firstIterationDuration){
 	matrixNumber_ = (int)round(firstIterationDuration / generalData_->MPCSamplingPeriod)-1;
 }

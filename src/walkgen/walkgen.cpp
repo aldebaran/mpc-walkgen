@@ -53,7 +53,7 @@ Walkgen::Walkgen(
 		const std::string & qpParams)
 	: WalkgenAbstract(leftFoot, rightFoot,
 		leftHipYaw, rightHipYaw, robotMass, comHeight)
-	, generalData_()
+	,generalData_()
 	,robotData_()
 	,solver_(0x0)
 	,generator_(0x0)
@@ -70,14 +70,6 @@ Walkgen::Walkgen(
 	,upperTimeLimitToUpdate_(0)
 	,upperTimeLimitToFeedback_(0)
 {
-	generalData_.QPNbSamplings = 16;
-	generalData_.QPSamplingPeriod = 0.1;
-	generalData_.MPCSamplingPeriod = 0.005;
-	generalData_.simSamplingPeriod = 0.005;
-	generalData_.stepPeriod = 0.8;
-	generalData_.nbStepSSDS = 2;
-	generalData_.DSPeriod = 1e9;
-	generalData_.DSSSPeriod = 0.8;
 
 	robotData_.CoMHeight = comHeight;
 	robotData_.freeFlyingFootMaxHeight = 0.05;
@@ -155,18 +147,6 @@ void Walkgen::init(const Eigen::Vector3d& leftFootPosition, const Eigen::Vector3
 
 	generator_->precomputeObjective();
 
-	solution_.currentSupportState.phase = DS;
-	solution_.currentSupportState.foot = LEFT;
-	solution_.currentSupportState.timeLimit = 1e9;
-	solution_.currentSupportState.nbStepsLeft = 1;
-	solution_.currentSupportState.stateChanged = false;
-	solution_.currentSupportState.x = 0.0;//TODO: hard coded!
-	solution_.currentSupportState.y = 0.1;
-	solution_.currentSupportState.yaw = 0.0;
-	solution_.currentSupportState.yawTrunk = 0.0;
-
-	solution_.currentSupportState.startTime = 0.0;
-
 	BodyState state;
 	state.x[0]=leftFootPosition[0];
 	state.y[0]=leftFootPosition[1];
@@ -189,7 +169,7 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
 	solution_.newTraj = false;
 	if(time  > upperTimeLimitToUpdate_+EPS){
 		upperTimeLimitToUpdate_ += generalData_.QPSamplingPeriod;
-		CurrentQPTime_ = time;
+		currentTime_ = time;
 	}
 
 	if(time  > upperTimeLimitToFeedback_+EPS){
@@ -203,11 +183,11 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
 
 		velRef_ = newVelRef_;
 		if (isNewCurrentSupport_){
-			solution_.currentSupportState = newCurrentSupport_;
-			isNewCurrentSupport_=false;
+			robot_->currentSupport(newCurrentSupport_);
+			isNewCurrentSupport_ = false;
 		}
 
-		if (solution_.currentSupportState.phase==SS && solution_.currentSupportState.nbStepsLeft == 0){
+		if (robot_->currentSupport().phase == SS && robot_->currentSupport().nbStepsLeft == 0){
 			velRef_.local.x=0;
 			velRef_.local.y=0;
 			velRef_.local.yaw=0;
@@ -223,15 +203,14 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
 
 		robot_->firstIterationDuration(FirstIterationDynamicsDuration);
 
-		preview_->previewSupportStates(CurrentQPTime_, FirstIterationDynamicsDuration, solution_, solution_.currentSupportState);
+		preview_->previewSupportStates(currentTime_, FirstIterationDynamicsDuration, solution_);
 
-		orientPrw_->preview_orientations( CurrentQPTime_, velRef_,
+		orientPrw_->preview_orientations( currentTime_, velRef_,
 			generalData_.stepPeriod,
 			robot_->body(LEFT_FOOT)->state(), robot_->body(RIGHT_FOOT)->state(),
 			solution_ );
 
 		preview_->computeRotationMatrix(solution_);
-
 
 		generator_->computeReferenceVector(solution_);
 		generator_->buildObjective(solution_);

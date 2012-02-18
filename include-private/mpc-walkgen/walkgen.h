@@ -143,7 +143,7 @@ namespace MPCWalkgen{
 			double upperTimeLimitToFeedback_;
 
 			/// \brief Synchronised time with QP sampling
-			double CurrentQPTime_;
+			double currentTime_;
 
 	};
 }

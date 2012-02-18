@@ -9,12 +9,22 @@ RigidBodySystem::RigidBodySystem(const MPCData * generalData,
 		const RobotData * robotData
 		, const Interpolation * interpolation)
 	:generalData_(generalData)
-	,robotData_(robotData)
-{
+	,robotData_(robotData) {
 	CoM_ = new CoMBody(generalData_, robotData_, interpolation);
 	leftFoot_ = new FootBody(generalData_, robotData_, interpolation, LEFT);
 	rightFoot_ = new FootBody(generalData_, robotData_, interpolation, RIGHT);
 	initConvexHulls();
+
+	currentSupport_.phase = DS;
+	currentSupport_.foot = LEFT;
+	currentSupport_.timeLimit = 1e9;
+	currentSupport_.nbStepsLeft = 1;
+	currentSupport_.stateChanged = false;
+	currentSupport_.x = 0.0;
+	currentSupport_.y = 0.1;
+	currentSupport_.yaw = 0.0;
+	currentSupport_.yawTrunk = 0.0;
+	currentSupport_.startTime = 0.0;
 }
 
 RigidBodySystem::~RigidBodySystem()

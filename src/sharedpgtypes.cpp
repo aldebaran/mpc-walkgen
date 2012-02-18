@@ -78,6 +78,7 @@ namespace MPCWalkgen
 	  activePonderation = 1;
   }
 
+  //TODO:copyFrom
   ConvexHull & ConvexHull::operator=(const ConvexHull & hull){
   	x=hull.x;
   	y=hull.y;

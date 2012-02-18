@@ -7,7 +7,7 @@ using namespace Eigen;
 
 const double QPPreview::EPS_=1e-5;
 
-
+//TODO:change name QPPreview
 QPPreview::QPPreview(VelReference * velRef, RigidBodySystem * robot, const MPCData * generalData)
 	:robot_(robot)
 	,generalData_(generalData)
@@ -24,66 +24,66 @@ QPPreview::~QPPreview()
 }
 
 void QPPreview::previewSupportStates(const double currentTime,
-		const double FirstIterationDynamicsDuration, MPCSolution & result, SupportState & CurrentSupport){
+		const double FirstIterationDynamicsDuration, MPCSolution & result){
 
-	const BodyState * Foot;
+	const BodyState * foot;
+	SupportState & currentSupport = robot_->currentSupport();
 
-	statesolver_->setSupportState( currentTime, 0, CurrentSupport);
-	CurrentSupport.inTransitionPhase = false;
-	if( CurrentSupport.stateChanged){
-		if( CurrentSupport.foot == LEFT ){
-			Foot = &robot_->body(LEFT_FOOT)->state();
+	statesolver_->setSupportState( currentTime, 0, currentSupport);
+	currentSupport.inTransitionPhase = false;
+	if( currentSupport.stateChanged){
+		if( currentSupport.foot == LEFT ){
+			foot = &robot_->body(LEFT_FOOT)->state();
 		}else{
-			Foot = &robot_->body(RIGHT_FOOT)->state();
+			foot = &robot_->body(RIGHT_FOOT)->state();
 		}
-		CurrentSupport.x = Foot->x(0);
-		CurrentSupport.y = Foot->y(0);
-		CurrentSupport.yaw = Foot->yaw(0);
-		CurrentSupport.startTime = currentTime;
+		currentSupport.x = foot->x(0);
+		currentSupport.y = foot->y(0);
+		currentSupport.yaw = foot->yaw(0);
+		currentSupport.startTime = currentTime;
 	}
-	result.supportState_vec.push_back( CurrentSupport );
+	result.supportState_vec.push_back( currentSupport );
 
 
 	// PREVIEW SUPPORT STATES:
 	// -----------------------
 	// initialize the previewed support state before previewing
-	SupportState PreviewedSupport = CurrentSupport;
+	SupportState previewedSupport = currentSupport;
 
-	PreviewedSupport.stepNumber  = 0;
+	previewedSupport.stepNumber = 0;
 	for( int pi=1; pi<=generalData_->QPNbSamplings; pi++ ){
-		statesolver_->setSupportState( currentTime, pi, PreviewedSupport);
-		PreviewedSupport.inTransitionPhase=false;
-		if( PreviewedSupport.stateChanged ){
+		statesolver_->setSupportState( currentTime, pi, previewedSupport);
+		previewedSupport.inTransitionPhase=false;
+		if( previewedSupport.stateChanged ){
 			if( pi == 1 ){// foot down
-				if( PreviewedSupport.foot == LEFT ){
-					Foot = &robot_->body(LEFT_FOOT)->state();
+				if( previewedSupport.foot == LEFT ){
+					foot = &robot_->body(LEFT_FOOT)->state();
 				}else{
-					Foot = &robot_->body(RIGHT_FOOT)->state();
+					foot = &robot_->body(RIGHT_FOOT)->state();
 				}
-				PreviewedSupport.x = Foot->x(0);
-				PreviewedSupport.y = Foot->y(0);
-				PreviewedSupport.yaw = Foot->yaw(0);
-				PreviewedSupport.startTime = currentTime+pi*generalData_->QPSamplingPeriod;
-				if( CurrentSupport.phase == SS && PreviewedSupport.phase == SS ){
-					PreviewedSupport.inTransitionPhase=true;
+				previewedSupport.x = foot->x(0);
+				previewedSupport.y = foot->y(0);
+				previewedSupport.yaw = foot->yaw(0);
+				previewedSupport.startTime = currentTime+pi*generalData_->QPSamplingPeriod;
+				if( currentSupport.phase == SS && previewedSupport.phase == SS ){
+					previewedSupport.inTransitionPhase=true;
 				}
 			}
-			if( /*pi > 1 &&*/ PreviewedSupport.stepNumber > 0 ){
-				PreviewedSupport.x = 0.0;
-				PreviewedSupport.y = 0.0;
+			if( /*pi > 1 &&*/ previewedSupport.stepNumber > 0 ){
+				previewedSupport.x = 0.0;
+				previewedSupport.y = 0.0;
 			}
 		}
-		if (pi==1){
-			PreviewedSupport.iterationDuration = FirstIterationDynamicsDuration;
-			PreviewedSupport.iterationWeight = FirstIterationDynamicsDuration/generalData_->QPSamplingPeriod;
+		if (pi == 1){
+			previewedSupport.iterationDuration = FirstIterationDynamicsDuration;
+			previewedSupport.iterationWeight = FirstIterationDynamicsDuration/generalData_->QPSamplingPeriod;
 		}else{
-			PreviewedSupport.iterationDuration = generalData_->QPSamplingPeriod;
-			PreviewedSupport.iterationWeight = 1;
+			previewedSupport.iterationDuration = generalData_->QPSamplingPeriod;
+			previewedSupport.iterationWeight = 1;
 		}
 
-		result.supportState_vec.push_back( PreviewedSupport );
+		result.supportState_vec.push_back( previewedSupport );
 	}
-
 
 	buildSelectionMatrices(result);
 }

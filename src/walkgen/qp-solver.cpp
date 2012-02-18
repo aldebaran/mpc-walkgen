@@ -5,7 +5,7 @@ using namespace MPCWalkgen;
 using namespace Eigen;
 
 
-
+//TODO: NB_VAR_MAX
 const int QPSolver::DefaultNbVarMax_=100;
 const int QPSolver::DefaultNbCtrMax_=100;
 

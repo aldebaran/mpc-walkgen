@@ -152,10 +152,13 @@ namespace MPCWalkgen
 		double DSSSPeriod;
 		int nbStepSSDS;
 
+		//TODO: nbSamplingsFeedback
 		/// \brief Compute the unique feedback iteration number between two QP instants
 		int iterationNumberFeedback(double firstIterationduration) const;
+		//TODO: nbSamplingSimulation
 		/// \brief number of simulation iterations between two feedback call
 		int nbIterationSimulation() const;
+		//TODO: difference?
 		/// \brief number of feedback iterations between two QP instants
 		int nbIterationFeedback() const;
 
@@ -193,11 +196,11 @@ namespace MPCWalkgen
 
 		bool stateChanged;
 
-		/// \brief Define if the support state is in double support between two single support
+		/// \brief Define if the support state is in a (transitional) double support phase
 		bool inTransitionPhase;
 
 		/// \brief The duration of the support state
-		double iterationDuration;
+		double iterationDuration;//TODO: change name
 
 		// \brief The relative weight of this support state in the QP (A support state duration of QPSamplingTime have : iterationWeight = 1)
 		double iterationWeight;
@@ -232,10 +235,9 @@ namespace MPCWalkgen
 		bool newTraj;
 
 		std::vector<SupportState> supportState_vec;
-		SupportState currentSupportState;
 
-		std::vector<double> supportOrientation_vec;
-		std::vector<double> supportTrunkOrientation_vec;
+		std::vector<double> supportOrientation_vec;//TODO: supportOrientations_vec
+		std::vector<double> supportTrunkOrientation_vec;//TODO: TrunkOrientations_vec
 
 		Eigen::VectorXd CoPTrajX;
 		Eigen::VectorXd CoPTrajY;

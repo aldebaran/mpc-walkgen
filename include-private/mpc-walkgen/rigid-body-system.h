@@ -43,6 +43,16 @@ namespace MPCWalkgen{
 			RigidBody * body(BodyType type);
 			const RigidBody * body(BodyType type) const;
 
+			inline SupportState &currentSupport() {
+				return currentSupport_;
+			};
+			inline const SupportState &currentSupport() const {
+				return currentSupport_;
+			};
+			inline void currentSupport(SupportState currentSupport) {
+				currentSupport_ = currentSupport;
+			};
+
 		private:
 			void initConvexHulls() ;
 
@@ -60,6 +70,8 @@ namespace MPCWalkgen{
 			RigidBody* CoM_;
 			RigidBody* leftFoot_;
 			RigidBody* rightFoot_;
+
+			SupportState currentSupport_;
 
 	};
 
