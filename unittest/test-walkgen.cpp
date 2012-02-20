@@ -52,79 +52,68 @@ int main ()
 	leftFoot.anklePositionInLocalFrame<< 0, 0, 0.105;
 	leftFoot.soleHeight = 0.138;
 	leftFoot.soleWidth = 0.2172;
-
 	FootData rightFoot;
-	rightFoot.anklePositionInLocalFrame << 0, 0, 	0.105;
+	rightFoot.anklePositionInLocalFrame<< 0, 0, 0.105;
 	rightFoot.soleHeight = 0.138;
 	rightFoot.soleWidth = 0.2172;
 
 	HipYawData leftHipYaw;
-	leftHipYaw.lowerBound = -0.523599;
-	leftHipYaw.upperBound = 0.785398;
-	leftHipYaw.lowerVelocityBound = -3.54108;
-	leftHipYaw.upperVelocityBound = 3.54108;
-	leftHipYaw.lowerAccelerationBound = -0.1;
-	leftHipYaw.upperAccelerationBound = 0.1;
-
 	HipYawData rightHipYaw = leftHipYaw;
 
-	RobotData robot;
-	robot.CoMHeight = 0.814;
-	robot.freeFlyingFootMaxHeight = 0.05;
-	robot.leftFoot = leftFoot;
-	robot.rightFoot = rightFoot;
-	robot.leftHipYaw = leftHipYaw;
-	robot.rightHipYaw = rightHipYaw;
-	robot.robotMass = 0;
-
-	Walkgen walk(robot);
-
-	// initialization
+	MPCData mpcData; // mpcData has a default initialization
+	RobotData robotData;
+	robotData.CoMHeight = 0.814;
+	robotData.freeFlyingFootMaxHeight = 0.05;
+	robotData.leftFoot = leftFoot;
+	robotData.rightFoot = rightFoot;
+	robotData.leftHipYaw = leftHipYaw;
+	robotData.rightHipYaw = rightHipYaw;
+	robotData.robotMass = 0;
 	Eigen::Vector3d leftFootPos(0.00949035, 0.095, 0);
 	Eigen::Vector3d rightFootPos(0.00949035, -0.095, 0);
-	MPCData mpcData;
+	robotData.leftFootPos = leftFootPos;
+	robotData.rightFootPos = rightFootPos;
 
-
-	walk.init(leftFootPos, rightFootPos,
-			robot, mpcData);
+	Walkgen walk;
+	walk.init(robotData, mpcData);
 
 	// run
 	double velocity = 0.25;
 	walk.reference(0, 0, 0);
 	walk.online(0);
-	for (double time=0.005;time<5;time+=0.005){
+	for (double time = 0.005; time < 5; time += 0.005){
 		MPCSolution result = walk.online(time);
 		dumpTrajectory(result, data_vec);
 	}
 	walk.reference(velocity, 0, 0);
-	for (double time=5;time<10;time+=0.005){
+	for (double time = 5; time < 10; time += 0.005){
 		MPCSolution result = walk.online(time);
 		dumpTrajectory(result, data_vec);
 	}
 	walk.reference(0, velocity, 0);
-	for (double time=10;time<20;time+=0.005){
+	for (double time = 10; time < 20; time += 0.005){
 		MPCSolution result = walk.online(time);
 		dumpTrajectory(result, data_vec);
 	}
 	walk.reference(velocity, 0, velocity);
-	for (double time=20;time<30;time+=0.005){
+	for (double time = 20; time < 30; time += 0.005){
 		MPCSolution result = walk.online(time);
 		dumpTrajectory(result, data_vec);
 	}
 
-	for(unsigned i=0;i<data_vec.size();++i){
+	for(unsigned i = 0; i < data_vec.size(); ++i){
 		data_vec[i]->close();
 	}
 
 	// now reopen the files
 	std::vector<std::ifstream*> check_vec(nbFile);
-	for(int i=0;i<nbFile;++i){
+	for(int i = 0;i < nbFile; ++i){
 		check_vec[i] = new std::ifstream((name_vec[i]+".data").c_str());
 	}
 
 
 	bool success = true;
-	for(unsigned i=0;i<check_vec.size();++i){
+	for(unsigned i = 0; i < check_vec.size();++i){
 		// if the reference file exists, compare with the previous version.
 		if (*ref_vec[i]){
 			if (!checkFiles(*check_vec[i],*ref_vec[i])){

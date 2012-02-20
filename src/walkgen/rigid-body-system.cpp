@@ -114,15 +114,15 @@ ConvexHull RigidBodySystem::convexHull(HullType type, const SupportState & prwSu
 	ConvexHull hull;
 	switch (type){
 		case FootHull:
-			if (prwSupport.foot==LEFT){
+			if (prwSupport.foot == LEFT){
 				hull = leftFootHull_;
 			}else{
 				hull = rightFootHull_;
 			}
 		break;
 		case CoPHull:
-			if (prwSupport.foot==LEFT){
-				if (prwSupport.phase==SS){
+			if (prwSupport.foot == LEFT){
+				if (prwSupport.phase == SS){
 					hull = CoPLeftSSHull_;
 				}else{
 					hull = CoPLeftDSHull_;

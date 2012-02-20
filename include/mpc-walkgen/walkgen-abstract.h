@@ -30,7 +30,7 @@ namespace MPCWalkgen
 	    //
 	  public:
 
-	  WalkgenAbstract(const RobotData &robotData);
+	  WalkgenAbstract();
 
 	  virtual ~WalkgenAbstract() =0;
 
@@ -46,10 +46,7 @@ namespace MPCWalkgen
 	      @param[in] InitRightFootAbsolutePosition: The initial position of the right foot.
 	     */
 
-	    virtual void init(
-	        const Eigen::Vector3d & initLeftFootAbsolutePosition,
-	        const Eigen::Vector3d & initRightFootAbsolutePosition,
-			const RobotData & robotData, const MPCData & mpcData) =0;
+	    virtual void init(const RobotData &robotData, const MPCData &mpcData) = 0;
 
 
 	    /// \brief Update the stacks on-line
@@ -59,12 +56,12 @@ namespace MPCWalkgen
 	       @return The associated solution
 	       If solution.newTraj is true, the method has succeeded.
 	     */
-	    virtual const MPCSolution & online(double time, bool previewBodiesNextState=true) =0;
+	    virtual const MPCSolution & online(double time, bool previewBodiesNextState = true) = 0;
 
 	    /// \name Accessors and mutators
 	    /// \{
 	    /// \brief Set the reference (velocity only as for now) through the Interface (slow)
-	    virtual void reference(double dx, double dy, double dyaw) =0;
+	    virtual void reference(double dx, double dy, double dyaw) = 0;
 
 
 		//accessors relative to the state of the robot.
@@ -113,7 +110,7 @@ namespace MPCWalkgen
   };
 
   /*! Factory of Pattern generator interface. */
-  MPC_WALK_GEN_EXPORT WalkgenAbstract * mpcFactory(const RobotData & robotData);
+  MPC_WALK_GEN_EXPORT WalkgenAbstract * mpcFactory();
 }
 
 #endif /* _WALKGEN_ABSTRACT_H_ */

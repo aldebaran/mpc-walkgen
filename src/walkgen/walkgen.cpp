@@ -17,24 +17,23 @@ using namespace MPCWalkgen;
 using namespace Eigen;
 
 
-MPCWalkgen::WalkgenAbstract *MPCWalkgen::mpcFactory(const RobotData &robotData) {
+MPCWalkgen::WalkgenAbstract *MPCWalkgen::mpcFactory() {
 	MPCWalkgen::WalkgenAbstract *zmpVra =
-		new Walkgen(robotData);
+		new Walkgen();
 	return zmpVra;
 }
 
 using namespace MPCWalkgen;
 
-WalkgenAbstract::WalkgenAbstract(const RobotData &robotData) {}
+WalkgenAbstract::WalkgenAbstract() {}
 
 WalkgenAbstract::~WalkgenAbstract(){}
 
 
 // Implementation of the private interface
-Walkgen::Walkgen(const RobotData &robotData)
-	: WalkgenAbstract(robotData)
+Walkgen::Walkgen()
+	: WalkgenAbstract()
 	,generalData_()
-	,robotData_(robotData)
 	,solver_(0x0)
 	,generator_(0x0)
 	,preview_(0x0)
@@ -70,28 +69,27 @@ Walkgen::~Walkgen(){
 	if (debug_ != 0x0)
 		delete debug_;
 
-	if (orientPrw_!=0x0)
+	if (orientPrw_ != 0x0)
 		delete orientPrw_;
 
-	if (solver_!=0x0)
+	if (solver_ != 0x0)
 		delete solver_;
 
-	if (generator_!=0x0)
+	if (generator_ != 0x0)
 		delete generator_;
 
-	if (preview_!=0x0)
+	if (preview_ != 0x0)
 		delete preview_;
 
-	if (robot_!=0x0)
+	if (robot_ != 0x0)
 		delete robot_;
 
-	if (interpolation_!=0x0)
+	if (interpolation_ != 0x0)
 		delete interpolation_;
 
 }
 
-void Walkgen::init(const Eigen::Vector3d& leftFootPosition, const Eigen::Vector3d& rightFootPosition,
-		const RobotData& robotData, const MPCData& mpcData){
+void Walkgen::init(const RobotData &robotData, const MPCData &mpcData) {
 
 	robot_->init(robotData);
 
@@ -118,17 +116,17 @@ void Walkgen::init(const Eigen::Vector3d& leftFootPosition, const Eigen::Vector3
 	generator_->precomputeObjective();
 
 	BodyState state;
-	state.x[0]=leftFootPosition[0];
-	state.y[0]=leftFootPosition[1];
+	state.x[0] = robotData.leftFootPos[0];
+	state.y[0] = robotData.leftFootPos[1];
 	robot_->body(LEFT_FOOT)->state(state);
 
-	state.x[0]=rightFootPosition[0];
-	state.y[0]=rightFootPosition[1];
+	state.x[0] = robotData.rightFootPos[0];
+	state.y[0] = robotData.rightFootPos[1];
 	robot_->body(RIGHT_FOOT)->state(state);
 
-	state.x[0]=0;
-	state.y[0]=0;
-	state.z[0]=robotData_.CoMHeight;
+	state.x[0] = 0;
+	state.y[0] = 0;
+	state.z[0] = robotData.CoMHeight;
 	robot_->body(COM)->state(state);
 
 	upperTimeLimitToUpdate_ = 0.0;
@@ -218,6 +216,14 @@ void Walkgen::bodyState(BodyType body, const BodyState & state){
 }
 inline const SupportState & Walkgen::currentSupportState() const {
 	return robot_->currentSupport(); }
+ inline double Walkgen::comHeight() const
+{ return robot_->robotData().CoMHeight; }
+ inline void Walkgen::comHeight(double d)
+{ robot_->robotData().CoMHeight=d; }
+ inline double Walkgen::freeFlyingFootMaxHeight() const
+{ return robot_->robotData().freeFlyingFootMaxHeight; }
+ inline void Walkgen::freeFlyingFootMaxHeight(double d)
+{ robot_->robotData().freeFlyingFootMaxHeight = d; }
 
 
 void Walkgen::QPSamplingPeriod(double)

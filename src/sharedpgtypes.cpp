@@ -49,19 +49,19 @@ void MPCSolution::reset(){
   ,stepPeriod(0.8)
   ,DSPeriod(1e9)
   ,DSSSPeriod(0.8)
-  ,nbStepSSDS(2){
+  ,nbStepSSDS(2) {
   }
 
   int MPCData::iterationNumberFeedback(double firstIterationduration) const{
-  	return static_cast<int> (round(firstIterationduration / MPCSamplingPeriod)-1 );
+	  return static_cast<int> (round(firstIterationduration / MPCSamplingPeriod)-1 );
   }
 
   int MPCData::nbIterationFeedback() const{
-  	return static_cast<int> (round(QPSamplingPeriod / MPCSamplingPeriod) );
+	  return static_cast<int> (round(QPSamplingPeriod / MPCSamplingPeriod) );
   }
 
   int MPCData::nbIterationSimulation() const{
-  	return static_cast<int> (round(MPCSamplingPeriod / simSamplingPeriod) );
+	  return static_cast<int> (round(MPCSamplingPeriod / simSamplingPeriod) );
   }
 
   QPPonderation::QPPonderation(int nb)
@@ -80,16 +80,25 @@ void MPCSolution::reset(){
   }
 
   BodyState::BodyState(){
-  	reset();
+	  reset();
   }
 
   void BodyState::reset(){
-  	x.fill(0);
-  	y.fill(0);
-  	z.fill(0);
-  	yaw.fill(0);
-  	pitch.fill(0);
-  	roll.fill(0);
+	  x.fill(0);
+	  y.fill(0);
+	  z.fill(0);
+	  yaw.fill(0);
+	  pitch.fill(0);
+	  roll.fill(0);
+  }
+
+  HipYawData::HipYawData()
+  : lowerBound(-0.523599)
+  , upperBound(0.785398)
+  , lowerVelocityBound(-3.54108)
+  , upperVelocityBound(3.54108)
+  , lowerAccelerationBound(-0.1)
+  , upperAccelerationBound(0.1) {
   }
 
   // TODO: Necessary?

@@ -30,14 +30,13 @@ namespace MPCWalkgen{
 	{
 
 		public:
-			Walkgen(const RobotData & robotData);
+			Walkgen();
 			~Walkgen();
-			// TODO: clean
-			void init(const Eigen::Vector3d & leftFootPosition, const Eigen::Vector3d & rightFootPosition,
-					const RobotData & robotData, const MPCData & mpcData);
+			// TODO: clean this .h
+			virtual void init(const RobotData &robotData, const MPCData &mpcData);
 
 		    /// Update the stacks on-line
-			virtual const MPCSolution & online(double time, bool previewBodiesNextState=true);
+			virtual const MPCSolution &online(double time, bool previewBodiesNextState=true);
 
 		    /// \name Accessors and mutators
 		    /// \{
@@ -48,15 +47,11 @@ namespace MPCWalkgen{
 		  public:
 			/// \name Accessors relative to the state of the robot.
 			/// \{
-			virtual inline double comHeight()const
-			{ return robotData_.CoMHeight; }
-			virtual inline void comHeight(double d)
-			{ robotData_.CoMHeight=d; }
+			virtual inline double comHeight() const;
+			virtual inline void comHeight (double d);
 
-			virtual inline double freeFlyingFootMaxHeight()const
-			{ return robotData_.freeFlyingFootMaxHeight; }
-			virtual inline void freeFlyingFootMaxHeight(double d)
-			{ robotData_.freeFlyingFootMaxHeight=d; }
+			virtual inline double freeFlyingFootMaxHeight() const;
+			virtual inline void freeFlyingFootMaxHeight(double d);
 
 			virtual inline const SupportState &currentSupportState() const;
 			virtual inline void currentSupportState(const SupportState &newSupportState){
@@ -113,7 +108,6 @@ namespace MPCWalkgen{
 
 		  private:
 			MPCData generalData_;
-			RobotData robotData_;
 
 		    LSSOLSolver * solver_;
 			QPGenerator * generator_;

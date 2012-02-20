@@ -103,11 +103,7 @@ namespace MPCWalkgen
 		double lowerAccelerationBound;
 		double upperAccelerationBound;
 
-		MPC_WALK_GEN_EXPORT HipYawData(
-				double lowerBound =  0				,   double upperBound = 0,
-				double lowerVelocityBound =  -3.54108,	double upperVelocityBound = 3.54108,
-				double lowerAccelerationBound = -0.1,	double upperAccelerationBound = 0.1
-		);
+		HipYawData();
 	};
 
 	struct ConvexHull{
@@ -205,6 +201,9 @@ namespace MPCWalkgen
   		HipYawData rightHipYaw;
 
   		double robotMass; //TODO: rename mass
+
+  		Eigen::Vector3d leftFootPos;
+  		Eigen::Vector3d rightFootPos;
   	};
 
 	struct BodyState{

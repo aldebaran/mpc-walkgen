@@ -53,6 +53,9 @@ namespace MPCWalkgen{
 			inline void currentSupport(const SupportState &currentSupport) {
 				currentSupport_ = currentSupport;
 			};
+			inline RobotData &robotData() {
+				return robotData_;
+			}
 
 		private:
 			void initConvexHulls() ;
