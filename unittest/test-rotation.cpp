@@ -223,7 +223,7 @@ int main ()
   std::cout << " Test of the multiplication R * TriangSup * Rt" << std::endl;
   out.open("time_test-rotation.dat");
   bool result = true;
-  for (unsigned i=1; i<200; ++i)
+  for (unsigned i=1; i<20; ++i)
 	  result = testCholeskyRotation(2*i, out) && result;
 
   out.close();

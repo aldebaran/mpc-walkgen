@@ -4,7 +4,7 @@ INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/src)
 # test the lssol solver
 ADD_EXECUTABLE(test-lssol test-lssol.cpp)
 PKG_CONFIG_USE_DEPENDENCY(test-lssol lssol)
-# ADD_TEST(test-lssol test-lssol)
+ADD_TEST(test-lssol test-lssol)
 
 # test the rotation of the cholesky matrix
 ADD_EXECUTABLE(test-rotation test-rotation.cpp
@@ -13,7 +13,7 @@ ADD_EXECUTABLE(test-rotation test-rotation.cpp
 	tools-rotation.h
 	tools-rotation.cpp
 )
-# ADD_TEST(test-rotation test-rotation)
+ADD_TEST(test-rotation test-rotation)
 
 
 ADD_EXECUTABLE(test-qpsolver test-qpsolver.cpp
@@ -23,7 +23,7 @@ ADD_EXECUTABLE(test-qpsolver test-qpsolver.cpp
 	../src/sharedpgtypes.cpp
 )	
 PKG_CONFIG_USE_DEPENDENCY(test-qpsolver lssol)
-# ADD_TEST(test-qpsolver test-qpsolver)
+ADD_TEST(test-qpsolver test-qpsolver)
 
 # a simple execution of the walkgen. For link reasons,
 #  it only works with unix systems.
