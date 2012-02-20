@@ -32,7 +32,7 @@ namespace MPCWalkgen{
 		public:
 			Walkgen(const RobotData & robotData);
 			~Walkgen();
-
+			// TODO: clean
 			void init(const Eigen::Vector3d & leftFootPosition, const Eigen::Vector3d & rightFootPosition,
 					const RobotData & robotData, const MPCData & mpcData);
 
@@ -58,9 +58,8 @@ namespace MPCWalkgen{
 			virtual inline void freeFlyingFootMaxHeight(double d)
 			{ robotData_.freeFlyingFootMaxHeight=d; }
 
-			virtual inline const SupportState & currentSupportState() const {
-				return *robotData_.currentSupport; }
-			virtual inline void currentSupportState(const SupportState & newSupportState){
+			virtual inline const SupportState &currentSupportState() const;
+			virtual inline void currentSupportState(const SupportState &newSupportState){
 				newCurrentSupport_=newSupportState;
 				isNewCurrentSupport_=true;
 			}

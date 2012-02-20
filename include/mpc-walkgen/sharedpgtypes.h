@@ -77,31 +77,31 @@ namespace MPCWalkgen
 	/// \name Structures
 	/// \{
 	struct FootData{
-		double soleWidth_;
-		double soleHeight_;
-		Eigen::Vector3d anklePositionInLocalFrame_;
+		double soleWidth;
+		double soleHeight;
+		Eigen::Vector3d anklePositionInLocalFrame;
 
 		inline FootData()
-		  : soleWidth_(0)
-		  , soleHeight_(0)
-		  , anklePositionInLocalFrame_()
+		  : soleWidth(0)
+		  , soleHeight(0)
+		  , anklePositionInLocalFrame()
 		  {}
 
 		inline FootData(const FootData &f)
-		  : soleWidth_(f.soleWidth_)
-		  , soleHeight_(f.soleHeight_)
-		  , anklePositionInLocalFrame_(f.anklePositionInLocalFrame_)//TODO: LocalAnklePosition_ better?
+		  : soleWidth(f.soleWidth)
+		  , soleHeight(f.soleHeight)
+		  , anklePositionInLocalFrame(f.anklePositionInLocalFrame)//TODO: LocalAnklePosition_ better?
 		  {}
 
 	};
 
 	struct HipYawData{
-		double lowerBound_;
-		double upperBound_;
-		double lowerVelocityBound_;
-		double upperVelocityBound_;
-		double lowerAccelerationBound_;
-		double upperAccelerationBound_;
+		double lowerBound;
+		double upperBound;
+		double lowerVelocityBound;
+		double upperVelocityBound;
+		double lowerAccelerationBound;
+		double upperAccelerationBound;
 
 		MPC_WALK_GEN_EXPORT HipYawData(
 				double lowerBound =  0				,   double upperBound = 0,
@@ -119,7 +119,7 @@ namespace MPCWalkgen
 		Eigen::VectorXd C;
 		Eigen::VectorXd D;
 
-		ConvexHull & operator=(const ConvexHull & hull);
+		ConvexHull & operator=(const ConvexHull & hull); // TODO: copyFrom() instead of =
 		void resize(int size);
 		void rotate(double yaw);
 		void computeLinearSystem(const Foot & foot);
@@ -204,9 +204,7 @@ namespace MPCWalkgen
   		HipYawData leftHipYaw;
   		HipYawData rightHipYaw;
 
-  		double robotMass;
-
-  		SupportState *currentSupport;
+  		double robotMass; //TODO: rename mass
   	};
 
 	struct BodyState{
@@ -214,6 +212,8 @@ namespace MPCWalkgen
 		Eigen::Vector3d y;
 		Eigen::Vector3d z;
 		Eigen::Vector3d yaw;
+		Eigen::Vector3d pitch;
+		Eigen::Vector3d roll;
 
 		BodyState();
 

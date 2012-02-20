@@ -9,11 +9,11 @@ HipYawData::HipYawData(
 	double upperVelocityBound,
 	double lowerAccelerationBound,
 	double upperAccelerationBound
-): lowerBound_(lowerBound), upperBound_(upperBound)
-, lowerVelocityBound_(lowerVelocityBound)
-, upperVelocityBound_(upperVelocityBound)
-, lowerAccelerationBound_(lowerAccelerationBound)
-, upperAccelerationBound_(upperAccelerationBound)
+): lowerBound(lowerBound), upperBound(upperBound)
+, lowerVelocityBound(lowerVelocityBound)
+, upperVelocityBound(upperVelocityBound)
+, lowerAccelerationBound(lowerAccelerationBound)
+, upperAccelerationBound(upperAccelerationBound)
 {}
 
 VelReference::Frame::Frame()
@@ -35,17 +35,6 @@ SelectionMatrices::SelectionMatrices(const MPCData & generalData)
 	,VcfX(generalData.QPNbSamplings)
 	,VcfY(generalData.QPNbSamplings)
 {}
-
-BodyState::BodyState(){
-	reset();
-}
-
-void BodyState::reset(){
-	x.fill(0);
-	y.fill(0);
-	z.fill(0);
-	yaw.fill(0);
-}
 
 void RelativeInequalities::resize(int rows, int cols){
 	if (rows!=DX.rows() || cols!=DX.cols()){

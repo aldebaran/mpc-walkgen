@@ -7,7 +7,7 @@ using namespace Eigen;
 
 const double QPPreview::EPS_=1e-5;
 
-//TODO:change name QPPreview
+//TODO:change name QPPreview to Preview
 QPPreview::QPPreview(VelReference * velRef, RigidBodySystem * robot, const MPCData * generalData)
 	:robot_(robot)
 	,generalData_(generalData)

@@ -58,17 +58,17 @@ namespace {
 
 OrientationsPreview::OrientationsPreview(const HipYawData & leftHipYaw, const HipYawData & rightHipYaw)
 {
-  lLimitLeftHipYaw_ = leftHipYaw.lowerBound_;
-  uLimitLeftHipYaw_ = leftHipYaw.upperBound_;
+  lLimitLeftHipYaw_ = leftHipYaw.lowerBound;
+  uLimitLeftHipYaw_ = leftHipYaw.upperBound;
 
-  lLimitRightHipYaw_ = rightHipYaw.lowerBound_;
-  uLimitRightHipYaw_ = rightHipYaw.upperBound_;
+  lLimitRightHipYaw_ = rightHipYaw.lowerBound;
+  uLimitRightHipYaw_ = rightHipYaw.upperBound;
 
   //Velocity limit
-  uvLimitFoot_ = fabs(rightHipYaw.upperVelocityBound_);
+  uvLimitFoot_ = fabs(rightHipYaw.upperVelocityBound);
 
   //Acceleration limit not given by HRP2JRLmain.wrl
-  uaLimitHipYaw_ = rightHipYaw.upperAccelerationBound_;
+  uaLimitHipYaw_ = rightHipYaw.upperAccelerationBound;
 
   //Maximal cross angle between the feet
   uLimitFeet_ = 5.0/180.0*M_PI;

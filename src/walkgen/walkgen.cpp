@@ -17,8 +17,8 @@ using namespace MPCWalkgen;
 using namespace Eigen;
 
 
-MPCWalkgen::WalkgenAbstract * MPCWalkgen::mpcFactory(const RobotData & robotData) {
-	MPCWalkgen::WalkgenAbstract* zmpVra =
+MPCWalkgen::WalkgenAbstract *MPCWalkgen::mpcFactory(const RobotData &robotData) {
+	MPCWalkgen::WalkgenAbstract *zmpVra =
 		new Walkgen(robotData);
 	return zmpVra;
 }
@@ -52,13 +52,13 @@ Walkgen::Walkgen(const RobotData &robotData)
 
 	solver_ = new LSSOLSolver();
 
-	orientPrw_ = new OrientationsPreview( robotData_.leftHipYaw, robotData_.rightHipYaw );
+	orientPrw_ = new OrientationsPreview(robotData_.leftHipYaw, robotData_.rightHipYaw);
 
 	interpolation_ = new Interpolation();
 
-	robot_ = new RigidBodySystem(&generalData_, &robotData_, interpolation_);
+	robot_ = new RigidBodySystem(&generalData_, interpolation_);
 
-	preview_ = new QPPreview(&velRef_,robot_, &generalData_ );
+	preview_ = new QPPreview(&velRef_, robot_, &generalData_);
 
 	generator_= new QPGenerator(preview_, solver_, &velRef_, &ponderation_, robot_, &generalData_ );
 
@@ -93,6 +93,7 @@ Walkgen::~Walkgen(){
 void Walkgen::init(const Eigen::Vector3d& leftFootPosition, const Eigen::Vector3d& rightFootPosition,
 		const RobotData& robotData, const MPCData& mpcData){
 
+	robot_->init(robotData);
 	//Check if sampling periods are defined correctly
 	assert(generalData_.simSamplingPeriod > 0);
 	assert(generalData_.MPCSamplingPeriod >= generalData_.simSamplingPeriod);
@@ -214,7 +215,8 @@ const BodyState & Walkgen::bodyState(BodyType body)const{
 void Walkgen::bodyState(BodyType body, const BodyState & state){
 	robot_->body(body)->state(state);
 }
-
+inline const SupportState & Walkgen::currentSupportState() const {
+	return robot_->currentSupport(); }
 
 
 void Walkgen::QPSamplingPeriod(double)

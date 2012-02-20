@@ -25,13 +25,10 @@ void FSMSolver::setSupportState(double time, int pi, SupportState & Support){
 		Support.nbStepsLeft = generalData_->nbStepSSDS;
 	}
 
-	//std::cout << "time+EPS+" << pi << "*T_ = " << time+EPS+pi*T_ << std::endl;
-	//std::cout << "Support.TimeLimit = " << Support.TimeLimit << std::endl;
-
 	//FSM
 	if(time+EPS+pi*generalData_->QPSamplingPeriod >= Support.timeLimit){
 		//SS->DS
-		if(Support.phase == SS  && !ReferenceGiven && Support.nbStepsLeft == 0){
+		if(Support.phase == SS && !ReferenceGiven && Support.nbStepsLeft == 0){
 			Support.phase = DS;
 			Support.timeLimit = time+pi*generalData_->QPSamplingPeriod+generalData_->DSPeriod;
 			Support.stateChanged = true;

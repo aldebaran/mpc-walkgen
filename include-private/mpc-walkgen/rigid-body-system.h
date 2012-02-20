@@ -25,23 +25,24 @@ namespace MPCWalkgen{
 	class RigidBodySystem{
 
 		public:
-			RigidBodySystem(const MPCData * generalData,
-					RobotData * robotData
-					, const Interpolation * interpolation);
+			RigidBodySystem(const MPCData *generalData
+					, const Interpolation *interpolation);
 			~RigidBodySystem();
+
+			void init(const RobotData &robotData);
 
 			void computeDynamics();
 
-			void interpolateBodies(MPCSolution & solution, double currentTime, const VelReference & velRef);
+			void interpolateBodies(MPCSolution &solution, double currentTime, const VelReference &velRef);
 
-			void updateBodyState(const MPCSolution & solution);
+			void updateBodyState(const MPCSolution &solution);
 
 			void firstIterationDuration(double firstIterationDuration);
 
-			ConvexHull convexHull(HullType type, const SupportState & prwSupport, bool computeLinearSystem=true, bool rotateHull=true) const;
+			ConvexHull convexHull(HullType type, const SupportState &prwSupport, bool computeLinearSystem=true, bool rotateHull=true) const;
 
-			RigidBody * body(BodyType type);
-			const RigidBody * body(BodyType type) const;
+			RigidBody *body(BodyType type);
+			const RigidBody *body(BodyType type) const;
 
 			inline SupportState &currentSupport() {
 				return currentSupport_;
@@ -49,7 +50,7 @@ namespace MPCWalkgen{
 			inline const SupportState &currentSupport() const {
 				return currentSupport_;
 			};
-			inline void currentSupport(SupportState currentSupport) {
+			inline void currentSupport(const SupportState &currentSupport) {
 				currentSupport_ = currentSupport;
 			};
 
@@ -57,8 +58,8 @@ namespace MPCWalkgen{
 			void initConvexHulls() ;
 
 		private:
-			const MPCData * generalData_;
-			RobotData * robotData_;
+			const MPCData *generalData_;
+			RobotData robotData_;
 
 			ConvexHull leftFootHull_;
 			ConvexHull rightFootHull_;
@@ -67,9 +68,9 @@ namespace MPCWalkgen{
 			ConvexHull CoPLeftDSHull_;
 			ConvexHull CoPRightDSHull_;
 
-			RigidBody* CoM_;
-			RigidBody* leftFoot_;
-			RigidBody* rightFoot_;
+			RigidBody *CoM_;
+			RigidBody *leftFoot_;
+			RigidBody *rightFoot_;
 
 			SupportState currentSupport_;
 

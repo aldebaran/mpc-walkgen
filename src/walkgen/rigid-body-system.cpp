@@ -5,14 +5,15 @@
 using namespace MPCWalkgen;
 using namespace Eigen;
 
-RigidBodySystem::RigidBodySystem(const MPCData * generalData, RobotData * robotData, const Interpolation * interpolation)
+RigidBodySystem::RigidBodySystem(const MPCData *generalData, const Interpolation *interpolation)
 :generalData_(generalData)
-,robotData_(robotData) {
-	CoM_ = new CoMBody(generalData_, robotData_, interpolation);
-	leftFoot_ = new FootBody(generalData_, robotData_, interpolation, LEFT);
-	rightFoot_ = new FootBody(generalData_, robotData_, interpolation, RIGHT);
+,robotData_() {
+	CoM_ = new CoMBody(generalData_, &robotData_, interpolation);
+	leftFoot_ = new FootBody(generalData_, &robotData_, interpolation, LEFT);
+	rightFoot_ = new FootBody(generalData_, &robotData_, interpolation, RIGHT);
 	initConvexHulls();
 
+	// Default initialization
 	currentSupport_.phase = DS;
 	currentSupport_.foot = LEFT;
 	currentSupport_.timeLimit = 1e9;
@@ -23,7 +24,6 @@ RigidBodySystem::RigidBodySystem(const MPCData * generalData, RobotData * robotD
 	currentSupport_.yaw = 0.0;
 	currentSupport_.yawTrunk = 0.0;
 	currentSupport_.startTime = 0.0;
-	robotData->currentSupport = &currentSupport_;
 }
 
 RigidBodySystem::~RigidBodySystem() {
@@ -32,8 +32,11 @@ RigidBodySystem::~RigidBodySystem() {
 	delete CoM_;
 }
 
+void RigidBodySystem::init(const RobotData &robotData) {
+	robotData_ = robotData;
+}
 
-void RigidBodySystem::computeDynamics(){
+void RigidBodySystem::computeDynamics() {
 	CoM_->computeDynamics();
 	leftFoot_->computeDynamics();
 	rightFoot_->computeDynamics();
@@ -66,7 +69,7 @@ void RigidBodySystem::updateBodyState(const MPCSolution & solution){
 		CoM.y(i) = currentState.CoMTrajY_(nextCurrentState);
 		CoM.yaw(i) = currentState.trunkYaw_(nextCurrentState);
 	}
-	CoM.z(0) = robotData_->CoMHeight;
+	CoM.z(0) = robotData_.CoMHeight;
 	CoM.z(1) = 0;
 	CoM.z(2) = 0;
 
@@ -161,13 +164,9 @@ void RigidBodySystem::initConvexHulls() {
 		  leftFootHull_.x(i)=DefaultFPosEdgesX[i];
 		  leftFootHull_.y(i)=DefaultFPosEdgesY[i];
 
-
 		  rightFootHull_.x(i)=DefaultFPosEdgesX[i];
 		  rightFootHull_.y(i)=-DefaultFPosEdgesY[i];
 	  }
-
-
-
 
 	  // ZMP polygonal hulls:
 	  // TODO are those parameterizable?

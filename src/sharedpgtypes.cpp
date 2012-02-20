@@ -29,14 +29,15 @@
 
 namespace MPCWalkgen
 {
-  MPCSolution::MPCSolution()
-  	:useWarmStart(true)
-  	,state_vec(3)
-  {}
 
-  void MPCSolution::reset(){
-	  supportState_vec.resize(0);
-	  supportOrientation_vec.resize(0);
+MPCSolution::MPCSolution()
+:useWarmStart(true)
+,state_vec(3)
+{}
+
+void MPCSolution::reset(){
+	supportState_vec.resize(0);
+	supportOrientation_vec.resize(0);
 	  supportTrunkOrientation_vec.resize(0);
   }
 
@@ -78,7 +79,20 @@ namespace MPCWalkgen
 	  activePonderation = 1;
   }
 
-  //TODO:copyFrom
+  BodyState::BodyState(){
+  	reset();
+  }
+
+  void BodyState::reset(){
+  	x.fill(0);
+  	y.fill(0);
+  	z.fill(0);
+  	yaw.fill(0);
+  	pitch.fill(0);
+  	roll.fill(0);
+  }
+
+  // TODO: Necessary?
   ConvexHull & ConvexHull::operator=(const ConvexHull & hull){
   	x=hull.x;
   	y=hull.y;
@@ -149,5 +163,6 @@ namespace MPCWalkgen
   		D(i) = dc;
   	}
   }
+
 
 }

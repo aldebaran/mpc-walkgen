@@ -17,7 +17,7 @@
 #include <mpc-walkgen/state-solver.h>
 
 namespace MPCWalkgen{
-
+//TODO: Change name of these classes
 	class FSMSolver:public StateSolver{
 		public:
 			FSMSolver(VelReference * velRef, const MPCData * generalData);

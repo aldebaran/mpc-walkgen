@@ -49,22 +49,22 @@ int main ()
 	}
 
 	FootData leftFoot;
-	leftFoot.anklePositionInLocalFrame_<< 0, 0, 0.105;
-	leftFoot.soleHeight_ = 0.138;
-	leftFoot.soleWidth_ = 0.2172;
+	leftFoot.anklePositionInLocalFrame<< 0, 0, 0.105;
+	leftFoot.soleHeight = 0.138;
+	leftFoot.soleWidth = 0.2172;
 
 	FootData rightFoot;
-	rightFoot.anklePositionInLocalFrame_ << 0, 0, 	0.105;
-	rightFoot.soleHeight_ = 0.138;
-	rightFoot.soleWidth_ = 0.2172;
+	rightFoot.anklePositionInLocalFrame << 0, 0, 	0.105;
+	rightFoot.soleHeight = 0.138;
+	rightFoot.soleWidth = 0.2172;
 
 	HipYawData leftHipYaw;
-	leftHipYaw.lowerBound_ = -0.523599;
-	leftHipYaw.upperBound_ = 0.785398;
-	leftHipYaw.lowerVelocityBound_ = -3.54108;
-	leftHipYaw.upperVelocityBound_ = 3.54108;
-	leftHipYaw.lowerAccelerationBound_ = -0.1;
-	leftHipYaw.upperAccelerationBound_ = 0.1;
+	leftHipYaw.lowerBound = -0.523599;
+	leftHipYaw.upperBound = 0.785398;
+	leftHipYaw.lowerVelocityBound = -3.54108;
+	leftHipYaw.upperVelocityBound = 3.54108;
+	leftHipYaw.lowerAccelerationBound = -0.1;
+	leftHipYaw.upperAccelerationBound = 0.1;
 
 	HipYawData rightHipYaw = leftHipYaw;
 
