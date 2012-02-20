@@ -56,46 +56,40 @@ namespace {
 
 } // end of anonymous namespace
 
-OrientationsPreview::OrientationsPreview(const HipYawData & leftHipYaw, const HipYawData & rightHipYaw)
-{
-  lLimitLeftHipYaw_ = leftHipYaw.lowerBound;
-  uLimitLeftHipYaw_ = leftHipYaw.upperBound;
-
-  lLimitRightHipYaw_ = rightHipYaw.lowerBound;
-  uLimitRightHipYaw_ = rightHipYaw.upperBound;
-
-  //Velocity limit
-  uvLimitFoot_ = fabs(rightHipYaw.upperVelocityBound);
-
-  //Acceleration limit not given by HRP2JRLmain.wrl
-  uaLimitHipYaw_ = rightHipYaw.upperAccelerationBound;
-
-  //Maximal cross angle between the feet
-  uLimitFeet_ = 5.0/180.0*M_PI;
-}
-
-
+OrientationsPreview::OrientationsPreview()
+{ }
 
 OrientationsPreview::~OrientationsPreview()
-{
-}
+{ }
 
-
-void OrientationsPreview::init(const MPCData &data) {
+void OrientationsPreview::init(const MPCData &data, const RobotData &robotData) {
 	T_ 			= data.QPSamplingPeriod;
 	Ti_ 		= data.MPCSamplingPeriod;
 	N_ 			= data.QPNbSamplings;
 	SSPeriod_ 	= data.stepPeriod;
+
+	lLimitLeftHipYaw_ = robotData.leftHipYaw.lowerBound;
+	uLimitLeftHipYaw_ = robotData.leftHipYaw.upperBound;
+
+	lLimitRightHipYaw_ = robotData.rightHipYaw.lowerBound;
+	uLimitRightHipYaw_ = robotData.rightHipYaw.upperBound;
+
+	//Velocity limit
+	uvLimitFoot_ = fabs(robotData.rightHipYaw.upperVelocityBound);
+
+	//Acceleration limit not given by HRP2JRLmain.wrl
+	uaLimitHipYaw_ = robotData.rightHipYaw.upperAccelerationBound;
+
+	//Maximal cross angle between the feet
+	uLimitFeet_ = 5.0/180.0*M_PI;
 }
 
-void
-OrientationsPreview::preview_orientations(double Time,
+void OrientationsPreview::preview_orientations(double Time,
     const VelReference & Ref,
     double StepDuration,
     const BodyState & LeftFoot,
     const BodyState & RightFoot,
-    MPCSolution & Solution)
-{
+    MPCSolution & Solution) {
 
   const vector<SupportState> & PrwSupportStates_deq = Solution.supportState_vec;
   vector<double> & PreviewedSupportAngles_deq=Solution.supportOrientation_vec;

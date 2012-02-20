@@ -52,7 +52,7 @@ Walkgen::Walkgen(const RobotData &robotData)
 
 	solver_ = new LSSOLSolver();
 
-	orientPrw_ = new OrientationsPreview(robotData_.leftHipYaw, robotData_.rightHipYaw);
+	orientPrw_ = new OrientationsPreview();
 
 	interpolation_ = new Interpolation();
 
@@ -94,6 +94,7 @@ void Walkgen::init(const Eigen::Vector3d& leftFootPosition, const Eigen::Vector3
 		const RobotData& robotData, const MPCData& mpcData){
 
 	robot_->init(robotData);
+
 	//Check if sampling periods are defined correctly
 	assert(generalData_.simSamplingPeriod > 0);
 	assert(generalData_.MPCSamplingPeriod >= generalData_.simSamplingPeriod);
@@ -110,7 +111,7 @@ void Walkgen::init(const Eigen::Vector3d& leftFootPosition, const Eigen::Vector3
 	}
 	solver_->varOrder(order);
 
-	orientPrw_->init(mpcData);
+	orientPrw_->init(mpcData, robotData);
 
 	robot_->computeDynamics();
 
