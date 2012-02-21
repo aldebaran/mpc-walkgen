@@ -208,24 +208,6 @@ void Walkgen::reference(double dx, double dy, double dyaw){
 	newVelRef_.local.yaw = dyaw;
 }
 
-const BodyState & Walkgen::bodyState(BodyType body)const{
-	return robot_->body(body)->state();
-}
-void Walkgen::bodyState(BodyType body, const BodyState & state){
-	robot_->body(body)->state(state);
-}
-inline const SupportState & Walkgen::currentSupportState() const {
-	return robot_->currentSupport(); }
- inline double Walkgen::comHeight() const
-{ return robot_->robotData().CoMHeight; }
- inline void Walkgen::comHeight(double d)
-{ robot_->robotData().CoMHeight=d; }
- inline double Walkgen::freeFlyingFootMaxHeight() const
-{ return robot_->robotData().freeFlyingFootMaxHeight; }
- inline void Walkgen::freeFlyingFootMaxHeight(double d)
-{ robot_->robotData().freeFlyingFootMaxHeight = d; }
-
-
 void Walkgen::QPSamplingPeriod(double)
 {
 	std::cerr << " The method Walkgen::QPSamplingPeriod(d) is not implemented yet. " << std::endl;
@@ -245,3 +227,5 @@ void Walkgen::QPNbSamplings(int)
 {
 	std::cerr << " The method Walkgen::QPNbSamplings(d) is not implemented yet. " << std::endl;
 }
+
+#include <mpc-walkgen/walkgen-inl.h>
