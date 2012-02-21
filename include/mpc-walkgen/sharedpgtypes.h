@@ -106,21 +106,6 @@ namespace MPCWalkgen
 		HipYawData();
 	};
 
-	struct ConvexHull{
-		Eigen::VectorXd x;
-		Eigen::VectorXd y;
-
-		Eigen::VectorXd A;
-		Eigen::VectorXd B;
-		Eigen::VectorXd C;
-		Eigen::VectorXd D;
-
-		ConvexHull & operator=(const ConvexHull & hull); // TODO: copyFrom() instead of =
-		void resize(int size);
-		void rotate(double yaw);
-		void computeLinearSystem(const Foot & foot);
-	};
-
 	struct QPPonderation {
 		std::vector<double> instantVelocity;
 		std::vector<double> CopCentering;

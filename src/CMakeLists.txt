@@ -27,6 +27,7 @@ ENDIF(WIN32)
 SET(SOURCES
  sharedpgtypes.cpp 
  
+ walkgen/convex-hull.cpp 
  walkgen/orientations-preview.cpp 
 
  
