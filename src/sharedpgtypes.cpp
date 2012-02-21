@@ -38,8 +38,13 @@ MPCSolution::MPCSolution()
 void MPCSolution::reset(){
 	supportState_vec.resize(0);
 	supportOrientation_vec.resize(0);
-	  supportTrunkOrientation_vec.resize(0);
-  }
+	supportTrunkOrientation_vec.resize(0);
+}
+
+ConvexHull::ConvexHull()
+:x(0),y(0),z(0)
+,A(0),B(0),C(0),D(0) {
+}
 
   MPCData::MPCData()
   :QPSamplingPeriod(0.1)
@@ -63,11 +68,17 @@ void MPCSolution::reset(){
 	,rightHipYaw(rightHipYaw)
 	,robotMass(mass)
 	,leftFootPos()
-	,rightFootPos() {
+	,rightFootPos()
+	,leftFootHull()
+	,rightFootHull()
+	,CoPLeftSSHull()
+	,CoPRightSSHull()
+	,CoPLeftDSHull()
+	,CoPRightDSHull() {
 	  leftFootPos << 0.00949035, 0.095, 0;
 	  rightFootPos << 0.00949035, -0.095, 0;
   }
-  RobotData::RobotData(){};
+  RobotData::RobotData(){}
 
   int MPCData::iterationNumberFeedback(double firstIterationduration) const{
 	  return static_cast<int> (round(firstIterationduration / MPCSamplingPeriod)-1 );

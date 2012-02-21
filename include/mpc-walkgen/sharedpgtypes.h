@@ -143,11 +143,30 @@ namespace MPCWalkgen
 		double iterationWeight;
 	};
 
+	struct ConvexHull {
+		/// \brief Set of vertices
+		Eigen::VectorXd x;
+		Eigen::VectorXd y;
+		Eigen::VectorXd z;
+
+		/// \brief Set of inequalities A*x+B*y+C*z+D>0
+		Eigen::VectorXd A;
+		Eigen::VectorXd B;
+		Eigen::VectorXd C;
+		Eigen::VectorXd D;
+
+		ConvexHull();
+		ConvexHull &operator=(const ConvexHull &hull); // TODO: copyFrom() instead of =
+		void resize(int size);
+		void rotate(double yaw);
+		void computeLinearSystem(const Foot &foot);
+	};
 
 	struct MPCData{
 		// The following parameters are fixed once and for all at initialization
 		/// \brief Sampling period considered in the QP
 		double QPSamplingPeriod;    //blocked - precomputeObjective
+		// TODO: This must be the feedback sampling period, no?
 		double MPCSamplingPeriod;   //blocked - precomputeObjective / RigidBodySystem::computeDynamicMatrix
 		double simSamplingPeriod;   //blocked - precomputeObjective / RigidBodySystem::computeDynamicMatrix
 
@@ -189,6 +208,13 @@ namespace MPCWalkgen
 
   		Eigen::Vector3d leftFootPos;
   		Eigen::Vector3d rightFootPos;
+
+		ConvexHull leftFootHull;
+		ConvexHull rightFootHull;
+		ConvexHull CoPLeftSSHull;
+		ConvexHull CoPRightSSHull;
+		ConvexHull CoPLeftDSHull;
+		ConvexHull CoPRightDSHull;
 
   		RobotData(const FootData &leftFoot, const FootData &rightFoot,
   				const HipYawData &leftHipYaw, const HipYawData &rightHipYaw,
