@@ -152,7 +152,7 @@ namespace MPCWalkgen
 		double simSamplingPeriod;   //blocked - precomputeObjective / RigidBodySystem::computeDynamicMatrix
 
 		/// \brief Nb. samplings inside preview window
-		int QPNbSamplings;  //blocked - precomputeObjective
+		int nbSamplesQP;  //blocked - precomputeObjective
 
 		// The following parameters can be changed online
 		double stepPeriod;  //blocked by orientPrw_ ? can be solved --

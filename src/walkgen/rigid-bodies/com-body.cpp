@@ -16,19 +16,19 @@ CoMBody::~CoMBody(){}
 void CoMBody::interpolate(MPCSolution & solution, double currentTime, const VelReference & velRef){
 	interpolation_->computeInterpolationByJerk(solution.state_vec[0].CoMTrajX_, solution.state_vec[0].CoMTrajY_, state_,
 			dynamic(interpolationPos), solution.solution(0),
-			solution.solution(generalData_->QPNbSamplings));
+			solution.solution(generalData_->nbSamplesQP));
 
 	interpolation_->computeInterpolationByJerk(solution.state_vec[1].CoMTrajX_, solution.state_vec[1].CoMTrajY_, state_,
 			dynamic(interpolationVel), solution.solution(0),
-			solution.solution(generalData_->QPNbSamplings));
+			solution.solution(generalData_->nbSamplesQP));
 
 	interpolation_->computeInterpolationByJerk(solution.state_vec[2].CoMTrajX_, solution.state_vec[2].CoMTrajY_, state_,
 			dynamic(interpolationAcc), solution.solution(0),
-			solution.solution(generalData_->QPNbSamplings));
+			solution.solution(generalData_->nbSamplesQP));
 
 	interpolation_->computeInterpolationByJerk(solution.CoPTrajX, solution.CoPTrajY, state_,
 			dynamic(interpolationCoP), solution.solution(0),
-			solution.solution(generalData_->QPNbSamplings));
+			solution.solution(generalData_->nbSamplesQP));
 
 	interpolateTrunkOrientation(solution, currentTime, velRef);
 }

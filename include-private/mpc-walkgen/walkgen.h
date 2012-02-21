@@ -103,7 +103,7 @@ namespace MPCWalkgen{
 			virtual void simSamplingPeriod(double d);
 
 			virtual inline int QPNbSamplings()const
-			{return generalData_.QPNbSamplings;}
+			{return generalData_.nbSamplesQP;}
 			virtual void QPNbSamplings(int d);
 
 		  private:

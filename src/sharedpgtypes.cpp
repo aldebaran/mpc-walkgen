@@ -45,7 +45,7 @@ void MPCSolution::reset(){
   :QPSamplingPeriod(0.1)
   ,MPCSamplingPeriod(0.005)
   ,simSamplingPeriod(0.005)
-  ,QPNbSamplings(16)
+  ,nbSamplesQP(16)
   ,stepPeriod(0.8)
   ,DSPeriod(1e9)
   ,DSSSPeriod(0.8)

@@ -14,13 +14,13 @@ VelReference::VelReference()
 {}
 
 SelectionMatrices::SelectionMatrices(const MPCData & generalData)
-	:V(generalData.QPNbSamplings,generalData.QPNbSamplings)
-	,VT(generalData.QPNbSamplings,generalData.QPNbSamplings)
-	,VcX(generalData.QPNbSamplings)
-	,VcY(generalData.QPNbSamplings)
-	,Vf(generalData.QPNbSamplings,generalData.QPNbSamplings)
-	,VcfX(generalData.QPNbSamplings)
-	,VcfY(generalData.QPNbSamplings)
+	:V(generalData.nbSamplesQP,generalData.nbSamplesQP)
+	,VT(generalData.nbSamplesQP,generalData.nbSamplesQP)
+	,VcX(generalData.nbSamplesQP)
+	,VcY(generalData.nbSamplesQP)
+	,Vf(generalData.nbSamplesQP,generalData.nbSamplesQP)
+	,VcfX(generalData.nbSamplesQP)
+	,VcfY(generalData.nbSamplesQP)
 {}
 
 void RelativeInequalities::resize(int rows, int cols){

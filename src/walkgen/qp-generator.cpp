@@ -30,7 +30,7 @@ QPGenerator::~QPGenerator(){}
 
 void QPGenerator::precomputeObjective(){
 
-	int N = generalData_->QPNbSamplings;
+	int N = generalData_->nbSamplesQP;
 	int pondSize = ponderation_->JerkMin.size();
 	int size=generalData_->nbIterationFeedback();
 	Qconst_.resize(size*pondSize);
@@ -106,7 +106,7 @@ void QPGenerator::buildObjective(const MPCSolution & result){
 	const MatrixXd & rot2 = preview_->rotationMatrix2();
 
 	int nbStepsPreviewed = result.supportState_vec.back().stepNumber;
-	int N = generalData_->QPNbSamplings;
+	int N = generalData_->nbSamplesQP;
 
 	solver_->nbVar(2*N+2*nbStepsPreviewed);
 	solver_->nbCtr(0);
@@ -182,7 +182,7 @@ void QPGenerator::computeWarmStart(MPCSolution & result){
 	// -----------
 	int nbSteps = result.supportState_vec.back().stepNumber;
 	int nbStepsMax = 4;
-	int nbSampling = generalData_->QPNbSamplings;
+	int nbSampling = generalData_->nbSamplesQP;
 	result.initialSolution.resize(4*nbSampling+4*nbSteps);
 
 	// Compute previewed initial constraints:
@@ -328,16 +328,15 @@ void QPGenerator::computeWarmStart(MPCSolution & result){
 
 }
 
-
 void QPGenerator::computeReferenceVector(const MPCSolution & result){
 
-	if (velRef_->global.xVec.rows()!=generalData_->QPNbSamplings){
-		velRef_->global.xVec.resize(generalData_->QPNbSamplings);
-		velRef_->global.yVec.resize(generalData_->QPNbSamplings);
+	if (velRef_->global.xVec.rows()!=generalData_->nbSamplesQP){
+		velRef_->global.xVec.resize(generalData_->nbSamplesQP);
+		velRef_->global.yVec.resize(generalData_->nbSamplesQP);
 	}
 
 	  double YawTrunk;
-	for (int i=0;i<generalData_->QPNbSamplings;++i){
+	for (int i=0;i<generalData_->nbSamplesQP;++i){
 		YawTrunk = result.supportState_vec[i+1].yaw;
 		velRef_->global.xVec(i) = velRef_->local.x*cos(YawTrunk)-velRef_->local.y*sin(YawTrunk);
 		velRef_->global.yVec(i) = velRef_->local.x*sin(YawTrunk)+velRef_->local.y*cos(YawTrunk);
@@ -346,7 +345,7 @@ void QPGenerator::computeReferenceVector(const MPCSolution & result){
 }
 
 void QPGenerator::convertCopToJerk(MPCSolution & result){
-	int N = generalData_->QPNbSamplings;
+	int N = generalData_->nbSamplesQP;
 
 	const SelectionMatrices & State = preview_->selectionMatrices();
 	const MatrixXd & rot = preview_->rotationMatrix();
@@ -396,7 +395,7 @@ void QPGenerator::convertCopToJerk(MPCSolution & result){
 
 void QPGenerator::display(const MPCSolution & result, const std::string & filename) const
 {
-	int N = generalData_->QPNbSamplings;
+	int N = generalData_->nbSamplesQP;
 
 	const SelectionMatrices & State = preview_->selectionMatrices();
 	const MatrixXd & rot = preview_->rotationMatrix();
@@ -445,12 +444,12 @@ void QPGenerator::display(const MPCSolution & result, const std::string & filena
 		return;
 	}
 
-	int nbSampling = generalData_->QPNbSamplings;
+	int nbSamples = generalData_->nbSamplesQP;
 
-	VectorXd ZX(nbSampling);
-	VectorXd ZY(nbSampling);
-	VectorXd CX(nbSampling);
-	VectorXd CY(nbSampling);
+	VectorXd ZX(nbSamples);
+	VectorXd ZY(nbSamples);
+	VectorXd CX(nbSamples);
+	VectorXd CY(nbSamples);
 
 
 
@@ -466,13 +465,13 @@ void QPGenerator::display(const MPCSolution & result, const std::string & filena
 
 	//display previewed ZMP
 
-	for(int i=0;i<generalData_->QPNbSamplings;++i){
+	for(int i=0;i<generalData_->nbSamplesQP;++i){
 		data << "TRAJ\t1\t\t0\t1\t1\t\t" << ZX(i) << "\t" << ZY(i) << "\t0\n";
 	}
 
 	//display previewed COM
 
-	for(int i=0;i<generalData_->QPNbSamplings;++i){
+	for(int i=0;i<generalData_->nbSamplesQP;++i){
 		data << "TRAJ\t2\t\t1\t0\t0\t\t" << CX(i) << "\t" << CY(i) << "\t0\n";
 	}
 
@@ -507,7 +506,7 @@ void QPGenerator::display(const MPCSolution & result, const std::string & filena
 
 	prwSS_it++;
 
-	for(int i=0; i<generalData_->QPNbSamplings; i++)
+	for(int i=0; i<generalData_->nbSamplesQP; i++)
 	{
 
 	  //display constraints
@@ -521,8 +520,8 @@ void QPGenerator::display(const MPCSolution & result, const std::string & filena
 				Yfoot=result.supportState_vec[0].y;
 		  }else{
 
-				Xfoot=result.solution(2*generalData_->QPNbSamplings+j);
-				Yfoot=result.solution(2*generalData_->QPNbSamplings+nbSteps+j);
+				Xfoot=result.solution(2*generalData_->nbSamplesQP+j);
+				Yfoot=result.solution(2*generalData_->nbSamplesQP+nbSteps+j);
 				if (j+1<nbSteps){
 					j++;
 				}
@@ -572,7 +571,7 @@ void QPGenerator::buildInequalitiesFeet(const MPCSolution & result){
 
 	std::vector<SupportState>::const_iterator prwSS_it = result.supportState_vec.begin();
 	prwSS_it++;//Point at the first previewed instant
-	for( int i=0; i<generalData_->QPNbSamplings; ++i ){
+	for( int i=0; i<generalData_->nbSamplesQP; ++i ){
 		//foot positioning constraints
 		if( prwSS_it->stateChanged && prwSS_it->stepNumber>0 && prwSS_it->phase != DS){
 
@@ -601,10 +600,10 @@ void QPGenerator::buildConstraintsFeet(const MPCSolution & result){
 	solver_->addNbCtr(5*nbStepsPreviewed);
 
 	tmpMat_.noalias() = feetInequalities_.DX*State.Vf;
-	solver_->matrix(matrixA).addTerm(tmpMat_,nbCtr, 2*generalData_->QPNbSamplings);
+	solver_->matrix(matrixA).addTerm(tmpMat_,nbCtr, 2*generalData_->nbSamplesQP);
 
 	tmpMat_.noalias() = feetInequalities_.DY*State.Vf;
-	solver_->matrix(matrixA).addTerm(tmpMat_,nbCtr, 2*generalData_->QPNbSamplings+nbStepsPreviewed);
+	solver_->matrix(matrixA).addTerm(tmpMat_,nbCtr, 2*generalData_->nbSamplesQP+nbStepsPreviewed);
 
 
 	solver_->matrix(vectorBL).addTerm(feetInequalities_.Dc,nbCtr);
@@ -618,27 +617,27 @@ void QPGenerator::buildConstraintsFeet(const MPCSolution & result){
 
 void QPGenerator::buildConstraintsCOP(const MPCSolution & result){
 
-	int nbSampling = generalData_->QPNbSamplings;
+	int nbSampling = generalData_->nbSamplesQP;
 	std::vector<SupportState>::const_iterator prwSS_it = result.supportState_vec.begin();
 
 	ConvexHull hull = robot_->convexHull(CoPHull, *prwSS_it, false, false);
 
 	int nbStepsPreviewed = result.supportState_vec.back().stepNumber;
-	int size = 2*generalData_->QPNbSamplings+2*nbStepsPreviewed;
+	int size = 2*generalData_->nbSamplesQP+2*nbStepsPreviewed;
 	tmpVec_.resize(size);
 	tmpVec2_.resize(size);
 
 
 	++prwSS_it;//Point at the first previewed instant
-	for(int i=0; i<generalData_->QPNbSamplings; ++i ){
+	for(int i=0; i<generalData_->nbSamplesQP; ++i ){
 		if( prwSS_it->stateChanged ){
 			hull = robot_->convexHull(CoPHull, *prwSS_it, false, false);
 		}
 		tmpVec_(i)    = std::min(hull.x(0),hull.x(3));
 		tmpVec2_(i)   = std::max(hull.x(0),hull.x(3));
 
-		tmpVec_(generalData_->QPNbSamplings+i) = std::min(hull.y(0),hull.y(1));
-		tmpVec2_(generalData_->QPNbSamplings+i)= std::max(hull.y(0),hull.y(1));
+		tmpVec_(generalData_->nbSamplesQP+i) = std::min(hull.y(0),hull.y(1));
+		tmpVec2_(generalData_->nbSamplesQP+i)= std::max(hull.y(0),hull.y(1));
 		++prwSS_it;
 	}
 

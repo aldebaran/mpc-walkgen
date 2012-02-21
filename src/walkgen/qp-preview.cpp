@@ -12,8 +12,8 @@ QPPreview::QPPreview(VelReference * velRef, RigidBodySystem * robot, const MPCDa
 	:robot_(robot)
 	,generalData_(generalData)
 	,selectionMatrices_(*generalData)
-	,rotationMatrix_(2*generalData_->QPNbSamplings, 2*generalData_->QPNbSamplings)
-	,rotationMatrix2_(2*generalData_->QPNbSamplings, 2*generalData_->QPNbSamplings)
+	,rotationMatrix_(2*generalData_->nbSamplesQP, 2*generalData_->nbSamplesQP)
+	,rotationMatrix2_(2*generalData_->nbSamplesQP, 2*generalData_->nbSamplesQP)
 {
 	statesolver_ = new FSMSolver(velRef, generalData);
 }
@@ -51,7 +51,7 @@ void QPPreview::previewSupportStates(const double currentTime,
 	SupportState previewedSupport = currentSupport;
 
 	previewedSupport.stepNumber = 0;
-	for( int pi=1; pi<=generalData_->QPNbSamplings; pi++ ){
+	for( int pi=1; pi<=generalData_->nbSamplesQP; pi++ ){
 		statesolver_->setSupportState( currentTime, pi, previewedSupport);
 		previewedSupport.inTransitionPhase=false;
 		if( previewedSupport.stateChanged ){
@@ -89,7 +89,7 @@ void QPPreview::previewSupportStates(const double currentTime,
 }
 
 void QPPreview::computeRotationMatrix(MPCSolution & result){
-	int N = generalData_->QPNbSamplings;
+	int N = generalData_->nbSamplesQP;
 	rotationMatrix_.fill(0);
 	rotationMatrix2_.fill(0);
 
@@ -112,8 +112,8 @@ void QPPreview::buildSelectionMatrices(MPCSolution & result){
 	const int & NbPrwSteps = result.supportState_vec.back().stepNumber;
 
 	if (selectionMatrices_.V.cols()!=NbPrwSteps){
-		selectionMatrices_.V.resize(generalData_->QPNbSamplings,NbPrwSteps);
-		selectionMatrices_.VT.resize(NbPrwSteps,generalData_->QPNbSamplings);
+		selectionMatrices_.V.resize(generalData_->nbSamplesQP,NbPrwSteps);
+		selectionMatrices_.VT.resize(NbPrwSteps,generalData_->nbSamplesQP);
 		selectionMatrices_.VcfX.resize(NbPrwSteps);
 		selectionMatrices_.VcfY.resize(NbPrwSteps);
 		selectionMatrices_.Vf.resize(NbPrwSteps,NbPrwSteps);
@@ -132,7 +132,7 @@ void QPPreview::buildSelectionMatrices(MPCSolution & result){
 	std::vector<SupportState>::iterator SS_it;
 	SS_it = result.supportState_vec.begin();//points at the cur. sup. st.
 	++SS_it;
-	for(int i=0;i<generalData_->QPNbSamplings;i++){
+	for(int i=0;i<generalData_->nbSamplesQP;i++){
 		if(SS_it->stepNumber>0){
 			selectionMatrices_.V(i,SS_it->stepNumber-1) = selectionMatrices_.VT(SS_it->stepNumber-1,i) = 1.0;
 			if( SS_it->stepNumber==1 && SS_it->stateChanged && SS_it->phase == SS ){

@@ -34,8 +34,8 @@ void FootBody::interpolate(MPCSolution & result, double currentTime, const VelRe
 			int nbPreviewedSteps = result.supportState_vec.back().stepNumber;
 
 			if (nbPreviewedSteps>0){
-				nextSupportFootState.x(0)=result.solution(2*generalData_->QPNbSamplings);
-				nextSupportFootState.y(0)=result.solution(2*generalData_->QPNbSamplings+nbStepsPreviewed);
+				nextSupportFootState.x(0)=result.solution(2*generalData_->nbSamplesQP);
+				nextSupportFootState.y(0)=result.solution(2*generalData_->nbSamplesQP+nbStepsPreviewed);
 				nextSupportFootState.yaw(0)=result.supportOrientation_vec[0];
 			}else{
 				nextSupportFootState.x(0)=state_.x(0);

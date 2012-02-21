@@ -65,7 +65,7 @@ OrientationsPreview::~OrientationsPreview()
 void OrientationsPreview::init(const MPCData &data, const RobotData &robotData) {
 	T_ 			= data.QPSamplingPeriod;
 	Ti_ 		= data.MPCSamplingPeriod;
-	N_ 			= data.QPNbSamplings;
+	N_ 			= data.nbSamplesQP;
 	SSPeriod_ 	= data.stepPeriod;
 
 	lLimitLeftHipYaw_ = robotData.leftHipYaw.lowerBound;

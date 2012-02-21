@@ -100,11 +100,11 @@ void Walkgen::init(const RobotData &robotData, const MPCData &mpcData) {
 
 	// Redistribute the X,Y vectors of variables inside the optimization problems
 	VectorXi order(QPSolver::DefaultNbVarMax_);
-	for(int i = 0; i < generalData_.QPNbSamplings; ++i) {
+	for(int i = 0; i < generalData_.nbSamplesQP; ++i) {
 		order(i) = 2*i;
-		order(i+generalData_.QPNbSamplings) = 2*i+1;
+		order(i+generalData_.nbSamplesQP) = 2*i+1;
 	}
-	for(int i = 2*generalData_.QPNbSamplings; i < QPSolver::DefaultNbVarMax_; ++i) {
+	for(int i = 2*generalData_.nbSamplesQP; i < QPSolver::DefaultNbVarMax_; ++i) {
 		order(i) = i;
 	}
 	solver_->varOrder(order);

@@ -54,15 +54,15 @@ void RigidBody::computeDynamics(){
 	for(int k=0;k<vecSize ;++k){
 		double S = generalData_->MPCSamplingPeriod * (k+1);
 		computeOneDynamicMatrices(pos_vec_[k], S,
-				generalData_->QPSamplingPeriod, generalData_->QPNbSamplings, posDynamic);
+				generalData_->QPSamplingPeriod, generalData_->nbSamplesQP, posDynamic);
 		computeOneDynamicMatrices(vel_vec_[k], S,
-				generalData_->QPSamplingPeriod, generalData_->QPNbSamplings, velDynamic);
+				generalData_->QPSamplingPeriod, generalData_->nbSamplesQP, velDynamic);
 		computeOneDynamicMatrices(acc_vec_[k], S,
-				generalData_->QPSamplingPeriod, generalData_->QPNbSamplings, accDynamic);
+				generalData_->QPSamplingPeriod, generalData_->nbSamplesQP, accDynamic);
 		computeOneDynamicMatrices(jerk_vec_[k], S,
-				generalData_->QPSamplingPeriod, generalData_->QPNbSamplings, jerkDynamic);
+				generalData_->QPSamplingPeriod, generalData_->nbSamplesQP, jerkDynamic);
 		computeOneDynamicMatrices(cop_vec_[k], S,
-				generalData_->QPSamplingPeriod, generalData_->QPNbSamplings, copDynamic);
+				generalData_->QPSamplingPeriod, generalData_->nbSamplesQP, copDynamic);
 
 	}
 
