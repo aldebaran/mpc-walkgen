@@ -52,6 +52,23 @@ void MPCSolution::reset(){
   ,nbStepSSDS(2) {
   }
 
+  RobotData::RobotData(const FootData &leftFoot, const FootData &rightFoot,
+	const HipYawData &leftHipYaw, const HipYawData &rightHipYaw,
+	double mass)
+  :	CoMHeight(0.814)
+	,freeFlyingFootMaxHeight(0.05)
+	,leftFoot(leftFoot)
+	,rightFoot(rightFoot)
+	,leftHipYaw(leftHipYaw)
+	,rightHipYaw(rightHipYaw)
+	,robotMass(mass)
+	,leftFootPos()
+	,rightFootPos() {
+	  leftFootPos << 0.00949035, 0.095, 0;
+	  rightFootPos << 0.00949035, -0.095, 0;
+  }
+  RobotData::RobotData(){};
+
   int MPCData::iterationNumberFeedback(double firstIterationduration) const{
 	  return static_cast<int> (round(firstIterationduration / MPCSamplingPeriod)-1 );
   }

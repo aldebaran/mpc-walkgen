@@ -18,17 +18,16 @@
 using namespace Eigen;
 using namespace MPCWalkgen;
 
-/*
-*/
 
 void makeScilabFile(std::string type);
 void dumpTrajectory(MPCSolution & result, std::vector<std::ofstream*> & data_vec);
 bool checkFiles(std::ifstream & f1, std::ifstream & f2);
 int copyFile(const std::string & source, const std::string & destination);
 
-int main ()
-{
+int main () {
 
+	// Logging:
+	// --------
 	const int nbFile=8;
 
 	std::vector<std::string> name_vec(nbFile);
@@ -48,6 +47,9 @@ int main ()
 		ref_vec[i] = new std::ifstream((name_vec[i]+".ref").c_str());
 	}
 
+
+	// Robot parameters (HRP-2):
+	// -------------------------
 	FootData leftFoot;
 	leftFoot.anklePositionInLocalFrame<< 0, 0, 0.105;
 	leftFoot.soleHeight = 0.138;
@@ -58,26 +60,25 @@ int main ()
 	rightFoot.soleWidth = 0.2172;
 
 	HipYawData leftHipYaw;
+	leftHipYaw.lowerBound = -0.523599;
+	leftHipYaw.upperBound = 0.785398;
+	leftHipYaw.lowerVelocityBound = -3.54108;
+	leftHipYaw.upperVelocityBound = 3.54108;
+	leftHipYaw.lowerAccelerationBound = -0.1;
+	leftHipYaw.upperAccelerationBound = 0.1;
 	HipYawData rightHipYaw = leftHipYaw;
 
-	MPCData mpcData; // mpcData has a default initialization
-	RobotData robotData;
-	robotData.CoMHeight = 0.814;
-	robotData.freeFlyingFootMaxHeight = 0.05;
-	robotData.leftFoot = leftFoot;
-	robotData.rightFoot = rightFoot;
-	robotData.leftHipYaw = leftHipYaw;
-	robotData.rightHipYaw = rightHipYaw;
-	robotData.robotMass = 0;
-	Eigen::Vector3d leftFootPos(0.00949035, 0.095, 0);
-	Eigen::Vector3d rightFootPos(0.00949035, -0.095, 0);
-	robotData.leftFootPos = leftFootPos;
-	robotData.rightFootPos = rightFootPos;
 
+	// Initialize:
+	// -----------
+	MPCData mpcData;
+	RobotData robotData(leftFoot, rightFoot, leftHipYaw, rightHipYaw, 0.0);
 	Walkgen walk;
 	walk.init(robotData, mpcData);
 
-	// run
+
+	// Run:
+	// ----
 	double velocity = 0.25;
 	walk.reference(0, 0, 0);
 	walk.online(0);
@@ -100,12 +101,13 @@ int main ()
 		MPCSolution result = walk.online(time);
 		dumpTrajectory(result, data_vec);
 	}
-
 	for(unsigned i = 0; i < data_vec.size(); ++i){
 		data_vec[i]->close();
 	}
 
-	// now reopen the files
+
+	// Reopen the files:
+	// -----------------
 	std::vector<std::ifstream*> check_vec(nbFile);
 	for(int i = 0;i < nbFile; ++i){
 		check_vec[i] = new std::ifstream((name_vec[i]+".data").c_str());

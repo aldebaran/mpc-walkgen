@@ -175,7 +175,7 @@ namespace MPCWalkgen
 		MPCData();
 	};
 
-	struct RobotData{
+	struct RobotData {
 		double CoMHeight;
 		double freeFlyingFootMaxHeight;
 
@@ -189,6 +189,11 @@ namespace MPCWalkgen
 
   		Eigen::Vector3d leftFootPos;
   		Eigen::Vector3d rightFootPos;
+
+  		RobotData(const FootData &leftFoot, const FootData &rightFoot,
+  				const HipYawData &leftHipYaw, const HipYawData &rightHipYaw,
+  				double mass);
+  		RobotData();
   	};
 
 	struct BodyState{
