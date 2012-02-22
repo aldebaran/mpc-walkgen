@@ -29,10 +29,10 @@ QPGenerator::~QPGenerator(){}
 
 
 void QPGenerator::precomputeObjective(){
-
+	// TODO: Document this function
 	int N = generalData_->nbSamplesQP;
-	int pondSize = ponderation_->JerkMin.size();
-	int size=generalData_->nbIterationFeedback();
+	int pondSize = ponderation_->JerkMin.size(); //
+	int size = generalData_->nbFeedbackSamplesStandard();
 	Qconst_.resize(size*pondSize);
 	choleskyConst_.resize(size*pondSize);
 	pconstCoM_.resize(size*pondSize);
@@ -43,43 +43,43 @@ void QPGenerator::precomputeObjective(){
 	MatrixXd G(N,N);
 
 	VectorXi order(2*N);
-	for(int i=0;i<N;++i){
-		order(i)=2*i;
-		order(i+N)=2*i+1;
+	for (int i = 0; i < N; ++i) {
+		order(i) = 2*i;
+		order(i+N) = 2*i+1;
 	}
 
-	QPMatrix chol(2*N,2*N,2*N,2*N);
+	QPMatrix chol(2*N, 2*N, 2*N, 2*N);
 	chol.rowOrder(order);
 	chol.colOrder(order);
 
-	for(int i=0; i<pondSize; ++i){
-		for(double s=generalData_->MPCSamplingPeriod;
-				s<generalData_->QPSamplingPeriod+EPS;
-				s+=generalData_->MPCSamplingPeriod){
+	for (int i = 0; i < pondSize; ++i) {
+		for (double s = generalData_->MPCSamplingPeriod;
+				s < generalData_->QPSamplingPeriod+EPS;
+				s += generalData_->MPCSamplingPeriod) {
 			int nb = (int)round(s / generalData_->MPCSamplingPeriod)-1;
-			nb+=i*size;
-			robot_->firstIterationDuration(s);
+			nb += i*size;
+			robot_->firstSamplingPeriod(s);
 
 			const DynamicMatrix & CoPDynamics = robot_->body(COM)->dynamic(copDynamic);
 			const DynamicMatrix & VelDynamics = robot_->body(COM)->dynamic(velDynamic);
 
-			double firstIterationWeight = s/generalData_->QPSamplingPeriod;
-			pondFactor(0,0)=firstIterationWeight;
-			pondFactor(N-1,N-1)=1.05-firstIterationWeight;
+			double firstIterationWeight = s / generalData_->QPSamplingPeriod;
+			pondFactor(0, 0) = firstIterationWeight;
+			pondFactor(N-1, N-1) = 1.05 - firstIterationWeight;
 
 
 			tmpMat_ = CoPDynamics.UInvT*VelDynamics.UT*pondFactor*VelDynamics.U*CoPDynamics.UInv;
 			tmpMat2_= CoPDynamics.UInvT*pondFactor*CoPDynamics.UInv;
 
 			G = ponderation_->instantVelocity[i]*tmpMat_ + ponderation_->JerkMin[i]*tmpMat2_;
-			Qconst_[nb]=G;
+			Qconst_[nb] = G;
 
 			tmpMat_ = G + ponderation_->CopCentering[i]*MatrixXd::Identity(N,N);
 
 			chol.reset();
-			chol.addTerm(tmpMat_,0,0);
-			chol.addTerm(tmpMat_,N,N);
-			choleskyConst_[nb]=chol.cholesky();
+			chol.addTerm(tmpMat_, 0, 0);
+			chol.addTerm(tmpMat_, N, N);
+			choleskyConst_[nb] = chol.cholesky();
 
 			pconstCoM_[nb] = VelDynamics.S - VelDynamics.U*CoPDynamics.UInv*CoPDynamics.S;
 			pconstCoM_[nb] = CoPDynamics.UInvT*VelDynamics.UT*ponderation_->instantVelocity[i]*pondFactor*pconstCoM_[nb];
@@ -95,11 +95,12 @@ void QPGenerator::precomputeObjective(){
 	}
 }
 
-void QPGenerator::buildObjective(const MPCSolution & result){
+void QPGenerator::buildObjective(const MPCSolution & result) {
 
+	// Choose the precomputed element depending on the nb of "feedback-recomputations" until new qp-sample
+	int precomputedMatrixNumber = generalData_->nbFeedbackSamplesLeft(result.supportState_vec[1].previousSamplingPeriod);
+	precomputedMatrixNumber += ponderation_->activePonderation * generalData_->nbFeedbackSamplesStandard();
 
-	int nb = generalData_->iterationNumberFeedback(result.supportState_vec[1].iterationDuration);
-	nb += ponderation_->activePonderation*generalData_->nbIterationFeedback();
 	const BodyState & CoM = robot_->body(COM)->state();
 	const SelectionMatrices & state = preview_->selectionMatrices();
 	const MatrixXd & rot = preview_->rotationMatrix();
@@ -108,48 +109,48 @@ void QPGenerator::buildObjective(const MPCSolution & result){
 	int nbStepsPreviewed = result.supportState_vec.back().stepNumber;
 	int N = generalData_->nbSamplesQP;
 
-	solver_->nbVar(2*N+2*nbStepsPreviewed);
+	solver_->nbVar(2*N + 2*nbStepsPreviewed);
 	solver_->nbCtr(0);
 
-	if (nbStepsPreviewed>0){
-		tmpMat_ = Qconst_[nb]*state.V;
-		solver_->matrix(matrixQ).addTerm(tmpMat_,0,2*N);
-		solver_->matrix(matrixQ).addTerm(tmpMat_,N,2*N+nbStepsPreviewed);
+	if (nbStepsPreviewed>0) {
+		tmpMat_ = Qconst_[precomputedMatrixNumber]*state.V;
+		solver_->matrix(matrixQ).addTerm(tmpMat_, 0, 2*N);
+		solver_->matrix(matrixQ).addTerm(tmpMat_, N, 2*N + nbStepsPreviewed);
 
 
-		tmpMat_ = state.VT*Qconst_[nb]*state.V;
-		solver_->matrix(matrixQ).addTerm(tmpMat_, 2*N , 2*N );
-		solver_->matrix(matrixQ).addTerm(tmpMat_, 2*N+nbStepsPreviewed, 2*N+nbStepsPreviewed );
+		tmpMat_ = state.VT*Qconst_[precomputedMatrixNumber]*state.V;
+		solver_->matrix(matrixQ).addTerm(tmpMat_, 2*N , 2*N);
+		solver_->matrix(matrixQ).addTerm(tmpMat_, 2*N + nbStepsPreviewed, 2*N + nbStepsPreviewed);
 
 		MatrixXd & Q = solver_->matrix(matrixQ)();
 
 		// rotate the down left block
-		MatrixXd dlBlock = Q.block(2*N,0,2*nbStepsPreviewed,2*N);
+		MatrixXd dlBlock = Q.block(2*N, 0, 2*nbStepsPreviewed, 2*N);
 		computeMRt(dlBlock, rot2);
-		Q.block(2*N,0,2*nbStepsPreviewed,2*N) = dlBlock;
+		Q.block(2*N, 0, 2*nbStepsPreviewed, 2*N) = dlBlock;
 
 		// rotate the upper right block
-		MatrixXd urBlock = Q.block(0,2*N,2*N,2*nbStepsPreviewed);
-		computeRM (urBlock, rot2);
-		Q.block(0,2*N,2*N,2*nbStepsPreviewed) = urBlock;
+		MatrixXd urBlock = Q.block(0, 2*N, 2*N, 2*nbStepsPreviewed);
+		computeRM(urBlock, rot2);
+		Q.block(0, 2*N, 2*N, 2*nbStepsPreviewed) = urBlock;
 	}
 
 	// rotate the cholesky matrix
-	MatrixXd chol = choleskyConst_[nb];
+	MatrixXd chol = choleskyConst_[precomputedMatrixNumber];
 	rotateCholeskyMatrix(chol, rot2);
 	solver_->matrix(matrixQ).cholesky(chol);
 
 
 	VectorXd HX(N),HY(N),H(2*N);
 
-	HX = pconstCoM_[nb]*CoM.x;
-	HY = pconstCoM_[nb]*CoM.y;
+	HX = pconstCoM_[precomputedMatrixNumber]*CoM.x;
+	HY = pconstCoM_[precomputedMatrixNumber]*CoM.y;
 
-	HX += pconstVc_[nb]*state.VcX;
-	HY += pconstVc_[nb]*state.VcY;
+	HX += pconstVc_[precomputedMatrixNumber]*state.VcX;
+	HY += pconstVc_[precomputedMatrixNumber]*state.VcY;
 
-	HX += pconstRef_[nb]*velRef_->global.xVec;
-	HY += pconstRef_[nb]*velRef_->global.yVec;
+	HX += pconstRef_[precomputedMatrixNumber]*velRef_->global.xVec;
+	HY += pconstRef_[precomputedMatrixNumber]*velRef_->global.yVec;
 
 	if (nbStepsPreviewed>0){
 		tmpVec_ = state.VT*HX;
@@ -157,7 +158,6 @@ void QPGenerator::buildObjective(const MPCSolution & result){
 		tmpVec_ = state.VT*HY;
 		solver_->matrix(vectorP).addTerm(tmpVec_, 2*N+nbStepsPreviewed);
 	}
-
 
 	H << HX, HY;
 	H = rot*H;
@@ -189,7 +189,7 @@ void QPGenerator::computeWarmStart(MPCSolution & result){
 	// ---------------------
 	int size=result.initialConstraints.rows();
 	VectorXi initialConstraintTmp = result.initialConstraints;
-	double TimeFactor = result.supportState_vec[1].iterationWeight;
+	double TimeFactor = result.supportState_vec[1].sampleWeight;
 	int shift_ctr;
 	if (fabs(TimeFactor-1.)<EPS){
 		shift_ctr=1;
@@ -481,7 +481,7 @@ void QPGenerator::display(const MPCSolution & result, const std::string & filena
 	std::vector<SupportState>::const_iterator prwSS_it = result.supportState_vec.begin();
 
 
-	 int j = 0,b=0;
+	int j = 0,b=0;
 
 
 	double Xfoot, Yfoot;
@@ -489,7 +489,7 @@ void QPGenerator::display(const MPCSolution & result, const std::string & filena
 	//display current COP constraint
 	ConvexHull COPFeasibilityEdges = robot_->convexHull(CoPHull, *prwSS_it, false);
 
-	for(int k=0;k<4;++k){
+	for (int k=0; k<4; ++k) {
 		  data << "BOUND\t-1\t\t0.1\t0.8\t0.1\t\t" <<
 				  COPFeasibilityEdges.x[k]+currentSupport.x << "\t" <<
 				  COPFeasibilityEdges.y[k]+currentSupport.y << "\t0\n";
@@ -527,7 +527,7 @@ void QPGenerator::display(const MPCSolution & result, const std::string & filena
 				}
 		  }
 
-		  if (prwSS_it->inTransitionPhase){
+		  if (prwSS_it->inTransitionalDS){
 			  Xfoot=result.supportState_vec[1].x;
 			  Yfoot=result.supportState_vec[1].y;
 		  }

@@ -34,7 +34,7 @@ namespace MPCWalkgen{
 
 			const DynamicMatrix & dynamic(DynamicMatrixType type) const;
 
-			void firstIterationDuration(double firstIterationDuration);
+			void firstSamplingPeriod(double firstSamplingPeriod);
 
 			void computeDynamics();
 

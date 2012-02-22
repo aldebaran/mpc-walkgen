@@ -24,17 +24,19 @@ QPPreview::~QPPreview()
 }
 
 void QPPreview::previewSupportStates(const double currentTime,
-		const double FirstIterationDynamicsDuration, MPCSolution & result){
+		const double firstSamplingPeriod, MPCSolution & result){
 
 	const BodyState * foot;
 	SupportState & currentSupport = robot_->currentSupport();
 
-	statesolver_->setSupportState( currentTime, 0, currentSupport);
-	currentSupport.inTransitionPhase = false;
-	if( currentSupport.stateChanged){
-		if( currentSupport.foot == LEFT ){
+	// SET CURRENT SUPPORT STATE:
+	// --------------------------
+	statesolver_->setSupportState(currentTime, 0, currentSupport);
+	currentSupport.inTransitionalDS = false;
+	if (currentSupport.stateChanged) {
+		if (currentSupport.foot == LEFT) {
 			foot = &robot_->body(LEFT_FOOT)->state();
-		}else{
+		} else {
 			foot = &robot_->body(RIGHT_FOOT)->state();
 		}
 		currentSupport.x = foot->x(0);
@@ -42,47 +44,45 @@ void QPPreview::previewSupportStates(const double currentTime,
 		currentSupport.yaw = foot->yaw(0);
 		currentSupport.startTime = currentTime;
 	}
-	result.supportState_vec.push_back( currentSupport );
-
+	result.supportState_vec.push_back(currentSupport);
 
 	// PREVIEW SUPPORT STATES:
 	// -----------------------
 	// initialize the previewed support state before previewing
 	SupportState previewedSupport = currentSupport;
-
 	previewedSupport.stepNumber = 0;
-	for( int pi=1; pi<=generalData_->nbSamplesQP; pi++ ){
-		statesolver_->setSupportState( currentTime, pi, previewedSupport);
-		previewedSupport.inTransitionPhase=false;
-		if( previewedSupport.stateChanged ){
-			if( pi == 1 ){// foot down
-				if( previewedSupport.foot == LEFT ){
+	for (int pi = 1; pi <= generalData_->nbSamplesQP; pi++) {
+		statesolver_->setSupportState(currentTime, pi, previewedSupport);
+		previewedSupport.inTransitionalDS = false;
+		if (previewedSupport.stateChanged) {
+			if (pi == 1) {// foot down
+				if (previewedSupport.foot == LEFT) {
 					foot = &robot_->body(LEFT_FOOT)->state();
-				}else{
+				} else {
 					foot = &robot_->body(RIGHT_FOOT)->state();
 				}
 				previewedSupport.x = foot->x(0);
 				previewedSupport.y = foot->y(0);
 				previewedSupport.yaw = foot->yaw(0);
 				previewedSupport.startTime = currentTime+pi*generalData_->QPSamplingPeriod;
-				if( currentSupport.phase == SS && previewedSupport.phase == SS ){
-					previewedSupport.inTransitionPhase=true;
+				if (currentSupport.phase == SS && previewedSupport.phase == SS) {
+					previewedSupport.inTransitionalDS = true;
 				}
 			}
-			if( /*pi > 1 &&*/ previewedSupport.stepNumber > 0 ){
+			if (/*pi > 1 &&*/ previewedSupport.stepNumber > 0) {
 				previewedSupport.x = 0.0;
 				previewedSupport.y = 0.0;
 			}
 		}
-		if (pi == 1){
-			previewedSupport.iterationDuration = FirstIterationDynamicsDuration;
-			previewedSupport.iterationWeight = FirstIterationDynamicsDuration/generalData_->QPSamplingPeriod;
-		}else{
-			previewedSupport.iterationDuration = generalData_->QPSamplingPeriod;
-			previewedSupport.iterationWeight = 1;
+		if (pi == 1) {
+			previewedSupport.previousSamplingPeriod = firstSamplingPeriod;
+			previewedSupport.sampleWeight = firstSamplingPeriod/generalData_->QPSamplingPeriod;
+		} else {
+			previewedSupport.previousSamplingPeriod = generalData_->QPSamplingPeriod;
+			previewedSupport.sampleWeight = 1;
 		}
 
-		result.supportState_vec.push_back( previewedSupport );
+		result.supportState_vec.push_back(previewedSupport);
 	}
 
 	buildSelectionMatrices(result);
@@ -111,12 +111,12 @@ void QPPreview::computeRotationMatrix(MPCSolution & result){
 void QPPreview::buildSelectionMatrices(MPCSolution & result){
 	const int & NbPrwSteps = result.supportState_vec.back().stepNumber;
 
-	if (selectionMatrices_.V.cols()!=NbPrwSteps){
+	if (selectionMatrices_.V.cols() != NbPrwSteps){
 		selectionMatrices_.V.resize(generalData_->nbSamplesQP,NbPrwSteps);
-		selectionMatrices_.VT.resize(NbPrwSteps,generalData_->nbSamplesQP);
+		selectionMatrices_.VT.resize(NbPrwSteps, generalData_->nbSamplesQP);
 		selectionMatrices_.VcfX.resize(NbPrwSteps);
 		selectionMatrices_.VcfY.resize(NbPrwSteps);
-		selectionMatrices_.Vf.resize(NbPrwSteps,NbPrwSteps);
+		selectionMatrices_.Vf.resize(NbPrwSteps, NbPrwSteps);
 	}
 
 	selectionMatrices_.VcX.fill(0);

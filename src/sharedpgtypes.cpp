@@ -80,11 +80,11 @@ ConvexHull::ConvexHull()
   }
   RobotData::RobotData(){}
 
-  int MPCData::iterationNumberFeedback(double firstIterationduration) const{
+  int MPCData::nbFeedbackSamplesLeft(double firstIterationduration) const{
 	  return static_cast<int> (round(firstIterationduration / MPCSamplingPeriod)-1 );
   }
 
-  int MPCData::nbIterationFeedback() const{
+  int MPCData::nbFeedbackSamplesStandard() const{
 	  return static_cast<int> (round(QPSamplingPeriod / MPCSamplingPeriod) );
   }
 

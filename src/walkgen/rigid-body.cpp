@@ -37,13 +37,13 @@ const DynamicMatrix & RigidBody::dynamic(DynamicMatrixType type) const{
 }
 
 //TODO: firstSamplingPeriod
-void RigidBody::firstIterationDuration(double firstIterationDuration){
-	matrixNumber_ = (int)round(firstIterationDuration / generalData_->MPCSamplingPeriod)-1;
+void RigidBody::firstSamplingPeriod(double firstSamplingPeriod){
+	matrixNumber_ = (int)round(firstSamplingPeriod / generalData_->MPCSamplingPeriod)-1;
 }
 
 void RigidBody::computeDynamics(){
 
-	int vecSize = generalData_->nbIterationFeedback();
+	int vecSize = generalData_->nbFeedbackSamplesStandard();
 
 	pos_vec_.resize(vecSize);
 	vel_vec_.resize(vecSize);
@@ -51,7 +51,7 @@ void RigidBody::computeDynamics(){
 	jerk_vec_.resize(vecSize);
 	cop_vec_.resize(vecSize);
 
-	for(int k=0;k<vecSize ;++k){
+	for (int k=0; k<vecSize; ++k) {
 		double S = generalData_->MPCSamplingPeriod * (k+1);
 		computeOneDynamicMatrices(pos_vec_[k], S,
 				generalData_->QPSamplingPeriod, generalData_->nbSamplesQP, posDynamic);

@@ -37,7 +37,7 @@ namespace MPCWalkgen{
 
 			void updateBodyState(const MPCSolution &solution);
 
-			void firstIterationDuration(double firstIterationDuration);
+			void firstSamplingPeriod(double firstSamplingPeriod);
 
 			ConvexHull convexHull(HullType type, const SupportState &prwSupport, bool computeLinearSystem=true, bool rotateHull=true) const;
 

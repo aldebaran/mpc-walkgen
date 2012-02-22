@@ -26,7 +26,7 @@ void FootBody::interpolate(MPCSolution & result, double currentTime, const VelRe
 
 		Txy = result.supportState_vec[0].startTime+generalData_->stepPeriod-currentTime;
 
-		if (result.supportState_vec[1].inTransitionPhase){
+		if (result.supportState_vec[1].inTransitionalDS){
 			nextSupportFootState.x(0)=state_.x(0);
 			nextSupportFootState.y(0)=state_.y(0);
 			nextSupportFootState.yaw(0)=state_.yaw(0);

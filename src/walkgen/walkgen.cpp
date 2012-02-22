@@ -140,7 +140,7 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
 		currentTime_ = time;
 	}
 
-	if(time  > upperTimeLimitToFeedback_+EPS){
+	if (time  > upperTimeLimitToFeedback_+EPS) {
 
 		solver_->reset();
 
@@ -164,12 +164,12 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
 			ponderation_.activePonderation = 0;
 		}
 
-		double FirstIterationDynamicsDuration = upperTimeLimitToUpdate_-upperTimeLimitToFeedback_;
+		double firstSamplingPeriod = upperTimeLimitToUpdate_ - upperTimeLimitToFeedback_;
 		upperTimeLimitToFeedback_ += generalData_.MPCSamplingPeriod;
 
-		robot_->firstIterationDuration(FirstIterationDynamicsDuration);
+		robot_->firstSamplingPeriod(firstSamplingPeriod);
 
-		preview_->previewSupportStates(currentTime_, FirstIterationDynamicsDuration, solution_);
+		preview_->previewSupportStates(currentTime_, firstSamplingPeriod, solution_);
 
 		orientPrw_->preview_orientations( currentTime_, velRef_,
 			generalData_.stepPeriod,

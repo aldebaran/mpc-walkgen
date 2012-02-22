@@ -48,11 +48,11 @@ void RigidBodySystem::interpolateBodies(MPCSolution & solution, double currentTi
 }
 
 void RigidBodySystem::updateBodyState(const MPCSolution & solution){
-	int nextCurrentState = generalData_->iterationNumberFeedback(generalData_->MPCSamplingPeriod);
+	int nextCurrentState = generalData_->nbFeedbackSamplesLeft(generalData_->MPCSamplingPeriod);
 
 	BodyState leftFoot, rightFoot, CoM;
 
-	for(int i = 0; i < 3; ++i){
+	for (int i = 0; i < 3; ++i){
 		const MPCSolution::State & currentState = solution.state_vec[i];
 		leftFoot.x(i) = currentState.leftFootTrajX_(nextCurrentState);
 		leftFoot.y(i) = currentState.leftFootTrajY_(nextCurrentState);
@@ -78,10 +78,10 @@ void RigidBodySystem::updateBodyState(const MPCSolution & solution){
 
 }
 
-void RigidBodySystem::firstIterationDuration(double firstIterationDuration){
-	CoM_->firstIterationDuration(firstIterationDuration);
-	leftFoot_->firstIterationDuration(firstIterationDuration);
-	rightFoot_->firstIterationDuration(firstIterationDuration);
+void RigidBodySystem::firstSamplingPeriod(double firstSamplingPeriod){
+	CoM_->firstSamplingPeriod(firstSamplingPeriod);
+	leftFoot_->firstSamplingPeriod(firstSamplingPeriod);
+	rightFoot_->firstSamplingPeriod(firstSamplingPeriod);
 }
 
 RigidBody * RigidBodySystem::body(BodyType type){

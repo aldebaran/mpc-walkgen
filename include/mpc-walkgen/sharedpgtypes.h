@@ -134,13 +134,13 @@ namespace MPCWalkgen
 		bool stateChanged;
 
 		/// \brief Define if the support state is in a (transitional) double support phase
-		bool inTransitionPhase;
+		bool inTransitionalDS;
 
-		/// \brief The duration of the support state
-		double iterationDuration;//TODO: change name
+		/// \brief The length of the previous sampling period (can be different from QPSamplingPeriod)
+		double previousSamplingPeriod;//TODO: change name
 
 		// \brief The relative weight of this support state in the QP (A support state duration of QPSamplingTime have : iterationWeight = 1)
-		double iterationWeight;
+		double sampleWeight;
 	};
 
 	struct ConvexHull {
@@ -179,15 +179,13 @@ namespace MPCWalkgen
 		double DSSSPeriod;
 		int nbStepSSDS;
 
-		//TODO: nbSamplingsFeedback
-		/// \brief Compute the unique feedback iteration number between two QP instants
-		int iterationNumberFeedback(double firstIterationduration) const;
-		//TODO: nbSamplingSimulation
+		/// \brief Compute the number of recomputations left until next sample
+		int nbFeedbackSamplesLeft(double firstSamplingPeriod) const;
 		/// \brief number of simulation iterations between two feedback call
 		int nbIterationSimulation() const;
 		//TODO: difference?
 		/// \brief number of feedback iterations between two QP instants
-		int nbIterationFeedback() const;
+		int nbFeedbackSamplesStandard() const;
 
 		QPPonderation ponderation;
 
