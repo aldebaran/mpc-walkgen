@@ -41,11 +41,6 @@ void MPCSolution::reset(){
 	supportTrunkOrientation_vec.resize(0);
 }
 
-ConvexHull::ConvexHull()
-:x(0),y(0),z(0)
-,A(0),B(0),C(0),D(0) {
-}
-
   MPCData::MPCData()
   :QPSamplingPeriod(0.1)
   ,MPCSamplingPeriod(0.005)
