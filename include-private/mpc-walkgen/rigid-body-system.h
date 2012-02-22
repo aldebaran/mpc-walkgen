@@ -55,21 +55,11 @@ namespace MPCWalkgen{
 			};
 			inline RobotData &robotData() {
 				return robotData_;
-			}
-
-		private:
-			void initConvexHulls() ;
+			};
 
 		private:
 			const MPCData *generalData_;
 			RobotData robotData_;
-
-			ConvexHull leftFootHull_;
-			ConvexHull rightFootHull_;
-			ConvexHull CoPLeftSSHull_;
-			ConvexHull CoPRightSSHull_;
-			ConvexHull CoPLeftDSHull_;
-			ConvexHull CoPRightDSHull_;
 
 			RigidBody *CoM_;
 			RigidBody *leftFoot_;

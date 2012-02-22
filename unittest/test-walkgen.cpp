@@ -24,7 +24,7 @@ void dumpTrajectory(MPCSolution & result, std::vector<std::ofstream*> & data_vec
 bool checkFiles(std::ifstream & f1, std::ifstream & f2);
 int copyFile(const std::string & source, const std::string & destination);
 
-int main () {
+int main() {
 	// Logging:
 	// --------
 	const int nbFile=8;
@@ -50,11 +50,11 @@ int main () {
 	// Robot parameters (HRP-2):
 	// -------------------------
 	FootData leftFoot;
-	leftFoot.anklePositionInLocalFrame<< 0, 0, 0.105;
+	leftFoot.anklePositionInLocalFrame << 0, 0, 0.105;
 	leftFoot.soleHeight = 0.138;
 	leftFoot.soleWidth = 0.2172;
 	FootData rightFoot;
-	rightFoot.anklePositionInLocalFrame<< 0, 0, 0.105;
+	rightFoot.anklePositionInLocalFrame << 0, 0, 0.105;
 	rightFoot.soleHeight = 0.138;
 	rightFoot.soleWidth = 0.2172;
 
@@ -67,11 +67,50 @@ int main () {
 	leftHipYaw.upperAccelerationBound = 0.1;
 	HipYawData rightHipYaw = leftHipYaw;
 
-
-	// Initialize:
-	// -----------
 	MPCData mpcData;
 	RobotData robotData(leftFoot, rightFoot, leftHipYaw, rightHipYaw, 0.0);
+
+	// Feasible hulls:
+	// ---------------
+	const int nbVertFeet = 5;
+	// Feasible foot positions
+	double DefaultFPosEdgesX[nbVertFeet] = {-0.28, -0.2, 0.0, 0.2, 0.28};
+	double DefaultFPosEdgesY[nbVertFeet] = {-0.2, -0.3, -0.4, -0.3, -0.2};
+
+	robotData.leftFootHull.resize(nbVertFeet);
+	robotData.rightFootHull.resize(nbVertFeet);
+	for (int i=0; i < nbVertFeet; ++i) {
+		robotData.leftFootHull.x(i)=DefaultFPosEdgesX[i];
+		robotData.leftFootHull.y(i)=DefaultFPosEdgesY[i];
+		robotData.rightFootHull.x(i)=DefaultFPosEdgesX[i];
+		robotData.rightFootHull.y(i)=-DefaultFPosEdgesY[i];
+	}
+
+	// Constraints on the CoP
+	const int nbVertCoP = 4;
+	double DefaultCoPSSEdgesX[nbVertCoP] = {0.0686, 0.0686, -0.0686, -0.0686};
+	double DefaultCoPSSEdgesY[nbVertCoP] = {0.029, -0.029, -0.029, 0.029};
+	double DefaultCoPDSEdgesX[nbVertCoP] = {0.0686, 0.0686, -0.0686, -0.0686};
+	double DefaultCoPDSEdgesY[nbVertCoP] = {0.029, -0.229, -0.229, 0.029};
+
+	robotData.CoPLeftSSHull.resize(nbVertCoP);
+	robotData.CoPRightSSHull.resize(nbVertCoP);
+	robotData.CoPLeftDSHull.resize(nbVertCoP);
+	robotData.CoPRightDSHull.resize(nbVertCoP);
+	for(int i=0;i<nbVertCoP;++i){
+		robotData.CoPLeftSSHull.x(i) = DefaultCoPSSEdgesX[i];
+		robotData.CoPLeftSSHull.y(i) = DefaultCoPSSEdgesY[i];
+		robotData.CoPLeftDSHull.x(i) = DefaultCoPDSEdgesX[i];
+		robotData.CoPLeftDSHull.y(i) = DefaultCoPDSEdgesY[i];
+
+		robotData.CoPRightSSHull.x(i) = DefaultCoPSSEdgesX[i];
+		robotData.CoPRightSSHull.y(i) =- DefaultCoPSSEdgesY[i];
+		robotData.CoPRightDSHull.x(i) = DefaultCoPDSEdgesX[i];
+		robotData.CoPRightDSHull.y(i) =- DefaultCoPDSEdgesY[i];
+	}
+
+	// Creat and initialize generator:
+	// -------------------------------
 	Walkgen walk;
 	walk.init(robotData, mpcData);
 

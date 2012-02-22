@@ -33,8 +33,6 @@ RigidBodySystem::~RigidBodySystem() {
 
 void RigidBodySystem::init(const RobotData &robotData) {
 	robotData_ = robotData;
-
-	initConvexHulls();
 }
 
 void RigidBodySystem::computeDynamics() {
@@ -116,23 +114,23 @@ ConvexHull RigidBodySystem::convexHull(HullType type, const SupportState & prwSu
 	switch (type){
 		case FootHull:
 			if (prwSupport.foot == LEFT){
-				hull = leftFootHull_;
+				hull = robotData_.leftFootHull;
 			}else{
-				hull = rightFootHull_;
+				hull = robotData_.rightFootHull;
 			}
 		break;
 		case CoPHull:
 			if (prwSupport.foot == LEFT){
 				if (prwSupport.phase == SS){
-					hull = CoPLeftSSHull_;
+					hull = robotData_.CoPLeftSSHull;
 				}else{
-					hull = CoPLeftDSHull_;
+					hull = robotData_.CoPLeftDSHull;
 				}
 			}else{
 				if (prwSupport.phase==SS){
-					hull = CoPRightSSHull_;
+					hull = robotData_.CoPRightSSHull;
 				}else{
-					hull =  CoPRightDSHull_;
+					hull =  robotData_.CoPRightDSHull;
 				}
 			}
 		break;
@@ -147,53 +145,4 @@ ConvexHull RigidBodySystem::convexHull(HullType type, const SupportState & prwSu
 	}
 
 	return hull;
-}
-
-
-void RigidBodySystem::initConvexHulls() {
-
-	  // Feet polygonal hulls:
-	  int nbVertFeet = 5;
-
-	  double DefaultFPosEdgesX[5] = {-0.28, -0.2, 0.0, 0.2, 0.28};
-	  double DefaultFPosEdgesY[5] = {-0.2, -0.3, -0.4, -0.3, -0.2};
-
-	  leftFootHull_.resize( nbVertFeet );
-	  rightFootHull_.resize( nbVertFeet );
-
-	  for(int i=0;i<nbVertFeet;++i){
-		  leftFootHull_.x(i)=DefaultFPosEdgesX[i];
-		  leftFootHull_.y(i)=DefaultFPosEdgesY[i];
-
-		  rightFootHull_.x(i)=DefaultFPosEdgesX[i];
-		  rightFootHull_.y(i)=-DefaultFPosEdgesY[i];
-	  }
-
-	  // ZMP polygonal hulls:
-	  // TODO are those parameterizable?
-	  int nbVertCoP = 4;
-
-	  double DefaultCoPSSEdgesX[4] = {0.0686, 0.0686, -0.0686, -0.0686};
-	  double DefaultCoPSSEdgesY[4] = {0.029, -0.029, -0.029, 0.029};
-
-	  double DefaultCoPDSEdgesX[4] = {0.0686, 0.0686, -0.0686, -0.0686};
-	  double DefaultCoPDSEdgesY[4] = {0.029, -0.229, -0.229, 0.029};
-
-	  CoPLeftSSHull_.resize(nbVertCoP);
-	  CoPRightSSHull_.resize(nbVertCoP);
-	  CoPLeftDSHull_.resize(nbVertCoP);
-	  CoPRightDSHull_.resize(nbVertCoP);
-
-	  for(int i=0;i<nbVertCoP;++i){
-		  CoPLeftSSHull_.x(i)=DefaultCoPSSEdgesX[i];
-		  CoPLeftSSHull_.y(i)=DefaultCoPSSEdgesY[i];
-		  CoPLeftDSHull_.x(i)=DefaultCoPDSEdgesX[i];
-		  CoPLeftDSHull_.y(i)=DefaultCoPDSEdgesY[i];
-
-		  CoPRightSSHull_.x(i)=DefaultCoPSSEdgesX[i];
-		  CoPRightSSHull_.y(i)=-DefaultCoPSSEdgesY[i];
-		  CoPRightDSHull_.x(i)=DefaultCoPDSEdgesX[i];
-		  CoPRightDSHull_.y(i)=-DefaultCoPDSEdgesY[i];
-	  }
-
 }
