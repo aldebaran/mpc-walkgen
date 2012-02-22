@@ -133,20 +133,20 @@ void CoMBody::interpolateTrunkOrientation(MPCSolution & result,
 		}
 	}
 
-	double orientation0 = result.supportTrunkOrientation_vec[0];
+	double orientation0 = result.supportTrunkOrientations_vec[0];
 	double orientation1;
 	double orientation2;
 
-	int size = result.supportTrunkOrientation_vec.size();
+	int size = result.supportTrunkOrientations_vec.size();
 
 
 	if (size >= 2) {
-		orientation1 = result.supportTrunkOrientation_vec[1];
+		orientation1 = result.supportTrunkOrientations_vec[1];
 	} else {
 		orientation1 = orientation0;
 	}
 	if (size >= 3) {
-		orientation2 = result.supportTrunkOrientation_vec[2];
+		orientation2 = result.supportTrunkOrientations_vec[2];
 	} else {
 		orientation2 = orientation1;
 	}

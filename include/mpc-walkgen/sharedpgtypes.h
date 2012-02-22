@@ -166,7 +166,6 @@ namespace MPCWalkgen
 		// The following parameters are fixed once and for all at initialization
 		/// \brief Sampling period considered in the QP
 		double QPSamplingPeriod;    //blocked - precomputeObjective
-		// TODO: This must be the feedback sampling period, no?
 		double MPCSamplingPeriod;   //blocked - precomputeObjective / RigidBodySystem::computeDynamicMatrix
 		double simSamplingPeriod;   //blocked - precomputeObjective / RigidBodySystem::computeDynamicMatrix
 
@@ -183,7 +182,6 @@ namespace MPCWalkgen
 		int nbFeedbackSamplesLeft(double firstSamplingPeriod) const;
 		/// \brief number of simulation iterations between two feedback call
 		int nbIterationSimulation() const;
-		//TODO: difference?
 		/// \brief number of feedback iterations between two QP instants
 		int nbFeedbackSamplesStandard() const;
 
@@ -250,16 +248,14 @@ namespace MPCWalkgen
 		/// \brief True if a new trajectory is computed in online loop
 		bool newTraj;
 
-		std::vector<SupportState> supportState_vec;
+		std::vector<SupportState> supportStates_vec;
 
-		std::vector<double> supportOrientation_vec;//TODO: supportOrientations_vec
-		std::vector<double> supportTrunkOrientation_vec;//TODO: TrunkOrientations_vec
+		std::vector<double> supportOrientations_vec;//TODO: supportOrientations_vec
+		std::vector<double> supportTrunkOrientations_vec;//TODO: TrunkOrientations_vec
 
 		Eigen::VectorXd CoPTrajX;
 		Eigen::VectorXd CoPTrajY;
 
-		//TODO: Why does State contain trajectory vectors?
-		//TODO: State is used in a vector of states
 		struct State
 		{
 			Eigen::VectorXd CoMTrajX_;

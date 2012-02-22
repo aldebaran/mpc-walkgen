@@ -36,9 +36,9 @@ MPCSolution::MPCSolution()
 {}
 
 void MPCSolution::reset(){
-	supportState_vec.resize(0);
-	supportOrientation_vec.resize(0);
-	supportTrunkOrientation_vec.resize(0);
+	supportStates_vec.resize(0);
+	supportOrientations_vec.resize(0);
+	supportTrunkOrientations_vec.resize(0);
 }
 
   MPCData::MPCData()

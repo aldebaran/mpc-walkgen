@@ -44,7 +44,7 @@ void QPPreview::previewSupportStates(const double currentTime,
 		currentSupport.yaw = foot->yaw(0);
 		currentSupport.startTime = currentTime;
 	}
-	result.supportState_vec.push_back(currentSupport);
+	result.supportStates_vec.push_back(currentSupport);
 
 	// PREVIEW SUPPORT STATES:
 	// -----------------------
@@ -82,7 +82,7 @@ void QPPreview::previewSupportStates(const double currentTime,
 			previewedSupport.sampleWeight = 1;
 		}
 
-		result.supportState_vec.push_back(previewedSupport);
+		result.supportStates_vec.push_back(previewedSupport);
 	}
 
 	buildSelectionMatrices(result);
@@ -94,8 +94,8 @@ void QPPreview::computeRotationMatrix(MPCSolution & result){
 	rotationMatrix2_.fill(0);
 
 	for( int i=0; i<N; ++i ){
-		double cosYaw = cos(result.supportState_vec[i+1].yaw);
-		double sinYaw = sin(result.supportState_vec[i+1].yaw);
+		double cosYaw = cos(result.supportStates_vec[i+1].yaw);
+		double sinYaw = sin(result.supportStates_vec[i+1].yaw);
 		rotationMatrix_(i  ,i  ) =  cosYaw;
 		rotationMatrix_(i+N,i  ) = -sinYaw;
 		rotationMatrix_(i  ,i+N) =  sinYaw;
@@ -109,7 +109,7 @@ void QPPreview::computeRotationMatrix(MPCSolution & result){
 }
 
 void QPPreview::buildSelectionMatrices(MPCSolution & result){
-	const int & NbPrwSteps = result.supportState_vec.back().stepNumber;
+	const int & NbPrwSteps = result.supportStates_vec.back().stepNumber;
 
 	if (selectionMatrices_.V.cols() != NbPrwSteps){
 		selectionMatrices_.V.resize(generalData_->nbSamplesQP,NbPrwSteps);
@@ -130,12 +130,12 @@ void QPPreview::buildSelectionMatrices(MPCSolution & result){
 
 
 	std::vector<SupportState>::iterator SS_it;
-	SS_it = result.supportState_vec.begin();//points at the cur. sup. st.
+	SS_it = result.supportStates_vec.begin();//points at the cur. sup. st.
 	++SS_it;
-	for(int i=0;i<generalData_->nbSamplesQP;i++){
-		if(SS_it->stepNumber>0){
+	for (int i=0; i<generalData_->nbSamplesQP; i++){
+		if (SS_it->stepNumber>0){
 			selectionMatrices_.V(i,SS_it->stepNumber-1) = selectionMatrices_.VT(SS_it->stepNumber-1,i) = 1.0;
-			if( SS_it->stepNumber==1 && SS_it->stateChanged && SS_it->phase == SS ){
+			if (SS_it->stepNumber==1 && SS_it->stateChanged && SS_it->phase == SS) {
 				--SS_it;
 				selectionMatrices_.VcfX(0) = SS_it->x;
 				selectionMatrices_.VcfY(0) = SS_it->y;

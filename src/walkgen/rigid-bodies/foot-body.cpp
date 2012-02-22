@@ -20,23 +20,23 @@ void FootBody::interpolate(MPCSolution & result, double currentTime, const VelRe
 	double Txy=1;
 	double Tz=1;
 	int nbSampling = generalData_->nbIterationSimulation();
-	if (result.supportState_vec[0].phase == SS){
+	if (result.supportStates_vec[0].phase == SS){
 
-		int nbStepsPreviewed = result.supportState_vec.back().stepNumber;
+		int nbStepsPreviewed = result.supportStates_vec.back().stepNumber;
 
-		Txy = result.supportState_vec[0].startTime+generalData_->stepPeriod-currentTime;
+		Txy = result.supportStates_vec[0].startTime+generalData_->stepPeriod-currentTime;
 
-		if (result.supportState_vec[1].inTransitionalDS){
+		if (result.supportStates_vec[1].inTransitionalDS){
 			nextSupportFootState.x(0)=state_.x(0);
 			nextSupportFootState.y(0)=state_.y(0);
 			nextSupportFootState.yaw(0)=state_.yaw(0);
 		}else{
-			int nbPreviewedSteps = result.supportState_vec.back().stepNumber;
+			int nbPreviewedSteps = result.supportStates_vec.back().stepNumber;
 
 			if (nbPreviewedSteps>0){
 				nextSupportFootState.x(0)=result.solution(2*generalData_->nbSamplesQP);
 				nextSupportFootState.y(0)=result.solution(2*generalData_->nbSamplesQP+nbStepsPreviewed);
-				nextSupportFootState.yaw(0)=result.supportOrientation_vec[0];
+				nextSupportFootState.yaw(0)=result.supportOrientations_vec[0];
 			}else{
 				nextSupportFootState.x(0)=state_.x(0);
 				nextSupportFootState.y(0)=state_.y(0);
@@ -46,7 +46,7 @@ void FootBody::interpolate(MPCSolution & result, double currentTime, const VelRe
 
 		if (Txy-generalData_->stepPeriod/2>generalData_->simSamplingPeriod){
 			nextSupportFootState.z(0) = robotData_->freeFlyingFootMaxHeight;
-			Tz = result.supportState_vec[0].startTime+generalData_->stepPeriod/2-currentTime;
+			Tz = result.supportStates_vec[0].startTime+generalData_->stepPeriod/2-currentTime;
 		}else{
 			Tz = Txy;
 		}
@@ -138,14 +138,14 @@ void FootBody::computeFootInterpolationByPolynomial(MPCSolution & result, Axis a
 		FootTrajAcc.resize(nbSampling);
 	}
 
-	if (result.supportState_vec[0].foot==footType_){
+	if (result.supportStates_vec[0].foot==footType_){
 		FootTrajState.fill(FootCurrentState(0));
 		FootTrajVel.fill(0);
 		FootTrajAcc.fill(0);
 
 	}else{
 
-		if (result.supportState_vec[0].phase == DS){
+		if (result.supportStates_vec[0].phase == DS){
 			FootTrajState.fill(FootCurrentState(0));
 			FootTrajVel.fill(0);
 			FootTrajAcc.fill(0);

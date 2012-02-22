@@ -91,9 +91,9 @@ void OrientationsPreview::preview_orientations(double Time,
     const BodyState & RightFoot,
     MPCSolution & Solution) {
 
-  const vector<SupportState> & PrwSupportStates_deq = Solution.supportState_vec;
-  vector<double> & PreviewedSupportAngles_deq=Solution.supportOrientation_vec;
-  vector<double> & PreviewedTrunkOrientations_deq=Solution.supportTrunkOrientation_vec;
+  const vector<SupportState> & PrwSupportStates_deq = Solution.supportStates_vec;
+  vector<double> & PreviewedSupportAngles_deq=Solution.supportOrientations_vec;
+  vector<double> & PreviewedTrunkOrientations_deq=Solution.supportTrunkOrientations_vec;
 
 
 
@@ -241,14 +241,14 @@ void OrientationsPreview::preview_orientations(double Time,
 
 
 
-  std::vector<SupportState>::iterator prwSS_it = Solution.supportState_vec.begin();
+  std::vector<SupportState>::iterator prwSS_it = Solution.supportStates_vec.begin();
   double supportAngle = prwSS_it->yaw;
   prwSS_it++;//Point at the first previewed instant
   for(unsigned i = 0; i<N_; i++ )
     {
       if(prwSS_it->stateChanged)
         {
-          supportAngle = Solution.supportOrientation_vec[j];
+          supportAngle = Solution.supportOrientations_vec[j];
           j++;
         }
       prwSS_it->yaw = supportAngle;
