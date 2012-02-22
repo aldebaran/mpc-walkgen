@@ -11,7 +11,6 @@ RigidBodySystem::RigidBodySystem(const MPCData *generalData, const Interpolation
 	CoM_ = new CoMBody(generalData_, &robotData_, interpolation);
 	leftFoot_ = new FootBody(generalData_, &robotData_, interpolation, LEFT);
 	rightFoot_ = new FootBody(generalData_, &robotData_, interpolation, RIGHT);
-	initConvexHulls();
 
 	// Default initialization
 	currentSupport_.phase = DS;
@@ -34,6 +33,8 @@ RigidBodySystem::~RigidBodySystem() {
 
 void RigidBodySystem::init(const RobotData &robotData) {
 	robotData_ = robotData;
+
+	initConvexHulls();
 }
 
 void RigidBodySystem::computeDynamics() {
