@@ -20,6 +20,7 @@ ADD_EXECUTABLE(test-qpsolver test-qpsolver.cpp
 	../src/walkgen/qp-solver.cpp
 	../src/walkgen/qp-solvers/lssol-solver.cpp	
 	../src/walkgen/qp-matrix.cpp
+	../src/walkgen/convex-hull.cpp
 	../src/sharedpgtypes.cpp
 )	
 PKG_CONFIG_USE_DEPENDENCY(test-qpsolver lssol)
