@@ -70,7 +70,7 @@ namespace MPCWalkgen{
 	void rotateCholeskyMatrix(Eigen::MatrixXd & mInOut, const Eigen::MatrixXd & rot);
 }
 
-#include "tools.hxx"
+#include "tools-inl.h"
 
 /*! \fn void MPCWalkgen::pseudoInverse(const Eigen::MatrixXd & X, Eigen::MatrixXd & Xinv, double eps=1e-8)
 * \brief Compute the pseudo inverse Xinv of the matrix X.
