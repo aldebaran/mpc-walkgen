@@ -82,17 +82,16 @@ namespace MPCWalkgen{
 }
 
 /*! \fn MPCWalkgen::QPGenerator::QPGenerator(QPPreview * preview, QPSolver * solver,
-					VelReference * velRef, QPPonderation * ponderation,
-					RigidBodySystem * robot, int N)
+*					VelReference * velRef, QPPonderation * ponderation,
+*					RigidBodySystem * robot, const MPCData * generalData)
 * \brief Constructor
-* \param N QP number of samplings
 */
 
-/*! \fn MPCWalkgen::QPGenerator::buildObjective(MPCSolution & result)
+/*! \fn MPCWalkgen::QPGenerator::buildObjective(const MPCSolution & result)
 * \brief Build matrix Q and vector p for the QP
 */
 
-/*! \fn MPCWalkgen::QPGenerator::buildConstraints(MPCSolution & result)
+/*! \fn MPCWalkgen::QPGenerator::buildConstraints(const MPCSolution & result)
 * \brief build matrix A and vectors BU, BL, XU, XL for the QP
 */
 
@@ -104,17 +103,13 @@ namespace MPCWalkgen{
 * \brief the current QP generate a solution in CoP position. for the interpolation, we must to convert the solution into CoM Jerk
 */
 
-/*! \fn MPCWalkgen::QPGenerator::NbPreviewSamplings(const int N)
-* \brief Setter to modify the QP number of samplings
-*/
-
-/*! \fn MPCWalkgen::QPGenerator::computeReferenceVector(MPCSolution & result)
+/*! \fn MPCWalkgen::QPGenerator::computeReferenceVector(const MPCSolution & result)
 * \brief Compute the reference vector (constant over the horizon)
-* \param
 */
 
-/*! \fn MPCWalkgen::QPGenerator::display(MPCSolution & result, const std::string & filename)
+/*! \fn MPCWalkgen::QPGenerator::display(const MPCSolution & result, const std::string & filename) const
 * \brief display some informations of the solution in a file (previewed CoM, CoP and feet and CoP constraints)
+* \param result   the solution
 * \param filename the file to display solution
 */
 
