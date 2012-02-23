@@ -30,20 +30,18 @@ namespace MPCWalkgen{
 			QPSolver(const int nbVarMax=DefaultNbVarMax_, const int nbCtrMax=DefaultNbCtrMax_);
 			virtual ~QPSolver();
 
-			QPMatrix & matrix(const QPMatrixType type);
-
 			void reset(const bool withConstantPart = true);
+			virtual void solve(MPCSolution & result)=0;
 
+		public:
+			QPMatrix & matrix(const QPMatrixType type);
 			void nbVar(const int nbVar);
 			void nbCtr(const int nbCtr);
-			inline int nbCtr(){return nbCtr_;}
+			inline int nbCtr() const {return nbCtr_;}
 			void addNbCtr(const int addCtr);
 
 			void varOrder(const Eigen::VectorXi & order);
 			void ctrOrder(const Eigen::VectorXi & order);
-
-			virtual void solve(MPCSolution & result)=0;
-
 
 		protected:
 			virtual bool resizeAll();
@@ -93,7 +91,7 @@ namespace MPCWalkgen{
 */
 
 /*! \fn MPCWalkgen::QPSolver::matrix(const QPMatrixType type);
-* \brief return a QPMatrix. Problem is defined by this form : min || x^t Q x + p^t x || , bl <= Ax <= bu , xl <= x <= xu
+* \brief return a QPMatrix.
 */
 
 /*! \fn MPCWalkgen::QPSolver::reset(const bool withConstantPart = true)
@@ -114,6 +112,13 @@ namespace MPCWalkgen{
 */
 
 /*! \fn MPCWalkgen::QPSolver::solve(MPCSolution & solution)
-* \brief Solve the problemù
+* \brief Solve the problem defined by this form : \f$ \left\{
+* \begin{array}{l}
+* 	min \| x^t Q x + p^t x \|\\
+* 	bl \leq Ax \leq bu, \\
+* 	xl \leq x \leq xu \\
+* \end{array}
+* \right.
+* \f$
 */
 #endif //QP_SOLVER
