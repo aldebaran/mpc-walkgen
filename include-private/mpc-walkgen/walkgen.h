@@ -32,21 +32,19 @@ namespace MPCWalkgen{
 		public:
 			Walkgen();
 			~Walkgen();
-			// TODO: clean this .h
+
 			virtual void init(const RobotData &robotData, const MPCData &mpcData);
 
-		    /// Update the stacks on-line
 			virtual const MPCSolution &online(double time, bool previewBodiesNextState=true);
 
 		    /// \name Accessors and mutators
 		    /// \{
-		    /// \brief Set the reference (velocity only as for now) through the Interface (slow)
 			void reference(double dx, double dy, double dyaw);
-
+		    /// \}
 
 		  public:
-			/// \name Accessors relative to the state of the robot.
-			/// \{
+		    /// \name accessors relative to the state of the robot.
+		    /// \{
 			virtual inline double comHeight() const;
 			virtual inline void comHeight (double d);
 
@@ -88,9 +86,10 @@ namespace MPCWalkgen{
 			{ generalData_.nbStepSSDS = d; }
 			/// \}
 
-			//accessors relative to the solver, should not be modified on line
 		  public:
-		    virtual inline double QPSamplingPeriod()const
+			/// \name accessors relative to the solver, costly when modified on line
+		    /// \{
+			virtual inline double QPSamplingPeriod()const
 			{return generalData_.QPSamplingPeriod;}
 			virtual void QPSamplingPeriod(double d);
 
@@ -105,6 +104,7 @@ namespace MPCWalkgen{
 			virtual inline int QPNbSamplings()const
 			{return generalData_.nbSamplesQP;}
 			virtual void QPNbSamplings(int d);
+		    /// \}
 
 		  private:
 			MPCData generalData_;
