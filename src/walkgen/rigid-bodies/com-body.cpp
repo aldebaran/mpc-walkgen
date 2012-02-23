@@ -158,9 +158,9 @@ void CoMBody::interpolateTrunkOrientation(MPCSolution & result,
 	for(int i=0; i < nbSampling; ++i){
 		double ti = (i+1)*generalData_->simSamplingPeriod;
 
-		result.state_vec[0].trunkYaw_(i) = interpolation_->p(factor, ti/T);
-		result.state_vec[1].trunkYaw_(i) = interpolation_->dp(factor, ti/T)/T;
-		result.state_vec[2].trunkYaw_(i) = interpolation_->ddp(factor, ti/T)/(T*T);
+		result.state_vec[0].trunkYaw_(i) = p(factor, ti/T);
+		result.state_vec[1].trunkYaw_(i) = dp(factor, ti/T)/T;
+		result.state_vec[2].trunkYaw_(i) = ddp(factor, ti/T)/(T*T);
 
 	}
 

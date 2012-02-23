@@ -29,6 +29,17 @@ namespace MPCWalkgen{
 
 	inline double pow5(double v);
 
+
+	/// \brief compute the value of the polynomial of degree 5 p(x)
+	inline double p(const Eigen::Matrix<double,6,1> & factor, double x);
+
+	/// \brief compute the value of the derivative of the polynomial of degree 5 p(x)
+	inline double dp(const Eigen::Matrix<double,6,1> & factor, double x);
+
+	/// \brief compute the value of the second derivative of the polynomial of degree 5 p(x)
+	inline double ddp(const Eigen::Matrix<double,6,1> & factor, double x);
+
+
 	// \brief Return true if the matrix given is triangular.
 	// \param [in] m
 	bool isUpperTriangular(const Eigen::MatrixXd & m);
