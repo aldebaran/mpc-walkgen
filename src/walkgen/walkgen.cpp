@@ -45,7 +45,7 @@ Walkgen::Walkgen()
 	,newCurrentSupport_()
 	,isNewCurrentSupport_(false)
 	,debug_(0x0)
-	,enableDisplay_(true)
+	,enableDisplay_(false)
 	,upperTimeLimitToUpdate_(0)
 	,upperTimeLimitToFeedback_(0) {
 
@@ -140,8 +140,7 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
 		currentTime_ = time;
 	}
 
-	if (time  > upperTimeLimitToFeedback_+EPS) {
-
+	if (time  > upperTimeLimitToFeedback_ + EPS) {
 		solver_->reset();
 
 		solution_.reset();
@@ -197,7 +196,7 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
 		}
 
 		orientPrw_->interpolate_trunk_orientation(robot_);
-	}
+		}
 
 	return solution_;
 }

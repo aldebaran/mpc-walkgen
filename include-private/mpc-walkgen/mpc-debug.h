@@ -30,7 +30,7 @@ namespace MPCWalkgen{
 			~MPCDebug();
 
 			void getTime(int id, bool start);
-			double computeInterval(int id, TimeUnit unit);
+			double computeInterval(int id, TimeUnit unit = us);
 			int nbIntervals(int id);
 
 			void reset(int id);

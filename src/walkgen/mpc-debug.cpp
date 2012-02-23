@@ -30,7 +30,7 @@ void MPCDebug::getTime(int id, bool start){
 }
 
 
-double MPCDebug::computeInterval(int id, TimeUnit unit=us){
+double MPCDebug::computeInterval(int id, TimeUnit unit){
 	if (enable_){
 		switch(unit){
 			case us:
