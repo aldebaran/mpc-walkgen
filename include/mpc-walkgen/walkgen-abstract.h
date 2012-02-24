@@ -43,6 +43,7 @@ namespace MPCWalkgen
 
 	    /*! \brief Call method to handle on-line generation of ZMP reference trajectory.
 	       @param[in] time : Current time.
+	       @param[in] previewBodiesNextState
 
 	       @return The associated solution
 	       If solution.newTraj is true, the method has succeeded.
