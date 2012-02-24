@@ -139,20 +139,4 @@ namespace MPCWalkgen{
 	};
 }
 
-/*! \fn MPCWalkgen::Walkgen::Walkgen(const MPCData & generalData, const RobotData & robotData)
-* \brief Constructor
-* \param generalData options of the mpc
-* \param robotData   caracteritics of the robot
-*/
-
-/*! \fn MPCWalkgen::Walkgen::init(const Eigen::Vector3d & leftFootPosition, const Eigen::Vector3d & rightFootPosition)
-* \brief Initialize the algorithm
-* \param leftFootPosition position of the left foot in absolute coordinates
-* \param rightFootPosition position of the right foot in absolute coordinates
-*/
-
-/*! \fn const MPCSolution & MPCWalkgen::Walkgen::online(double time)
-* \brief Compute one iteration of the algorithm and return the solution
-*/
-
 #endif //WALKGEN
