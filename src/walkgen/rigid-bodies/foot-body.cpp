@@ -156,9 +156,9 @@ void FootBody::computeFootInterpolationByPolynomial(MPCSolution & result, Axis a
 			for(int i=0;i<nbSampling;++i){
 				double ti = (i+1)*generalData_->simSamplingPeriod;
 
-				FootTrajState(i) = interpolation_->p(factor, ti/T);
-				FootTrajVel(i)   = interpolation_->dp(factor, ti/T)/T;
-				FootTrajAcc(i)   = interpolation_->ddp(factor, ti/T)/(T*T);
+				FootTrajState(i) = p(factor, ti/T);
+				FootTrajVel(i)   = dp(factor, ti/T)/T;
+				FootTrajAcc(i)   = ddp(factor, ti/T)/(T*T);
 
 			}
 		}

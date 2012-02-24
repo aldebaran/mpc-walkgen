@@ -1,10 +1,7 @@
 #include <mpc-walkgen/interpolation.h>
 
-
-
 using namespace MPCWalkgen;
 using namespace Eigen;
-
 
 Interpolation::Interpolation()
 {

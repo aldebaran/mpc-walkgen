@@ -34,24 +34,16 @@ namespace MPCWalkgen
 
 	  virtual ~WalkgenAbstract() =0;
 
-	  //TODO: clean
-	    /*!  \brief Set the ModulationSupportCoefficient.*/
-	    ///virtual void SetModulationSupportCoefficient(double) =0;
-
-	    /*! \name Call method to handle on-line generation of ZMP reference trajectory.
-	      @{*/
-
-	    /*! Methods for on-line generation.
-	      @param[in] InitLeftFootAbsolutePosition: The initial position of the left foot.
-	      @param[in] InitRightFootAbsolutePosition: The initial position of the right foot.
+	    /*! \brief Initialize the system
+	      @param[in] robotData: data relative to the robot
+	      @param[in] mpcData: data relative to the qp solver
 	     */
-
 	    virtual void init(const RobotData &robotData, const MPCData &mpcData) = 0;
 
 
-	    /// \brief Update the stacks on-line
-	    /* ! \brief Method to change to update on line the queues necessary of the system.
+	    /*! \brief Call method to handle on-line generation of ZMP reference trajectory.
 	       @param[in] time : Current time.
+	       @param[in] previewBodiesNextState
 
 	       @return The associated solution
 	       If solution.newTraj is true, the method has succeeded.
@@ -60,15 +52,16 @@ namespace MPCWalkgen
 
 	    /// \name Accessors and mutators
 	    /// \{
-	    /// \brief Set the reference (velocity only as for now) through the Interface (slow)
+	    /// \brief Set the reference (velocity only as for now)
 	    virtual void reference(double dx, double dy, double dyaw) = 0;
+	    /// \}
 
-
-		//accessors relative to the state of the robot.
 	  public:
-	    /* ! \brief Returns the Com Height. */
+	    /// \name accessors relative to the state of the robot.
+	    /// \{
+	    /*! \brief Returns the Com Height. */
 		virtual double comHeight()const=0;
-	    /* ! \brief Sets the Com Height. */
+	    /*! \brief Sets the Com Height. */
 		virtual void comHeight(double d)=0;
 
 		virtual double freeFlyingFootMaxHeight() const = 0;
@@ -79,9 +72,11 @@ namespace MPCWalkgen
 
 		virtual const BodyState & bodyState(BodyType body)const=0;
 		virtual void bodyState(BodyType body, const BodyState & state)=0;
+	    /// \}
 
 	  public:
-		//accessors relative to the solver, modifiable on line
+		/// \name accessors relative to the solver, modifiable on line
+	    /// \{
 		virtual double stepPeriod()const=0;
 		virtual void stepPeriod(double d)=0;
 
@@ -93,9 +88,11 @@ namespace MPCWalkgen
 
 		virtual int nbStepSSDS()const=0;
 		virtual void nbStepSSDS(int d)=0;
+	    /// \}
 
-		//accessors relative to the solver, should not be modified on line
 	  public:
+		/// \name accessors relative to the solver, costly when modified on line
+	    /// \{
 		virtual double QPSamplingPeriod()const=0;
 		virtual void QPSamplingPeriod(double d)=0;
 
@@ -107,6 +104,7 @@ namespace MPCWalkgen
 
 		virtual int QPNbSamplings()const=0;
 		virtual void QPNbSamplings(int d)=0;
+	    /// \}
   };
 
   /*! Factory of Pattern generator interface. */

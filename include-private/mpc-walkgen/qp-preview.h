@@ -61,18 +61,19 @@ namespace MPCWalkgen{
 	};
 }
 
-/*! \fn MPCWalkgen::QPPreview::QPPreview(VelReference * velRef, RigidBodySystem * robot, GeneralData * generalData)
+/*! \fn MPCWalkgen::QPPreview::QPPreview(VelReference * velRef, RigidBodySystem * robot, const MPCData * generalData)
 * \brief Constructor
 */
 
 /*! \fn void MPCWalkgen::QPPreview::previewSupportStates(const double currentTime,
-					const double FirstIterationDynamicsDuration, MPCSolution & result, SupportState & CurrentSupport)
+					const double FirstIterationDynamicsDuration,  MPCSolution & result)
 * \brief Preview support states for the defined horizon
-* \param currentTime current time (synchronized with QP sampling time)
-* \param FirstIterationDynamicsDuration Duration of the first iteration
+* \param [in] currentTime current time (synchronized with QP sampling time)
+* \param [in] FirstIterationDynamicsDuration Duration of the first iteration
+* \param [out] result
 */
 
-/*! \fn SelectionMatrix & MPCWalkgen::QPPreview::state()
+/*! \fn SelectionMatrix & MPCWalkgen::QPPreview::selectionMatrices()
 * \brief Return computed selection matrices
 */
 
