@@ -43,7 +43,7 @@ namespace MPCWalkgen{
 	};
 }
 
-/*! \fn MPCWalkgen::Interpolation::Interpolation(GeneralData * generalData, RigidBodySystem * robot)
+/*! \fn MPCWalkgen::Interpolation::Interpolation()
 * \brief Constructor
 */
 
