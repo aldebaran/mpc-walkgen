@@ -32,16 +32,18 @@ namespace MPCWalkgen{
 
 			~QPPreview();
 
+			void previewSamplingInstants(double firstSamplingPeriod, MPCSolution &solution);
+
 			void previewSupportStates(const double currentTime,
-					const double FirstIterationDynamicsDuration, MPCSolution & result);
+					const double FirstIterationDynamicsDuration, MPCSolution &result);
 
-			void computeRotationMatrix(MPCSolution & result);
+			void computeRotationMatrix(MPCSolution &result);
 
-			inline SelectionMatrices & selectionMatrices(){return selectionMatrices_;}
+			inline SelectionMatrices &selectionMatrices(){return selectionMatrices_;}
 
-			inline const Eigen::MatrixXd & rotationMatrix() const{return rotationMatrix_;}
+			inline const Eigen::MatrixXd &rotationMatrix() const{return rotationMatrix_;}
 
-			inline const Eigen::MatrixXd & rotationMatrix2() const{return rotationMatrix2_;}
+			inline const Eigen::MatrixXd &rotationMatrix2() const{return rotationMatrix2_;}
 
 		private:
 

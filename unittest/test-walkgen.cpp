@@ -97,7 +97,7 @@ int main() {
 	robotData.CoPRightSSHull.resize(nbVertCoP);
 	robotData.CoPLeftDSHull.resize(nbVertCoP);
 	robotData.CoPRightDSHull.resize(nbVertCoP);
-	for(int i=0;i<nbVertCoP;++i){
+	for (int i = 0; i < nbVertCoP; ++i) {
 		robotData.CoPLeftSSHull.x(i) = DefaultCoPSSEdgesX[i];
 		robotData.CoPLeftSSHull.y(i) = DefaultCoPSSEdgesY[i];
 		robotData.CoPLeftDSHull.x(i) = DefaultCoPDSEdgesX[i];

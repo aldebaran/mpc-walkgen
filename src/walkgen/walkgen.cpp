@@ -141,40 +141,41 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
 	}
 
 	if (time  > upperTimeLimitToFeedback_ + EPS) {
+		// UPDATE INTERNAL DATA:
+		// ---------------------
 		solver_->reset();
-
 		solution_.reset();
 		solution_.newTraj = true;
-
 		velRef_ = newVelRef_;
 		if (isNewCurrentSupport_){
 			robot_->currentSupport(newCurrentSupport_);
 			isNewCurrentSupport_ = false;
 		}
 
-		if (robot_->currentSupport().phase == SS && robot_->currentSupport().nbStepsLeft == 0){
-			velRef_.local.x=0;
-			velRef_.local.y=0;
-			velRef_.local.yaw=0;
+		if (robot_->currentSupport().phase == SS && robot_->currentSupport().nbStepsLeft == 0) {
+			velRef_.local.x = 0;
+			velRef_.local.y = 0;
+			velRef_.local.yaw = 0;
 		}
-		if (velRef_.local.yaw==0 && velRef_.local.x==0 && velRef_.local.y==0){
+		if (velRef_.local.yaw == 0 && velRef_.local.x == 0 && velRef_.local.y == 0) {
 			ponderation_.activePonderation = 1;
-		}else{
+		} else {
 			ponderation_.activePonderation = 0;
 		}
 
 		double firstSamplingPeriod = upperTimeLimitToUpdate_ - upperTimeLimitToFeedback_;
 		upperTimeLimitToFeedback_ += generalData_.MPCSamplingPeriod;
-
 		robot_->firstSamplingPeriod(firstSamplingPeriod);
+
+		// PREVIEW:
+		// --------
+		preview_->previewSamplingInstants(firstSamplingPeriod, solution_);
 
 		preview_->previewSupportStates(currentTime_, firstSamplingPeriod, solution_);
 
-		orientPrw_->preview_orientations( currentTime_, velRef_,
-			generalData_.stepPeriod,
-			robot_->body(LEFT_FOOT)->state(), robot_->body(RIGHT_FOOT)->state(),
-			solution_ );
-
+		orientPrw_->preview_orientations( currentTime_, velRef_, generalData_.stepPeriod,
+				robot_->body(LEFT_FOOT)->state(), robot_->body(RIGHT_FOOT)->state(),
+				solution_ );
 		preview_->computeRotationMatrix(solution_);
 
 		generator_->computeReferenceVector(solution_);
@@ -196,7 +197,7 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
 		}
 
 		orientPrw_->interpolate_trunk_orientation(robot_);
-		}
+	}
 
 	return solution_;
 }

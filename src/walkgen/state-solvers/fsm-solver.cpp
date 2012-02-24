@@ -21,7 +21,7 @@ void FSMSolver::setSupportState(double time, int pi, SupportState & Support) {
 	// Update time limit for double support phase
 	if (ReferenceGiven && Support.phase == DS && (Support.timeLimit-time+EPS) > generalData_->DSSSPeriod) {
 		//Support.TimeLimit = time+DSSSPeriod_-T_/10.0;
-		Support.timeLimit = time+generalData_->DSSSPeriod;
+		Support.timeLimit = time + generalData_->DSSSPeriod;
 		Support.nbStepsLeft = generalData_->nbStepSSDS;
 	}
 
@@ -30,7 +30,7 @@ void FSMSolver::setSupportState(double time, int pi, SupportState & Support) {
 		//SS->DS
 		if (Support.phase == SS && !ReferenceGiven && Support.nbStepsLeft == 0){
 			Support.phase = DS;
-			Support.timeLimit = time+pi*generalData_->QPSamplingPeriod+generalData_->DSPeriod;
+			Support.timeLimit = time + pi * generalData_->QPSamplingPeriod+generalData_->DSPeriod;
 			Support.stateChanged = true;
 			Support.nbInstants = 0;
 			//DS->SS

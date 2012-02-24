@@ -248,6 +248,9 @@ namespace MPCWalkgen
 		/// \brief True if a new trajectory is computed in online loop
 		bool newTraj;
 
+		/// \brief Sampling times relative to the current time
+		std::vector<double> samplingInstants_vec;
+
 		std::vector<SupportState> supportStates_vec;
 
 		std::vector<double> supportOrientations_vec;//TODO: supportOrientations_vec

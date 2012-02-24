@@ -13,14 +13,25 @@ QPPreview::QPPreview(VelReference * velRef, RigidBodySystem * robot, const MPCDa
 	,generalData_(generalData)
 	,selectionMatrices_(*generalData)
 	,rotationMatrix_(2*generalData_->nbSamplesQP, 2*generalData_->nbSamplesQP)
-	,rotationMatrix2_(2*generalData_->nbSamplesQP, 2*generalData_->nbSamplesQP)
-{
+	,rotationMatrix2_(2*generalData_->nbSamplesQP, 2*generalData_->nbSamplesQP) {
+
 	statesolver_ = new FSMSolver(velRef, generalData);
 }
 
 QPPreview::~QPPreview()
 {
 	delete statesolver_;
+}
+
+void QPPreview::previewSamplingInstants(double firstSamplingPeriod, MPCSolution &solution) {
+
+	solution.samplingInstants_vec.resize(generalData_->nbSamplesQP);
+	// As for now, only the first sampling period varies
+	solution.samplingInstants_vec[0] = firstSamplingPeriod;
+	for (int prwSample = 1; prwSample < generalData_->nbSamplesQP; prwSample++) {
+		solution.samplingInstants_vec[prwSample] += solution.samplingInstants_vec[prwSample - 1] +
+				generalData_->QPSamplingPeriod;
+	}
 }
 
 void QPPreview::previewSupportStates(const double currentTime,
@@ -88,12 +99,12 @@ void QPPreview::previewSupportStates(const double currentTime,
 	buildSelectionMatrices(result);
 }
 
-void QPPreview::computeRotationMatrix(MPCSolution & result){
+void QPPreview::computeRotationMatrix(MPCSolution &result){
 	int N = generalData_->nbSamplesQP;
 	rotationMatrix_.fill(0);
 	rotationMatrix2_.fill(0);
 
-	for( int i=0; i<N; ++i ){
+	for (int i=0; i<N; ++i) {
 		double cosYaw = cos(result.supportStates_vec[i+1].yaw);
 		double sinYaw = sin(result.supportStates_vec[i+1].yaw);
 		rotationMatrix_(i  ,i  ) =  cosYaw;
