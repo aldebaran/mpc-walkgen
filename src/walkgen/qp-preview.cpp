@@ -23,26 +23,29 @@ QPPreview::~QPPreview()
 	delete statesolver_;
 }
 
-void QPPreview::previewSamplingInstants(double firstSamplingPeriod, MPCSolution &solution) {
+void QPPreview::previewSamplingTimes(double firstSamplingPeriod, MPCSolution &solution) {
 
-	solution.samplingInstants_vec.resize(generalData_->nbSamplesQP);
+	solution.samplingTimes_vec.resize(generalData_->nbSamplesQP + 1);
+	solution.samplingTimes_vec.clear();
 	// As for now, only the first sampling period varies
-	solution.samplingInstants_vec[0] = firstSamplingPeriod;
-	for (int prwSample = 1; prwSample < generalData_->nbSamplesQP; prwSample++) {
-		solution.samplingInstants_vec[prwSample] += solution.samplingInstants_vec[prwSample - 1] +
+	solution.samplingTimes_vec[0] = 0;//This is the current time
+	solution.samplingTimes_vec[1] = generalData_->QPSamplingPeriod;//firstSamplingPeriod;
+	for (int prwSample = 2; prwSample < generalData_->nbSamplesQP + 1; prwSample++) {
+		solution.samplingTimes_vec[prwSample] += solution.samplingTimes_vec[prwSample - 1] +
 				generalData_->QPSamplingPeriod;
 	}
+
 }
 
 void QPPreview::previewSupportStates(const double currentTime,
-		const double firstSamplingPeriod, MPCSolution & result){
+		const double firstSamplingPeriod, MPCSolution & solution){
 
 	const BodyState * foot;
 	SupportState & currentSupport = robot_->currentSupport();
 
 	// SET CURRENT SUPPORT STATE:
 	// --------------------------
-	statesolver_->setSupportState(currentTime, 0, currentSupport);
+	statesolver_->setSupportState(currentTime, 0, solution.samplingTimes_vec, currentSupport);
 	currentSupport.inTransitionalDS = false;
 	if (currentSupport.stateChanged) {
 		if (currentSupport.foot == LEFT) {
@@ -55,18 +58,18 @@ void QPPreview::previewSupportStates(const double currentTime,
 		currentSupport.yaw = foot->yaw(0);
 		currentSupport.startTime = currentTime;
 	}
-	result.supportStates_vec.push_back(currentSupport);
+	solution.supportStates_vec.push_back(currentSupport);
 
 	// PREVIEW SUPPORT STATES:
 	// -----------------------
 	// initialize the previewed support state before previewing
 	SupportState previewedSupport = currentSupport;
 	previewedSupport.stepNumber = 0;
-	for (int pi = 1; pi <= generalData_->nbSamplesQP; pi++) {
-		statesolver_->setSupportState(currentTime, pi, previewedSupport);
+	for (int sample = 1; sample <= generalData_->nbSamplesQP; sample++) {
+		statesolver_->setSupportState(currentTime, sample, solution.samplingTimes_vec, previewedSupport);
 		previewedSupport.inTransitionalDS = false;
 		if (previewedSupport.stateChanged) {
-			if (pi == 1) {// foot down
+			if (sample == 1) {// foot down
 				if (previewedSupport.foot == LEFT) {
 					foot = &robot_->body(LEFT_FOOT)->state();
 				} else {
@@ -75,7 +78,7 @@ void QPPreview::previewSupportStates(const double currentTime,
 				previewedSupport.x = foot->x(0);
 				previewedSupport.y = foot->y(0);
 				previewedSupport.yaw = foot->yaw(0);
-				previewedSupport.startTime = currentTime+pi*generalData_->QPSamplingPeriod;
+				previewedSupport.startTime = currentTime + solution.samplingTimes_vec[sample];
 				if (currentSupport.phase == SS && previewedSupport.phase == SS) {
 					previewedSupport.inTransitionalDS = true;
 				}
@@ -85,7 +88,7 @@ void QPPreview::previewSupportStates(const double currentTime,
 				previewedSupport.y = 0.0;
 			}
 		}
-		if (pi == 1) {
+		if (sample == 1) {
 			previewedSupport.previousSamplingPeriod = firstSamplingPeriod;
 			previewedSupport.sampleWeight = firstSamplingPeriod/generalData_->QPSamplingPeriod;
 		} else {
@@ -93,10 +96,10 @@ void QPPreview::previewSupportStates(const double currentTime,
 			previewedSupport.sampleWeight = 1;
 		}
 
-		result.supportStates_vec.push_back(previewedSupport);
+		solution.supportStates_vec.push_back(previewedSupport);
 	}
 
-	buildSelectionMatrices(result);
+	buildSelectionMatrices(solution);
 }
 
 void QPPreview::computeRotationMatrix(MPCSolution &result){

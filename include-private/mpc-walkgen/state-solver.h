@@ -22,7 +22,7 @@ namespace MPCWalkgen{
 			StateSolver(VelReference * velRef, const MPCData * generalData);
 			virtual ~StateSolver();
 
-			virtual void setSupportState(double time, int pi, SupportState & Support)=0;
+			virtual void setSupportState(double time, int pi, const std::vector<double> &samplingTimes_vec, SupportState & Support)=0;
 
 		protected:
 			VelReference * velRef_;

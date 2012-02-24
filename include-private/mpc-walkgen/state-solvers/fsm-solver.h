@@ -23,7 +23,7 @@ namespace MPCWalkgen{
 			FSMSolver(VelReference * velRef, const MPCData * generalData);
 			virtual ~FSMSolver();
 
-			virtual void setSupportState(double time, int pi, SupportState & Support);
+			virtual void setSupportState(double time, int pi, const std::vector<double> &samplingTimes_vec, SupportState & Support);
 	};
 
 }

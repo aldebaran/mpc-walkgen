@@ -169,7 +169,7 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
 
 		// PREVIEW:
 		// --------
-		preview_->previewSamplingInstants(firstSamplingPeriod, solution_);
+		preview_->previewSamplingTimes(firstSamplingPeriod, solution_);
 
 		preview_->previewSupportStates(currentTime_, firstSamplingPeriod, solution_);
 

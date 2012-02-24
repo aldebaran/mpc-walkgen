@@ -32,7 +32,7 @@ namespace MPCWalkgen{
 
 			~QPPreview();
 
-			void previewSamplingInstants(double firstSamplingPeriod, MPCSolution &solution);
+			void previewSamplingTimes(double firstSamplingPeriod, MPCSolution &solution);
 
 			void previewSupportStates(const double currentTime,
 					const double FirstIterationDynamicsDuration, MPCSolution &result);
