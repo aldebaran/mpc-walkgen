@@ -45,7 +45,7 @@ Walkgen::Walkgen()
 	,newCurrentSupport_()
 	,isNewCurrentSupport_(false)
 	,debug_(0x0)
-	,enableDisplay_(true)
+	,enableDisplay_(false)
 	,upperTimeLimitToUpdate_(0)
 	,upperTimeLimitToFeedback_(0) {
 
