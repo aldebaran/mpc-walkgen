@@ -72,15 +72,16 @@ namespace MPCWalkgen{
 
 }
 
-/*! \fn MPCWalkgen::RigidBodySystem::RigidBodySystem(GeneralData * generalData)
+/*! \fn MPCWalkgen::RigidBodySystem::RigidBodySystem(const MPCData *generalData
+					, const Interpolation *interpolation)
 * \brief Constructor
 */
 
-/*! \fn MPCWalkgen::RigidBodySystem::computeDynamicMatrix()
+/*! \fn MPCWalkgen::RigidBodySystem::computeDynamics()
 * \brief Compute dynamic matrices of the rigid body system
 */
 
-/*! \fn void MPCWalkgen::RigidBodySystem::updateBodiesState(MPCSolution & solution)
+/*! \fn void MPCWalkgen::RigidBodySystem::updateBodyState(const MPCSolution & solution)
 * \brief Update state of bodies
 * \param solution [out] the solution
 */
