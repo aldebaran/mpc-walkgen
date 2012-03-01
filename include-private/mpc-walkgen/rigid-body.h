@@ -32,16 +32,16 @@ namespace MPCWalkgen{
 
 			inline void state(const BodyState & s){state_=s;}
 
-			const DynamicMatrix & dynamic(DynamicMatrixType type) const;
+			const DynamicMatrix & dynamics(DynamicMatrixType type) const;
 
-			void firstSamplingPeriod(double firstSamplingPeriod);
+			void setDynamics(double firstSamplingPeriod);
 
 			void computeDynamics();
 
 			virtual void interpolate(MPCSolution & result, double currentTime, const VelReference & velRef)=0;
 
 		protected:
-			virtual void computeOneDynamicMatrices(DynamicMatrix & dyn,
+			virtual void computeDynamicsMatrices(DynamicMatrix & dyn,
 					double S, double T, int N, DynamicMatrixType type)=0;
 
 

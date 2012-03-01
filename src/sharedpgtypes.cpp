@@ -44,7 +44,7 @@ void MPCSolution::reset(){
   MPCData::MPCData()
   :QPSamplingPeriod(0.1)
   ,MPCSamplingPeriod(0.005)
-  ,simSamplingPeriod(0.005)
+  ,actuationSamplingPeriod(0.005)
   ,nbSamplesQP(16)
   ,stepPeriod(0.8)
   ,DSPeriod(1e9)
@@ -84,7 +84,7 @@ void MPCSolution::reset(){
   }
 
   int MPCData::nbIterationSimulation() const{
-	  return static_cast<int> (round(MPCSamplingPeriod / simSamplingPeriod) );
+	  return static_cast<int> (round(MPCSamplingPeriod / actuationSamplingPeriod) );
   }
 
   QPPonderation::QPPonderation(int nb)

@@ -24,7 +24,7 @@ void FootBody::interpolate(MPCSolution & result, double currentTime, const VelRe
 
 		int nbStepsPreviewed = result.supportStates_vec.back().stepNumber;
 
-		Txy = result.supportStates_vec[0].startTime+generalData_->stepPeriod-currentTime;
+		Txy = result.supportStates_vec[0].startTime + generalData_->stepPeriod - currentTime;//TODO: Not simply generalData_->stepPeriod
 
 		if (result.supportStates_vec[1].inTransitionalDS){
 			nextSupportFootState.x(0)=state_.x(0);
@@ -34,8 +34,8 @@ void FootBody::interpolate(MPCSolution & result, double currentTime, const VelRe
 			int nbPreviewedSteps = result.supportStates_vec.back().stepNumber;
 
 			if (nbPreviewedSteps>0){
-				nextSupportFootState.x(0)=result.solution(2*generalData_->nbSamplesQP);
-				nextSupportFootState.y(0)=result.solution(2*generalData_->nbSamplesQP+nbStepsPreviewed);
+				nextSupportFootState.x(0)=result.qpSolution(2*generalData_->nbSamplesQP);
+				nextSupportFootState.y(0)=result.qpSolution(2*generalData_->nbSamplesQP+nbStepsPreviewed);
 				nextSupportFootState.yaw(0)=result.supportOrientations_vec[0];
 			}else{
 				nextSupportFootState.x(0)=state_.x(0);
@@ -44,9 +44,9 @@ void FootBody::interpolate(MPCSolution & result, double currentTime, const VelRe
 			}
 		}
 
-		if (Txy-generalData_->stepPeriod/2>generalData_->simSamplingPeriod){
+		if (Txy-generalData_->stepPeriod/2>generalData_->actuationSamplingPeriod){
 			nextSupportFootState.z(0) = robotData_->freeFlyingFootMaxHeight;
-			Tz = result.supportStates_vec[0].startTime+generalData_->stepPeriod/2-currentTime;
+			Tz = result.supportStates_vec[0].startTime + generalData_->stepPeriod/2 - currentTime;
 		}else{
 			Tz = Txy;
 		}
@@ -68,7 +68,7 @@ void FootBody::interpolate(MPCSolution & result, double currentTime, const VelRe
 
 }
 
-void FootBody::computeOneDynamicMatrices(DynamicMatrix & dyn,
+void FootBody::computeDynamicsMatrices(DynamicMatrix & dyn,
 double /*S*/, double /*T*/, int N, DynamicMatrixType type){
 	dyn.S.setZero(N,3);
 	dyn.U.setZero(N,N);
@@ -154,7 +154,7 @@ void FootBody::computeFootInterpolationByPolynomial(MPCSolution & result, Axis a
 			Eigen::Matrix<double,6,1> factor;
 			interpolation_->computePolynomialNormalisedFactors(factor, FootCurrentState, nextSupportFootState, T);
 			for(int i=0;i<nbSampling;++i){
-				double ti = (i+1)*generalData_->simSamplingPeriod;
+				double ti = (i+1)*generalData_->actuationSamplingPeriod;
 
 				FootTrajState(i) = p(factor, ti/T);
 				FootTrajVel(i)   = dp(factor, ti/T)/T;

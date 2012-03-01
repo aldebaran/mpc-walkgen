@@ -41,13 +41,13 @@ void LSSOLSolver::solve(MPCSolution & result){
 	bu_.segment(nbVar_, nbCtr_) = vectorBU_().block(0,0,nbCtr_,1);
 
 	if (result.useWarmStart){
-		result.solution = result.initialSolution;
+		result.qpSolution = result.initialSolution;
 		result.constraints = result.initialConstraints;
 	}else{
-		if (result.solution.rows()!=nbVar_){
-			result.solution.setZero(nbVar_);
+		if (result.qpSolution.rows()!=nbVar_){
+			result.qpSolution.setZero(nbVar_);
 		}else{
-			result.solution.fill(0);
+			result.qpSolution.fill(0);
 		}
 		if (result.constraints.rows()!=nbVar_ + nbCtr_){
 			result.constraints.setZero(nbVar_ + nbCtr_);
@@ -74,7 +74,7 @@ void LSSOLSolver::solve(MPCSolution & result){
 	lssol_(&nbVar_, &nbVar_,
 			&nbCtr_, &nbCtr_, &nbVar_,
 			matrixA_.dense().data(), bl_.data(), bu_.data(),vectorP_().data(),
-			result.constraints.data(), kx_.data(), result.solution.data(),
+			result.constraints.data(), kx_.data(), result.qpSolution.data(),
 			matrixQ_.cholesky().data(), bb_.data(), &inform_, &iter_, &obj_, lambda_.data(),
 			iwar_.data(), &leniw_, war_.data(), &lenw_);
 

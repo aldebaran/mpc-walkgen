@@ -29,9 +29,9 @@ void QPPreview::previewSamplingTimes(double firstSamplingPeriod, MPCSolution &so
 	solution.samplingTimes_vec.clear();
 	// As for now, only the first sampling period varies
 	solution.samplingTimes_vec[0] = 0;//This is the current time
-	solution.samplingTimes_vec[1] = generalData_->QPSamplingPeriod;//firstSamplingPeriod;
-	for (int prwSample = 2; prwSample < generalData_->nbSamplesQP + 1; prwSample++) {
-		solution.samplingTimes_vec[prwSample] += solution.samplingTimes_vec[prwSample - 1] +
+	solution.samplingTimes_vec[1] = solution.samplingTimes_vec[0] + generalData_->QPSamplingPeriod;//firstSamplingPeriod;
+	for (int sample = 2; sample < generalData_->nbSamplesQP + 1; sample++) {
+		solution.samplingTimes_vec[sample] += solution.samplingTimes_vec[sample - 1] +
 				generalData_->QPSamplingPeriod;
 	}
 
@@ -67,9 +67,10 @@ void QPPreview::previewSupportStates(const double currentTime,
 	previewedSupport.stepNumber = 0;
 	for (int sample = 1; sample <= generalData_->nbSamplesQP; sample++) {
 		statesolver_->setSupportState(currentTime, sample, solution.samplingTimes_vec, previewedSupport);
+		// special treatment for the first instant of transitionalDS
 		previewedSupport.inTransitionalDS = false;
 		if (previewedSupport.stateChanged) {
-			if (sample == 1) {// foot down
+			if (sample == 1) {// robot is already in ds phase
 				if (previewedSupport.foot == LEFT) {
 					foot = &robot_->body(LEFT_FOOT)->state();
 				} else {

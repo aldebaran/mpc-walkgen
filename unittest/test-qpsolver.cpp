@@ -87,6 +87,6 @@ int main ()
 	Vector2d expectedResult;
 	expectedResult << 2./3., 4./3.;
 
-	bool success = ((result.solution - expectedResult).norm() < 1e-9);
+	bool success = ((result.qpSolution - expectedResult).norm() < 1e-9);
 	return (success ? 0 : 1);
 }

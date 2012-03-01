@@ -26,11 +26,11 @@ void FSMSolver::setSupportState(double time, int sample, const std::vector<doubl
 	}
 
 	//FSM
-	if (time + EPS + samplingTimes_vec[sample] >= support.timeLimit){
+	if (time + EPS + samplingTimes_vec[sample] >= support.timeLimit) {
 		//SS->DS
 		if (support.phase == SS && !ReferenceGiven && support.nbStepsLeft == 0){
 			support.phase = DS;
-			support.timeLimit = time + samplingTimes_vec[sample]+generalData_->DSPeriod;
+			support.timeLimit = time + samplingTimes_vec[sample] + generalData_->DSPeriod;
 			support.stateChanged = true;
 			support.nbInstants = 0;
 			//DS->SS

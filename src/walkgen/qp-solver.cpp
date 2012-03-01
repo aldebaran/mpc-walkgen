@@ -140,11 +140,11 @@ void QPSolver::reorderInitialSolution(MPCSolution & result){
 }
 
 void QPSolver::reorderSolution(MPCSolution & result){
-	VectorXd solution = result.solution;
+	VectorXd solution = result.qpSolution;
 	VectorXi constraints = result.constraints;
 
 	for(int i=0;i<nbVar_;++i){
-		result.solution(i)=solution(varOrder_(i));
+		result.qpSolution(i)=solution(varOrder_(i));
 		result.constraints(i)=constraints(varOrder_(i));
 	}
 	for(int i=0;i<nbCtr_;++i){

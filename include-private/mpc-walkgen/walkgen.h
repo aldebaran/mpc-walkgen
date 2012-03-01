@@ -98,7 +98,7 @@ namespace MPCWalkgen{
 			virtual void mpcSamplingPeriod(double d);
 
 			virtual inline double simSamplingPeriod()const
-			{return generalData_.simSamplingPeriod;}
+			{return generalData_.actuationSamplingPeriod;}
 			virtual void simSamplingPeriod(double d);
 
 			virtual inline int QPNbSamplings()const

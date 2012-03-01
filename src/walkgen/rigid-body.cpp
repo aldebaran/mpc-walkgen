@@ -13,7 +13,7 @@ RigidBody::RigidBody(const MPCData * generalData,
 RigidBody::~RigidBody()
 {}
 
-const DynamicMatrix & RigidBody::dynamic(DynamicMatrixType type) const{
+const DynamicMatrix & RigidBody::dynamics(DynamicMatrixType type) const{
 	switch (type){
 		case posDynamic:
 			return pos_vec_[matrixNumber_];
@@ -36,8 +36,7 @@ const DynamicMatrix & RigidBody::dynamic(DynamicMatrixType type) const{
 	}
 }
 
-//TODO: firstSamplingPeriod
-void RigidBody::firstSamplingPeriod(double firstSamplingPeriod){
+void RigidBody::setDynamics(double firstSamplingPeriod){
 	matrixNumber_ = (int)round(firstSamplingPeriod / generalData_->MPCSamplingPeriod)-1;
 }
 
@@ -53,32 +52,33 @@ void RigidBody::computeDynamics(){
 
 	for (int k=0; k<vecSize; ++k) {
 		double S = generalData_->MPCSamplingPeriod * (k+1);
-		computeOneDynamicMatrices(pos_vec_[k], S,
+		computeDynamicsMatrices(pos_vec_[k], S,
 				generalData_->QPSamplingPeriod, generalData_->nbSamplesQP, posDynamic);
-		computeOneDynamicMatrices(vel_vec_[k], S,
+		computeDynamicsMatrices(vel_vec_[k], S,
 				generalData_->QPSamplingPeriod, generalData_->nbSamplesQP, velDynamic);
-		computeOneDynamicMatrices(acc_vec_[k], S,
+		computeDynamicsMatrices(acc_vec_[k], S,
 				generalData_->QPSamplingPeriod, generalData_->nbSamplesQP, accDynamic);
-		computeOneDynamicMatrices(jerk_vec_[k], S,
+		computeDynamicsMatrices(jerk_vec_[k], S,
 				generalData_->QPSamplingPeriod, generalData_->nbSamplesQP, jerkDynamic);
-		computeOneDynamicMatrices(cop_vec_[k], S,
+		computeDynamicsMatrices(cop_vec_[k], S,
 				generalData_->QPSamplingPeriod, generalData_->nbSamplesQP, copDynamic);
 
 	}
 
 	int nbSamplingSim = generalData_->nbIterationSimulation();
-	computeOneDynamicMatrices(posInterpol_, generalData_->simSamplingPeriod,
-			generalData_->simSamplingPeriod, nbSamplingSim, posDynamic);
+	computeDynamicsMatrices(posInterpol_, generalData_->actuationSamplingPeriod,
+			generalData_->actuationSamplingPeriod, nbSamplingSim, posDynamic);
 
-	computeOneDynamicMatrices(velInterpol_, generalData_->simSamplingPeriod,
-			generalData_->simSamplingPeriod, nbSamplingSim, velDynamic);
+	computeDynamicsMatrices(velInterpol_, generalData_->actuationSamplingPeriod,
+			generalData_->actuationSamplingPeriod, nbSamplingSim, velDynamic);
 
-	computeOneDynamicMatrices(accInterpol_, generalData_->simSamplingPeriod,
-			generalData_->simSamplingPeriod, nbSamplingSim, accDynamic);
+	computeDynamicsMatrices(accInterpol_, generalData_->actuationSamplingPeriod,
+			generalData_->actuationSamplingPeriod, nbSamplingSim, accDynamic);
 
-	computeOneDynamicMatrices(copInterpol_, generalData_->simSamplingPeriod,
-			generalData_->simSamplingPeriod, nbSamplingSim, copDynamic);
-
-
-
+	computeDynamicsMatrices(copInterpol_, generalData_->actuationSamplingPeriod,
+			generalData_->actuationSamplingPeriod, nbSamplingSim, copDynamic);
 }
+
+//void RigidBody::simulateForward() {
+//
+//}

@@ -79,9 +79,9 @@ void RigidBodySystem::updateBodyState(const MPCSolution & solution){
 }
 
 void RigidBodySystem::firstSamplingPeriod(double firstSamplingPeriod){
-	CoM_->firstSamplingPeriod(firstSamplingPeriod);
-	leftFoot_->firstSamplingPeriod(firstSamplingPeriod);
-	rightFoot_->firstSamplingPeriod(firstSamplingPeriod);
+	CoM_->setDynamics(firstSamplingPeriod);
+	leftFoot_->setDynamics(firstSamplingPeriod);
+	rightFoot_->setDynamics(firstSamplingPeriod);
 }
 
 RigidBody * RigidBodySystem::body(BodyType type){

@@ -94,8 +94,8 @@ void Walkgen::init(const RobotData &robotData, const MPCData &mpcData) {
 	robot_->init(robotData);
 
 	//Check if sampling periods are defined correctly
-	assert(generalData_.simSamplingPeriod > 0);
-	assert(generalData_.MPCSamplingPeriod >= generalData_.simSamplingPeriod);
+	assert(generalData_.actuationSamplingPeriod > 0);
+	assert(generalData_.MPCSamplingPeriod >= generalData_.actuationSamplingPeriod);
 	assert(generalData_.QPSamplingPeriod >= generalData_.MPCSamplingPeriod);
 
 	// Redistribute the X,Y vectors of variables inside the optimization problems

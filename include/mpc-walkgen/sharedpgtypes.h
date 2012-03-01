@@ -167,7 +167,7 @@ namespace MPCWalkgen
 		/// \brief Sampling period considered in the QP
 		double QPSamplingPeriod;    //blocked - precomputeObjective
 		double MPCSamplingPeriod;   //blocked - precomputeObjective / RigidBodySystem::computeDynamicMatrix
-		double simSamplingPeriod;   //blocked - precomputeObjective / RigidBodySystem::computeDynamicMatrix
+		double actuationSamplingPeriod;   //blocked - precomputeObjective / RigidBodySystem::computeDynamicMatrix
 
 		/// \brief Nb. samplings inside preview window
 		int nbSamplesQP;  //blocked - precomputeObjective
@@ -238,7 +238,7 @@ namespace MPCWalkgen
 		MPC_WALK_GEN_EXPORT void reset();
 
 		// attributes
-		Eigen::VectorXd solution;
+		Eigen::VectorXd qpSolution;
 		Eigen::VectorXd initialSolution;
 
 		Eigen::VectorXi constraints;

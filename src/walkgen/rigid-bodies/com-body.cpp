@@ -15,25 +15,25 @@ CoMBody::~CoMBody(){}
 
 void CoMBody::interpolate(MPCSolution & solution, double currentTime, const VelReference & velRef){
 	interpolation_->computeInterpolationByJerk(solution.state_vec[0].CoMTrajX_, solution.state_vec[0].CoMTrajY_, state_,
-			dynamic(interpolationPos), solution.solution(0),
-			solution.solution(generalData_->nbSamplesQP));
+			dynamics(interpolationPos), solution.qpSolution(0),
+			solution.qpSolution(generalData_->nbSamplesQP));
 
 	interpolation_->computeInterpolationByJerk(solution.state_vec[1].CoMTrajX_, solution.state_vec[1].CoMTrajY_, state_,
-			dynamic(interpolationVel), solution.solution(0),
-			solution.solution(generalData_->nbSamplesQP));
+			dynamics(interpolationVel), solution.qpSolution(0),
+			solution.qpSolution(generalData_->nbSamplesQP));
 
 	interpolation_->computeInterpolationByJerk(solution.state_vec[2].CoMTrajX_, solution.state_vec[2].CoMTrajY_, state_,
-			dynamic(interpolationAcc), solution.solution(0),
-			solution.solution(generalData_->nbSamplesQP));
+			dynamics(interpolationAcc), solution.qpSolution(0),
+			solution.qpSolution(generalData_->nbSamplesQP));
 
 	interpolation_->computeInterpolationByJerk(solution.CoPTrajX, solution.CoPTrajY, state_,
-			dynamic(interpolationCoP), solution.solution(0),
-			solution.solution(generalData_->nbSamplesQP));
+			dynamics(interpolationCoP), solution.qpSolution(0),
+			solution.qpSolution(generalData_->nbSamplesQP));
 
 	interpolateTrunkOrientation(solution, currentTime, velRef);
 }
 
-void CoMBody::computeOneDynamicMatrices(DynamicMatrix & dyn,
+void CoMBody::computeDynamicsMatrices(DynamicMatrix & dyn,
 double S, double T, int N, DynamicMatrixType type){
 	dyn.S.setZero(N,3);
 	dyn.U.setZero(N,N);
@@ -156,7 +156,7 @@ void CoMBody::interpolateTrunkOrientation(MPCSolution & result,
 
 	interpolation_->computePolynomialNormalisedFactors(factor, state().yaw, nextTrunkState, T);
 	for(int i=0; i < nbSampling; ++i){
-		double ti = (i+1)*generalData_->simSamplingPeriod;
+		double ti = (i+1)*generalData_->actuationSamplingPeriod;
 
 		result.state_vec[0].trunkYaw_(i) = p(factor, ti/T);
 		result.state_vec[1].trunkYaw_(i) = dp(factor, ti/T)/T;

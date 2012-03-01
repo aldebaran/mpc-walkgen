@@ -60,8 +60,8 @@ void QPGenerator::precomputeObjective(){
 			nb += i*size;
 			robot_->firstSamplingPeriod(s);
 
-			const DynamicMatrix & CoPDynamics = robot_->body(COM)->dynamic(copDynamic);
-			const DynamicMatrix & VelDynamics = robot_->body(COM)->dynamic(velDynamic);
+			const DynamicMatrix & CoPDynamics = robot_->body(COM)->dynamics(copDynamic);
+			const DynamicMatrix & VelDynamics = robot_->body(COM)->dynamics(velDynamic);
 
 			double firstIterationWeight = s / generalData_->QPSamplingPeriod;
 			pondFactor(0, 0) = firstIterationWeight;
@@ -348,11 +348,11 @@ void QPGenerator::convertCopToJerk(MPCSolution & result){
 	const SelectionMatrices & State = preview_->selectionMatrices();
 	const MatrixXd & rot = preview_->rotationMatrix();
 	const BodyState & CoM = robot_->body(COM)->state();
-	const DynamicMatrix & CoP = robot_->body(COM)->dynamic(copDynamic);
+	const DynamicMatrix & CoP = robot_->body(COM)->dynamics(copDynamic);
 	// int nbSteps =  result.supportState_vec.back().stepNumber;
 
-	VectorXd sx = result.solution.segment(0, 2);
-	VectorXd sy = result.solution.segment(N, 2);
+	VectorXd sx = result.qpSolution.segment(0, 2);
+	VectorXd sy = result.qpSolution.segment(N, 2);
 
 	// Vpx(0,0) and Vpy(0,0) always equal to 0 because the first iteration always on the current foot and never on previewed steps
 	/*
@@ -385,8 +385,8 @@ void QPGenerator::convertCopToJerk(MPCSolution & result){
 	zy -= (CoP.S.block(0,0,1,3) * CoM.y)(0,0) ;
 	Y  =  CoP.UInv(0,0) * zy;
 
-	result.solution.segment(0, N).fill(X);
-	result.solution.segment(N, N).fill(Y);
+	result.qpSolution.segment(0, N).fill(X);
+	result.qpSolution.segment(N, N).fill(Y);
 
 
 }
@@ -398,14 +398,14 @@ void QPGenerator::display(const MPCSolution & result, const std::string & filena
 	const SelectionMatrices & State = preview_->selectionMatrices();
 	const MatrixXd & rot = preview_->rotationMatrix();
 	const BodyState & CoM = robot_->body(COM)->state();
-	const DynamicMatrix & CoP = robot_->body(COM)->dynamic(copDynamic);
+	const DynamicMatrix & CoP = robot_->body(COM)->dynamics(copDynamic);
 	int nbSteps =  result.supportStates_vec.back().stepNumber;
 
-	VectorXd sx = result.solution.segment(0, N);
-	VectorXd sy = result.solution.segment(N, N);
+	VectorXd sx = result.qpSolution.segment(0, N);
+	VectorXd sy = result.qpSolution.segment(N, N);
 
-	const VectorXd px = result.solution.segment(2*N,         nbSteps);
-	const VectorXd py = result.solution.segment(2*N+nbSteps, nbSteps);
+	const VectorXd px = result.qpSolution.segment(2*N,         nbSteps);
+	const VectorXd py = result.qpSolution.segment(2*N+nbSteps, nbSteps);
 
 	VectorXd Vpx;
 	VectorXd Vpy;
@@ -451,7 +451,7 @@ void QPGenerator::display(const MPCSolution & result, const std::string & filena
 
 
 
-	const DynamicMatrix & CoMPos = robot_->body(COM)->dynamic(posDynamic);
+	const DynamicMatrix & CoMPos = robot_->body(COM)->dynamics(posDynamic);
 
 
 	// Compute previewed ZMP
@@ -518,8 +518,8 @@ void QPGenerator::display(const MPCSolution & result, const std::string & filena
 				Yfoot=result.supportStates_vec[0].y;
 		  } else {
 
-				Xfoot=result.solution(2*generalData_->nbSamplesQP+j);
-				Yfoot=result.solution(2*generalData_->nbSamplesQP+nbSteps+j);
+				Xfoot=result.qpSolution(2*generalData_->nbSamplesQP+j);
+				Yfoot=result.qpSolution(2*generalData_->nbSamplesQP+nbSteps+j);
 				if (j+1<nbSteps) {
 					j++;
 				}
