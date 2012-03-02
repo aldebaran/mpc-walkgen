@@ -32,7 +32,7 @@ namespace MPCWalkgen{
 
 			inline void state(const BodyState & s){state_=s;}
 
-			const DynamicMatrix & dynamics(DynamicMatrixType type) const;
+			const LinearDynamics & dynamics(DynamicMatrixType type) const;
 
 			void setDynamics(double firstSamplingPeriod);
 
@@ -41,26 +41,26 @@ namespace MPCWalkgen{
 			virtual void interpolate(MPCSolution & result, double currentTime, const VelReference & velRef)=0;
 
 		protected:
-			virtual void computeDynamicsMatrices(DynamicMatrix & dyn,
+			virtual void computeDynamicsMatrices(LinearDynamics & dyn,
 					double S, double T, int N, DynamicMatrixType type)=0;
 
 
 		protected:
-			const MPCData * generalData_;
-			const RobotData * robotData_;
-			const Interpolation * interpolation_;
+			const MPCData *generalData_;
+			const RobotData *robotData_;
+			const Interpolation *interpolation_;
 
 			BodyState state_;
-			std::vector<DynamicMatrix> pos_vec_;
-			std::vector<DynamicMatrix> vel_vec_;
-			std::vector<DynamicMatrix> acc_vec_;
-			std::vector<DynamicMatrix> jerk_vec_;
-			std::vector<DynamicMatrix> cop_vec_;
+			std::vector<LinearDynamics> pos_vec_;
+			std::vector<LinearDynamics> vel_vec_;
+			std::vector<LinearDynamics> acc_vec_;
+			std::vector<LinearDynamics> jerk_vec_;
+			std::vector<LinearDynamics> cop_vec_;
 
-			DynamicMatrix posInterpol_;
-			DynamicMatrix velInterpol_;
-			DynamicMatrix accInterpol_;
-			DynamicMatrix copInterpol_;
+			LinearDynamics posInterpol_;
+			LinearDynamics velInterpol_;
+			LinearDynamics accInterpol_;
+			LinearDynamics copInterpol_;
 
 			int matrixNumber_;
 	};

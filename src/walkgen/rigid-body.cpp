@@ -13,7 +13,7 @@ RigidBody::RigidBody(const MPCData * generalData,
 RigidBody::~RigidBody()
 {}
 
-const DynamicMatrix & RigidBody::dynamics(DynamicMatrixType type) const{
+const LinearDynamics & RigidBody::dynamics(DynamicMatrixType type) const{
 	switch (type){
 		case posDynamic:
 			return pos_vec_[matrixNumber_];

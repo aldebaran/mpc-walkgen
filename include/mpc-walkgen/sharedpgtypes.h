@@ -140,7 +140,7 @@ namespace MPCWalkgen
 		double previousSamplingPeriod;//TODO: change name
 
 		// \brief The relative weight of this support state in the QP (A support state duration of QPSamplingTime have : iterationWeight = 1)
-		double sampleWeight;
+		double sampleWeight;//TODO: shouldn't it be outside... somewhere...?
 	};
 
 	struct ConvexHull {
@@ -249,7 +249,7 @@ namespace MPCWalkgen
 		bool newTraj;
 
 		/// \brief Sampling times
-		/// starting with 0
+		/// starting with 0, i.e. all times are relative to the current time
 		std::vector<double> samplingTimes_vec;
 
 		std::vector<SupportState> supportStates_vec;

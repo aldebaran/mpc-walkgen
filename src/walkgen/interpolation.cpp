@@ -14,11 +14,11 @@ Interpolation::~Interpolation(){}
 
 
 void Interpolation::computeInterpolationByJerk(VectorXd & solutionX, VectorXd & solutionY, const BodyState & state,
-		 const DynamicMatrix & dyn, double jerkX, double jerkY) const{
+		 const LinearDynamics & dyn, double jerkX, double jerkY) const{
 
-	int nbSampling = dyn.U.cols();
-	VectorXd UX = VectorXd::Constant(nbSampling, jerkX);
-	VectorXd UY = VectorXd::Constant(nbSampling, jerkY);
+	int nbSamples = dyn.U.cols();
+	VectorXd UX = VectorXd::Constant(nbSamples, jerkX);
+	VectorXd UY = VectorXd::Constant(nbSamples, jerkY);
 
 	solutionX = dyn.S*state.x + dyn.U*UX;
 	solutionY = dyn.S*state.y + dyn.U*UY;

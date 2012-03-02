@@ -43,7 +43,7 @@ void MPCSolution::reset(){
 
   MPCData::MPCData()
   :QPSamplingPeriod(0.1)
-  ,MPCSamplingPeriod(0.005)
+  ,MPCSamplingPeriod(0.1)
   ,actuationSamplingPeriod(0.005)
   ,nbSamplesQP(16)
   ,stepPeriod(0.8)

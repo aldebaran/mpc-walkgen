@@ -150,7 +150,7 @@ void OrientationsPreview::preview_orientations(double Time,
               else
                 TrunkStateT_.yaw[0] = TrunkState_.yaw[0] + TrunkState_.yaw[1]*T_;
               //Compute the trunk angle at the end of the support phase
-              SupportTimePassed_ = CurrentSupport.timeLimit-Time;
+              SupportTimePassed_ = CurrentSupport.timeLimit - Time;
               PreviewedTrunkAngleEnd = TrunkStateT_.yaw[0] + TrunkStateT_.yaw[1]*(SupportTimePassed_-T_);
 
               //Verify the angle between the support foot and the trunk at the end of the current support period

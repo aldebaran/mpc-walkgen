@@ -28,7 +28,7 @@ namespace MPCWalkgen{
 				~Interpolation();
 
 				void computeInterpolationByJerk(Eigen::VectorXd & solutionX, Eigen::VectorXd & solutionY, const BodyState & state,
-						 const DynamicMatrix & dyn, double jerkX, double jerkY) const;
+						 const LinearDynamics & dyn, double jerkX, double jerkY) const;
 
 				void computePolynomialNormalisedFactors(
 						Eigen::Matrix<double,6,1> & factor, const Eigen::Vector3d & initialstate,

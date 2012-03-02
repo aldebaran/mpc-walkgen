@@ -129,16 +129,16 @@ int main() {
 		MPCSolution result = walk.online(time);
 		dumpTrajectory(result, data_vec);
 	}
-	walk.reference(0, velocity, 0);
-	for (double time = 10; time < 20; time += 0.005){
-		MPCSolution result = walk.online(time);
-		dumpTrajectory(result, data_vec);
-	}
-	walk.reference(velocity, 0, velocity);
-	for (double time = 20; time < 30; time += 0.005){
-		MPCSolution result = walk.online(time);
-		dumpTrajectory(result, data_vec);
-	}
+//	walk.reference(0, velocity, 0);
+//	for (double time = 10; time < 20; time += 0.005){
+//		MPCSolution result = walk.online(time);
+//		dumpTrajectory(result, data_vec);
+//	}
+//	walk.reference(velocity, 0, velocity);
+//	for (double time = 20; time < 30; time += 0.005){
+//		MPCSolution result = walk.online(time);
+//		dumpTrajectory(result, data_vec);
+//	}
 	for(unsigned i = 0; i < data_vec.size(); ++i){
 		data_vec[i]->close();
 	}
@@ -225,19 +225,26 @@ void makeScilabFile(std::string type) {
 
 	sci << "scf();" << std::endl;
 
-	sci << "subplot(2,2,1);" << std::endl;
+	sci << "subplot(2,3,1);" << std::endl;
 	sci << "plot(t,LFX);" << std::endl;
 	sci << "title('LF_X');" << std::endl;
-	sci << "subplot(2,2,3);" << std::endl;
+	sci << "subplot(2,3,3);" << std::endl;
 	sci << "plot(t,LFY);" << std::endl;
 	sci << "title('LF_Y');" << std::endl;
 
-	sci << "subplot(2,2,2);" << std::endl;
+	sci << "subplot(2,3,2);" << std::endl;
 	sci << "plot(t,RFX);" << std::endl;
 	sci << "title('RF_X');" << std::endl;
-	sci << "subplot(2,2,4);" << std::endl;
+	sci << "subplot(2,3,4);" << std::endl;
 	sci << "plot(t,RFY);" << std::endl;
 	sci << "title('RF_Y');" << std::endl;
+
+	sci << "subplot(2,3,5);" << std::endl;
+	sci << "plot(t,RFX);" << std::endl;
+	sci << "plot(t,LFX);" << std::endl;
+	sci << "title('RF_X/LF_X');" << std::endl;
+
+
 
 	sci << "scf();" << std::endl;
 

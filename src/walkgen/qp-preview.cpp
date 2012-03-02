@@ -29,7 +29,7 @@ void QPPreview::previewSamplingTimes(double firstSamplingPeriod, MPCSolution &so
 	solution.samplingTimes_vec.clear();
 	// As for now, only the first sampling period varies
 	solution.samplingTimes_vec[0] = 0;//This is the current time
-	solution.samplingTimes_vec[1] = solution.samplingTimes_vec[0] + generalData_->QPSamplingPeriod;//firstSamplingPeriod;
+	solution.samplingTimes_vec[1] = solution.samplingTimes_vec[0] + generalData_->QPSamplingPeriod;// firstSamplingPeriod;////;
 	for (int sample = 2; sample < generalData_->nbSamplesQP + 1; sample++) {
 		solution.samplingTimes_vec[sample] += solution.samplingTimes_vec[sample - 1] +
 				generalData_->QPSamplingPeriod;
@@ -41,7 +41,7 @@ void QPPreview::previewSupportStates(const double currentTime,
 		const double firstSamplingPeriod, MPCSolution & solution){
 
 	const BodyState * foot;
-	SupportState & currentSupport = robot_->currentSupport();
+	SupportState &currentSupport = robot_->currentSupport();
 
 	// SET CURRENT SUPPORT STATE:
 	// --------------------------

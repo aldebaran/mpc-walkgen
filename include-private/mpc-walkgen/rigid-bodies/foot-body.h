@@ -30,7 +30,7 @@ namespace MPCWalkgen{
 			virtual void interpolate(MPCSolution & result, double currentTime, const VelReference & velRef);
 
 		protected:
-			virtual void computeDynamicsMatrices(DynamicMatrix & dyn,
+			virtual void computeDynamicsMatrices(LinearDynamics & dyn,
 					double S, double T, int N, DynamicMatrixType type);
 
 		private:

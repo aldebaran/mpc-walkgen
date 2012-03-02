@@ -13,7 +13,7 @@ CoMBody::CoMBody(const MPCData * generalData,
 
 CoMBody::~CoMBody(){}
 
-void CoMBody::interpolate(MPCSolution & solution, double currentTime, const VelReference & velRef){
+void CoMBody::interpolate(MPCSolution &solution, double currentTime, const VelReference & velRef){
 	interpolation_->computeInterpolationByJerk(solution.state_vec[0].CoMTrajX_, solution.state_vec[0].CoMTrajY_, state_,
 			dynamics(interpolationPos), solution.qpSolution(0),
 			solution.qpSolution(generalData_->nbSamplesQP));
@@ -33,7 +33,7 @@ void CoMBody::interpolate(MPCSolution & solution, double currentTime, const VelR
 	interpolateTrunkOrientation(solution, currentTime, velRef);
 }
 
-void CoMBody::computeDynamicsMatrices(DynamicMatrix & dyn,
+void CoMBody::computeDynamicsMatrices(LinearDynamics & dyn,
 double S, double T, int N, DynamicMatrixType type){
 	dyn.S.setZero(N,3);
 	dyn.U.setZero(N,N);
@@ -50,8 +50,8 @@ double S, double T, int N, DynamicMatrixType type){
 				dyn.S(i,2) = S*S/2 + i*T*S + i*i*T*T/2;
 
 				dyn.U(i,0) = dyn.UT(0,i) = S*S*S/6 + i*T*S*S/2 + S*(i*i*T*T/2 );
-				for(int j=1; j<N; j++){
-					if (j <= i){
+				for (int j=1; j<N; j++) {
+					if (j <= i) {
 						dyn.U(i,j) = dyn.UT(j,i) =T*T*T/6 + 3*(i-j)*T*T*T/6 + 3*(i-j)*(i-j)*T*T*T/6;
 					}
 				}
@@ -59,7 +59,7 @@ double S, double T, int N, DynamicMatrixType type){
 		break;
 
 		case velDynamic:
-			for(int i=0;i<N;i++){
+			for (int i=0;i<N;i++) {
 				dyn.S(i,0) = 0.0;
 				dyn.S(i,1) = 1.0;
 				dyn.S(i,2) = i*T + S;
@@ -111,8 +111,8 @@ double S, double T, int N, DynamicMatrixType type){
 	}
 }
 
-void CoMBody::interpolateTrunkOrientation(MPCSolution & result,
-		double /*currentTime*/, const VelReference & velRef){
+void CoMBody::interpolateTrunkOrientation(MPCSolution &result,
+		double /*currentTime*/, const VelReference &velRef){
 
 	Eigen::Matrix<double,6,1> factor;
 
@@ -128,7 +128,7 @@ void CoMBody::interpolateTrunkOrientation(MPCSolution & result,
 	int nbSampling = generalData_->nbIterationSimulation();
 
 	if (result.state_vec[0].trunkYaw_.rows() != nbSampling){
-		for(int i=0; i<3; ++i){
+		for (int i=0; i<3; ++i) {
 			result.state_vec[i].trunkYaw_.resize(nbSampling);
 		}
 	}

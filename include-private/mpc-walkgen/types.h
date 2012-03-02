@@ -55,7 +55,7 @@ namespace MPCWalkgen{
 		SelectionMatrices(const MPCData & generalData);
 	};
 
-	struct DynamicMatrix{
+	struct LinearDynamics{
 		Eigen::MatrixXd S;
 		Eigen::MatrixXd U;
 		Eigen::MatrixXd UT;

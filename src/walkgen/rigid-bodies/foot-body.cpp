@@ -13,38 +13,43 @@ FootBody::FootBody(const MPCData * generalData,
 
 FootBody::~FootBody(){}
 
-void FootBody::interpolate(MPCSolution & result, double currentTime, const VelReference & /*velRef*/){
+void FootBody::interpolate(MPCSolution & result, double currentTime, const VelReference & /*velRef*/) {
 
 	BodyState nextSupportFootState;
 
-	double Txy=1;
-	double Tz=1;
+	double Txy = 1;
+	double Tz = 1;
 	int nbSampling = generalData_->nbIterationSimulation();
-	if (result.supportStates_vec[0].phase == SS){
+	if (result.supportStates_vec[0].phase == SS) {
 
 		int nbStepsPreviewed = result.supportStates_vec.back().stepNumber;
 
 		Txy = result.supportStates_vec[0].startTime + generalData_->stepPeriod - currentTime;//TODO: Not simply generalData_->stepPeriod
+//		Txy = result.supportStates_vec.front().timeLimit - currentTime - generalData_->QPSamplingPeriod;
 
-		if (result.supportStates_vec[1].inTransitionalDS){
-			nextSupportFootState.x(0)=state_.x(0);
-			nextSupportFootState.y(0)=state_.y(0);
-			nextSupportFootState.yaw(0)=state_.yaw(0);
-		}else{
+		if (result.supportStates_vec[1].inTransitionalDS) {
+			nextSupportFootState.x(0) = state_.x(0);
+			nextSupportFootState.y(0) = state_.y(0);
+			nextSupportFootState.yaw(0) = state_.yaw(0);
+//			Txy = (result.supportStates_vec.front().timeLimit - currentTime)/generalData_->QPSamplingPeriod;
+//			std::cout<<"Txy in transition: "<<Txy<<std::endl;
+		} else {
 			int nbPreviewedSteps = result.supportStates_vec.back().stepNumber;
-
-			if (nbPreviewedSteps>0){
-				nextSupportFootState.x(0)=result.qpSolution(2*generalData_->nbSamplesQP);
-				nextSupportFootState.y(0)=result.qpSolution(2*generalData_->nbSamplesQP+nbStepsPreviewed);
-				nextSupportFootState.yaw(0)=result.supportOrientations_vec[0];
-			}else{
-				nextSupportFootState.x(0)=state_.x(0);
-				nextSupportFootState.y(0)=state_.y(0);
-				nextSupportFootState.yaw(0)=state_.yaw(0);
+//			std::cout<<"Txy: "<<Txy<<std::endl;
+//			Txy -= generalData_->QPSamplingPeriod;
+			if (nbPreviewedSteps>0) {
+				nextSupportFootState.x(0) = result.qpSolution(2*generalData_->nbSamplesQP);
+				nextSupportFootState.y(0) = result.qpSolution(2*generalData_->nbSamplesQP+nbStepsPreviewed);
+				nextSupportFootState.yaw(0) = result.supportOrientations_vec[0];
+			} else {
+				nextSupportFootState.x(0) = state_.x(0);
+				nextSupportFootState.y(0) = state_.y(0);
+				nextSupportFootState.yaw(0) = state_.yaw(0);
 			}
 		}
+//		std::cout<<"x: "<<nextSupportFootState.x(0)<<std::endl;
 
-		if (Txy-generalData_->stepPeriod/2>generalData_->actuationSamplingPeriod){
+		if (Txy - generalData_->stepPeriod/2 > generalData_->actuationSamplingPeriod) {
 			nextSupportFootState.z(0) = robotData_->freeFlyingFootMaxHeight;
 			Tz = result.supportStates_vec[0].startTime + generalData_->stepPeriod/2 - currentTime;
 		}else{
@@ -68,7 +73,7 @@ void FootBody::interpolate(MPCSolution & result, double currentTime, const VelRe
 
 }
 
-void FootBody::computeDynamicsMatrices(DynamicMatrix & dyn,
+void FootBody::computeDynamicsMatrices(LinearDynamics & dyn,
 double /*S*/, double /*T*/, int N, DynamicMatrixType type){
 	dyn.S.setZero(N,3);
 	dyn.U.setZero(N,N);
