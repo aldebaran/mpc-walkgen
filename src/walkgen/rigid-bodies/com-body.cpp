@@ -125,7 +125,7 @@ void CoMBody::interpolateTrunkOrientation(MPCSolution &result,
 	}*/
 
 
-	int nbSampling = generalData_->nbIterationSimulation();
+	int nbSampling = generalData_->nbSamplesControl();
 
 	if (result.state_vec[0].trunkYaw_.rows() != nbSampling){
 		for (int i=0; i<3; ++i) {

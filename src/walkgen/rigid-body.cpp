@@ -65,7 +65,7 @@ void RigidBody::computeDynamics(){
 
 	}
 
-	int nbSamplingSim = generalData_->nbIterationSimulation();
+	int nbSamplingSim = generalData_->nbSamplesControl();
 	computeDynamicsMatrices(posInterpol_, generalData_->actuationSamplingPeriod,
 			generalData_->actuationSamplingPeriod, nbSamplingSim, posDynamic);
 

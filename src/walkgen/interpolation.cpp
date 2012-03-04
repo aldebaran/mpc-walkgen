@@ -13,8 +13,8 @@ Interpolation::Interpolation()
 Interpolation::~Interpolation(){}
 
 
-void Interpolation::computeInterpolationByJerk(VectorXd & solutionX, VectorXd & solutionY, const BodyState & state,
-		 const LinearDynamics & dyn, double jerkX, double jerkY) const{
+void Interpolation::computeInterpolationByJerk(VectorXd &solutionX, VectorXd &solutionY, const BodyState &state,
+		 const LinearDynamics &dyn, double jerkX, double jerkY) const{
 
 	int nbSamples = dyn.U.cols();
 	VectorXd UX = VectorXd::Constant(nbSamples, jerkX);
@@ -25,9 +25,8 @@ void Interpolation::computeInterpolationByJerk(VectorXd & solutionX, VectorXd & 
 }
 
 
-void Interpolation::computePolynomialNormalisedFactors(
-		Eigen::Matrix<double,6,1> & factor,
-		const Vector3d & initialstate, const Vector3d & finalState, double T) const
+void Interpolation::computePolynomialNormalisedFactors( Eigen::Matrix<double,6,1> &factor,
+		const Vector3d &initialstate, const Vector3d &finalState, double T) const
 {
 	Vector3d b;
 

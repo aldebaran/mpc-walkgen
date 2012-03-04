@@ -19,7 +19,7 @@ using namespace Eigen;
 using namespace MPCWalkgen;
 
 
-void makeScilabFile(std::string type);
+void makeScilabFile(std::string type, double time);
 void dumpTrajectory(MPCSolution & result, std::vector<std::ofstream*> & data_vec);
 bool checkFiles(std::ifstream & f1, std::ifstream & f2);
 int copyFile(const std::string & source, const std::string & destination);
@@ -120,25 +120,26 @@ int main() {
 	double velocity = 0.25;
 	walk.reference(0, 0, 0);
 	walk.online(0);
-	for (double time = 0.005; time < 5; time += 0.005){
-		MPCSolution result = walk.online(time);
+	double t = 0;
+	for (t; t < 5; t += 0.005){
+		MPCSolution result = walk.online(t);
 		dumpTrajectory(result, data_vec);
 	}
 	walk.reference(velocity, 0, 0);
-	for (double time = 5; time < 10; time += 0.005){
-		MPCSolution result = walk.online(time);
+	for (t; t < 10; t += 0.005){
+		MPCSolution result = walk.online(t);
 		dumpTrajectory(result, data_vec);
 	}
-//	walk.reference(0, velocity, 0);
-//	for (double time = 10; time < 20; time += 0.005){
-//		MPCSolution result = walk.online(time);
-//		dumpTrajectory(result, data_vec);
-//	}
-//	walk.reference(velocity, 0, velocity);
-//	for (double time = 20; time < 30; time += 0.005){
-//		MPCSolution result = walk.online(time);
-//		dumpTrajectory(result, data_vec);
-//	}
+	walk.reference(0, velocity, 0);
+	for (t; t < 20; t += 0.005){
+		MPCSolution result = walk.online(t);
+		dumpTrajectory(result, data_vec);
+	}
+	walk.reference(velocity, 0, velocity);
+	for (t; t < 30; t += 0.005){
+		MPCSolution result = walk.online(t);
+		dumpTrajectory(result, data_vec);
+	}
 	for(unsigned i = 0; i < data_vec.size(); ++i){
 		data_vec[i]->close();
 	}
@@ -167,10 +168,10 @@ int main() {
 		check_vec[i]->close();
 		ref_vec[i]->close();
 	}
-	makeScilabFile("data");
-	makeScilabFile("ref");
+	makeScilabFile("data", t);
+	makeScilabFile("ref", t);
 
-	for(int i=0;i<nbFile;++i){
+	for (int i=0; i < nbFile; ++i) {
 		delete check_vec[i];
 		delete ref_vec[i];
 		delete data_vec[i];
@@ -179,7 +180,7 @@ int main() {
 	return (success)?0:1;
 }
 
-void dumpTrajectory(MPCSolution & result, std::vector<std::ofstream*> & data_vec) {
+void dumpTrajectory(MPCSolution &result, std::vector<std::ofstream*> &data_vec) {
 	for (int i = 0; i < result.state_vec[0].CoMTrajX_.rows(); ++i) {
 		*data_vec[0] << result.state_vec[0].CoMTrajX_(i) << " " << result.state_vec[1].CoMTrajX_(i) << " " << result.state_vec[2].CoMTrajX_(i) << std::endl;
 		*data_vec[1] << result.state_vec[0].CoMTrajY_(i) << " " << result.state_vec[1].CoMTrajY_(i) << " " << result.state_vec[2].CoMTrajY_(i) << std::endl;
@@ -192,7 +193,7 @@ void dumpTrajectory(MPCSolution & result, std::vector<std::ofstream*> & data_vec
 	}
 }
 
-void makeScilabFile(std::string type) {
+void makeScilabFile(std::string type, double time) {
 	std::ofstream sci(("plot"+type+".sci").c_str());
 	sci << "X=read('CoM_X." << type << "',-1,3);" << std::endl;
 	sci << "Y=read('CoM_Y." << type << "',-1,3);" << std::endl;
@@ -202,7 +203,7 @@ void makeScilabFile(std::string type) {
 	sci << "LFY=read('LF_Y." << type << "',-1,3);" << std::endl;
 	sci << "RFX=read('RF_X." << type << "',-1,3);" << std::endl;
 	sci << "RFY=read('RF_Y." << type << "',-1,3);" << std::endl;
-	sci << "s=size(X);t=linspace(0,30,s(1));" << std::endl;
+	sci << "s=size(X);t=linspace(0,"<<time<<",s(1));" << std::endl;
 
 	sci << "subplot(2,2,1);" << std::endl;
 	sci << "plot(t,X);" << std::endl;

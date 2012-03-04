@@ -4,72 +4,78 @@ using namespace MPCWalkgen;
 using namespace Eigen;
 
 
-FootBody::FootBody(const MPCData * generalData,
-		const RobotData * robotData,
-		const Interpolation * interpolation, Foot type)
+FootBody::FootBody(const MPCData *generalData,
+		const RobotData *robotData,
+		const Interpolation *interpolation, Foot type)
 	:RigidBody(generalData, robotData, interpolation)
 	,footType_(type)
 {}
 
 FootBody::~FootBody(){}
 
-void FootBody::interpolate(MPCSolution & result, double currentTime, const VelReference & /*velRef*/) {
+void FootBody::interpolate(MPCSolution &result, double currentTime, const VelReference &/*velRef*/) {
 
-	BodyState nextSupportFootState;
+	BodyState nextFootState;
+	SupportState curSupport = result.supportStates_vec.front();
+	SupportState nextSupportState = result.supportStates_vec[1];
 
-	double Txy = 1;
-	double Tz = 1;
-	int nbSampling = generalData_->nbIterationSimulation();
+	double Txy = 1; // Local horizontal interpolation time
+	double Tz = 1; // Local vertical interpolation time
+	int nbSamples = generalData_->nbSamplesControl();
+	double transitionalDSPeriod = generalData_->QPSamplingPeriod;
+	double raiseTime = 0.05; // Time during which the horizontal displacement is blocked
+	double freeFlyingTimeLeft = curSupport.timeLimit - transitionalDSPeriod - currentTime;
+	double freeFlyingTimeSpent = currentTime - curSupport.startTime;
 	if (result.supportStates_vec[0].phase == SS) {
-
 		int nbStepsPreviewed = result.supportStates_vec.back().stepNumber;
-
-		Txy = result.supportStates_vec[0].startTime + generalData_->stepPeriod - currentTime;//TODO: Not simply generalData_->stepPeriod
-//		Txy = result.supportStates_vec.front().timeLimit - currentTime - generalData_->QPSamplingPeriod;
-
-		if (result.supportStates_vec[1].inTransitionalDS) {
-			nextSupportFootState.x(0) = state_.x(0);
-			nextSupportFootState.y(0) = state_.y(0);
-			nextSupportFootState.yaw(0) = state_.yaw(0);
-//			Txy = (result.supportStates_vec.front().timeLimit - currentTime)/generalData_->QPSamplingPeriod;
-//			std::cout<<"Txy in transition: "<<Txy<<std::endl;
+		if (nextSupportState.inTransitionalDS) {
+			Txy = curSupport.timeLimit - currentTime;
+			nextFootState.x(0) = state_.x(0);
+			nextFootState.y(0) = state_.y(0);
+			nextFootState.yaw(0) = state_.yaw(0);
+		} else if (freeFlyingTimeSpent < raiseTime + EPS) {
+			Txy = raiseTime - freeFlyingTimeSpent;
+			nextFootState.x(0) = state_.x(0);
+			nextFootState.y(0) = state_.y(0);
+			nextFootState.yaw(0) = state_.yaw(0);
+		}  else if (freeFlyingTimeLeft < raiseTime + EPS) {
+			Txy = freeFlyingTimeLeft;
+			nextFootState.x(0) = state_.x(0);
+			nextFootState.y(0) = state_.y(0);
+			nextFootState.yaw(0) = state_.yaw(0);
 		} else {
+			Txy = freeFlyingTimeLeft - raiseTime;
 			int nbPreviewedSteps = result.supportStates_vec.back().stepNumber;
-//			std::cout<<"Txy: "<<Txy<<std::endl;
-//			Txy -= generalData_->QPSamplingPeriod;
-			if (nbPreviewedSteps>0) {
-				nextSupportFootState.x(0) = result.qpSolution(2*generalData_->nbSamplesQP);
-				nextSupportFootState.y(0) = result.qpSolution(2*generalData_->nbSamplesQP+nbStepsPreviewed);
-				nextSupportFootState.yaw(0) = result.supportOrientations_vec[0];
+			if (nbPreviewedSteps > 0) {
+				nextFootState.x(0) = result.qpSolution(2 * generalData_->nbSamplesQP);
+				nextFootState.y(0) = result.qpSolution(2 * generalData_->nbSamplesQP + nbStepsPreviewed);
+				nextFootState.yaw(0) = result.supportOrientations_vec[0];
 			} else {
-				nextSupportFootState.x(0) = state_.x(0);
-				nextSupportFootState.y(0) = state_.y(0);
-				nextSupportFootState.yaw(0) = state_.yaw(0);
+				nextFootState.x(0) = state_.x(0);
+				nextFootState.y(0) = state_.y(0);
+				nextFootState.yaw(0) = state_.yaw(0);
 			}
 		}
-//		std::cout<<"x: "<<nextSupportFootState.x(0)<<std::endl;
-
-		if (Txy - generalData_->stepPeriod/2 > generalData_->actuationSamplingPeriod) {
-			nextSupportFootState.z(0) = robotData_->freeFlyingFootMaxHeight;
-			Tz = result.supportStates_vec[0].startTime + generalData_->stepPeriod/2 - currentTime;
-		}else{
+		if (Txy - (generalData_->stepPeriod - transitionalDSPeriod)/2 > generalData_->actuationSamplingPeriod) {
+			nextFootState.z(0) = robotData_->freeFlyingFootMaxHeight;
+			Tz = Txy - (generalData_->stepPeriod - transitionalDSPeriod)/2 ;
+		} else {
 			Tz = Txy;
 		}
-
 	}
 
-	computeFootInterpolationByPolynomial(result, X, nbSampling,
+	computeFootInterpolationByPolynomial(result, X, nbSamples,
 			state_.x,
-			Txy, nextSupportFootState.x);
-	computeFootInterpolationByPolynomial(result, Y, nbSampling,
+			Txy, nextFootState.x);
+	computeFootInterpolationByPolynomial(result, Y, nbSamples,
 			state_.y,
-			Txy, nextSupportFootState.y);
-	computeFootInterpolationByPolynomial(result, Z, nbSampling,
+			Txy, nextFootState.y);
+	computeFootInterpolationByPolynomial(result, Z, nbSamples,
 			state_.z,
-			Tz, nextSupportFootState.z);
-	computeFootInterpolationByPolynomial(result, Yaw, nbSampling,
+			Tz, nextFootState.z);
+	computeFootInterpolationByPolynomial(result, Yaw, nbSamples,
 			state_.yaw,
-			Txy, nextSupportFootState.yaw);
+			Txy, nextFootState.yaw);
 
 }
 
@@ -129,18 +135,18 @@ VectorXd & FootBody::getFootVector(MPCSolution & solution, Axis axis, unsigned d
 	}
 }
 
-void FootBody::computeFootInterpolationByPolynomial(MPCSolution & result, Axis axis, int nbSampling,
-		const Eigen::Vector3d & FootCurrentState,
-		double T, const Eigen::Vector3d & nextSupportFootState){
+void FootBody::computeFootInterpolationByPolynomial(MPCSolution &result, Axis axis, int nbSamples,
+		const Eigen::Vector3d &FootCurrentState,
+		double T, const Eigen::Vector3d &nextSupportFootState){
 
-	VectorXd & FootTrajState = getFootVector(result, axis, 0);
-	VectorXd & FootTrajVel   = getFootVector(result, axis, 1);
-	VectorXd & FootTrajAcc   = getFootVector(result, axis, 2);
+	VectorXd &FootTrajState = getFootVector(result, axis, 0);
+	VectorXd &FootTrajVel   = getFootVector(result, axis, 1);
+	VectorXd &FootTrajAcc   = getFootVector(result, axis, 2);
 
-	if (FootTrajState.rows() != nbSampling){
-		FootTrajState.resize(nbSampling);
-		FootTrajVel.resize(nbSampling);
-		FootTrajAcc.resize(nbSampling);
+	if (FootTrajState.rows() != nbSamples){
+		FootTrajState.resize(nbSamples);
+		FootTrajVel.resize(nbSamples);
+		FootTrajAcc.resize(nbSamples);
 	}
 
 	if (result.supportStates_vec[0].foot==footType_){
@@ -158,7 +164,7 @@ void FootBody::computeFootInterpolationByPolynomial(MPCSolution & result, Axis a
 		}else{
 			Eigen::Matrix<double,6,1> factor;
 			interpolation_->computePolynomialNormalisedFactors(factor, FootCurrentState, nextSupportFootState, T);
-			for(int i=0;i<nbSampling;++i){
+			for (int i = 0; i < nbSamples; ++i) {
 				double ti = (i+1)*generalData_->actuationSamplingPeriod;
 
 				FootTrajState(i) = p(factor, ti/T);
