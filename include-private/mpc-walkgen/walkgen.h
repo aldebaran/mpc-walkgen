@@ -17,7 +17,7 @@
 #include <mpc-walkgen/types.h>
 
 namespace MPCWalkgen{
-	class LSSOLSolver;
+	class QPSolver;
 	class QPGenerator;
 	class QPPreview;
 	class Interpolation;
@@ -113,7 +113,7 @@ namespace MPCWalkgen{
 		  private:
 			MPCData generalData_;
 
-		    LSSOLSolver * solver_;
+			QPSolver * solver_;
 			QPGenerator * generator_;
 			QPPreview * preview_;
 			Interpolation * interpolation_;
