@@ -39,9 +39,9 @@ namespace MPCWalkgen{
 }
 
 /*!
-* \class MPCWalkgen::LSSOLSolver lssol-solver.h "Definition"
+* \class MPCWalkgen::QPOasesLSolver qpoases-solver.h "Definition"
 * \ingroup solver
-* \brief QPSolver based on the lssol library developed by Standford
+* \brief QPSolver based on the qpoases library
 */
 
 #endif //QPOASES_SOLVER

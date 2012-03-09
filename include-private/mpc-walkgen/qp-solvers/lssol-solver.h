@@ -4,7 +4,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 ///
 ///\file	lssol-solver.h
-///\brief	A class to solver the QP problem
+///\brief	A class to solver the QP problem using LSSOL
 ///\author	Herdt Andrei
 ///\author	Lafaye Jory
 ///\author	Keith François
