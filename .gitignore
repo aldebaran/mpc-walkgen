@@ -29,4 +29,5 @@ build/
 ,svn-log
 +committed/
 *~
-*build
+*build*
+CMakeLists.txt.user

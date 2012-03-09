@@ -1,67 +1,57 @@
-# Copyright 2010, Olivier Stasse, JRL, CNRS/AIST
-#
-# This file is part of jrl-walkgen.
-# jrl-walkgen is free software: you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public License
-# as published by the Free Software Foundation, either version 3 of
-# the License, or (at your option) any later version.
-#
-# jrl-walkgen is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Lesser Public License for more details.  You should have
-# received a copy of the GNU Lesser General Public License along with
-# jrl-walkgen. If not, see <http://www.gnu.org/licenses/>.
+project(mpc-walkgen)
+cmake_minimum_required(VERSION 2.8)
+find_package(qibuild)
 
-# Requires at least CMake 2.6 to configure the package.
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+#SET(CXX_DISABLE_WERROR True)
 
-# Includes from jrl-cmaketools
-INCLUDE(cmake/base.cmake)
-INCLUDE(cmake/boost.cmake)
-INCLUDE(cmake/eigen.cmake)
-INCLUDE(cmake/cpack.cmake)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/modules")
+INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/include)
+INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/include-private)
+INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/src)
 
-# Define properties of the project
-SET(PROJECT_NAME mpc-walkgen)
-SET(PROJECT_DESCRIPTION "MPC Walking pattern generator for Humanoids")
-SET(PROJECT_URL "")
+SET(SOURCES
+ src/sharedpgtypes.cpp 
+ 
+ src/walkgen/convex-hull.cpp 
+ src/walkgen/orientations-preview.cpp 
 
-SET(CUSTOM_HEADER_DIR "${PROJECT_NAME}")
+ 
+ src/walkgen/qp-solver.cpp
+ src/walkgen/qp-solvers/lssol-solver.cpp
+ src/walkgen/qp-solvers/qpoases-solver.cpp
+ 
+ src/walkgen/state-solver.cpp
+ src/walkgen/state-solvers/fsm-solver.cpp 
+ 
+ src/walkgen/rigid-body-system.cpp
+ src/walkgen/rigid-body.cpp
+ src/walkgen/rigid-bodies/com-body.cpp
+ src/walkgen/rigid-bodies/foot-body.cpp
+ 
+ src/walkgen/qp-matrix.cpp
+ src/walkgen/qp-generator.cpp
+ src/walkgen/qp-preview.cpp
+ 
+ src/walkgen/interpolation.cpp
+ src/walkgen/tools.cpp
+ src/walkgen/types.cpp
+ src/walkgen/walkgen.cpp
+ 
+ src/walkgen/mpc-debug.cpp
+ )
 
-SET(CXX_DISABLE_WERROR True)
-
-# Initialize generic properties of the project
-SETUP_PROJECT()
-SEARCH_FOR_BOOST()
-SEARCH_FOR_EIGEN()
-
-# Handle OS specificities 
-INCLUDE(CheckIncludeFiles)
-CHECK_INCLUDE_FILES("sys/time.h" SYS_TIME_H)
-IF(SYS_TIME_H)
- ADD_DEFINITIONS("-DHAVE_SYS_TIME_H")
-ENDIF(SYS_TIME_H)
-
-# Define dependencies
-
-# Required dependencies
-ADD_REQUIRED_DEPENDENCY("lssol >= 0.1.0")
-
-# Define the set of headers to be exported
-SET(${PROJECT_NAME}_HEADERS
-  include/mpc-walkgen/sharedpgtypes.h
-  include/mpc-walkgen/walkgen-abstract.h
-)
+qi_create_lib(mpc-walkgen SRC "${SOURCES}")
+qi_use_lib(mpc-walkgen lssol)
+target_link_libraries(mpc-walkgen gfortran)
+qi_use_lib(mpc-walkgen qpoases)
+qi_use_lib(mpc-walkgen boost)
+qi_use_lib(mpc-walkgen eigen3)
+qi_stage_lib(mpc-walkgen INCLUDE_DIRS include/mpc-walkgen)
+#SET_TARGET_PROPERTIES(mpc-walkgen PROPERTIES SOVERSION ${PROJECT_VERSION})
 
 # Define subdirectories to explore for cmake
-ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(unittest)
 
-# Generate dependency to jrl-walkgen in pc file
-PKG_CONFIG_APPEND_LIBS("mpc-walkgen")
-PKG_CONFIG_APPEND_CFLAGS(${_Eigen_CFLAGS})
+# Add a simple test:
+enable_testing()
 
-# Ask to generate the final steps.
-SETUP_PROJECT_FINALIZE()
-SETUP_PROJECT_CPACK()
