@@ -34,20 +34,18 @@ namespace MPCWalkgen
 
 	  virtual ~WalkgenAbstract() =0;
 
-	    /*! \brief Initialize the system
-	      @param[in] robotData: data relative to the robot
-	      @param[in] mpcData: data relative to the qp solver
-	     */
+	    /// \brief Initialize the system
+	    /// \param[in] robotData: data relative to the robot
+	    /// \param[in] mpcData: data relative to the qp solver
 	    virtual void init(const RobotData &robotData, const MPCData &mpcData) = 0;
 
 
-	    /*! \brief Call method to handle on-line generation of ZMP reference trajectory.
-	       @param[in] time : Current time.
-	       @param[in] previewBodiesNextState
+	    /// \brief Call method to handle on-line generation of ZMP reference trajectory.
+	    /// \param[in] time : Current time.
+	    /// \param[in] previewBodiesNextState
 
-	       @return The associated solution
-	       If solution.newTraj is true, the method has succeeded.
-	     */
+	    /// \return The associated solution
+	    ///   If solution.newTraj is true, the method has succeeded.
 	    virtual const MPCSolution & online(double time, bool previewBodiesNextState = true) = 0;
 
 	    /// \name Accessors and mutators
@@ -56,12 +54,9 @@ namespace MPCWalkgen
 	    virtual void reference(double dx, double dy, double dyaw) = 0;
 	    /// \}
 
-	  public:
 	    /// \name accessors relative to the state of the robot.
 	    /// \{
-	    /*! \brief Returns the Com Height. */
 		virtual double comHeight()const=0;
-	    /*! \brief Sets the Com Height. */
 		virtual void comHeight(double d)=0;
 
 		virtual double freeFlyingFootMaxHeight() const = 0;
@@ -99,8 +94,8 @@ namespace MPCWalkgen
 		virtual double mpcSamplingPeriod()const=0;
 		virtual void mpcSamplingPeriod(double d)=0;
 
-		virtual double simSamplingPeriod()const=0;
-		virtual void simSamplingPeriod(double d)=0;
+		virtual double actuationSamplingPeriod()const=0;
+		virtual void actuationSamplingPeriod(double d)=0;
 
 		virtual int QPNbSamplings()const=0;
 		virtual void QPNbSamplings(int d)=0;

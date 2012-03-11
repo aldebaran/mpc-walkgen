@@ -5,6 +5,7 @@
 
 #include <mpc-walkgen/sharedpgtypes.h>
 #include <mpc-walkgen/walkgen.h>
+//#include <mpc-walkgen/rigid-body-system.h>
 
 #include <cmath>
 #include <cstdio>
@@ -17,7 +18,6 @@
 
 using namespace Eigen;
 using namespace MPCWalkgen;
-
 
 void makeScilabFile(std::string type, double time);
 void dumpTrajectory(MPCSolution & result, std::vector<std::ofstream*> & data_vec);
@@ -113,7 +113,7 @@ int main() {
 	// -------------------------------
 	Walkgen walk;
 	walk.init(robotData, mpcData);
-
+//	const RigidBodySystem *robot = walk.robot();// Not used yet
 
 	// Run:
 	// ----
@@ -121,22 +121,22 @@ int main() {
 	walk.reference(0, 0, 0);
 	walk.online(0);
 	double t = 0;
-	for (t; t < 5; t += 0.005){
+	for (; t < 5; t += 0.005){
 		MPCSolution result = walk.online(t);
 		dumpTrajectory(result, data_vec);
 	}
 	walk.reference(velocity, 0, 0);
-	for (t; t < 10; t += 0.005){
+	for (; t < 10; t += 0.005){
 		MPCSolution result = walk.online(t);
 		dumpTrajectory(result, data_vec);
 	}
 	walk.reference(0, velocity, 0);
-	for (t; t < 20; t += 0.005){
+	for (; t < 20; t += 0.005){
 		MPCSolution result = walk.online(t);
 		dumpTrajectory(result, data_vec);
 	}
 	walk.reference(velocity, 0, velocity);
-	for (t; t < 30; t += 0.005){
+	for (; t < 30; t += 0.005){
 		MPCSolution result = walk.online(t);
 		dumpTrajectory(result, data_vec);
 	}
@@ -177,6 +177,7 @@ int main() {
 		delete data_vec[i];
 	}
 
+	std::cout<<success<<std::endl;
 	return (success)?0:1;
 }
 

@@ -45,6 +45,9 @@ namespace MPCWalkgen{
 		  public:
 		    /// \name accessors relative to the state of the robot.
 		    /// \{
+			inline const RigidBodySystem *robot() const
+			{return robot_;};
+
 			virtual inline double comHeight() const;
 			virtual inline void comHeight (double d);
 
@@ -62,7 +65,7 @@ namespace MPCWalkgen{
 			/// \}
 
 
-			/// \name Accessors relative to the solver, modifiable on line
+			/// \name Accessors relative to the support logic
 			/// \{
 		  public:
 			virtual inline double stepPeriod()const
@@ -87,7 +90,7 @@ namespace MPCWalkgen{
 			/// \}
 
 		  public:
-			/// \name accessors relative to the solver, costly when modified on line
+			/// \name accessors relative to the solver
 		    /// \{
 			virtual inline double QPSamplingPeriod()const
 			{return generalData_.QPSamplingPeriod;}
@@ -97,9 +100,10 @@ namespace MPCWalkgen{
 			{return generalData_.MPCSamplingPeriod;}
 			virtual void mpcSamplingPeriod(double d);
 
-			virtual inline double simSamplingPeriod()const
+			virtual inline double actuationSamplingPeriod()const
 			{return generalData_.actuationSamplingPeriod;}
-			virtual void simSamplingPeriod(double d);
+			virtual void actuationSamplingPeriod(double period)
+			{generalData_.actuationSamplingPeriod = period;};
 
 			virtual inline int QPNbSamplings()const
 			{return generalData_.nbSamplesQP;}

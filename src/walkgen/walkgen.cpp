@@ -218,11 +218,6 @@ void Walkgen::mpcSamplingPeriod(double)
 	std::cerr << " The method Walkgen::mpcSamplingPeriod(d) is not implemented yet. " << std::endl;
 }
 
-void Walkgen::simSamplingPeriod(double)
-{
-	std::cerr << " The method Walkgen::simSamplingPeriod(d) is not implemented yet. " << std::endl;
-}
-
 void Walkgen::QPNbSamplings(int)
 {
 	std::cerr << " The method Walkgen::QPNbSamplings(d) is not implemented yet. " << std::endl;
