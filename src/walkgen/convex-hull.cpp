@@ -5,8 +5,13 @@ namespace MPCWalkgen
 {
 
 ConvexHull::ConvexHull()
-:x(0),y(0),z(0)
-,A(0),B(0),C(0),D(0) {
+:x(Eigen::VectorXd::Zero(0))
+,y(Eigen::VectorXd::Zero(0))
+,z(Eigen::VectorXd::Zero(0))
+,A(Eigen::VectorXd::Zero(0))
+,B(Eigen::VectorXd::Zero(0))
+,C(Eigen::VectorXd::Zero(0))
+,D(Eigen::VectorXd::Zero(0)) {
 }
 
 // TODO: Necessary?
