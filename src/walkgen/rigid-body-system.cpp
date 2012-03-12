@@ -48,7 +48,7 @@ void RigidBodySystem::interpolateBodies(MPCSolution & solution, double currentTi
 }
 
 void RigidBodySystem::updateBodyState(const MPCSolution & solution){
-	int nextCurrentState = generalData_->nbFeedbackSamplesLeft(generalData_->MPCSamplingPeriod);
+	int nextCurrentState = (int)round(generalData_->MPCSamplingPeriod / generalData_->actuationSamplingPeriod)-1;
 
 	BodyState leftFoot, rightFoot, CoM;
 
