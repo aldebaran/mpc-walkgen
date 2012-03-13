@@ -147,7 +147,7 @@ int main() {
 	std::cout << "60%" << std::endl;
 
 
-	std::cout << "100% \o/" << std::endl;
+	std::cout << "100% \\o/" << std::endl;
 
 	std::cout << "Walkgen test :" << std::endl;
 	std::cout << "Mean iteration duration with LSSOL   : " << debug.computeInterval(1) << " us" << std::endl;
