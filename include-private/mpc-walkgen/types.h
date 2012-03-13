@@ -21,9 +21,10 @@
 #include <mpc-walkgen/enums.h>
 #include <mpc-walkgen/sharedpgtypes.h>
 
-#define EPS 0.0000001
 
 namespace MPCWalkgen{
+
+	#define EPSILON 0.000001
 
 	struct VelReference{
 		struct Frame{

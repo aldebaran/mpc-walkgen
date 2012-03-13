@@ -33,12 +33,12 @@ void FootBody::interpolate(MPCSolution &result, double currentTime, const VelRef
 			nextFootState.x(0) = state_.x(0);
 			nextFootState.y(0) = state_.y(0);
 			nextFootState.yaw(0) = state_.yaw(0);
-		} else if (freeFlyingTimeSpent < raiseTime + EPS) {
+		} else if (freeFlyingTimeSpent < raiseTime + EPSILON) {
 			Txy = raiseTime - freeFlyingTimeSpent;
 			nextFootState.x(0) = state_.x(0);
 			nextFootState.y(0) = state_.y(0);
 			nextFootState.yaw(0) = state_.yaw(0);
-		}  else if (freeFlyingTimeLeft < raiseTime + EPS) {
+		}  else if (freeFlyingTimeLeft < raiseTime + EPSILON) {
 			Txy = freeFlyingTimeLeft;
 			nextFootState.x(0) = state_.x(0);
 			nextFootState.y(0) = state_.y(0);
@@ -59,7 +59,7 @@ void FootBody::interpolate(MPCSolution &result, double currentTime, const VelRef
 		if (freeFlyingTimeLeft - (generalData_->stepPeriod - transitionalDSPeriod)/2 > generalData_->actuationSamplingPeriod) {
 			nextFootState.z(0) = robotData_->freeFlyingFootMaxHeight;
 			Tz = freeFlyingTimeLeft - (generalData_->stepPeriod - transitionalDSPeriod)/2 ;
-		} else if (freeFlyingTimeLeft < (generalData_->stepPeriod - transitionalDSPeriod)/2 && freeFlyingTimeLeft > EPS) { // Half-time passed
+		} else if (freeFlyingTimeLeft < (generalData_->stepPeriod - transitionalDSPeriod)/2 && freeFlyingTimeLeft > EPSILON) { // Half-time passed
 			Tz = freeFlyingTimeLeft;
 		} else {
 			// Tz stays 1

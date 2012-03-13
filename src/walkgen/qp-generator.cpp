@@ -54,7 +54,7 @@ void QPGenerator::precomputeObjective(){
 
 	for (int i = 0; i < nbUsedPonderations; ++i) {
 		for (double s = generalData_->MPCSamplingPeriod;
-				s < generalData_->QPSamplingPeriod+EPS;
+				s < generalData_->QPSamplingPeriod+EPSILON;
 				s += generalData_->MPCSamplingPeriod) {
 			int nb = (int)round(s / generalData_->MPCSamplingPeriod)-1;
 			nb += i*size;
@@ -190,7 +190,7 @@ void QPGenerator::computeWarmStart(MPCSolution & result){
 	VectorXi initialConstraintTmp = result.initialConstraints;
 	double TimeFactor = result.supportStates_vec[1].sampleWeight;
 	int shiftCtr = 0;
-	if (fabs(TimeFactor-1.) < EPS) {
+	if (fabs(TimeFactor-1.) < EPSILON) {
 		shiftCtr = 1;
 	}
 

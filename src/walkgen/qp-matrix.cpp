@@ -180,7 +180,7 @@ void QPMatrix::computeCholesky(MatrixXd & partialCholesky){
 					for(int k=0;k<j;++k){
 						tmp -= choleskyMatrix_(k,j)*choleskyMatrix_(k,j);
 					}
-					if (fabs(tmp)>EPS){
+					if (fabs(tmp)>EPSILON){
 						choleskyMatrix_(j,j) = sqrt(tmp);
 					}else{
 						choleskyMatrix_(j,j) = 0;
@@ -192,7 +192,7 @@ void QPMatrix::computeCholesky(MatrixXd & partialCholesky){
 					for(int k=0;k<j;++k){
 						tmp -= choleskyMatrix_(k,j)*choleskyMatrix_(k,i);
 					}
-					if (fabs(tmp)>EPS && fabs(choleskyMatrix_(j,j))>EPS){
+					if (fabs(tmp)>EPSILON && fabs(choleskyMatrix_(j,j))>EPSILON){
 						choleskyMatrix_(j,i) = tmp / choleskyMatrix_(j,j);
 					}else{
 						choleskyMatrix_(j,i) = 0;

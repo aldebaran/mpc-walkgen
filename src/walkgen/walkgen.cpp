@@ -99,6 +99,7 @@ void Walkgen::init(const RobotData &robotData, const MPCData &mpcData) {
 	assert(generalData_.QPSamplingPeriod >= generalData_.MPCSamplingPeriod);
 
 	// Redistribute the X,Y vectors of variables inside the optimization problems
+
 	VectorXi order(QPSolver::DefaultNbVarMax_);
 	for(int i = 0; i < generalData_.nbSamplesQP; ++i) {// 0,2,4,1,3,5 (CoM)
 		order(i) = 2*i;
@@ -135,12 +136,12 @@ void Walkgen::init(const RobotData &robotData, const MPCData &mpcData) {
 
 const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
 	solution_.newTraj = false;
-	if(time  > upperTimeLimitToUpdate_+EPS){
+	if(time  > upperTimeLimitToUpdate_+EPSILON){
 		upperTimeLimitToUpdate_ += generalData_.QPSamplingPeriod;
 		currentTime_ = time;
 	}
 
-	if (time  > upperTimeLimitToFeedback_ + EPS) {
+	if (time  > upperTimeLimitToFeedback_ + EPSILON) {
 		// UPDATE INTERNAL DATA:
 		// ---------------------
 		solver_->reset();

@@ -14,19 +14,19 @@ void FSMSolver::setSupportState(double time, int sample, const std::vector<doubl
 	support.nbInstants++;
 
 	bool ReferenceGiven = false;
-	if (fabs(velRef_->local.x)>EPS || fabs(velRef_->local.y)>EPS || fabs(velRef_->local.yaw)>EPS) {
+	if (fabs(velRef_->local.x)>EPSILON || fabs(velRef_->local.y)>EPSILON || fabs(velRef_->local.yaw)>EPSILON) {
 		ReferenceGiven = true;
 	}
 
 	// Update time limit for double support phase
-	if (ReferenceGiven && support.phase == DS && (support.timeLimit-time+EPS) > generalData_->DSSSPeriod) {
+	if (ReferenceGiven && support.phase == DS && (support.timeLimit-time+EPSILON) > generalData_->DSSSPeriod) {
 		//Support.TimeLimit = time+DSSSPeriod_-T_/10.0;
 		support.timeLimit = time + generalData_->DSSSPeriod;
 		support.nbStepsLeft = generalData_->nbStepSSDS;
 	}
 
 	//FSM
-	if (time + EPS + samplingTimes_vec[sample] >= support.timeLimit) {
+	if (time + EPSILON + samplingTimes_vec[sample] >= support.timeLimit) {
 		//SS->DS
 		if (support.phase == SS && !ReferenceGiven && support.nbStepsLeft == 0){
 			support.phase 			= DS;
