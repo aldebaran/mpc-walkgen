@@ -53,6 +53,12 @@ namespace MPCWalkgen
 
 	/// \name Enum types
 	/// \{
+
+        enum Solver{
+                QPOASES,
+                LSSOL
+        };
+
 	enum Phase{
 		SS,
 		DS

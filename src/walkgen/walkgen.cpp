@@ -4,9 +4,8 @@
 
 #ifdef USE_QPOASES
 #include <mpc-walkgen/qp-solvers/qpoases-solver.h>
-#else
-#include <mpc-walkgen/qp-solvers/lssol-solver.h>
 #endif //USE_QPOASES
+#include <mpc-walkgen/qp-solvers/lssol-solver.h>
 
 #include <mpc-walkgen/qp-generator.h>
 #include <mpc-walkgen/qp-preview.h>
@@ -23,8 +22,12 @@ using namespace Eigen;
 
 
 MPCWalkgen::WalkgenAbstract *MPCWalkgen::mpcFactory() {
-	MPCWalkgen::WalkgenAbstract *zmpVra =
-		new Walkgen();
+	MPCWalkgen::WalkgenAbstract *zmpVra =    
+#ifdef USE_QPOASES
+		new Walkgen(QPOASES);
+#else
+		new Walkgen(LSSOL);
+#endif
 	return zmpVra;
 }
 
@@ -36,7 +39,7 @@ WalkgenAbstract::~WalkgenAbstract(){}
 
 
 // Implementation of the private interface
-Walkgen::Walkgen()
+Walkgen::Walkgen(Solver solver)
 	: WalkgenAbstract()
 	,generalData_()
 	,solver_(0x0)
@@ -52,10 +55,15 @@ Walkgen::Walkgen()
 	,debug_(0x0)
 	,enableDisplay_(false)
 	,upperTimeLimitToUpdate_(0)
-	,upperTimeLimitToFeedback_(0) {
+	,upperTimeLimitToFeedback_(0)
+{
 
 #ifdef USE_QPOASES
-	solver_ = new QPOasesSolver();
+        if (solver==QPOASES){
+              solver_ = new QPOasesSolver();
+        }else{
+              solver_ = new LSSOLSolver();
+        }
 #else
 	solver_ = new LSSOLSolver();
 #endif //USE_QPOASES

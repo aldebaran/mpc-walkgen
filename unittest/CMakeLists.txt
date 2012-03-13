@@ -51,4 +51,12 @@ IF(UNIX AND NOT APPLE)
 	    DEPENDS mpc-walkgen
 	)
 	target_link_libraries(test-walkgen gfortran)
+
+
+	qi_create_test(bench-solvers
+	    SRC
+		bench-solvers.cpp
+	    DEPENDS mpc-walkgen
+	)
+	target_link_libraries(test-walkgen gfortran)
 ENDIF(UNIX AND NOT APPLE)
