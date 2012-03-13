@@ -2,7 +2,6 @@ project(mpc-walkgen)
 cmake_minimum_required(VERSION 2.8)
 find_package(qibuild)
 
-#SET(CXX_DISABLE_WERROR True)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/modules")
 INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/include)
@@ -39,6 +38,11 @@ SET(SOURCES
  
  src/walkgen/mpc-debug.cpp
  )
+
+
+set_source_files_properties(src/walkgen/walkgen.cpp src/walkgen/qp-generator.cpp
+        PROPERTIES
+        COMPILE_FLAGS -DUSE_QPOASES)
 
 qi_create_lib(mpc-walkgen SRC "${SOURCES}")
 qi_use_lib(mpc-walkgen lssol)
