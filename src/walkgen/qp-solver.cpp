@@ -143,12 +143,12 @@ void QPSolver::reorderSolution(MPCSolution & result){
 	VectorXd solution = result.qpSolution;
 	VectorXi constraints = result.constraints;
 
-	for(int i=0;i<nbVar_;++i){
-		result.qpSolution(i)=solution(varOrder_(i));
-		result.constraints(i)=constraints(varOrder_(i));
+	for (int i=0;i<nbVar_;++i) {
+		result.qpSolution(i) = solution(varOrder_(i));
+		result.constraints(i) = constraints(varOrder_(i));
 	}
-	for(int i=0;i<nbCtr_;++i){
-		result.constraints(i+nbVar_)=constraints(ctrOrder_(i+nbVar_));
+	for(int i=0;i<nbCtr_;++i) {
+		result.constraints(i+nbVar_) = constraints(ctrOrder_(i+nbVar_));
 	}
 
 	result.initialConstraints=	result.constraints;

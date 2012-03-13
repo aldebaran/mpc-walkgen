@@ -29,17 +29,17 @@ void FSMSolver::setSupportState(double time, int sample, const std::vector<doubl
 	if (time + EPS + samplingTimes_vec[sample] >= support.timeLimit) {
 		//SS->DS
 		if (support.phase == SS && !ReferenceGiven && support.nbStepsLeft == 0){
-			support.phase = DS;
-			support.timeLimit = time + samplingTimes_vec[sample] + generalData_->DSPeriod;
-			support.stateChanged = true;
-			support.nbInstants = 0;
+			support.phase 			= DS;
+			support.timeLimit 		= time + samplingTimes_vec[sample] + generalData_->DSPeriod;
+			support.stateChanged 	= true;
+			support.nbInstants 		= 0;
 			//DS->SS
 		} else if (((support.phase == DS) && ReferenceGiven) || ((support.phase == DS) && (support.nbStepsLeft > 0))){
 			support.phase = SS;
-			support.timeLimit = time+samplingTimes_vec[sample]+generalData_->stepPeriod;
-			support.nbStepsLeft = generalData_->nbStepSSDS;
-			support.stateChanged = true;
-			support.nbInstants = 0;
+			support.timeLimit 		= time + samplingTimes_vec[sample] + generalData_->stepPeriod;
+			support.nbStepsLeft 	= generalData_->nbStepSSDS;
+			support.stateChanged 	= true;
+			support.nbInstants 		= 0;
 			//SS->SS
 		} else if ((support.phase == SS && support.nbStepsLeft > 0) || (support.nbStepsLeft == 0 && ReferenceGiven)){
 			if (support.foot == LEFT){
@@ -47,9 +47,9 @@ void FSMSolver::setSupportState(double time, int sample, const std::vector<doubl
 			} else {
 				support.foot = LEFT;
 			}
-			support.stateChanged = true;
-			support.nbInstants = 0;
-			support.timeLimit = time+samplingTimes_vec[sample]+generalData_->stepPeriod;
+			support.stateChanged 	= true;
+			support.nbInstants 		= 0;
+			support.timeLimit 		= time + samplingTimes_vec[sample] + generalData_->stepPeriod;
 			if (sample != 1) {//Flying foot is not down
 				++support.stepNumber;
 			}

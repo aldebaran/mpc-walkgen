@@ -180,34 +180,35 @@ void QPGenerator::computeWarmStart(MPCSolution & result){
 	// -----------
 	int nbSteps = result.supportStates_vec.back().stepNumber;
 	int nbStepsMax = 4;
-	int nbSampling = generalData_->nbSamplesQP;
-	result.initialSolution.resize(4*nbSampling+4*nbSteps);
+	int nbFC = 5;// Number of foot constraints per step
+	int nbSamples = generalData_->nbSamplesQP;
+	result.initialSolution.resize(4*nbSamples + 4*nbSteps);
 
-	// Compute previewed initial constraints:
-	// ---------------------
-	int size=result.initialConstraints.rows();
+	// Preview active set:
+	// -------------------
+	int size = result.initialConstraints.rows();
 	VectorXi initialConstraintTmp = result.initialConstraints;
 	double TimeFactor = result.supportStates_vec[1].sampleWeight;
-	int shift_ctr;
-	if (fabs(TimeFactor-1.)<EPS){
-		shift_ctr=1;
-	}else{
-		shift_ctr=0;
+	int shiftCtr = 0;
+	if (fabs(TimeFactor-1.) < EPS) {
+		shiftCtr = 1;
 	}
 
-	if (size>=2*nbSampling){
-		result.initialConstraints.segment(0,          nbSampling-1) = initialConstraintTmp.segment(shift_ctr,    nbSampling-1);
-		result.initialConstraints.segment(nbSampling, nbSampling-1) = initialConstraintTmp.segment(shift_ctr+nbSampling, nbSampling-1);
+	if (size >= 2*nbSamples){
+		// Shift active set by
+		result.initialConstraints.segment(0,         nbSamples-1) = initialConstraintTmp.segment(shiftCtr,    nbSamples-1);
+		result.initialConstraints.segment(nbSamples, nbSamples-1) = initialConstraintTmp.segment(shiftCtr+nbSamples, nbSamples-1);
 
-		result.initialConstraints(  nbSampling-1)=initialConstraintTmp(  nbSampling-1);
-		result.initialConstraints(2*nbSampling-1)=initialConstraintTmp(2*nbSampling-1);
+		// New final elements are old final elements
+		result.initialConstraints(  nbSamples-1) = initialConstraintTmp(  nbSamples-1);
+		result.initialConstraints(2*nbSamples-1) = initialConstraintTmp(2*nbSamples-1);
 
-		result.initialConstraints.segment(2*nbSampling          , 5*nbSteps)=
-			initialConstraintTmp.segment (2*nbSampling          , 5*nbSteps);
-		result.initialConstraints.segment(2*nbSampling+5*nbSteps, 5*(nbStepsMax-nbSteps))=
-			initialConstraintTmp.segment (2*nbSampling+5*nbSteps, 5*(nbStepsMax-nbSteps));
-	}else{
-		result.initialConstraints = VectorXi::Zero(2*nbSampling+5*nbStepsMax);
+		result.initialConstraints.segment(2*nbSamples          , nbFC*nbSteps)=
+			initialConstraintTmp.segment (2*nbSamples          , nbFC*nbSteps);
+		result.initialConstraints.segment(2*nbSamples+nbFC*nbSteps, nbFC*(nbStepsMax-nbSteps))=
+			initialConstraintTmp.segment (2*nbSamples+nbFC*nbSteps, nbFC*(nbStepsMax-nbSteps));
+	} else {
+		result.initialConstraints = VectorXi::Zero(2*nbSamples+nbFC*nbStepsMax);
 	}
 
 
@@ -219,15 +220,15 @@ void QPGenerator::computeWarmStart(MPCSolution & result){
 	SupportState currentSupport = result.supportStates_vec.front();
 	// if in transition phase
 	if (prwSS_it->stateChanged){
-	currentSupport=*prwSS_it;
+	currentSupport = *prwSS_it;
 	}
 	int j = 0;
 	ConvexHull FootFeasibilityEdges, COPFeasibilityEdges;
 	double shiftx,shifty;
 	bool noActiveConstraints;
-	for (int i=0; i<nbSampling; i++){
+	for (int i=0; i<nbSamples; i++){
 		// Get COP convex hull for current support
-		COPFeasibilityEdges = robot_->convexHull(CoPHull,*prwSS_it, false);
+		COPFeasibilityEdges = robot_->convexHull(CoPHull, *prwSS_it, false);
 		// Check if the support foot has changed
 		if (prwSS_it->stateChanged && prwSS_it->stepNumber>0){
 
@@ -241,10 +242,10 @@ void QPGenerator::computeWarmStart(MPCSolution & result){
 			// Place the foot on active constraints
 			shiftx=shifty=0;
 			noActiveConstraints=true;
-			for(int k=0;k<5;++k){
-				if (result.initialConstraints(k+2*nbSampling+j*5)!=0){
+			for(int k=0;k<nbFC;++k){
+				if (result.initialConstraints(k+2*nbSamples+j*nbFC)!=0){
 					int k2=(k+1)%5; // k(4) = k(0)
-					if (result.initialConstraints(k2+2*nbSampling+j*5)!=0){
+					if (result.initialConstraints(k2+2*nbSamples+j*nbFC)!=0){
 						shiftx=FootFeasibilityEdges.x(k2);
 						shifty=FootFeasibilityEdges.y(k2);
 					}else{
@@ -264,8 +265,8 @@ void QPGenerator::computeWarmStart(MPCSolution & result){
 			currentSupport.y += shifty;
 
 			// Set the new position into initial solution vector
-			result.initialSolution(2*nbSampling+j) = currentSupport.x;
-			result.initialSolution(2*nbSampling+nbSteps+j) = currentSupport.y;
+			result.initialSolution(2*nbSamples+j) = currentSupport.x;
+			result.initialSolution(2*nbSamples+nbSteps+j) = currentSupport.y;
 			++j;
 		}
 		// Place the ZMP on active constraints
@@ -274,34 +275,34 @@ void QPGenerator::computeWarmStart(MPCSolution & result){
 		int k1=-1;
 		int k2=-1;
 		if (result.initialConstraints(0+i*2)==1){
-			if (result.initialConstraints(nbSampling+i*2)==1){
+			if (result.initialConstraints(nbSamples+i*2)==1){
 				k2=1;
 				noActiveConstraints=false;
-			}else if (result.initialConstraints(nbSampling+i*2)==2){
+			}else if (result.initialConstraints(nbSamples+i*2)==2){
 				k2=0;
 				noActiveConstraints=false;
-			}else if (result.initialConstraints(nbSampling+i*2)==0){
+			}else if (result.initialConstraints(nbSamples+i*2)==0){
 				k1=0;
 				k2=1;
 				noActiveConstraints=false;
 			}
 		}else if (result.initialConstraints(0+i*2)==2){
-			if (result.initialConstraints(nbSampling+i*2)==1){
+			if (result.initialConstraints(nbSamples+i*2)==1){
 				k2=2;
 				noActiveConstraints=false;
-			}else if (result.initialConstraints(nbSampling+i*2)==2){
+			}else if (result.initialConstraints(nbSamples+i*2)==2){
 				k2=3;
 				noActiveConstraints=false;
-			}else if (result.initialConstraints(nbSampling+i*2)==0){
+			}else if (result.initialConstraints(nbSamples+i*2)==0){
 				k1=3;
 				k2=2;
 				noActiveConstraints=false;
 			}
-		}else if (result.initialConstraints(nbSampling+i*2)==1){
+		}else if (result.initialConstraints(nbSamples+i*2)==1){
 			k1=2;
 			k2=1;
 			noActiveConstraints=false;
-		}else if (result.initialConstraints(nbSampling+i*2)==2){
+		}else if (result.initialConstraints(nbSamples+i*2)==2){
 			k1=0;
 			k2=3;
 			noActiveConstraints=false;
@@ -317,9 +318,8 @@ void QPGenerator::computeWarmStart(MPCSolution & result){
 			}
 		}
 
-
 		result.initialSolution(i) = shiftx;
-		result.initialSolution(nbSampling+i) = shifty;
+		result.initialSolution(nbSamples+i) = shifty;
 		++prwSS_it;
 
 	}

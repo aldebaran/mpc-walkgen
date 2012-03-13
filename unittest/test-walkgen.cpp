@@ -177,7 +177,6 @@ int main() {
 		delete data_vec[i];
 	}
 
-	std::cout<<success<<std::endl;
 	return (success)?0:1;
 }
 

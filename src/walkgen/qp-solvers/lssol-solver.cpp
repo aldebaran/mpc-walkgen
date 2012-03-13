@@ -44,7 +44,7 @@ void LSSOLSolver::solve(MPCSolution & result){
 		result.qpSolution = result.initialSolution;
 		result.constraints = result.initialConstraints;
 	}else{
-		if (result.qpSolution.rows()!=nbVar_){
+		if (result.qpSolution.rows() != nbVar_){
 			result.qpSolution.setZero(nbVar_);
 		}else{
 			result.qpSolution.fill(0);
