@@ -1,27 +1,51 @@
 #include <mpc-walkgen/qp-solvers/qpoases-solver.h>
 
-//#include <QProblem.hpp>
-#include <lssol/lssol.h>
+#include <QProblem.hpp>
 using namespace MPCWalkgen;
 using namespace Eigen;
 
 
 QPOasesSolver::QPOasesSolver(const int nbVarMax, const int nbCtrMax)
 	:QPSolver(nbVarMax, nbCtrMax)
-	,ittMax_(100)
-{
-}
+{}
 
 QPOasesSolver::~QPOasesSolver(){}
 
 void QPOasesSolver::solve(MPCSolution & result){
 
+
+	qp_ = new qpOASES::QProblem(nbVar_, nbCtr_);
+	qp_->setPrintLevel(qpOASES::PL_MEDIUM);
+
 	reorderInitialSolution(result);
 
+	qpOASES::Constraints* ctrInit = new  qpOASES::Constraints(nbCtr_);
+	qpOASES::Bounds* boundsInit = new  qpOASES::Bounds(nbVar_);
 	if (result.useWarmStart){
 		result.qpSolution = result.initialSolution;
 		result.constraints = result.initialConstraints;
+		for(int i=0;i<nbVar_;++i){
+		      if (result.constraints(i)==0){
+			    boundsInit->setupBound(i,qpOASES::ST_INACTIVE);
+		      }else if (result.constraints(i)==1){
+			   boundsInit->setupBound(i,qpOASES::ST_LOWER);
+		      }else{
+			   boundsInit->setupBound(i,qpOASES::ST_UPPER);
+		      }
+		}
+		for(int i=0;i<nbCtr_;++i){
+		      if (result.constraints(nbVar_+i)==0){
+			   ctrInit->setupConstraint(i,qpOASES::ST_INACTIVE);
+		      }else if (result.constraints(nbVar_+i)==1){
+			   ctrInit->setupConstraint(i,qpOASES::ST_LOWER);
+		      }else{
+			   ctrInit->setupConstraint(i,qpOASES::ST_UPPER);
+		      }
+		}
+
 	}else{
+		ctrInit->setupAllInactive();
+		boundsInit->setupAllFree();
 		if (result.qpSolution.rows()!=nbVar_){
 			result.qpSolution.setZero(nbVar_);
 		}else{
@@ -33,17 +57,51 @@ void QPOasesSolver::solve(MPCSolution & result){
 			result.constraints.fill(0);
 		}
 	}
-/*
-        fQP->init(matrixQ_.dense().data(), vectorP_.data(), matrixA_.dense().data(),
-                  vectorXL_.dense().data(), vectorXU_.dense().data(),
-                  vectorBL_.dense().data(), vectorBU_.dense().data(), ittMax_, 0
-                  );
-        f_CopReal = f_Com[0];
 
-        fQP->getPrimalSolution(f_solution);
-*/
+	int ittMax=100;
+
+	MatrixXd A = matrixA_.dense().transpose();
+	qp_->init(matrixQ_.dense().data(), vectorP_().data(), A.data(),
+		  vectorXL_().data(), vectorXU_().data(),
+		  vectorBL_().data(), vectorBU_().data(),
+		  ittMax, 0,
+		  result.qpSolution.data(),NULL,
+		  boundsInit, ctrInit);
+
+        double* sol = new double[nbVar_];
+        qp_->getPrimalSolution(sol);
+        for(int i=0;i<nbVar_;++i){
+            result.qpSolution(i) = sol[i];
+        }
+
+        qpOASES::Constraints ctr;
+        qpOASES::Bounds bounds;
+        qp_->getConstraints(ctr);
+        qp_->getBounds(bounds);
+        for(int i=0;i<nbVar_;++i){
+            if (bounds.getStatus(i)==qpOASES::ST_LOWER){
+                result.constraints(i)=1;
+            }else if (bounds.getStatus(i)==qpOASES::ST_UPPER){
+                result.constraints(i)=2;
+            }else{
+                result.constraints(i)=0;
+            }
+        }
+        for(int i=0;i<nbCtr_;++i){
+            if (ctr.getStatus(i)==qpOASES::ST_LOWER){
+                result.constraints(i+nbVar_)=1;
+            }else if (ctr.getStatus(i)==qpOASES::ST_UPPER){
+                result.constraints(i+nbVar_)=2;
+            }else{
+                result.constraints(i+nbVar_)=0;
+            }
+        }
 
 	reorderSolution(result);
+
+	delete qp_;
+	delete ctrInit;
+	delete boundsInit;
 }
 
 

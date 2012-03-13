@@ -33,6 +33,7 @@ void QPGenerator::precomputeObjective(){
 	int nbUsedPonderations = ponderation_->JerkMin.size(); //
 	int size = generalData_->nbFeedbackSamplesStandard();
 	Qconst_.resize(size*nbUsedPonderations);
+	QconstN_.resize(size*nbUsedPonderations);
 	choleskyConst_.resize(size*nbUsedPonderations);
 	pconstCoM_.resize(size*nbUsedPonderations);
 	pconstVc_.resize(size*nbUsedPonderations);
@@ -74,11 +75,11 @@ void QPGenerator::precomputeObjective(){
 			G = ponderation_->instantVelocity[i]*tmpMat_ + ponderation_->JerkMin[i]*tmpMat2_;
 			Qconst_[nb] = G;
 
-			tmpMat_ = G + ponderation_->CopCentering[i]*MatrixXd::Identity(N,N);
+			QconstN_[nb] = G + ponderation_->CopCentering[i]*MatrixXd::Identity(N,N);
 
 			chol.reset();
-			chol.addTerm(tmpMat_, 0, 0);
-			chol.addTerm(tmpMat_, N, N);
+			chol.addTerm(QconstN_[nb], 0, 0);
+			chol.addTerm(QconstN_[nb], N, N);
 			choleskyConst_[nb] = chol.cholesky();
 
 			pconstCoM_[nb] = VelDynamics.S - VelDynamics.U*CoPDynamics.UInv*CoPDynamics.S;
@@ -110,6 +111,11 @@ void QPGenerator::buildObjective(const MPCSolution & result) {
 	solver_->nbVar(2*N + 2*nbStepsPreviewed);
 	solver_->nbCtr(0);
 
+#ifdef USE_QPOASES
+	solver_->matrix(matrixQ).addTerm(QconstN_[precomputedMatrixNumber], 0, 0);
+	solver_->matrix(matrixQ).addTerm(QconstN_[precomputedMatrixNumber], N, N);
+#endif //USE_QPOASES
+
 	if (nbStepsPreviewed>0) {
 		tmpMat_ = Qconst_[precomputedMatrixNumber]*state.V;
 		solver_->matrix(matrixQ).addTerm(tmpMat_, 0, 2*N);
@@ -119,6 +125,12 @@ void QPGenerator::buildObjective(const MPCSolution & result) {
 		tmpMat_ = state.VT*Qconst_[precomputedMatrixNumber]*state.V;
 		solver_->matrix(matrixQ).addTerm(tmpMat_, 2*N , 2*N);
 		solver_->matrix(matrixQ).addTerm(tmpMat_, 2*N + nbStepsPreviewed, 2*N + nbStepsPreviewed);
+
+#ifdef USE_QPOASES
+		tmpMat_ = state.VT*Qconst_[precomputedMatrixNumber];
+		solver_->matrix(matrixQ).addTerm(tmpMat_, 2*N, 0);
+		solver_->matrix(matrixQ).addTerm(tmpMat_, 2*N + nbStepsPreviewed, N);
+#endif //USE_QPOASES
 
 		MatrixXd & Q = solver_->matrix(matrixQ)();
 
@@ -132,12 +144,16 @@ void QPGenerator::buildObjective(const MPCSolution & result) {
 		computeRM(urBlock, rot2);
 		Q.block(0, 2*N, 2*N, 2*nbStepsPreviewed) = urBlock;
 	}
-
+#ifdef USE_QPOASES
+	MatrixXd Q= solver_->matrix(matrixQ)().block(0,0,2*N,2*N);
+	Q = rot2*Q*rot2.transpose();
+	solver_->matrix(matrixQ)().block(0,0,2*N,2*N)=Q;
+#else
 	// rotate the cholesky matrix
 	MatrixXd chol = choleskyConst_[precomputedMatrixNumber];
 	rotateCholeskyMatrix(chol, rot2);
 	solver_->matrix(matrixQ).cholesky(chol);
-
+#endif //USE_QPOASES
 
 	VectorXd HX(N),HY(N),H(2*N);
 

@@ -72,6 +72,7 @@ namespace MPCWalkgen{
 		    RelativeInequalities feetInequalities_;//TODO: Maybe should be instantiated in robot_
 
 		    std::vector<Eigen::MatrixXd> Qconst_;
+		    std::vector<Eigen::MatrixXd> QconstN_;
 		    std::vector<Eigen::MatrixXd> choleskyConst_;
 		    std::vector<Eigen::MatrixXd> pconstCoM_;
 		    std::vector<Eigen::MatrixXd> pconstVc_;

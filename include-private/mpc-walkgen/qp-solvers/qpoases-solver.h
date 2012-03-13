@@ -16,8 +16,12 @@
 #include <mpc-walkgen/qp-solver.h>
 #include <mpc-walkgen/types.h>
 
-
+namespace qpOASES{
+  class QProblem;
+}
 namespace MPCWalkgen{
+
+
 
 	class QPOasesSolver:public QPSolver{
 		public:
@@ -30,7 +34,8 @@ namespace MPCWalkgen{
 			virtual bool resizeAll();
 
 		protected:
-			int ittMax_;
+			::qpOASES::QProblem* qp_;
+
 
 	};
 

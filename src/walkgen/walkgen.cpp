@@ -2,7 +2,12 @@
 
 #include <mpc-walkgen/orientations-preview.h>
 
+#ifdef USE_QPOASES
 #include <mpc-walkgen/qp-solvers/qpoases-solver.h>
+#else
+#include <mpc-walkgen/qp-solvers/lssol-solver.h>
+#endif //USE_QPOASES
+
 #include <mpc-walkgen/qp-generator.h>
 #include <mpc-walkgen/qp-preview.h>
 #include <mpc-walkgen/rigid-body-system.h>
@@ -49,7 +54,11 @@ Walkgen::Walkgen()
 	,upperTimeLimitToUpdate_(0)
 	,upperTimeLimitToFeedback_(0) {
 
+#ifdef USE_QPOASES
 	solver_ = new QPOasesSolver();
+#else
+	solver_ = new LSSOLSolver();
+#endif //USE_QPOASES
 
 	orientPrw_ = new OrientationsPreview();
 
