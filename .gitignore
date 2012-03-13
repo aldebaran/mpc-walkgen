@@ -31,3 +31,4 @@ build/
 *~
 *build*
 CMakeLists.txt.user
+*.autosave
