@@ -26,6 +26,7 @@ QPPreview::~QPPreview()
 void QPPreview::previewSamplingTimes(double firstSamplingPeriod, MPCSolution &solution) {
 
 	solution.samplingTimes_vec.resize(generalData_->nbSamplesQP + 1, 0);
+	std::fill(solution.samplingTimes_vec.begin(), solution.samplingTimes_vec.end(), 0);
 	// As for now, only the first sampling period varies
 	solution.samplingTimes_vec[0] = 0;//This is the current time
 	solution.samplingTimes_vec[1] = solution.samplingTimes_vec[0] + generalData_->QPSamplingPeriod;// firstSamplingPeriod;////;
@@ -95,7 +96,6 @@ void QPPreview::previewSupportStates(const double currentTime,
 			previewedSupport.previousSamplingPeriod = generalData_->QPSamplingPeriod;
 			previewedSupport.sampleWeight = 1;
 		}
-
 		solution.supportStates_vec.push_back(previewedSupport);
 	}
 
