@@ -1,5 +1,5 @@
 /*
-*  The purpose of this test is to simply check the installation 
+*  The purpose of this test is to simply check the installation
 *  of lssol. Especially, we want to make sure that the link was succesful
 *  The problem solved is hence quite simple:
 *   min    || ( -1   -2) (x0)  - (-1) ||
@@ -12,7 +12,11 @@
 #include <iostream>
 #include <cstring>
 
+#ifdef USE_QPOASES
+#include <mpc-walkgen/qp-solvers/qpoases-solver.h>
+#else
 #include <mpc-walkgen/qp-solvers/lssol-solver.h>
+#endif //USE_QPOASES
 
 using namespace Eigen;
 using namespace MPCWalkgen;
@@ -32,7 +36,11 @@ obj = -8.2222
 */
 int main ()
 {
-	LSSOLSolver qp(2,3);
+#ifdef USE_QPOASES
+        QPOasesSolver qp(2,3);
+#else
+        LSSOLSolver qp(2,3);
+#endif //USE_QPOASES
 	qp.reset();
 	qp.nbVar(2);
 	qp.nbCtr(3);
@@ -64,7 +72,7 @@ int main ()
 	qp.matrix(vectorBU).addTerm(bu);
 
 	Vector2d xl;
-	xl.setZero();
+	xl.fill(1);
 	qp.matrix(vectorXL).addTerm(xl);
 
 	Vector2d xu;
@@ -77,16 +85,17 @@ int main ()
 	result.initialSolution.resize(2);
 	result.initialConstraints.resize(2+3);
 
-	// solution supposee
-	//  initial << 0.666, 1.33333;
-	//  std::cout << (A * initial) << std::endl;
-	//  std::cout << (initial.transpose() * Q * initial + P.transpose() * initial ) << std::endl;
-
+	/* solution supposee
+	Vector2d  initial;
+	initial << 0.666, 1.33333;
+	std::cout << (A * initial).transpose() << std::endl;
+	  std::cout << (initial.transpose() * Q * initial + P.transpose() * initial ) << std::endl;
+	*/
 	qp.solve(result);
 
 	Vector2d expectedResult;
 	expectedResult << 2./3., 4./3.;
-
-	bool success = ((result.qpSolution - expectedResult).norm() < 1e-9);
+	std::cout << result.qpSolution.transpose() << std::endl;
+	bool success = ((result.qpSolution - expectedResult).norm() < 1e-4);
 	return (success ? 0 : 1);
 }
