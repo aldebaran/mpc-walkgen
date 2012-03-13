@@ -25,8 +25,7 @@ QPPreview::~QPPreview()
 
 void QPPreview::previewSamplingTimes(double firstSamplingPeriod, MPCSolution &solution) {
 
-	solution.samplingTimes_vec.resize(generalData_->nbSamplesQP + 1);
-	solution.samplingTimes_vec.clear();
+	solution.samplingTimes_vec.resize(generalData_->nbSamplesQP + 1, 0);
 	// As for now, only the first sampling period varies
 	solution.samplingTimes_vec[0] = 0;//This is the current time
 	solution.samplingTimes_vec[1] = solution.samplingTimes_vec[0] + generalData_->QPSamplingPeriod;// firstSamplingPeriod;////;
