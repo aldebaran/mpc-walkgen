@@ -15,7 +15,7 @@ void QPOasesSolver::solve(MPCSolution & result){
 
 
 	qp_ = new qpOASES::QProblem(nbVar_, nbCtr_);
-	qp_->setPrintLevel(qpOASES::PL_MEDIUM);
+	qp_->setPrintLevel(qpOASES::PL_NONE);
 
 	reorderInitialSolution(result);
 
