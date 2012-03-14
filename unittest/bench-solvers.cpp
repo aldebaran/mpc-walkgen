@@ -111,7 +111,7 @@ int main() {
 		walk2.online(t);
 		debug.getTime(2,false);
 	}
-	std::cout << "15%" << std::endl;
+	std::cout << "25%" << std::endl;
 	walk1.reference(velocity, 0, 0);
 	walk2.reference(velocity, 0, 0);
 	for (t; t < 10; t += 0.005){
@@ -122,7 +122,7 @@ int main() {
 		walk2.online(t);
 		debug.getTime(2,false);
 	}
-	std::cout << "30%" << std::endl;
+	std::cout << "50%" << std::endl;
 	walk1.reference(0, velocity, 0);
 	walk2.reference(0, velocity, 0);
 	for (t; t < 20; t += 0.005){
@@ -133,7 +133,7 @@ int main() {
 		walk2.online(t);
 		debug.getTime(2,false);
 	}
-	std::cout << "45%" << std::endl;
+	std::cout << "75%" << std::endl;
 	walk1.reference(velocity, 0, velocity);
 	walk2.reference(velocity, 0, velocity);
 	for (t; t < 30; t += 0.005){
@@ -144,10 +144,8 @@ int main() {
 		walk2.online(t);
 		debug.getTime(2,false);
 	}
-	std::cout << "60%" << std::endl;
 
-
-	std::cout << "100% \\o/" << std::endl;
+	std::cout << "100%" << std::endl;
 
 	std::cout << "Walkgen test :" << std::endl;
 	std::cout << "Mean iteration duration with LSSOL   : " << debug.computeInterval(1) << " us" << std::endl;
