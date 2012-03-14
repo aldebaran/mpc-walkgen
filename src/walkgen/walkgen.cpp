@@ -39,7 +39,7 @@ WalkgenAbstract::~WalkgenAbstract(){}
 
 
 // Implementation of the private interface
-Walkgen::Walkgen(Solver solver)
+Walkgen::Walkgen(Solver solvertype)
 	: WalkgenAbstract()
 	,generalData_()
 	,solver_(0x0)
@@ -59,7 +59,7 @@ Walkgen::Walkgen(Solver solver)
 {
 
 #ifdef USE_QPOASES
-        if (solver==QPOASES){
+        if (solvertype==QPOASES){
               solver_ = new QPOasesSolver();
         }else{
               solver_ = new LSSOLSolver();
@@ -76,7 +76,7 @@ Walkgen::Walkgen(Solver solver)
 
 	preview_ = new QPPreview(&velRef_, robot_, &generalData_);
 
-	generator_= new QPGenerator(preview_, solver_, &velRef_, &ponderation_, robot_, &generalData_ );
+	generator_= new QPGenerator(preview_, solver_, &velRef_, &ponderation_, robot_, &generalData_, solvertype );
 
 	debug_ = new MPCDebug(true);
 }

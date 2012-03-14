@@ -30,7 +30,7 @@ namespace MPCWalkgen{
 		public:
 			QPGenerator(QPPreview * preview, QPSolver * solver,
 					VelReference * velRef, QPPonderation * ponderation,
-					RigidBodySystem * robot, const MPCData * generalData);
+					RigidBodySystem * robot, const MPCData * generalData, Solver solvertype);
 			~QPGenerator();
 
 			void precomputeObjective();
@@ -63,6 +63,7 @@ namespace MPCWalkgen{
 		    VelReference * velRef_;
 		    QPPonderation * ponderation_;
 		    const MPCData * generalData_;
+		    Solver solvertype_;
 
 		    Eigen::VectorXd tmpVec_;
 		    Eigen::VectorXd tmpVec2_;

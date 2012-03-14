@@ -11,13 +11,14 @@ using namespace Eigen;
 
 QPGenerator::QPGenerator(QPPreview * preview, QPSolver * solver,
 		VelReference * velRef, QPPonderation * ponderation,
-		RigidBodySystem * robot, const MPCData * generalData)
+		RigidBodySystem * robot, const MPCData * generalData, Solver solvertype)
 	:preview_(preview)
 	,solver_(solver)
 	,robot_(robot)
 	,velRef_(velRef)
 	,ponderation_(ponderation)
 	,generalData_(generalData)
+	,solvertype_(solvertype)
 	,tmpVec_(1)
 	,tmpVec2_(1)
 	,tmpMat_(1,1)
@@ -112,8 +113,10 @@ void QPGenerator::buildObjective(const MPCSolution & result) {
 	solver_->nbCtr(0);
 
 #ifdef USE_QPOASES
-	solver_->matrix(matrixQ).addTerm(QconstN_[precomputedMatrixNumber], 0, 0);
-	solver_->matrix(matrixQ).addTerm(QconstN_[precomputedMatrixNumber], N, N);
+	if (solvertype_==QPOASES){
+		solver_->matrix(matrixQ).addTerm(QconstN_[precomputedMatrixNumber], 0, 0);
+		solver_->matrix(matrixQ).addTerm(QconstN_[precomputedMatrixNumber], N, N);
+	}
 #endif //USE_QPOASES
 
 	if (nbStepsPreviewed>0) {
@@ -127,9 +130,11 @@ void QPGenerator::buildObjective(const MPCSolution & result) {
 		solver_->matrix(matrixQ).addTerm(tmpMat_, 2*N + nbStepsPreviewed, 2*N + nbStepsPreviewed);
 
 #ifdef USE_QPOASES
-		tmpMat_ = state.VT*Qconst_[precomputedMatrixNumber];
-		solver_->matrix(matrixQ).addTerm(tmpMat_, 2*N, 0);
-		solver_->matrix(matrixQ).addTerm(tmpMat_, 2*N + nbStepsPreviewed, N);
+		if (solvertype_==QPOASES){
+			tmpMat_ = state.VT*Qconst_[precomputedMatrixNumber];
+			solver_->matrix(matrixQ).addTerm(tmpMat_, 2*N, 0);
+			solver_->matrix(matrixQ).addTerm(tmpMat_, 2*N + nbStepsPreviewed, N);
+		}
 #endif //USE_QPOASES
 
 		MatrixXd & Q = solver_->matrix(matrixQ)();
@@ -145,15 +150,18 @@ void QPGenerator::buildObjective(const MPCSolution & result) {
 		Q.block(0, 2*N, 2*N, 2*nbStepsPreviewed) = urBlock;
 	}
 #ifdef USE_QPOASES
-	MatrixXd Q= solver_->matrix(matrixQ)().block(0,0,2*N,2*N);
-	Q = rot2*Q*rot2.transpose();
-	solver_->matrix(matrixQ)().block(0,0,2*N,2*N)=Q;
-#else
-	// rotate the cholesky matrix
-	MatrixXd chol = choleskyConst_[precomputedMatrixNumber];
-	rotateCholeskyMatrix(chol, rot2);
-	solver_->matrix(matrixQ).cholesky(chol);
+	if (solvertype_==QPOASES){
+		MatrixXd Q= solver_->matrix(matrixQ)().block(0,0,2*N,2*N);
+		Q = rot2*Q*rot2.transpose();
+		solver_->matrix(matrixQ)().block(0,0,2*N,2*N)=Q;
+	}
 #endif //USE_QPOASES
+	if (solvertype_==LSSOL){
+		// rotate the cholesky matrix
+		MatrixXd chol = choleskyConst_[precomputedMatrixNumber];
+		rotateCholeskyMatrix(chol, rot2);
+		solver_->matrix(matrixQ).cholesky(chol);
+	}
 
 	VectorXd HX(N),HY(N),H(2*N);
 
