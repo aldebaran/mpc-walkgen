@@ -27,7 +27,7 @@ int copyFile(const std::string & source, const std::string & destination);
 int main() {
 	// Logging:
 	// --------
-	const int nbFile=8;
+	const int nbFile=10;
 
 	std::vector<std::string> name_vec(nbFile);
 	name_vec[0]="CoM_X";
@@ -38,6 +38,8 @@ int main() {
 	name_vec[5]="LF_Y";
 	name_vec[6]="RF_X";
 	name_vec[7]="RF_Y";
+	name_vec[8]="RF_Z";
+	name_vec[9]="LF_Z";
 
 	std::vector<std::ofstream*> data_vec(nbFile);
 	std::vector<std::ifstream*> ref_vec(nbFile);
@@ -190,6 +192,8 @@ void dumpTrajectory(MPCSolution &result, std::vector<std::ofstream*> &data_vec) 
 		*data_vec[5] << result.state_vec[0].leftFootTrajY_(i) << " " << result.state_vec[1].leftFootTrajY_(i) << " " << result.state_vec[2].leftFootTrajY_(i) << std::endl;
 		*data_vec[6] << result.state_vec[0].rightFootTrajX_(i) << " " << result.state_vec[1].rightFootTrajX_(i) << " " << result.state_vec[2].rightFootTrajX_(i) << std::endl;
 		*data_vec[7] << result.state_vec[0].rightFootTrajY_(i) << " " << result.state_vec[1].rightFootTrajY_(i) << " " << result.state_vec[2].rightFootTrajY_(i) << std::endl;
+		*data_vec[8] << result.state_vec[0].rightFootTrajZ_(i) << " " << result.state_vec[1].rightFootTrajZ_(i) << " " << result.state_vec[2].rightFootTrajZ_(i) << std::endl;
+		*data_vec[9] << result.state_vec[0].leftFootTrajZ_(i) << " " << result.state_vec[1].leftFootTrajZ_(i) << " " << result.state_vec[2].leftFootTrajZ_(i) << std::endl;
 	}
 }
 
@@ -203,6 +207,8 @@ void makeScilabFile(std::string type, double time) {
 	sci << "LFY=read('LF_Y." << type << "',-1,3);" << std::endl;
 	sci << "RFX=read('RF_X." << type << "',-1,3);" << std::endl;
 	sci << "RFY=read('RF_Y." << type << "',-1,3);" << std::endl;
+	sci << "RFZ=read('RF_Z." << type << "',-1,3);" << std::endl;
+	sci << "LFZ=read('LF_Z." << type << "',-1,3);" << std::endl;
 	sci << "s=size(X);t=linspace(0,"<<time<<",s(1));" << std::endl;
 
 	sci << "subplot(2,2,1);" << std::endl;
@@ -245,6 +251,10 @@ void makeScilabFile(std::string type, double time) {
 	sci << "plot(t,LFX);" << std::endl;
 	sci << "title('RF_X/LF_X');" << std::endl;
 
+	sci << "subplot(2,3,6);" << std::endl;
+	sci << "plot(t,RFZ);" << std::endl;
+	sci << "plot(t,LFZ);" << std::endl;
+	sci << "title('RF_Z/LF_Z');" << std::endl;
 
 
 	sci << "scf();" << std::endl;
