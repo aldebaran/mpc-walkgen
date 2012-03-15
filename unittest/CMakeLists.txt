@@ -17,7 +17,7 @@ if ("ON")
     test-qpsolver.cpp
     bench-qpsolver.cpp
     PROPERTIES
-    COMPILE_FLAGS -DUSE_QPOASES)
+    COMPILE_FLAGS -DNUSE_QPOASES)
 endif ()
 
 qi_create_test(test-qpsolver
@@ -66,18 +66,24 @@ target_link_libraries(test-all-solvers gfortran)
 
 
 IF(UNIX AND NOT APPLE)
-  qi_create_test(test-walkgen
-      SRC
-    test-walkgen.cpp
-      DEPENDS mpc-walkgen
-  )
-  target_link_libraries(test-walkgen gfortran)
+	qi_create_test(test-walkgen 
+	    SRC 
+		test-walkgen.cpp 
+	    DEPENDS mpc-walkgen
+	)
+	target_link_libraries(test-walkgen gfortran)
 
 
-  qi_create_test(bench-solvers
-      SRC
-    bench-solvers.cpp
-      DEPENDS mpc-walkgen
-  )
-  target_link_libraries(test-walkgen gfortran)
+	qi_create_test(bench-solvers
+	    SRC
+		bench-solvers.cpp
+	    DEPENDS mpc-walkgen
+	)
+	target_link_libraries(test-walkgen gfortran)
+
+
+	qi_create_bin(bench-solver-bin
+		SRC bench-solvers.cpp
+		DEPENDS mpc-walkgen)
+
 ENDIF(UNIX AND NOT APPLE)
