@@ -16,52 +16,41 @@ FootBody::~FootBody(){}
 void FootBody::interpolate(MPCSolution &result, double currentTime, const VelReference &/*velRef*/) {
 
 	BodyState nextFootState;
-	SupportState curSupport = result.supportStates_vec.front();
-	SupportState nextSupportState = result.supportStates_vec[1];
 
 	double Txy = 1; // Local horizontal interpolation time
 	double Tz = 1; // Local vertical interpolation time
 	int nbSamples = generalData_->nbSamplesControl();
-	double transitionalDSPeriod = generalData_->QPSamplingPeriod;
-	double raiseTime = 0.05; // Time during which the horizontal displacement is blocked
-	double freeFlyingTimeLeft = curSupport.timeLimit - transitionalDSPeriod - currentTime;
-	double freeFlyingTimeSpent = currentTime - curSupport.startTime;
-	if (result.supportStates_vec[0].phase == SS) {
+	if (result.supportStates_vec[0].phase == SS){
+
 		int nbStepsPreviewed = result.supportStates_vec.back().stepNumber;
-		if (nextSupportState.inTransitionalDS) {
-			Txy = curSupport.timeLimit - currentTime;
-			nextFootState.x(0) = state_.x(0);
-			nextFootState.y(0) = state_.y(0);
-			nextFootState.yaw(0) = state_.yaw(0);
-		} else if (freeFlyingTimeSpent < raiseTime + EPS) {
-			Txy = raiseTime - freeFlyingTimeSpent;
-			nextFootState.x(0) = state_.x(0);
-			nextFootState.y(0) = state_.y(0);
-			nextFootState.yaw(0) = state_.yaw(0);
-		}  else if (freeFlyingTimeLeft < raiseTime + EPS) {
-			Txy = freeFlyingTimeLeft;
-			nextFootState.x(0) = state_.x(0);
-			nextFootState.y(0) = state_.y(0);
-			nextFootState.yaw(0) = state_.yaw(0);
-		} else {
-			Txy = freeFlyingTimeLeft - raiseTime;
+
+		Txy = result.supportStates_vec[0].startTime + generalData_->stepPeriod - currentTime;//TODO: Not simply generalData_->stepPeriod
+
+		if (result.supportStates_vec[1].inTransitionalDS){
+			nextFootState.x(0)=state_.x(0);
+			nextFootState.y(0)=state_.y(0);
+			nextFootState.yaw(0)=state_.yaw(0);
+		}else{
 			int nbPreviewedSteps = result.supportStates_vec.back().stepNumber;
-			if (nbPreviewedSteps > 0) {
-				nextFootState.x(0) = result.qpSolution(2 * generalData_->nbSamplesQP);
-				nextFootState.y(0) = result.qpSolution(2 * generalData_->nbSamplesQP + nbStepsPreviewed);
-				nextFootState.yaw(0) = result.supportOrientations_vec[0];
-			} else {
-				nextFootState.x(0) = state_.x(0);
-				nextFootState.y(0) = state_.y(0);
-				nextFootState.yaw(0) = state_.yaw(0);
+
+			if (nbPreviewedSteps>0){
+				nextFootState.x(0)=result.qpSolution(2*generalData_->nbSamplesQP);
+				nextFootState.y(0)=result.qpSolution(2*generalData_->nbSamplesQP+nbStepsPreviewed);
+				nextFootState.yaw(0)=result.supportOrientations_vec[0];
+			}else{
+				nextFootState.x(0)=state_.x(0);
+				nextFootState.y(0)=state_.y(0);
+				nextFootState.yaw(0)=state_.yaw(0);
 			}
 		}
-		if (Txy - (generalData_->stepPeriod - transitionalDSPeriod)/2 > generalData_->actuationSamplingPeriod) {
+
+		if (Txy-generalData_->stepPeriod/2>generalData_->actuationSamplingPeriod){
 			nextFootState.z(0) = robotData_->freeFlyingFootMaxHeight;
-			Tz = Txy - (generalData_->stepPeriod - transitionalDSPeriod)/2 ;
-		} else {
+			Tz = result.supportStates_vec[0].startTime + generalData_->stepPeriod/2 - currentTime;
+		}else{
 			Tz = Txy;
 		}
+
 	}
 
 	computeFootInterpolationByPolynomial(result, X, nbSamples,
