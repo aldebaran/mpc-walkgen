@@ -4,6 +4,7 @@ clean(LSSOL)
 fpath(LSSOL "lssol/lssol.h")
 flib(LSSOL "liblssol_c.so")
 flib(LSSOL "liblssol.so")
+flib(LSSOL "libblas_c.so")
 flib(LSSOL "libcblas.so" PATH_SUFFIXES "blas/reference")
 flib(LSSOL "libblas.so" PATH_SUFFIXES "blas/reference")
 
