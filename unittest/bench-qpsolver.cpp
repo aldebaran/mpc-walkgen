@@ -45,7 +45,7 @@ int main ()
   qp.nbVar(6+fDofWb);
   qp.nbCtr(fNconstraints);
 
-  std::string paths = std::string("/home/ccollette/src/mpc-walkgen/unittest/data/");
+  std::string paths = std::string("./");
 
   std::fstream s_H((paths+"wb_H").c_str(), std::fstream::in);
   std::fstream s_g((paths+"wb_g").c_str(), std::fstream::in);
