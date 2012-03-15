@@ -11,9 +11,14 @@ qi_create_test(test-rotation
   tools-rotation.cpp
 )
 
-set_source_files_properties(src/walkgen/test-qpsolver.cpp
-        PROPERTIES
-        COMPILE_FLAGS -DUSE_QPOASES)
+if ("ON")
+
+  set_source_files_properties(
+    test-qpsolver.cpp
+    bench-qpsolver.cpp
+    PROPERTIES
+    COMPILE_FLAGS -DUSE_QPOASES)
+endif ()
 
 qi_create_test(test-qpsolver
     SRC
@@ -29,9 +34,6 @@ qi_create_test(test-qpsolver
 target_link_libraries(test-qpsolver gfortran)
 
 
-set_source_files_properties(src/walkgen/bench-qpsolver.cpp
-        PROPERTIES
-        COMPILE_FLAGS -DUSE_QPOASES)
 qi_create_test(bench-qpsolver
     SRC
   bench-qpsolver.cpp
@@ -41,7 +43,7 @@ qi_create_test(bench-qpsolver
   ../src/walkgen/qp-matrix.cpp
   ../src/walkgen/convex-hull.cpp
   ../src/sharedpgtypes.cpp
-    DEPENDS LSSOL qpoases
+    DEPENDS mpc-walkgen LSSOL qpoases
 )
 target_link_libraries(bench-qpsolver gfortran)
 

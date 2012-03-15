@@ -7,7 +7,7 @@
 *  The solution is (-1, 1)
 */
 
-//#include "gtest/gtest.h"
+#include <mpc-walkgen/mpc-debug.h>
 
 #include <cmath>
 #include <cstdio>
@@ -25,39 +25,36 @@
 using namespace Eigen;
 using namespace MPCWalkgen;
 
-/* Solve a simple quadratic programming problem: find values of x that minimize
-f(x) = 1/2 x1^2 + x2^2 -x1.x2 - 2x1 - 6x2
-
-subject to
- x1 +  x2 ≤ 2
-–x1 + 2x2 ≤ 2
-2x1 +  x2 ≤ 3
-0 ≤ x1, 0 ≤ x2.
-
-Expected result:
-x   = 0.6667, 1.3333
-obj = -8.2222
+/*
+  Test whole body problem
 */
+
 int main ()
 {
-
   unsigned int fDofWb = 23;
   unsigned int fNconstraints = 18;
 
+  // nb unknown and constraint max
 #ifdef USE_QPOASES
   QPOasesSolver qp(6+fDofWb, fNconstraints);
 #else
   LSSOLSolver qp(6+fDofWb, fNconstraints);
 #endif //USE_QPOASES
 
-  std::fstream s_H("wb_H",std::fstream::in);
-  std::fstream s_g("wb_g",std::fstream::in);
-  std::fstream s_A("wb_A",std::fstream::in);
-  std::fstream s_lb("wb_lb",std::fstream::in);
-  std::fstream s_ub("wb_ub",std::fstream::in);
-  std::fstream s_lbA("wb_lbA",std::fstream::in);
-  std::fstream s_ubA("wb_ubA",std::fstream::in);
-  std::fstream s_solution("wb_solution",std::fstream::in);
+  // nb unknow and constraint of the current problem
+  qp.nbVar(6+fDofWb);
+  qp.nbCtr(fNconstraints);
+
+  std::string paths = std::string("/home/ccollette/src/mpc-walkgen/unittest/data/");
+
+  std::fstream s_H((paths+"wb_H").c_str(), std::fstream::in);
+  std::fstream s_g((paths+"wb_g").c_str(), std::fstream::in);
+  std::fstream s_A((paths+"wb_A").c_str(), std::fstream::in);
+  std::fstream s_lb((paths+"wb_lb").c_str(), std::fstream::in);
+  std::fstream s_ub((paths+"wb_ub").c_str(), std::fstream::in);
+  std::fstream s_lbA((paths+"wb_lbA").c_str(), std::fstream::in);
+  std::fstream s_ubA((paths+"wb_ubA").c_str(), std::fstream::in);
+  std::fstream s_solution((paths+"wb_solution").c_str(), std::fstream::in);
 
   if (
       !s_H.is_open() ||
@@ -233,17 +230,19 @@ int main ()
     return 0;
   }
 
-  struct timeval t1, t2;
-  int nb=0;
-  double deltaTime=0;
 
-  qp.reset();
-  qp.nbVar(6+fDofWb);
-  qp.nbCtr(fNconstraints);
+  bool isSuccess = true;
 
+  MPCWalkgen::MPCDebug debug(true);
 
-  for (unsigned int i=0; i<1/*H_List.size()*/; i++)
+  MPCSolution result;
+  result.initialSolution.resize(6+fDofWb);
+  result.initialConstraints.resize(fNconstraints+6+fDofWb);
+
+  for (unsigned int i=0; i<H_List.size(); i++)
   {
+    qp.reset();
+
     qp.matrix(matrixQ).addTerm(H_List.at(i));
 
     qp.matrix(vectorP).addTerm(g_List.at(i));
@@ -257,25 +256,48 @@ int main ()
     qp.matrix(vectorXL).addTerm(lb_List.at(i));
 
     qp.matrix(vectorXU).addTerm(ub_List.at(i));
+
+    result.reset();
+    if (i==0)
+    {
+      result.useWarmStart=false;
+    }
+    else
+    {
+      result.useWarmStart = true;
+      result.initialSolution = result.qpSolution;
+      result.initialConstraints = result.constraints;
+    }
+
+    debug.getTime(1, true);
+    qp.solve(result);
+    debug.getTime(1, false);
+
+
+    for (unsigned int j=0; j<6+fDofWb; j++)
+    {
+      if ((result.qpSolution(j)-solution_List.at(i)(j)) > 0.006 ||
+          (result.qpSolution(j)-solution_List.at(i)(j)) < -0.006)
+      {
+        std::cout << "i: " << i
+                  << " j: " << j
+                  << " " << result.qpSolution(j)
+                  << " " << solution_List.at(i)(j) << std::endl;
+        isSuccess = false;
+      }
+
+    }
   }
 
-  MPCSolution result;
-  result.reset();
-  result.useWarmStart=false;
-  result.initialSolution.resize(6+fDofWb);
-  result.initialConstraints.resize(fNconstraints+6+fDofWb);
 
-  /* solution supposee
-  Vector2d  initial;
-  initial << 0.666, 1.33333;
-  std::cout << (A * initial).transpose() << std::endl;
-    std::cout << (initial.transpose() * Q * initial + P.transpose() * initial ) << std::endl;
-  */
-  qp.solve(result);
+std::cout << "100%" << std::endl;
+std::cout << "bench-qpsolver test :" << std::endl;
+#ifdef USE_QPOASES
+std::cout << "Mean iteration duration with QPOASES : " << debug.computeInterval(1) << " us" << std::endl;
+#else
+std::cout << "Mean iteration duration with LSSOL   : " << debug.computeInterval(1) << " us" << std::endl;
+#endif
 
-  Vector2d expectedResult;
-  expectedResult << 2./3., 4./3.;
-  std::cout << result.qpSolution.transpose() << std::endl;
-  bool success = ((result.qpSolution - expectedResult).norm() < 1e-4);
-  return (success ? 0 : 1);
+
+  return (isSuccess ? 0 : 1);
 }
