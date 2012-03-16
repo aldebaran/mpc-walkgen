@@ -73,6 +73,14 @@ IF(UNIX AND NOT APPLE)
 	)
 	target_link_libraries(test-walkgen gfortran)
 
+	qi_create_test(test-step-period
+	    SRC
+		test-step-period.cpp
+	    DEPENDS mpc-walkgen
+	)
+	target_link_libraries(test-walkgen gfortran)
+
+
 
 	qi_create_test(bench-solvers
 	    SRC
