@@ -33,6 +33,8 @@ namespace MPCWalkgen{
 			void reset(const bool withConstantPart = true);
 			virtual void solve(MPCSolution & result)=0;
 
+			void dump();
+
 		public:
 			QPMatrix & matrix(const QPMatrixType type);
 			void nbVar(const int nbVar);

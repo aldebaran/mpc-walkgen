@@ -153,3 +153,32 @@ void QPSolver::reorderSolution(MPCSolution & result){
 
 	result.initialConstraints=	result.constraints;
 }
+
+void QPSolver::dump(){
+	std::cout << "nbVar : " << nbVar_ << std::endl;
+	std::cout << "nbCtr : " << nbCtr_ << std::endl;
+	std::cout << std::endl;
+	std::cout << "Q :" << std::endl;
+	std::cout << matrixQ_.dense() << std::endl;
+	std::cout << std::endl;
+	std::cout << std::endl;
+	std::cout << "chol(Q) :" << std::endl;
+	std::cout << matrixQ_.cholesky() << std::endl;
+	std::cout << std::endl;
+	std::cout << std::endl;
+	std::cout << "P :" << std::endl;
+	std::cout << vectorP_.dense().transpose() << std::endl;
+	std::cout << std::endl;
+	std::cout << std::endl;
+	std::cout << "A :" << std::endl;
+	std::cout << matrixA_.dense() << std::endl;
+	std::cout << std::endl;
+	std::cout << std::endl;
+	std::cout << "Bl / Bu :" << std::endl;
+	std::cout << vectorBL_.dense().transpose() << std::endl;
+	std::cout << vectorBU_.dense().transpose() << std::endl;
+	std::cout << std::endl;
+	std::cout << "Xl / Xu :" << std::endl;
+	std::cout << vectorXL_.dense().transpose() << std::endl;
+	std::cout << vectorXU_.dense().transpose() << std::endl;
+}
