@@ -203,7 +203,8 @@ void QPGenerator::computeWarmStart(MPCSolution & result){
 	// Initialize:
 	// -----------
 	int nbSteps = result.supportStates_vec.back().stepNumber;
-	int nbStepsMax = 4;
+	int nbStepsMax = generalData_->nbSamplesQP;
+
 	int nbFC = 5;// Number of foot constraints per step
 	int nbSamples = generalData_->nbSamplesQP;
 	result.initialSolution.resize(4*nbSamples + 4*nbSteps);
@@ -217,7 +218,6 @@ void QPGenerator::computeWarmStart(MPCSolution & result){
 	if (fabs(TimeFactor-1.) < EPSILON) {
 		shiftCtr = 1;
 	}
-
 	if (size >= 2*nbSamples){
 		// Shift active set by
 		result.initialConstraints.segment(0,         nbSamples-1) = initialConstraintTmp.segment(shiftCtr,    nbSamples-1);
@@ -232,7 +232,7 @@ void QPGenerator::computeWarmStart(MPCSolution & result){
 		result.initialConstraints.segment(2*nbSamples+nbFC*nbSteps, nbFC*(nbStepsMax-nbSteps))=
 			initialConstraintTmp.segment (2*nbSamples+nbFC*nbSteps, nbFC*(nbStepsMax-nbSteps));
 	} else {
-		result.initialConstraints = VectorXi::Zero(2*nbSamples+nbFC*nbStepsMax);
+		result.initialConstraints = VectorXi::Zero(2*nbSamples+(4+nbFC)*nbStepsMax);
 	}
 
 
