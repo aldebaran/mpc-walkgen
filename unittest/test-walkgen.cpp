@@ -113,7 +113,7 @@ int main() {
 
 	// Creat and initialize generator:
 	// -------------------------------
-	Walkgen walk;
+	Walkgen walk(LSSOL);
 	walk.init(robotData, mpcData);
 //	const RigidBodySystem *robot = walk.robot();// Not used yet
 
@@ -199,6 +199,7 @@ void dumpTrajectory(MPCSolution &result, std::vector<std::ofstream*> &data_vec) 
 
 void makeScilabFile(std::string type, double time) {
 	std::ofstream sci(("plot"+type+".sci").c_str());
+	sci << "stacksize(268435454);" << std::endl;
 	sci << "X=read('CoM_X." << type << "',-1,3);" << std::endl;
 	sci << "Y=read('CoM_Y." << type << "',-1,3);" << std::endl;
 	sci << "ZX=read('CoP_X." << type << "',-1,1);" << std::endl;
