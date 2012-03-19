@@ -24,15 +24,34 @@ The package mpc-walkgen depends on several packages which
 have to be available on your machine.
 
  - System tools:
-   - CMake (>=2.6)
+   - CMake (>=2.8)
    - pkg-config
    - usual compilation tools (GCC/G++, make, etc.)
 
  - Libraries
    - boost (>=1.40)
    - eigen (>=3.0.0)
-   - lssol.
+   - lssol (optional)
+   - qpoases (optional)
 
+ At least one of the two solvers (lssol or qpoases) must be installed.
+
+
+They are two ways of compiling and installing the project.
+- one based only on cmake
+- one based on qibuild (the project generation tool provided there:
+    https://github.com/aldebaran/qibuild)
+
+----------------------------------------
+-------- Setup using cmake only --------
+----------------------------------------
+
+First, verify that the folder cmake (in the root folder of mpc-walkgen) is not empty.
+If it is, you just have to update the submodules. Do
+> git submodule init
+> git submodule update
+
+Next, install at least one the two solvers according to the following instructions
 
 ### Installation of lssol.
 
@@ -53,5 +72,28 @@ to install manually two extra files, located in share/lssol:
 Once these steps done, you should be able to compile and link with lssol.
 Please run the unit test test-lssol to verify that the solver has been installed
 correctly.
+
+### Installation of qpOASES.
+
+qpOASES is an open-source C++ implementation of the online active set strategy.
+It is available at http://www.kuleuven.be/optec/software/qpOASES
+
+Once downloaded and compiled, it is necessary
+to install manually the extra file located in share/qpoases:
+- The config file qpoases.pc, that defines the compilation flags and link flags
+   required. It is mandatory to customize it according to your installation.
+   Please add the path to this file into your environment variable
+   PKG_CONFIG_PATH
+
+Once these steps done, you should be able to compile and link with qpOASES.
+Please run the unit test test-qpoases to verify that the solver has been installed
+correctly.
+
+
+
+
+-------------------------------------
+-------- Setup using qibuild --------
+-------------------------------------
 
 

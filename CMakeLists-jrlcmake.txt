@@ -24,7 +24,7 @@ SEARCH_FOR_EIGEN()
 
 # Optional dependencies: use a external qp solver library.
 ADD_OPTIONAL_DEPENDENCY("lssol >= 0.1.0")
-ADD_OPTIONAL_DEPENDENCY("qpoases >= 0.1.0")
+ADD_OPTIONAL_DEPENDENCY("qpoases >= 3.0")
 
 # Crash if no dependency was found.
 if(NOT LSSOL_FOUND AND NOT QPOASES_FOUND)
