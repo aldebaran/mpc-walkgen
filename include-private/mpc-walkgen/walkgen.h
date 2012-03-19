@@ -30,7 +30,7 @@ namespace MPCWalkgen{
 	{
 
 		public:
-			Walkgen(Solver solvertype=LSSOL);
+			Walkgen(Solver solvertype);
 			~Walkgen();
 
 			virtual void init(const RobotData &robotData, const MPCData &mpcData);

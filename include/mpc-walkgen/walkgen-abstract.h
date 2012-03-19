@@ -103,7 +103,7 @@ namespace MPCWalkgen
   };
 
   /*! Factory of Pattern generator interface. */
-  MPC_WALK_GEN_EXPORT WalkgenAbstract * mpcFactory();
+  MPC_WALK_GEN_EXPORT WalkgenAbstract * mpcFactory(Solver solvertype);
 }
 
 #endif /* _WALKGEN_ABSTRACT_H_ */

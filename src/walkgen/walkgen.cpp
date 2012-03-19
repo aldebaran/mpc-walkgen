@@ -21,13 +21,8 @@ using namespace MPCWalkgen;
 using namespace Eigen;
 
 
-MPCWalkgen::WalkgenAbstract *MPCWalkgen::mpcFactory() {
-	MPCWalkgen::WalkgenAbstract *zmpVra =    
-#ifdef USE_QPOASES
-		new Walkgen(QPOASES);
-#else
-		new Walkgen(LSSOL);
-#endif
+MPCWalkgen::WalkgenAbstract *MPCWalkgen::mpcFactory(Solver solvertype) {
+	MPCWalkgen::WalkgenAbstract *zmpVra = new Walkgen(solvertype);
 	return zmpVra;
 }
 
@@ -58,15 +53,12 @@ Walkgen::Walkgen(Solver solvertype)
 	,upperTimeLimitToFeedback_(0)
 {
 
-#ifdef USE_QPOASES
-        if (solvertype==QPOASES){
-              solver_ = new QPOasesSolver();
-        }else{
-              solver_ = new LSSOLSolver();
-        }
-#else
-	solver_ = new LSSOLSolver();
-#endif //USE_QPOASES
+//#ifdef USE_QPOASES
+    if (solvertype == QPOASES)
+      solver_ = new QPOasesSolver();
+//#endif //USE_QPOASES
+    if (solvertype == LSSOL)
+      solver_ = new LSSOLSolver();
 
 	orientPrw_ = new OrientationsPreview();
 
