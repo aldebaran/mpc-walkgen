@@ -1,97 +1,103 @@
-# test the rotation of the cholesky matrix
-qi_create_test(test-lssol SRC test-lssol.cpp DEPENDS LSSOL)
-target_link_libraries(test-lssol gfortran)
+# Load the file listing the sources required for each unit test.
+include(SourcesLib.cmake)
 
-qi_create_test(test-qpoases SRC test-qpoases.cpp DEPENDS qpoases)
+if(use_qibuild)
 
-qi_create_test(test-rotation
-    SRC
-  test-rotation.cpp
-  ../src/walkgen/tools.cpp
-  tools-rotation.cpp
-)
+  # define a macro wrapper to add an unit test.
+  #  name is the name of the unit test.
+  #  internal_dep indicates if the internal dep (aka does that depends on mpc-walkgen?)
+  #  external_dep lists the external dependencies (such as the solver) 
+  #  use_gfortran indicates if it is required to link with gfortran
+  macro(addUnitTest name internal_dep external_dep use_gfortran)
+    set(dependencies "")
 
-if ("ON")
-
-  set_source_files_properties(
-    test-qpsolver.cpp
-    bench-qpsolver.cpp
-    PROPERTIES
-    COMPILE_FLAGS -DNUSE_QPOASES)
-endif ()
-
-qi_create_test(test-qpsolver
-    SRC
-  test-qpsolver.cpp
-  ../src/walkgen/qp-solver.cpp
-  ../src/walkgen/qp-solvers/lssol-solver.cpp
-  ../src/walkgen/qp-solvers/qpoases-solver.cpp
-  ../src/walkgen/qp-matrix.cpp
-  ../src/walkgen/convex-hull.cpp
-  ../src/sharedpgtypes.cpp
-    DEPENDS LSSOL qpoases
-)
-target_link_libraries(test-qpsolver gfortran)
-
-
-qi_create_test(bench-qpsolver
-    SRC
-  bench-qpsolver.cpp
-  ../src/walkgen/qp-solver.cpp
-  ../src/walkgen/qp-solvers/lssol-solver.cpp
-  ../src/walkgen/qp-solvers/qpoases-solver.cpp
-  ../src/walkgen/qp-matrix.cpp
-  ../src/walkgen/convex-hull.cpp
-  ../src/sharedpgtypes.cpp
-    DEPENDS mpc-walkgen LSSOL qpoases
-)
-target_link_libraries(bench-qpsolver gfortran)
+    # list the dependencies - and check if LSSOL is used.
+    foreach(dep ${internal_dep} ${external_dep})
+      if("${dep}" STREQUAL "lssol")
+        set(dependencies "{dependencies} LSSOL")
+      else()
+        set(dependencies "{dependencies} ${dep}")
+      endif("${dep}" STREQUAL "lssol")
+    endforeach(dep)
+  
+    # create the unit test.
+    if(${dependencies} STREQUAL "")
+      qi_create_test(${name}  SRC  ${${name}_SRC})
+    else(${dependencies} STREQUAL "")
+      qi_create_test(${name}  SRC  ${${name}_SRC}
+         DEPEND ${dependencies})
+    endif(${dependencies} STREQUAL "")
+ 
+    # if the unit test depends on lssol, it must be linked with gfortran
+    if(${use_gfortran})
+      target_link_libraries(${name} gfortran)
+    endif(${useLSSOL})
+  endmacro(addUnitTest)
 
 
-qi_create_test(test-all-solvers
-    SRC
-        test-all-solvers.cpp
-        ../src/walkgen/qp-solver.cpp
-        ../src/walkgen/qp-solvers/lssol-solver.cpp
-        ../src/walkgen/qp-solvers/qpoases-solver.cpp
-        ../src/walkgen/qp-matrix.cpp
-        ../src/walkgen/convex-hull.cpp
-        ../src/sharedpgtypes.cpp
-    DEPENDS LSSOL qpoases
-)
-target_link_libraries(test-all-solvers gfortran)
+else()
+
+  INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/include-private)
+  INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/src)
+
+  # define a macro wrapper to add an unit test.
+  #  name is the name of the unit test.
+  #  internal_dep indicates if the internal dep (aka does that depends on mpc-walkgen?)
+  #  external_dep lists the external dependencies (such as the solver) 
+  #  use_gfortran is not used
+  macro(addUnitTest name internal_dep external_dep use_gfortran)
+    ADD_EXECUTABLE(${name}  ${${name}_SRC})
+    ADD_TEST(${name} ${name})
+
+    foreach(dep ${internal_dep})
+      ADD_DEPENDENCIES(${name} ${dep})
+      TARGET_LINK_LIBRARIES(${name} ${dep})
+    endforeach(dep)
+
+    foreach(dep ${external_dep})
+      PKG_CONFIG_USE_DEPENDENCY(${name} ${dep})
+    endforeach(dep)
+  endmacro(addUnitTest)
+
+endif(use_qibuild)
+
+#### GENERIC PART.
+# All the unit tests are created here.
+
+## test the rotation of the cholesky matrix
+addUnitTest(test-rotation "" "" 0)
+
+## Testing the solvers
+# test the lssol solver
+if(LSSOL_FOUND)
+  addUnitTest(test-lssol "" "lssol" 1) 
+endif(LSSOL_FOUND)
 
 
+# test the qpoases solver
+if(QPOASES_FOUND)
+  addUnitTest(test-qpoases "" "qpoases" 0)
+endif(QPOASES_FOUND)
 
 
+## Testing all the solvers
+set(solverAvailable "lssol;qpoases")
+addUnitTest(bench-qpsolver   "" "${solverAvailable}" 1)
+addUnitTest(test-qpsolver    "" "${solverAvailable}" 1)
+addUnitTest(test-all-solvers "" "${solverAvailable}" 1)
 
+
+# a simple execution of the walkgen. For link reasons,
+#  it only works with unix systems.
 IF(UNIX AND NOT APPLE)
-	qi_create_test(test-walkgen 
-	    SRC 
-		test-walkgen.cpp 
-	    DEPENDS mpc-walkgen
-	)
-	target_link_libraries(test-walkgen gfortran)
-
-	qi_create_test(test-step-period
-	    SRC
-		test-step-period.cpp
-	    DEPENDS mpc-walkgen
-	)
-	target_link_libraries(test-walkgen gfortran)
+  addUnitTest(bench-solvers "mpc-walkgen" "" 1)
+  addUnitTest(test-walkgen  "mpc-walkgen" "" 1)
+ENDIF(UNIX AND NOT APPLE)
 
 
-
-	qi_create_test(bench-solvers
-	    SRC
-		bench-solvers.cpp
-	    DEPENDS mpc-walkgen
-	)
-	target_link_libraries(test-walkgen gfortran)
-
-
+if(use_qibuild)
 	qi_create_bin(bench-solver-bin
 		SRC bench-solvers.cpp
 		DEPENDS mpc-walkgen)
+endif(use_qibuild)
 
-ENDIF(UNIX AND NOT APPLE)
