@@ -1,5 +1,4 @@
 project(mpc-walkgen)
-cmake_minimum_required(VERSION 2.8)
 find_package(qibuild)
 
 
@@ -8,72 +7,23 @@ INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/include)
 INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/include-private)
 INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/src)
 
-SET(SOURCES
- src/sharedpgtypes.cpp 
- 
- src/walkgen/convex-hull.cpp 
- src/walkgen/orientations-preview.cpp 
+# get the private headers and correct their path
+include(include-private/SourcesLib.cmake)
+foreach(inc ${mpc-walkgen_INCL_PRIVATE}
+  list(APPEND SOURCES "include-private/${inc}")
+endforeach(src)
 
- 
- src/walkgen/qp-solver.cpp
- src/walkgen/qp-solvers/lssol-solver.cpp
- src/walkgen/qp-solvers/qpoases-solver.cpp
- 
- src/walkgen/state-solver.cpp
- src/walkgen/state-solvers/fsm-solver.cpp 
- 
- src/walkgen/rigid-body-system.cpp
- src/walkgen/rigid-body.cpp
- src/walkgen/rigid-bodies/com-body.cpp
- src/walkgen/rigid-bodies/foot-body.cpp
- 
- src/walkgen/qp-matrix.cpp
- src/walkgen/qp-generator.cpp
- src/walkgen/qp-preview.cpp
- 
- src/walkgen/interpolation.cpp
- src/walkgen/tools.cpp
- src/walkgen/types.cpp
- src/walkgen/walkgen.cpp
- 
- src/walkgen/mpc-debug.cpp
- )
+# get the sources and correct their path
+include(src/SourcesLib.cmake)
+foreach(src ${mpc-walkgen_SRC}
+  list(APPEND SOURCES "src/${src}")
+endforeach(src)
 
-
-SET(HEADERS_PRIVATE
-
- include-private/mpc-walkgen/orientations-preview.h
-
-
- include-private/mpc-walkgen/qp-solver.h
- include-private/mpc-walkgen/qp-solvers/lssol-solver.h
- include-private/mpc-walkgen/qp-solvers/qpoases-solver.h
-
- include-private/mpc-walkgen/state-solver.h
- include-private/mpc-walkgen/state-solvers/fsm-solver.h
-
- include-private/mpc-walkgen/rigid-body-system.h
- include-private/mpc-walkgen/rigid-body.h
- include-private/mpc-walkgen/rigid-bodies/com-body.h
- include-private/mpc-walkgen/rigid-bodies/foot-body.h
-
- include-private/mpc-walkgen/qp-matrix.h
- include-private/mpc-walkgen/qp-generator.h
- include-private/mpc-walkgen/qp-preview.h
-
- include-private/mpc-walkgen/interpolation.h
- include-private/mpc-walkgen/tools.h
- include-private/mpc-walkgen/tools-inl.h
- include-private/mpc-walkgen/types.h
-
- include-private/mpc-walkgen/walkgen.h
- include-private/mpc-walkgen/walkgen-inl.h
- include-private/mpc-walkgen/mpc-debug.h
-)
-
+# get the headers
 SET(HEADERS
  include/mpc-walkgen/sharedpgtypes.h
  include/mpc-walkgen/walkgen-abstract.h
+ ${CMAKE_BINARY_DIR}/include/mpc-walkgen/solvers.h
  )
 
 
@@ -88,9 +38,9 @@ qi_use_lib(mpc-walkgen qpoases)
 qi_use_lib(mpc-walkgen boost)
 qi_use_lib(mpc-walkgen eigen3)
 qi_stage_lib(mpc-walkgen INCLUDE_DIRS include/mpc-walkgen)
-#SET_TARGET_PROPERTIES(mpc-walkgen PROPERTIES SOVERSION ${PROJECT_VERSION})
 
 # Define subdirectories to explore for cmake
+ADD_SUBDIRECTORY(include)
 ADD_SUBDIRECTORY(unittest)
 
 # Add a simple test:
