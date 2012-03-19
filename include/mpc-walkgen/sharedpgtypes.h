@@ -32,7 +32,7 @@
 #include <deque>
 #include <Eigen/Dense>
 #include <vector>
-
+#include <mpc-walkgen/solvers.h>
 
 // For Windows compatibility.
 #if defined (WIN32)
@@ -53,12 +53,6 @@ namespace MPCWalkgen
 
 	/// \name Enum types
 	/// \{
-
-        enum Solver{
-                QPOASES,
-                LSSOL
-        };
-
 	enum Phase{
 		SS,
 		DS

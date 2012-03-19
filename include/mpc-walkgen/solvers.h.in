@@ -1,0 +1,12 @@
+#ifndef _MPC_WALKGEN_SOLVERS_H_
+#define _MPC_WALKGEN_SOLVERS_H_
+
+namespace MPCWalkgen
+{
+        enum Solver{
+@_SOLVER_LIST_@
+        };
+}
+
+#endif /* _MPC_WALKGEN_SOLVERS_H_ */
+
