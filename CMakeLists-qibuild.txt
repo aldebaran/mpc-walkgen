@@ -1,21 +1,25 @@
+set(LSSOL_FOUND 1)
+set(QPOASES_FOUND 1)
 project(mpc-walkgen)
 find_package(qibuild)
+
 
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/modules")
 INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/include)
 INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/include-private)
 INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/src)
+INCLUDE_DIRECTORIES(BEFORE ${CMAKE_BINARY_DIR}/include)
 
 # get the private headers and correct their path
 include(include-private/SourcesLib.cmake)
-foreach(inc ${mpc-walkgen_INCL_PRIVATE}
+foreach(inc ${mpc-walkgen_INCL_PRIVATE})
   list(APPEND SOURCES "include-private/${inc}")
-endforeach(src)
+endforeach(inc)
 
 # get the sources and correct their path
 include(src/SourcesLib.cmake)
-foreach(src ${mpc-walkgen_SRC}
+foreach(src ${mpc-walkgen_SRC})
   list(APPEND SOURCES "src/${src}")
 endforeach(src)
 
@@ -44,6 +48,7 @@ qi_stage_lib(mpc-walkgen INCLUDE_DIRS include/mpc-walkgen)
 
 # Define subdirectories to explore for cmake
 ADD_SUBDIRECTORY(include)
+
 ADD_SUBDIRECTORY(unittest)
 
 # Add a simple test:

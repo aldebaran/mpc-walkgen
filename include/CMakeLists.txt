@@ -11,6 +11,12 @@ macro(addSolver solver solverList)
   endif(NOT ${solverList})
 endmacro(addSolver)
 
+
+find_package("QPOASES")
+find_package("LSSOL")
+
+message(STATUS "LSSOL_FOUND: ${LSSOL_FOUND}")
+
 set (_SOLVER_LIST_ "")
 if(LSSOL_FOUND)
   addSolver("LSSOL" _SOLVER_LIST_)
@@ -20,5 +26,5 @@ if(QPOASES_FOUND)
   addSolver("QPOASES" _SOLVER_LIST_)
 endif(QPOASES_FOUND)
 
-CONFIG_FILES(mpc-walkgen/solvers.h)
+CONFIGURE_FILE(mpc-walkgen/solvers.h.in mpc-walkgen/solvers.h)
 

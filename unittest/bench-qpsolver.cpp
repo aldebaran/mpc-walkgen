@@ -1,10 +1,4 @@
 /*
-*  The purpose of this test is to simply check the installation
-*  of lssol. Especially, we want to make sure that the link was succesful
-*  The problem solved is hence quite simple:
-*   min    || ( -1   -2) (x0)  - (-1) ||
-*   x0,x1  || ( -2   -1) (x1)    ( 1) ||
-*  The solution is (-1, 1)
 */
 
 #include <mpc-walkgen/mpc-debug.h>
@@ -17,12 +11,12 @@
 #include <fstream>
 
 #ifdef USE_QPOASES
-# include <mpc-walkgen/qp-solvers/qpoases-solver.h>
+#include <mpc-walkgen/qp-solvers/qpoases-solver.h>
 #endif //USE_QPOASES
 
 #ifdef USE_LSSOL
-# include <mpc-walkgen/qp-solvers/lssol-solver.h>
-#endif //ifdef USE_LSSOL
+#include <mpc-walkgen/qp-solvers/lssol-solver.h>
+#endif //USE_LSSOL
 
 using namespace Eigen;
 using namespace MPCWalkgen;

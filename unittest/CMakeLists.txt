@@ -1,5 +1,9 @@
 # Load the file listing the sources required for each unit test.
+set(LSSOL_FOUND 1)
+set(QPOASES_FOUND 1)
 include(SourcesLib.cmake)
+
+
 
 if(use_qibuild)
 
@@ -14,24 +18,23 @@ if(use_qibuild)
     # list the dependencies - and check if LSSOL is used.
     foreach(dep ${internal_dep} ${external_dep})
       if("${dep}" STREQUAL "lssol")
-        set(dependencies "{dependencies} LSSOL")
+        set(dependencies ${dependencies} ${dep})
       else()
-        set(dependencies "{dependencies} ${dep}")
+        set(dependencies ${dependencies} ${dep})
       endif("${dep}" STREQUAL "lssol")
     endforeach(dep)
-  
     # create the unit test.
-    if(${dependencies} STREQUAL "")
+    if("${dependencies}" STREQUAL "")
       qi_create_test(${name}  SRC  ${${name}_SRC})
-    else(${dependencies} STREQUAL "")
+    else()
       qi_create_test(${name}  SRC  ${${name}_SRC}
-         DEPEND ${dependencies})
-    endif(${dependencies} STREQUAL "")
+         DEPENDS ${dependencies})
+    endif("${dependencies}" STREQUAL "")
  
     # if the unit test depends on lssol, it must be linked with gfortran
     if(${use_gfortran})
       target_link_libraries(${name} gfortran)
-    endif(${useLSSOL})
+    endif(${use_gfortran})
   endmacro(addUnitTest)
 
 
@@ -108,9 +111,4 @@ if(UNIX AND NOT APPLE)
 endif(UNIX AND NOT APPLE)
 
 
-if(use_qibuild)
-	qi_create_bin(bench-solver-bin
-		SRC bench-solvers.cpp
-		DEPENDS mpc-walkgen)
-endif(use_qibuild)
 
