@@ -5,7 +5,6 @@
 
 #include <mpc-walkgen/sharedpgtypes.h>
 #include <mpc-walkgen/walkgen.h>
-//#include <mpc-walkgen/rigid-body-system.h>
 
 #include <cmath>
 #include <cstdio>
