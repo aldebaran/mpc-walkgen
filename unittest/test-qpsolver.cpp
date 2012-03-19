@@ -12,11 +12,13 @@
 #include <iostream>
 #include <cstring>
 
-#ifdef USE_QPOASES
+// #ifdef USE_QPOASES
 #include <mpc-walkgen/qp-solvers/qpoases-solver.h>
-#else
+// #endif //USE_QPOASES
+
+// #ifdef USE_LSSOL
 #include <mpc-walkgen/qp-solvers/lssol-solver.h>
-#endif //USE_QPOASES
+//#endif //USE_QPOASES
 
 using namespace Eigen;
 using namespace MPCWalkgen;
@@ -34,13 +36,9 @@ Expected result:
 x   = 0.6667, 1.3333
 obj = -8.2222
 */
-int main ()
+
+bool testQP (QPSolver & qp)
 {
-#ifdef USE_QPOASES
-        QPOasesSolver qp(2,3);
-#else
-        LSSOLSolver qp(2,3);
-#endif //USE_QPOASES
 	qp.reset();
 	qp.nbVar(2);
 	qp.nbCtr(3);
@@ -72,7 +70,7 @@ int main ()
 	qp.matrix(vectorBU).addTerm(bu);
 
 	Vector2d xl;
-	xl.fill(1);
+	xl.fill(0);
 	qp.matrix(vectorXL).addTerm(xl);
 
 	Vector2d xu;
@@ -85,17 +83,29 @@ int main ()
 	result.initialSolution.resize(2);
 	result.initialConstraints.resize(2+3);
 
-	/* solution supposee
-	Vector2d  initial;
-	initial << 0.666, 1.33333;
-	std::cout << (A * initial).transpose() << std::endl;
-	  std::cout << (initial.transpose() * Q * initial + P.transpose() * initial ) << std::endl;
-	*/
 	qp.solve(result);
 
 	Vector2d expectedResult;
 	expectedResult << 2./3., 4./3.;
 	std::cout << result.qpSolution.transpose() << std::endl;
 	bool success = ((result.qpSolution - expectedResult).norm() < 1e-4);
+	return success;
+}
+
+
+int main()
+{
+	bool success = true;
+//#ifdef USE_QPOASES
+	std::cout << "Testing qpOASES " << std::endl;
+	QPOasesSolver qpoSolver(2,3);
+	success = testQP(qpoSolver) && success;
+//#endif //USE_QPOASES
+
+//#ifdef USE_LSSOL
+	std::cout << "Testing LSSOL " << std::endl;
+	LSSOLSolver lssolSolver(2,3);
+	success = testQP(lssolSolver) && success;
+//#endif //USE_LSSOL
 	return (success ? 0 : 1);
 }
