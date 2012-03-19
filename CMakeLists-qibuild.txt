@@ -26,6 +26,9 @@ SET(HEADERS
  ${CMAKE_BINARY_DIR}/include/mpc-walkgen/solvers.h
  )
 
+# Assuming that both solvers have been found.
+ADD_DEFINITIONS("-DUSE_LSSOL")
+ADD_DEFINITIONS("-DUSE_QPOASES")
 
 set_source_files_properties(src/walkgen/walkgen.cpp src/walkgen/qp-generator.cpp
         PROPERTIES
