@@ -1,6 +1,6 @@
 #include <mpc-walkgen/qp-solvers/qpoases-solver.h>
 
-#include <QProblem.hpp>
+#include <qpOASES/QProblem.hpp>
 using namespace MPCWalkgen;
 using namespace Eigen;
 

@@ -14,7 +14,7 @@
 #include <cstring>
 
 
-#include <QProblem.hpp>
+#include <qpOASES/QProblem.hpp>
 
 using namespace qpOASES;
 int main ()
