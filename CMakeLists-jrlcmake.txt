@@ -37,6 +37,9 @@ endif(LSSOL_FOUND)
 
 if(QPOASES_FOUND)
   ADD_DEFINITIONS("-DUSE_QPOASES")
+  #There seems to be two version of qpoases, that change the way the inclusion has
+  # to be done: this one uses inclusions such as #include<qpOASES/file.hpp> 
+  ADD_DEFINITIONS("-DUSE_QPOASES_3_0")
 endif(QPOASES_FOUND)
 
 # Define the set of headers to be installed

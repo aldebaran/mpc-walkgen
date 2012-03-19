@@ -13,8 +13,12 @@
 #include <iostream>
 #include <cstring>
 
-
-#include <QProblem.hpp>
+#ifdef USE_QPOASES_3_0
+# include <qpOASES/QProblem.hpp>
+ typedef double Real;
+#else //
+# include <QProblem.hpp>
+#endif //USE_QPOASES_3_0
 
 using namespace qpOASES;
 int main ()
