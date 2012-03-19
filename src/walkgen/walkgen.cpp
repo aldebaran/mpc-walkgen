@@ -2,9 +2,10 @@
 
 #include <mpc-walkgen/orientations-preview.h>
 
-#ifdef USE_QPOASES
+//#ifdef USE_QPOASES
 #include <mpc-walkgen/qp-solvers/qpoases-solver.h>
-#endif //USE_QPOASES
+
+//#endif //USE_QPOASES
 #include <mpc-walkgen/qp-solvers/lssol-solver.h>
 
 #include <mpc-walkgen/qp-generator.h>
