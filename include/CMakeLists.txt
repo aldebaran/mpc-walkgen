@@ -11,10 +11,6 @@ macro(addSolver solver solverList)
   endif(NOT ${solverList})
 endmacro(addSolver)
 
-
-find_package("QPOASES")
-find_package("LSSOL")
-
 message(STATUS "LSSOL_FOUND: ${LSSOL_FOUND}")
 
 set (_SOLVER_LIST_ "")

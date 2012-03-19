@@ -30,6 +30,10 @@ SET(HEADERS
  ${CMAKE_BINARY_DIR}/include/mpc-walkgen/solvers.h
  )
 
+# Looking for QPOASES and LSSOL
+find_package("QPOASES")
+find_package("LSSOL")
+
 # Assuming that both solvers have been found.
 ADD_DEFINITIONS("-DUSE_LSSOL")
 ADD_DEFINITIONS("-DUSE_QPOASES")
