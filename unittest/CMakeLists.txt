@@ -68,20 +68,23 @@ endif(use_qibuild)
 addUnitTest(test-rotation "" "" 0)
 
 ## Testing the solvers
+set(solverAvailable "")
+
 # test the lssol solver
 if(LSSOL_FOUND)
+  list(APPEND solverAvailable "lssol")
   addUnitTest(test-lssol "" "lssol" 1) 
 endif(LSSOL_FOUND)
 
 
 # test the qpoases solver
 if(QPOASES_FOUND)
+  list(APPEND solverAvailable "qpoases")
   addUnitTest(test-qpoases "" "qpoases" 0)
 endif(QPOASES_FOUND)
 
 
 ## Testing all the solvers
-set(solverAvailable "lssol;qpoases")
 addUnitTest(bench-qpsolver   "" "${solverAvailable}" 1)
 addUnitTest(test-qpsolver    "" "${solverAvailable}" 1)
 addUnitTest(test-all-solvers "" "${solverAvailable}" 1)

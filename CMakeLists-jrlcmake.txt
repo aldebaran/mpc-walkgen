@@ -31,6 +31,14 @@ if(NOT LSSOL_FOUND AND NOT QPOASES_FOUND)
   message(FATAL_ERROR "No QP solver found.  Possible solvers: LSSOL and qpOASES")
 endif(NOT LSSOL_FOUND AND NOT QPOASES_FOUND)
 
+if(LSSOL_FOUND)
+  ADD_DEFINITIONS("-DUSE_LSSOL")
+endif(LSSOL_FOUND)
+
+if(QPOASES_FOUND)
+  ADD_DEFINITIONS("-DUSE_QPOASES")
+endif(QPOASES_FOUND)
+
 # Define the set of headers to be installed
 SET(${PROJECT_NAME}_HEADERS
   include/mpc-walkgen/sharedpgtypes.h

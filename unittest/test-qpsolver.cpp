@@ -12,13 +12,13 @@
 #include <iostream>
 #include <cstring>
 
-// #ifdef USE_QPOASES
-#include <mpc-walkgen/qp-solvers/qpoases-solver.h>
-// #endif //USE_QPOASES
+#ifdef USE_QPOASES
+# include <mpc-walkgen/qp-solvers/qpoases-solver.h>
+#endif //USE_QPOASES
 
-// #ifdef USE_LSSOL
-#include <mpc-walkgen/qp-solvers/lssol-solver.h>
-//#endif //USE_QPOASES
+#ifdef USE_LSSOL
+# include <mpc-walkgen/qp-solvers/lssol-solver.h>
+#endif //USE_LSSOL
 
 using namespace Eigen;
 using namespace MPCWalkgen;
@@ -96,16 +96,16 @@ bool testQP (QPSolver & qp)
 int main()
 {
 	bool success = true;
-//#ifdef USE_QPOASES
+#ifdef USE_QPOASES
 	std::cout << "Testing qpOASES " << std::endl;
 	QPOasesSolver qpoSolver(2,3);
 	success = testQP(qpoSolver) && success;
-//#endif //USE_QPOASES
+#endif //USE_QPOASES
 
-//#ifdef USE_LSSOL
+#ifdef USE_LSSOL
 	std::cout << "Testing LSSOL " << std::endl;
 	LSSOLSolver lssolSolver(2,3);
 	success = testQP(lssolSolver) && success;
-//#endif //USE_LSSOL
+#endif //USE_LSSOL
 	return (success ? 0 : 1);
 }

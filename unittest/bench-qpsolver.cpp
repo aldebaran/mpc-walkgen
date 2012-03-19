@@ -16,11 +16,13 @@
 
 #include <fstream>
 
-//#ifdef USE_QPOASES
-#include <mpc-walkgen/qp-solvers/qpoases-solver.h>
-//#else
-#include <mpc-walkgen/qp-solvers/lssol-solver.h>
-//#endif //USE_QPOASES
+#ifdef USE_QPOASES
+# include <mpc-walkgen/qp-solvers/qpoases-solver.h>
+#endif //USE_QPOASES
+
+#ifdef USE_LSSOL
+# include <mpc-walkgen/qp-solvers/lssol-solver.h>
+#endif //ifdef USE_LSSOL
 
 using namespace Eigen;
 using namespace MPCWalkgen;
@@ -297,16 +299,16 @@ int main()
 	unsigned int fDofWb = 23;
 	unsigned int fNconstraints = 18;
 
-  //#ifdef USE_QPOASES
+#ifdef USE_QPOASES
 	std::cout << "bench-qpsolver test qpOASES " << std::endl;
 	QPOasesSolver qpoSolver(6+fDofWb, fNconstraints);
 	success = testBenchmarkQP(qpoSolver, fDofWb, fNconstraints) && success;
-//#endif //USE_QPOASES
+#endif //USE_QPOASES
 
-//#ifdef USE_LSSOL
+#ifdef USE_LSSOL
 	std::cout << "bench-qpsolver test LSSOL " << std::endl;
 	LSSOLSolver lssolSolver(6+fDofWb, fNconstraints);
 	success = testBenchmarkQP(lssolSolver, fDofWb, fNconstraints) && success;
-//#endif //USE_LSSOL
+#endif //USE_LSSOL
 	return (success ? 0 : 1);
 }
