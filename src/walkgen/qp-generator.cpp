@@ -156,12 +156,15 @@ void QPGenerator::buildObjective(const MPCSolution & result) {
 		solver_->matrix(matrixQ)().block(0,0,2*N,2*N)=Q;
 	}
 #endif //USE_QPOASES
+
+#ifdef USE_LSSOL
 	if (solvertype_==LSSOL){
 		// rotate the cholesky matrix
 		MatrixXd chol = choleskyConst_[precomputedMatrixNumber];
 		rotateCholeskyMatrix(chol, rot2);
 		solver_->matrix(matrixQ).cholesky(chol);
 	}
+#endif //USE_LSSOL
 
 	VectorXd HX(N),HY(N),H(2*N);
 

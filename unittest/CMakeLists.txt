@@ -87,15 +87,25 @@ endif(QPOASES_FOUND)
 ## Testing all the solvers
 addUnitTest(bench-qpsolver   "" "${solverAvailable}" 1)
 addUnitTest(test-qpsolver    "" "${solverAvailable}" 1)
-addUnitTest(test-all-solvers "" "${solverAvailable}" 1)
+
+## Compare LSSOL and QPOASES.
+if(LSSOL_FOUND AND QPOASES_FOUND)
+  addUnitTest(test-all-solvers "" "${solverAvailable}" 1)
+endif(LSSOL_FOUND AND QPOASES_FOUND)
 
 
 # a simple execution of the walkgen. For link reasons,
 #  it only works with unix systems.
-IF(UNIX AND NOT APPLE)
-  addUnitTest(bench-solvers "mpc-walkgen" "" 1)
-  addUnitTest(test-walkgen  "mpc-walkgen" "" 1)
-ENDIF(UNIX AND NOT APPLE)
+if(UNIX AND NOT APPLE)
+
+  if(LSSOL_FOUND AND QPOASES_FOUND)
+    addUnitTest(bench-solvers "mpc-walkgen" "" 1)
+  endif(LSSOL_FOUND AND QPOASES_FOUND)
+
+  if(LSSOL_FOUND)
+    addUnitTest(test-walkgen  "mpc-walkgen" "" 1)
+  endif(LSSOL_FOUND)
+endif(UNIX AND NOT APPLE)
 
 
 if(use_qibuild)
