@@ -16,11 +16,11 @@
 
 #include <fstream>
 
-#ifdef USE_QPOASES
+//#ifdef USE_QPOASES
 #include <mpc-walkgen/qp-solvers/qpoases-solver.h>
-#else
+//#else
 #include <mpc-walkgen/qp-solvers/lssol-solver.h>
-#endif //USE_QPOASES
+//#endif //USE_QPOASES
 
 using namespace Eigen;
 using namespace MPCWalkgen;
@@ -29,18 +29,8 @@ using namespace MPCWalkgen;
   Test whole body problem
 */
 
-int main ()
+bool testBenchmarkQP (QPSolver &qp, unsigned fDofWb, unsigned fNconstraints)
 {
-  unsigned int fDofWb = 23;
-  unsigned int fNconstraints = 18;
-
-  // nb unknown and constraint max
-#ifdef USE_QPOASES
-  QPOasesSolver qp(6+fDofWb, fNconstraints);
-#else
-  LSSOLSolver qp(6+fDofWb, fNconstraints);
-#endif //USE_QPOASES
-
   // nb unknow and constraint of the current problem
   qp.nbVar(6+fDofWb);
   qp.nbCtr(fNconstraints);
@@ -69,7 +59,7 @@ int main ()
   {
     std::cout << "data not found" << std::endl;
     //EXPECT_TRUE(false);
-    return 0;
+    return 1;
   }
 
   std::string line;
@@ -290,14 +280,33 @@ int main ()
   }
 
 
-std::cout << "100%" << std::endl;
-std::cout << "bench-qpsolver test :" << std::endl;
-#ifdef USE_QPOASES
-std::cout << "Mean iteration duration with QPOASES : " << debug.computeInterval(1) << " us" << std::endl;
-#else
-std::cout << "Mean iteration duration with LSSOL   : " << debug.computeInterval(1) << " us" << std::endl;
-#endif
+//std::cout << "100%" << std::endl;
+//std::cout << "bench-qpsolver test :" << std::endl;
+std::cout << "\tMean iteration duration: " << debug.computeInterval(1) << " us" << std::endl;
+std::cout << "\tsuccess " << isSuccess << std::endl;
+
+  return isSuccess;
+}
 
 
-  return (isSuccess ? 0 : 1);
+
+int main()
+{
+	bool success = true;
+
+	unsigned int fDofWb = 23;
+	unsigned int fNconstraints = 18;
+
+  //#ifdef USE_QPOASES
+	std::cout << "bench-qpsolver test qpOASES " << std::endl;
+	QPOasesSolver qpoSolver(6+fDofWb, fNconstraints);
+	success = testBenchmarkQP(qpoSolver, fDofWb, fNconstraints) && success;
+//#endif //USE_QPOASES
+
+//#ifdef USE_LSSOL
+	std::cout << "bench-qpsolver test LSSOL " << std::endl;
+	LSSOLSolver lssolSolver(6+fDofWb, fNconstraints);
+	success = testBenchmarkQP(lssolSolver, fDofWb, fNconstraints) && success;
+//#endif //USE_LSSOL
+	return (success ? 0 : 1);
 }
