@@ -24,6 +24,7 @@ SET(mpc-walkgen_SRC
  walkgen/walkgen.cpp
  
  walkgen/mpc-debug.cpp
+ walkgen/perturbation.cpp
 )
 
 if(LSSOL_FOUND)

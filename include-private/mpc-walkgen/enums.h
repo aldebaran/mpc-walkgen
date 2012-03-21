@@ -53,13 +53,6 @@ namespace MPCWalkgen{
 	};
 
 
-	enum Axis{
-		X,
-		Y,
-		Z,
-		Yaw
-	};
-
 }
 
 #endif //PGENUM

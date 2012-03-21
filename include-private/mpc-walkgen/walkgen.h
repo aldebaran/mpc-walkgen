@@ -24,6 +24,7 @@ namespace MPCWalkgen{
 	class RigidBodySystem;
 	class OrientationsPreview;
 	class MPCDebug;
+	class Perturbation;
 
 	class Walkgen :
 		public WalkgenAbstract
@@ -110,6 +111,14 @@ namespace MPCWalkgen{
 			virtual void QPNbSamplings(int d);
 		    /// \}
 
+		  public:
+			/// \name accessors relative to perturbation
+		    /// \{
+			virtual void ApplyPerturbationForce(Axis axis, BodyType body, double f);
+			virtual void ApplyPerturbationAcc(Axis axis, BodyType body, double acc);
+			virtual void ApplyPerturbationVel(Axis axis, BodyType body, double vel);
+		    /// \}
+
 		  private:
 			MPCData generalData_;
 
@@ -129,6 +138,8 @@ namespace MPCWalkgen{
 			/// \brief The new value of current support state, updated with in online method
 			SupportState newCurrentSupport_;
 			bool isNewCurrentSupport_;
+
+			Perturbation * perturbation_;
 
 			MPCDebug* debug_;
 			bool enableDisplay_;

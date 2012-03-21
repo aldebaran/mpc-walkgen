@@ -29,6 +29,7 @@ namespace MPCWalkgen{
 			virtual ~RigidBody();
 
 			inline const BodyState & state() const{return state_;}
+			inline BodyState & state(){return state_;}
 
 			inline void state(const BodyState & s){state_=s;}
 

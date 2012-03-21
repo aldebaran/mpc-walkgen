@@ -16,6 +16,7 @@
 #include <mpc-walkgen/interpolation.h>
 
 #include <mpc-walkgen/mpc-debug.h>
+#include <mpc-walkgen/perturbation.h>
 
 #include <iostream>
 #include <Eigen/Dense>
@@ -48,8 +49,12 @@ Walkgen::Walkgen(Solver solvertype)
 	,orientPrw_(0x0)
 	,solution_()
 	,velRef_()
+<<<<<<< HEAD
 	,newCurrentSupport_()
 	,isNewCurrentSupport_(false)
+=======
+	,perturbation_(0x0)
+>>>>>>> ef51e36... Add a perturbation class to apply some perturbations on robot
 	,debug_(0x0)
 	,enableDisplay_(false)
 	,upperTimeLimitToUpdate_(0)
@@ -77,6 +82,8 @@ Walkgen::Walkgen(Solver solvertype)
 	generator_= new QPGenerator(preview_, solver_, &velRef_, &ponderation_, robot_, &generalData_);
 
 	debug_ = new MPCDebug(true);
+
+	perturbation_ = new Perturbation(robot_);
 }
 
 
@@ -237,6 +244,18 @@ void Walkgen::mpcSamplingPeriod(double)
 void Walkgen::QPNbSamplings(int)
 {
 	std::cerr << " The method Walkgen::QPNbSamplings(d) is not implemented yet. " << std::endl;
+}
+
+void Walkgen::ApplyPerturbationForce(Axis axis, BodyType body, double f){
+  perturbation_->applyForce(axis, body, f);
+}
+
+void Walkgen::ApplyPerturbationAcc(Axis axis, BodyType body, double acc){
+  perturbation_->applyAcc(axis, body, acc);
+}
+
+void Walkgen::ApplyPerturbationVel(Axis axis, BodyType body, double vel){
+  perturbation_->applyVel(axis, body, vel);
 }
 
 #include <mpc-walkgen/walkgen-inl.h>

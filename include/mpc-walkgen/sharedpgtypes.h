@@ -68,6 +68,14 @@ namespace MPCWalkgen
 		RIGHT_FOOT,
 		COM
 	};
+
+
+	enum Axis{
+		X,
+		Y,
+		Z,
+		Yaw
+	};
 	/// \}
 
 	//
