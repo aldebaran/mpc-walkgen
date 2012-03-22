@@ -158,7 +158,11 @@ void Walkgen::init(const RobotData &robotData, const MPCData &mpcData) {
 	ponderation_.activePonderation = 0;
 
 	velRef_.resize(generalData_.nbSamplesQP);
+<<<<<<< HEAD
 
+=======
+	newVelRef_.resize(generalData_.nbSamplesQP);
+>>>>>>> 7366f96... Bugfix : uninitialized values
 }
 
 const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
