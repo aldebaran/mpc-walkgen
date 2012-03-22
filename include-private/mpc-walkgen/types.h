@@ -28,20 +28,21 @@ namespace MPCWalkgen{
 
 	struct VelReference{
 		struct Frame{
-			double x;
-			double y;
-			double yaw;
-
-			Eigen::VectorXd xVec;
-			Eigen::VectorXd yVec;
+			Eigen::VectorXd x;
+			Eigen::VectorXd y;
+			Eigen::VectorXd yaw;
 
 			Frame();
+
+			void resize(int size);
 		};
 
 		Frame global;
 		Frame local;
 
 		VelReference();
+
+		void resize(int size);
 	};
 
 	struct SelectionMatrices{

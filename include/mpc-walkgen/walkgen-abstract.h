@@ -52,6 +52,7 @@ namespace MPCWalkgen
 	    /// \{
 	    /// \brief Set the reference (velocity only as for now)
 	    virtual void reference(double dx, double dy, double dyaw) = 0;
+	    virtual void reference(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw) = 0;
 	    /// \}
 
 	    /// \name accessors relative to the state of the robot.

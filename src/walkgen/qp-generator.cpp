@@ -363,8 +363,8 @@ void QPGenerator::computeReferenceVector(const MPCSolution & result){
 	double YawTrunk;
 	for (int i=0;i<generalData_->nbSamplesQP;++i){
 		YawTrunk = result.supportStates_vec[i+1].yaw;
-		velRef_->global.xVec(i) = velRef_->local.x*cos(YawTrunk)-velRef_->local.y*sin(YawTrunk);
-		velRef_->global.yVec(i) = velRef_->local.x*sin(YawTrunk)+velRef_->local.y*cos(YawTrunk);
+		velRef_->global.xVec(i) = velRef_->local.x(i)*cos(YawTrunk)-velRef_->local.y(i)*sin(YawTrunk);
+		velRef_->global.yVec(i) = velRef_->local.x(i)*sin(YawTrunk)+velRef_->local.y(i)*cos(YawTrunk);
 	}
 
 }

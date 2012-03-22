@@ -154,6 +154,11 @@ void Walkgen::init(const RobotData &robotData, const MPCData &mpcData) {
 
 	upperTimeLimitToUpdate_ = 0.0;
 	upperTimeLimitToFeedback_ = 0.0;
+
+	ponderation_.activePonderation = 0;
+
+	velRef_.resize(generalData_.nbSamplesQP);
+
 }
 
 const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
@@ -226,9 +231,15 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
 }
 
 void Walkgen::reference(double dx, double dy, double dyaw){
-	newVelRef_.local.x = dx;
-	newVelRef_.local.y = dy;
-	newVelRef_.local.yaw = dyaw;
+	newVelRef_.local.x.fill(dx);
+	newVelRef_.local.y.fill(dy);
+	newVelRef_.local.yaw.fill(dyaw);
+}
+
+void Walkgen::reference(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw){
+	newVelRef_.local.x=dx;
+	newVelRef_.local.y=dy;
+	newVelRef_.local.yaw=dyaw;
 }
 
 void Walkgen::QPSamplingPeriod(double)

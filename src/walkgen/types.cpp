@@ -4,14 +4,26 @@ using namespace MPCWalkgen;
 
 
 VelReference::Frame::Frame()
-	:x(0),y(0),yaw(0)
-	,xVec(1),yVec(1)
+        :x(1),y(1),yaw(1)
 {}
+
+void VelReference::Frame::resize(int size){
+  x.resize(size);
+  y.resize(size);
+  yaw.resize(size);
+}
+
 
 VelReference::VelReference()
 	:global()
 	,local()
 {}
+
+void VelReference::resize(int size){
+  global.resize(size);
+  local.resize(size);
+}
+
 
 SelectionMatrices::SelectionMatrices(const MPCData & generalData)
 	:V(generalData.nbSamplesQP,generalData.nbSamplesQP)
@@ -33,4 +45,5 @@ void RelativeInequalities::resize(int rows, int cols){
 		DY.fill(0);
 		Dc.fill(0);
 	}
+
 }
