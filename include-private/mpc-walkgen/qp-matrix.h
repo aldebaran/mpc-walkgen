@@ -15,7 +15,7 @@
 
 
 #include <Eigen/Dense>
-
+//TODO : Segfault if nbRows>nbRowsMax
 namespace MPCWalkgen{
 
 	class QPMatrix{
