@@ -79,9 +79,9 @@ void QPMatrix::setConstantPart(const MatrixXd & mat){
 
 void QPMatrix::reset(const bool withConstantPart){
 	if (withConstantPart){
-		matrix_ = constantPart_;
+		matrix_.block(0,0,nbRows_,nbCols_) = constantPart_.block(0,0,nbRows_,nbCols_);
 	}else{
-		matrix_.fill(0);
+		matrix_.block(0,0,nbRows_,nbCols_).fill(0);
 	}
 	denseMatrixOutdated_=true;
 	choleskyMatrixOutdated_=true;
