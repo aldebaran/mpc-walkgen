@@ -26,19 +26,19 @@ int main ()
 
   int n=2;
   int itt=100;
-  Real bl[n];
+  Real *bl = new Real[n];
   bl[0]=-10;
   bl[1]=-10;
-  Real bu[n];
+  Real *bu = new Real[n];
   bu[0]=10;
   bu[1]=10;
-  Real x[n];
+  Real *x = new Real[n];
   x[0]=0;
   x[1]=0;
-  Real H[n*n];
+  Real *H = new Real[n*n];
   H[0]=5;H[1]=4;
   H[2]=4;H[3]=5;
-  Real p[n];
+  Real *p = new Real[n];
   p[0]=1;
   p[1]=-1;
 
@@ -58,8 +58,11 @@ int main ()
 
   std::cout << "solution : " << x[0] << " " << x[1] << std::endl;
 
-  if (result == true)
-    return 0;
-  else
-    return 1;
+  delete[] p;
+  delete[] H;
+  delete[] x;
+  delete[] bu;
+  delete[] bl;
+
+  return (result == true)? 0 : 1;
 }
