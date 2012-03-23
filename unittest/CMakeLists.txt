@@ -1,9 +1,5 @@
 # Load the file listing the sources required for each unit test.
-set(LSSOL_FOUND 1)
-set(QPOASES_FOUND 1)
 include(SourcesLib.cmake)
-
-
 
 if(use_qibuild)
 
