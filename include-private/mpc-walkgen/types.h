@@ -74,7 +74,6 @@ namespace MPCWalkgen{
 	};
 
 
-
 }
 
 /** @defgroup private MPCWalkgen private interface

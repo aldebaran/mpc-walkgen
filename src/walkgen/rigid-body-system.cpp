@@ -2,6 +2,8 @@
 #include <mpc-walkgen/rigid-bodies/com-body.h>
 #include <mpc-walkgen/rigid-bodies/foot-body.h>
 
+#define PI 3.1415926
+
 using namespace MPCWalkgen;
 using namespace Eigen;
 
