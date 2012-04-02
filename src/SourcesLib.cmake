@@ -1,28 +1,28 @@
 SET(mpc-walkgen_SRC
- sharedpgtypes.cpp 
- 
- walkgen/convex-hull.cpp 
- walkgen/orientations-preview.cpp 
+ sharedpgtypes.cpp
+
+ walkgen/convex-hull.cpp
+ walkgen/orientations-preview.cpp
 
  walkgen/qp-solver.cpp
- 
+
  walkgen/state-solver.cpp
- walkgen/state-solvers/fsm-solver.cpp 
- 
+ walkgen/state-solvers/fsm-solver.cpp
+
  walkgen/rigid-body-system.cpp
  walkgen/rigid-body.cpp
  walkgen/rigid-bodies/com-body.cpp
  walkgen/rigid-bodies/foot-body.cpp
- 
+
  walkgen/qp-matrix.cpp
  walkgen/qp-generator.cpp
  walkgen/qp-preview.cpp
- 
+
  walkgen/interpolation.cpp
  walkgen/tools.cpp
  walkgen/types.cpp
  walkgen/walkgen.cpp
- 
+
  walkgen/mpc-debug.cpp
  walkgen/perturbation.cpp
 )

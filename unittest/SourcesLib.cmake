@@ -12,6 +12,7 @@ set(test-rotation_SRC
 
 ## Testing the solvers
 # test the lssol solver
+
 set(test-lssol_SRC test-lssol.cpp)
 
 # test the qpoases solver
@@ -30,8 +31,6 @@ set(test-qpsolver_SRC
 set(test-all-solvers_SRC
         test-all-solvers.cpp
         ../src/walkgen/qp-solver.cpp
-        ../src/walkgen/qp-solvers/lssol-solver.cpp
-        ../src/walkgen/qp-solvers/qpoases-solver.cpp
         ../src/walkgen/qp-matrix.cpp
         ../src/walkgen/convex-hull.cpp
         ../src/sharedpgtypes.cpp
