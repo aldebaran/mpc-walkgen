@@ -24,7 +24,7 @@
 
 namespace MPCWalkgen{
 
-	#define EPSILON 0.000001
+	static const double EPSILON = 0.000001;
 
 	struct VelReference{
 		struct Frame{
