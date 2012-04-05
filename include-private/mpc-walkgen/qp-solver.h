@@ -28,7 +28,7 @@ namespace MPCWalkgen{
 
 		public:
 			QPSolver(const int nbVarMax=DefaultNbVarMax_, const int nbCtrMax=DefaultNbCtrMax_);
-			virtual ~QPSolver();
+			virtual ~QPSolver()=0;
 
 			void reset(const bool withConstantPart = true);
 			virtual void solve(MPCSolution & result)=0;
@@ -45,8 +45,10 @@ namespace MPCWalkgen{
 			void varOrder(const Eigen::VectorXi & order);
 			void ctrOrder(const Eigen::VectorXi & order);
 
+			virtual Solver getType() const =0;
+
 			// can we / should we use the cholesly matrix
-			virtual bool useCholesky()=0;
+			virtual bool useCholesky() const =0;
 			virtual void useCholesky(bool)=0;
 
 		protected:
@@ -117,7 +119,11 @@ namespace MPCWalkgen{
 * \brief Augment the number of constraints
 */
 
-/*! \fn bool MPCWalkgen::QPSolver::useCholesky()
+/*! \fn Solver MPCWalkgen::QPSolver::getType() const
+* \brief Return the type of solver
+*/
+
+/*! \fn bool MPCWalkgen::QPSolver::useCholesky() const
 * \brief Return true is the solver makes use of the cholesky matrix
 */
 

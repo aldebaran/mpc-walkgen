@@ -11,14 +11,13 @@ using namespace Eigen;
 
 QPGenerator::QPGenerator(QPPreview * preview, QPSolver * solver,
 		VelReference * velRef, QPPonderation * ponderation,
-		RigidBodySystem * robot, const MPCData * generalData, Solver solvertype)
+		RigidBodySystem * robot, const MPCData * generalData)
 	:preview_(preview)
 	,solver_(solver)
 	,robot_(robot)
 	,velRef_(velRef)
 	,ponderation_(ponderation)
 	,generalData_(generalData)
-	,solvertype_(solvertype)
 	,tmpVec_(1)
 	,tmpVec2_(1)
 	,tmpMat_(1,1)
@@ -119,7 +118,7 @@ void QPGenerator::buildObjective(const MPCSolution & result) {
 	//So if one uses LSSOL, some computation can be avoided.
 	bool onlyCholesky = (solver_->useCholesky() == true);
 #ifdef USE_LSSOL
-	onlyCholesky = onlyCholesky && (solvertype_ == LSSOL);
+	onlyCholesky = onlyCholesky && (solver_->getType() == LSSOL);
 #endif //USE_LSSOL
 
 	if (onlyCholesky == false){

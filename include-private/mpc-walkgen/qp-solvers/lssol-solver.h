@@ -27,7 +27,9 @@ namespace MPCWalkgen{
 			virtual ~LSSOLSolver();
 
 			// accessors
-			inline bool useCholesky()
+			inline Solver getType() const
+			{ return LSSOL; }
+			inline bool useCholesky() const
 			{ return useCholesky_; }
 			inline void useCholesky(bool /*ch*/)
 			{ }

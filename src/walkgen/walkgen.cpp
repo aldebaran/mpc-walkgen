@@ -74,7 +74,7 @@ Walkgen::Walkgen(Solver solvertype)
 
 	preview_ = new QPPreview(&velRef_, robot_, &generalData_);
 
-	generator_= new QPGenerator(preview_, solver_, &velRef_, &ponderation_, robot_, &generalData_, solvertype );
+	generator_= new QPGenerator(preview_, solver_, &velRef_, &ponderation_, robot_, &generalData_);
 
 	debug_ = new MPCDebug(true);
 }
