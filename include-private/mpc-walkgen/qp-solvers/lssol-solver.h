@@ -26,6 +26,12 @@ namespace MPCWalkgen{
 			LSSOLSolver(const int nbVarMax=QPSolver::DefaultNbVarMax_, const int nbCtrMax=QPSolver::DefaultNbCtrMax_);
 			virtual ~LSSOLSolver();
 
+			// accessors
+			inline bool useCholesky()
+			{ return useCholesky_; }
+			inline void useCholesky(bool /*ch*/)
+			{ }
+
 			virtual void solve(MPCSolution & solution);
 
 		protected:
@@ -46,6 +52,7 @@ namespace MPCWalkgen{
 			int inform_;
 			int iter_;
 			double obj_;
+			bool useCholesky_;
 	};
 
 

@@ -28,6 +28,12 @@ namespace MPCWalkgen{
 			QPOasesSolver(const int nbVarMax=QPSolver::DefaultNbVarMax_, const int nbCtrMax=QPSolver::DefaultNbCtrMax_);
 			virtual ~QPOasesSolver();
 
+			// accessors
+			inline bool useCholesky()
+			{ return false; }
+			inline void useCholesky(bool /*ch*/)
+			{}
+
 			virtual void solve(MPCSolution & solution);
 
 		protected:

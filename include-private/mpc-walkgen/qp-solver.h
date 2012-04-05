@@ -45,6 +45,10 @@ namespace MPCWalkgen{
 			void varOrder(const Eigen::VectorXi & order);
 			void ctrOrder(const Eigen::VectorXi & order);
 
+			// can we / should we use the cholesly matrix
+			virtual bool useCholesky()=0;
+			virtual void useCholesky(bool)=0;
+
 		protected:
 			virtual bool resizeAll();
 
@@ -107,6 +111,18 @@ namespace MPCWalkgen{
 
 /*! \fn MPCWalkgen::QPSolver::nbCtr(const int nbCtr)
 * \brief Setter to modify the number of constraints
+*/
+
+/*! \fn MPCWalkgen::QPSolver::addNbCtr(const int addCtr)
+* \brief Augment the number of constraints
+*/
+
+/*! \fn bool MPCWalkgen::QPSolver::useCholesky()
+* \brief Return true is the solver makes use of the cholesky matrix
+*/
+
+/*! \fn void MPCWalkgen::QPSolver::useCholesky(bool)
+* \brief indicates if the solver can use of the cholesky matrix (unavailable for some solvers)
 */
 
 /*! \fn MPCWalkgen::QPSolver::addNbCtr(const int addCtr)

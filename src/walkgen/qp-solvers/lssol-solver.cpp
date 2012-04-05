@@ -20,6 +20,7 @@ LSSOLSolver::LSSOLSolver(const int nbVarMax, const int nbCtrMax)
 	,inform_(0)
 	,iter_(0)
 	,obj_(0)
+	,useCholesky_(true)
 {
 	sendOption("Print Level = 0");
 	sendOption("Problem Type = QP4");

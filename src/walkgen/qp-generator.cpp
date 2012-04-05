@@ -112,12 +112,18 @@ void QPGenerator::buildObjective(const MPCSolution & result) {
 	solver_->nbVar(2*N + 2*nbStepsPreviewed);
 	solver_->nbCtr(0);
 
-#ifdef USE_QPOASES
-	if (solvertype_==QPOASES){
+	//The LSSOL solver is a bit particular since it uses the cholesky matrix first
+	// (the computation of the hessian is hence useless)
+	//So if one uses LSSOL, some computation can be avoided.
+	bool onlyCholesky = (solver_->useCholesky() == true);
+#ifdef USE_LSSOL
+	onlyCholesky = onlyCholesky && (solvertype_ == LSSOL);
+#endif //USE_LSSOL
+
+	if (onlyCholesky == false){
 		solver_->matrix(matrixQ).addTerm(QconstN_[precomputedMatrixNumber], 0, 0);
 		solver_->matrix(matrixQ).addTerm(QconstN_[precomputedMatrixNumber], N, N);
 	}
-#endif //USE_QPOASES
 
 	if (nbStepsPreviewed>0) {
 		tmpMat_ = Qconst_[precomputedMatrixNumber]*state.V;
@@ -129,13 +135,11 @@ void QPGenerator::buildObjective(const MPCSolution & result) {
 		solver_->matrix(matrixQ).addTerm(tmpMat_, 2*N , 2*N);
 		solver_->matrix(matrixQ).addTerm(tmpMat_, 2*N + nbStepsPreviewed, 2*N + nbStepsPreviewed);
 
-#ifdef USE_QPOASES
-		if (solvertype_==QPOASES){
+		if (onlyCholesky == false){
 			tmpMat_ = state.VT*Qconst_[precomputedMatrixNumber];
 			solver_->matrix(matrixQ).addTerm(tmpMat_, 2*N, 0);
 			solver_->matrix(matrixQ).addTerm(tmpMat_, 2*N + nbStepsPreviewed, N);
 		}
-#endif //USE_QPOASES
 
 		MatrixXd & Q = solver_->matrix(matrixQ)();
 
@@ -149,22 +153,19 @@ void QPGenerator::buildObjective(const MPCSolution & result) {
 		computeRM(urBlock, rot2);
 		Q.block(0, 2*N, 2*N, 2*nbStepsPreviewed) = urBlock;
 	}
-#ifdef USE_QPOASES
-	if (solvertype_==QPOASES){
+
+	if (onlyCholesky == false){
 		MatrixXd Q= solver_->matrix(matrixQ)().block(0,0,2*N,2*N);
 		Q = rot2*Q*rot2.transpose();
 		solver_->matrix(matrixQ)().block(0,0,2*N,2*N)=Q;
 	}
-#endif //USE_QPOASES
 
-#ifdef USE_LSSOL
-	if (solvertype_==LSSOL){
+	if ( solver_->useCholesky() == true ){
 		// rotate the cholesky matrix
 		MatrixXd chol = choleskyConst_[precomputedMatrixNumber];
 		rotateCholeskyMatrix(chol, rot2);
 		solver_->matrix(matrixQ).cholesky(chol);
 	}
-#endif //USE_LSSOL
 
 	VectorXd HX(N),HY(N),H(2*N);
 
