@@ -135,18 +135,18 @@ void QPGenerator::buildObjective(const MPCSolution & result) {
 		solver_->matrix(matrixQ).addTerm(tmpMat_, 2*N , 2*N);
 		solver_->matrix(matrixQ).addTerm(tmpMat_, 2*N + nbStepsPreviewed, 2*N + nbStepsPreviewed);
 
+		MatrixXd & Q = solver_->matrix(matrixQ)();
+
 		if (onlyCholesky == false){
 			tmpMat_ = state.VT*Qconst_[precomputedMatrixNumber];
 			solver_->matrix(matrixQ).addTerm(tmpMat_, 2*N, 0);
 			solver_->matrix(matrixQ).addTerm(tmpMat_, 2*N + nbStepsPreviewed, N);
+
+			// rotate the down left block
+			MatrixXd dlBlock = Q.block(2*N, 0, 2*nbStepsPreviewed, 2*N);
+			computeMRt(dlBlock, rot2);
+			Q.block(2*N, 0, 2*nbStepsPreviewed, 2*N) = dlBlock;
 		}
-
-		MatrixXd & Q = solver_->matrix(matrixQ)();
-
-		// rotate the down left block
-		MatrixXd dlBlock = Q.block(2*N, 0, 2*nbStepsPreviewed, 2*N);
-		computeMRt(dlBlock, rot2);
-		Q.block(2*N, 0, 2*nbStepsPreviewed, 2*N) = dlBlock;
 
 		// rotate the upper right block
 		MatrixXd urBlock = Q.block(0, 2*N, 2*N, 2*nbStepsPreviewed);
