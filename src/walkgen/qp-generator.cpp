@@ -106,6 +106,8 @@ void QPGenerator::buildObjective(const MPCSolution & result) {
 	const MatrixXd & rot = preview_->rotationMatrix();
 	const MatrixXd & rot2 = preview_->rotationMatrix2();
 
+	QPMatrix & Q = solver_->matrix(matrixQ);
+
 	int nbStepsPreviewed = result.supportStates_vec.back().stepNumber;
 	int N = generalData_->nbSamplesQP;
 
@@ -121,50 +123,48 @@ void QPGenerator::buildObjective(const MPCSolution & result) {
 #endif //USE_LSSOL
 
 	if (onlyCholesky == false){
-		solver_->matrix(matrixQ).addTerm(QconstN_[precomputedMatrixNumber], 0, 0);
-		solver_->matrix(matrixQ).addTerm(QconstN_[precomputedMatrixNumber], N, N);
+		Q.addTerm(QconstN_[precomputedMatrixNumber], 0, 0);
+		Q.addTerm(QconstN_[precomputedMatrixNumber], N, N);
 	}
 
 	if (nbStepsPreviewed>0) {
 		tmpMat_ = Qconst_[precomputedMatrixNumber]*state.V;
-		solver_->matrix(matrixQ).addTerm(tmpMat_, 0, 2*N);
-		solver_->matrix(matrixQ).addTerm(tmpMat_, N, 2*N + nbStepsPreviewed);
+		Q.addTerm(tmpMat_, 0, 2*N);
+		Q.addTerm(tmpMat_, N, 2*N + nbStepsPreviewed);
 
 
 		tmpMat_ = state.VT*Qconst_[precomputedMatrixNumber]*state.V;
-		solver_->matrix(matrixQ).addTerm(tmpMat_, 2*N , 2*N);
-		solver_->matrix(matrixQ).addTerm(tmpMat_, 2*N + nbStepsPreviewed, 2*N + nbStepsPreviewed);
-
-		MatrixXd & Q = solver_->matrix(matrixQ)();
+		Q.addTerm(tmpMat_, 2*N , 2*N);
+		Q.addTerm(tmpMat_, 2*N + nbStepsPreviewed, 2*N + nbStepsPreviewed);
 
 		if (onlyCholesky == false){
 			tmpMat_ = state.VT*Qconst_[precomputedMatrixNumber];
-			solver_->matrix(matrixQ).addTerm(tmpMat_, 2*N, 0);
-			solver_->matrix(matrixQ).addTerm(tmpMat_, 2*N + nbStepsPreviewed, N);
+			Q.addTerm(tmpMat_, 2*N, 0);
+			Q.addTerm(tmpMat_, 2*N + nbStepsPreviewed, N);
 
 			// rotate the down left block
-			MatrixXd dlBlock = Q.block(2*N, 0, 2*nbStepsPreviewed, 2*N);
+			MatrixXd dlBlock = Q().block(2*N, 0, 2*nbStepsPreviewed, 2*N);
 			computeMRt(dlBlock, rot2);
-			Q.block(2*N, 0, 2*nbStepsPreviewed, 2*N) = dlBlock;
+			Q().block(2*N, 0, 2*nbStepsPreviewed, 2*N) = dlBlock;
 		}
 
 		// rotate the upper right block
-		MatrixXd urBlock = Q.block(0, 2*N, 2*N, 2*nbStepsPreviewed);
+		MatrixXd urBlock = Q().block(0, 2*N, 2*N, 2*nbStepsPreviewed);
 		computeRM(urBlock, rot2);
-		Q.block(0, 2*N, 2*N, 2*nbStepsPreviewed) = urBlock;
+		Q().block(0, 2*N, 2*N, 2*nbStepsPreviewed) = urBlock;
 	}
 
 	if (onlyCholesky == false){
-		MatrixXd Q= solver_->matrix(matrixQ)().block(0,0,2*N,2*N);
-		Q = rot2*Q*rot2.transpose();
-		solver_->matrix(matrixQ)().block(0,0,2*N,2*N)=Q;
+		MatrixXd Qmat = Q().block(0,0,2*N,2*N);
+		Qmat = rot2 * Qmat * rot2.transpose();
+		Q().block(0,0,2*N,2*N)=Qmat;
 	}
 
 	if ( solver_->useCholesky() == true ){
 		// rotate the cholesky matrix
 		MatrixXd chol = choleskyConst_[precomputedMatrixNumber];
 		rotateCholeskyMatrix(chol, rot2);
-		solver_->matrix(matrixQ).cholesky(chol);
+		Q.cholesky(chol);
 	}
 
 	VectorXd HX(N),HY(N),H(2*N);
