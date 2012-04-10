@@ -49,6 +49,11 @@ if(QPOASES_FOUND)
   endif()
 endif(QPOASES_FOUND)
 
+
+# make all symbols hidden with gcc.
+if(UNIX)
+  ADD_DEFINITIONS("-fvisibility=hidden")
+endif()
 # Define the set of headers to be installed
 SET(${PROJECT_NAME}_HEADERS
   include/mpc-walkgen/sharedpgtypes.h
