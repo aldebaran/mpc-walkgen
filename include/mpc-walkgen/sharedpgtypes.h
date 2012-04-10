@@ -28,22 +28,11 @@
 
 #ifndef _PATTERN_GENERATOR_INTERNAL_SHARED_H_2
 #define  _PATTERN_GENERATOR_INTERNAL_SHARED_H_2
-
+#include <mpc-walkgen/api.h>
 #include <deque>
 #include <Eigen/Dense>
 #include <vector>
 #include <mpc-walkgen/solvers.h>
-
-// For Windows compatibility.
-#if defined (WIN32)
-#  ifdef mpc_walkgen_EXPORTS
-#    define MPC_WALK_GEN_EXPORT __declspec(dllexport)
-#  else
-#    define MPC_WALK_GEN_EXPORT __declspec(dllimport)
-#  endif
-#else
-#  define MPC_WALK_GEN_EXPORT
-#endif
 
 namespace MPCWalkgen
 {
@@ -84,7 +73,7 @@ namespace MPCWalkgen
 
 	/// \name Structures
 	/// \{
-	struct FootData{
+	struct MPC_WALKGEN_API FootData{
 		double soleWidth;
 		double soleHeight;
 		Eigen::Vector3d anklePositionInLocalFrame;
@@ -103,7 +92,7 @@ namespace MPCWalkgen
 
 	};
 
-	struct HipYawData{
+	struct MPC_WALKGEN_API HipYawData{
 		double lowerBound;
 		double upperBound;
 		double lowerVelocityBound;
@@ -114,7 +103,7 @@ namespace MPCWalkgen
 		HipYawData();
 	};
 
-	struct QPPonderation {
+	struct MPC_WALKGEN_API QPPonderation {
 		std::vector<double> instantVelocity;
 		std::vector<double> CopCentering;
 		std::vector<double> JerkMin;
@@ -125,7 +114,7 @@ namespace MPCWalkgen
 		QPPonderation(int nb = 2);
 	};
 
-	struct SupportState{
+	struct MPC_WALKGEN_API SupportState{
 		Phase phase;
 		Foot foot;
 
@@ -151,7 +140,7 @@ namespace MPCWalkgen
 		double sampleWeight;//TODO: shouldn't it be outside... somewhere...?
 	};
 
-	struct ConvexHull {
+	struct MPC_WALKGEN_API ConvexHull {
 		/// \brief Set of vertices
 		Eigen::VectorXd x;
 		Eigen::VectorXd y;
@@ -170,7 +159,7 @@ namespace MPCWalkgen
 		void computeLinearSystem(const Foot &foot);
 	};
 
-	struct MPCData{
+	struct MPC_WALKGEN_API MPCData{
 		// The following parameters are fixed once and for all at initialization
 		/// \brief Sampling period considered in the QP
 		double QPSamplingPeriod;    //blocked - precomputeObjective
@@ -198,20 +187,20 @@ namespace MPCWalkgen
 		MPCData();
 	};
 
-	struct RobotData {
+	struct MPC_WALKGEN_API RobotData {
 		double CoMHeight;
 		double freeFlyingFootMaxHeight;
 
-  		FootData leftFoot;
-  		FootData rightFoot;
+		FootData leftFoot;
+		FootData rightFoot;
 
-  		HipYawData leftHipYaw;
-  		HipYawData rightHipYaw;
+		HipYawData leftHipYaw;
+		HipYawData rightHipYaw;
 
-  		double robotMass; //TODO: rename mass
+		double robotMass; //TODO: rename mass
 
-  		Eigen::Vector3d leftFootPos;
-  		Eigen::Vector3d rightFootPos;
+		Eigen::Vector3d leftFootPos;
+		Eigen::Vector3d rightFootPos;
 
 		ConvexHull leftFootHull;
 		ConvexHull rightFootHull;
@@ -226,7 +215,7 @@ namespace MPCWalkgen
   		RobotData();
   	};
 
-	struct BodyState{
+	struct MPC_WALKGEN_API BodyState{
 		Eigen::Vector3d x;
 		Eigen::Vector3d y;
 		Eigen::Vector3d z;
@@ -239,11 +228,11 @@ namespace MPCWalkgen
 		void reset();
 	};
 
-	struct MPCSolution{
+	struct MPC_WALKGEN_API MPCSolution{
 
-		MPC_WALK_GEN_EXPORT MPCSolution();
+		MPCSolution();
 
-		MPC_WALK_GEN_EXPORT void reset();
+		void reset();
 
 		// attributes
 		Eigen::VectorXd qpSolution;

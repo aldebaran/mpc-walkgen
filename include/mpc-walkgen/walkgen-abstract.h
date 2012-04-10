@@ -11,8 +11,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 
-#ifndef _WALKGEN_ABSTRACT_H_
-#define _WALKGEN_ABSTRACT_H_
+#ifndef _MPC_WALKGEN_ABSTRACT_H_
+#define _MPC_WALKGEN_ABSTRACT_H_
 
 #include <mpc-walkgen/sharedpgtypes.h>
 
@@ -23,8 +23,8 @@
 
 namespace MPCWalkgen
 {
-  class  WalkgenAbstract
-  {
+	class MPC_WALKGEN_API WalkgenAbstract
+	{
 	    //
 	    // Public methods:
 	    //
@@ -107,8 +107,8 @@ namespace MPCWalkgen
 	    /// \}
   };
 
-  /*! Factory of Pattern generator interface. */
-  MPC_WALK_GEN_EXPORT WalkgenAbstract * mpcFactory(Solver solvertype);
+	/*! Factory of Pattern generator interface. */
+	MPC_WALKGEN_API WalkgenAbstract * mpcFactory(Solver solvertype);
 }
 
-#endif /* _WALKGEN_ABSTRACT_H_ */
+#endif /* _MPC_WALKGEN_ABSTRACT_H_ */
