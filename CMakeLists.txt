@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
+project(mpc-walkgen)
+find_package(qibuild)
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/modules")
 option(use_qibuild OFF "Do you want to use qibuild to build your package?")
 set(use_qibuild OFF)
 if(use_qibuild)

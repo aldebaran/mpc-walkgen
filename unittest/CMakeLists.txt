@@ -79,8 +79,8 @@ endif(LSSOL_FOUND)
 
 # test the qpoases solver
 if(QPOASES_FOUND)
-  list(APPEND solverAvailable "qpoases")
-  addUnitTest(test-qpoases "" "qpoases" OFF)
+  list(APPEND solverAvailable "QPOASES")
+  addUnitTest(test-qpoases "" "QPOASES" OFF)
 endif(QPOASES_FOUND)
 
 
@@ -94,7 +94,6 @@ if(LSSOL_FOUND AND QPOASES_FOUND)
 endif(LSSOL_FOUND AND QPOASES_FOUND)
 
 addUnitTest(test-walkgen  "mpc-walkgen" "" ${use_gfortran})
-qi_use_lib(test-walkgen qpoasesfloat)
 
 # a simple execution of the walkgen. For link reasons,
 #  it only works with unix systems.
