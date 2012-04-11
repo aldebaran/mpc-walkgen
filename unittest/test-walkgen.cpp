@@ -178,7 +178,7 @@ int main() {
 		delete ref_vec[i];
 		delete data_vec[i];
 	}
-
+	delete walk;
 	return (success)?0:1;
 }
 
