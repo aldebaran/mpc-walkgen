@@ -4,7 +4,7 @@
 
 
 #include <mpc-walkgen/sharedpgtypes.h>
-#include <mpc-walkgen/walkgen.h>
+#include <mpc-walkgen/walkgen-abstract.h>
 
 #include <cmath>
 #include <cstdio>
@@ -112,33 +112,34 @@ int main() {
 
 	// Creat and initialize generator:
 	// -------------------------------
-	Walkgen walk(LSSOL);
-	walk.init(robotData, mpcData);
-//	const RigidBodySystem *robot = walk.robot();// Not used yet
+	WalkgenAbstract * walk = mpcFactory(LSSOL);
+
+	walk->init(robotData, mpcData);
+//	const RigidBodySystem *robot = walk->robot();// Not used yet
 
 	// Run:
 	// ----
 	double velocity = 0.25;
-	walk.reference(0, 0, 0);
-	walk.online(0);
+	walk->reference(0, 0, 0);
+	walk->online(0);
 	double t = 0;
 	for (; t < 5; t += 0.005){
-		MPCSolution result = walk.online(t);
+		MPCSolution result = walk->online(t);
 		dumpTrajectory(result, data_vec);
 	}
-	walk.reference(velocity, 0, 0);
+	walk->reference(velocity, 0, 0);
 	for (; t < 10; t += 0.005){
-		MPCSolution result = walk.online(t);
+		MPCSolution result = walk->online(t);
 		dumpTrajectory(result, data_vec);
 	}
-	walk.reference(0, velocity, 0);
+	walk->reference(0, velocity, 0);
 	for (; t < 20; t += 0.005){
-		MPCSolution result = walk.online(t);
+		MPCSolution result = walk->online(t);
 		dumpTrajectory(result, data_vec);
 	}
-	walk.reference(velocity, 0, velocity);
+	walk->reference(velocity, 0, velocity);
 	for (; t < 30; t += 0.005){
-		MPCSolution result = walk.online(t);
+		MPCSolution result = walk->online(t);
 		dumpTrajectory(result, data_vec);
 	}
 	for(unsigned i = 0; i < data_vec.size(); ++i){
