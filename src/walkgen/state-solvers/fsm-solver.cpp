@@ -14,7 +14,7 @@ void FSMSolver::setSupportState(double time, int sample, const std::vector<doubl
 	support.nbInstants++;
 
 	bool ReferenceGiven = false;
-	if (fabs(velRef_->local.x)>EPSILON || fabs(velRef_->local.y)>EPSILON || fabs(velRef_->local.yaw)>EPSILON) {
+	if (fabs(velRef_->local.x(0))>EPSILON || fabs(velRef_->local.y(0))>EPSILON || fabs(velRef_->local.yaw(0))>EPSILON) {
 		ReferenceGiven = true;
 	}
 

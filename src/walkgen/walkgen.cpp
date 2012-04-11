@@ -49,12 +49,9 @@ Walkgen::Walkgen(Solver solvertype)
 	,orientPrw_(0x0)
 	,solution_()
 	,velRef_()
-<<<<<<< HEAD
 	,newCurrentSupport_()
 	,isNewCurrentSupport_(false)
-=======
 	,perturbation_(0x0)
->>>>>>> ef51e36... Add a perturbation class to apply some perturbations on robot
 	,debug_(0x0)
 	,enableDisplay_(false)
 	,upperTimeLimitToUpdate_(0)
@@ -158,11 +155,8 @@ void Walkgen::init(const RobotData &robotData, const MPCData &mpcData) {
 	ponderation_.activePonderation = 0;
 
 	velRef_.resize(generalData_.nbSamplesQP);
-<<<<<<< HEAD
-
-=======
 	newVelRef_.resize(generalData_.nbSamplesQP);
->>>>>>> 7366f96... Bugfix : uninitialized values
+
 }
 
 const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
@@ -185,11 +179,11 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
 		}
 
 		if (robot_->currentSupport().phase == SS && robot_->currentSupport().nbStepsLeft == 0) {
-			velRef_.local.x = 0;
-			velRef_.local.y = 0;
-			velRef_.local.yaw = 0;
+			velRef_.local.x.fill(0);
+			velRef_.local.y.fill(0);
+			velRef_.local.yaw.fill(0);
 		}
-		if (velRef_.local.yaw == 0 && velRef_.local.x == 0 && velRef_.local.y == 0) {
+		if (velRef_.local.yaw(0) == 0 && velRef_.local.x(0) == 0 && velRef_.local.y(0) == 0) {
 			ponderation_.activePonderation = 1;
 		} else {
 			ponderation_.activePonderation = 0;

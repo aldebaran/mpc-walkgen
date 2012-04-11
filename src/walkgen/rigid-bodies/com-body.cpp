@@ -151,7 +151,7 @@ void CoMBody::interpolateTrunkOrientation(MPCSolution &result,
 		orientation2 = orientation1;
 	}
 
-	Vector3d nextTrunkState(orientation1, -velRef.local.yaw, 0);
+	Vector3d nextTrunkState(orientation1, -velRef.local.yaw(0), 0);
 
 
 	interpolation_->computePolynomialNormalisedFactors(factor, state().yaw, nextTrunkState, T);

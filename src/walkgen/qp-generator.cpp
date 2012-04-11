@@ -174,8 +174,8 @@ void QPGenerator::buildObjective(const MPCSolution & result) {
 	HX += pconstVc_[precomputedMatrixNumber]*state.VcX;
 	HY += pconstVc_[precomputedMatrixNumber]*state.VcY;
 
-	HX += pconstRef_[precomputedMatrixNumber]*velRef_->global.xVec;
-	HY += pconstRef_[precomputedMatrixNumber]*velRef_->global.yVec;
+	HX += pconstRef_[precomputedMatrixNumber]*velRef_->global.x;
+	HY += pconstRef_[precomputedMatrixNumber]*velRef_->global.y;
 
 	if (nbStepsPreviewed>0){
 		tmpVec_ = state.VT*HX;
@@ -355,16 +355,16 @@ void QPGenerator::computeWarmStart(MPCSolution & result){
 
 void QPGenerator::computeReferenceVector(const MPCSolution & result){
 
-	if (velRef_->global.xVec.rows()!=generalData_->nbSamplesQP){
-		velRef_->global.xVec.resize(generalData_->nbSamplesQP);
-		velRef_->global.yVec.resize(generalData_->nbSamplesQP);
+	if (velRef_->global.x.rows()!=generalData_->nbSamplesQP){
+		velRef_->global.x.resize(generalData_->nbSamplesQP);
+		velRef_->global.y.resize(generalData_->nbSamplesQP);
 	}
 
 	double YawTrunk;
 	for (int i=0;i<generalData_->nbSamplesQP;++i){
 		YawTrunk = result.supportStates_vec[i+1].yaw;
-		velRef_->global.xVec(i) = velRef_->local.x(i)*cos(YawTrunk)-velRef_->local.y(i)*sin(YawTrunk);
-		velRef_->global.yVec(i) = velRef_->local.x(i)*sin(YawTrunk)+velRef_->local.y(i)*cos(YawTrunk);
+		velRef_->global.x(i) = velRef_->local.x(i)*cos(YawTrunk)-velRef_->local.y(i)*sin(YawTrunk);
+		velRef_->global.y(i) = velRef_->local.x(i)*sin(YawTrunk)+velRef_->local.y(i)*cos(YawTrunk);
 	}
 
 }
