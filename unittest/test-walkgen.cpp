@@ -114,7 +114,7 @@ int main() {
 
 	// Creat and initialize generator:
 	// -------------------------------
-	WalkgenAbstract * walk = mpcFactory(LSSOL);
+	WalkgenAbstract * walk = mpcFactory(QPOASES);
 	MPCDebug debug(true);
 	walk->init(robotData, mpcData);
 //	const RigidBodySystem *robot = walk->robot();// Not used yet
