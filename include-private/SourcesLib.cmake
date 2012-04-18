@@ -23,7 +23,6 @@ SET(mpc-walkgen_INCL_PRIVATE
  mpc-walkgen/types.h
  mpc-walkgen/enums.h
  mpc-walkgen/walkgen.h
- mpc-walkgen/walkgen-inl.h
 
  mpc-walkgen/mpc-debug.h
  mpc-walkgen/perturbation.h
