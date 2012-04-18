@@ -13,14 +13,14 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
-
+#include <vector>
 #include <Eigen/Dense>
-//TODO : Segfault if nbRows>nbRowsMax
+
 namespace MPCWalkgen{
 
 	class QPMatrix{
 		public:
-			QPMatrix(const int nbRows, const int nbCols,
+			QPMatrix(const int nbRowsMin=1, const int nbColsMin=1,
 					 const int nbRowsMax=1, const int nbColsMax=1);
 			~QPMatrix();
 
@@ -31,10 +31,7 @@ namespace MPCWalkgen{
 
 			void reset(const bool withConstantPart = false);
 
-			void resize(const int nbRows, const int nbCols=1,
-					const bool preserve=false, const bool withConstantPart = false);
-
-			Eigen::MatrixXd & dense();
+			void resize(const int nbRows, const int nbCols=1);
 
 			Eigen::MatrixXd & cholesky();
 			Eigen::MatrixXd & cholesky(Eigen::MatrixXd & partialCholesky);
@@ -46,32 +43,35 @@ namespace MPCWalkgen{
 		// accessors
 			inline Eigen::MatrixXd & operator()(void) {
 				choleskyMatrixOutdated_=true;
-				denseMatrixOutdated_=true;
-				return matrix_;
+				return matrix_[vectorElem_];
 			}
-			inline double & operator()(int row, int col=0){return matrix_(row,col);}
+			inline double & operator()(int row, int col=0){return matrix_[vectorElem_](row,col);}
 
 			inline int nbRows() const	 {return nbRows_;}
 			inline int nbCols() const    {return nbCols_;}
 
-			inline int nbRowsMax() const {return nbRowsMax_;}
-			inline int nbColsMax() const {return nbColsMax_;}
+			inline int nbRowsMax() const {return nbRowsMin_+sizeRows_-1;}
+			inline int nbColsMax() const {return nbColsMin_+sizeCols_-1;}
 
 		private:
 			void computeCholesky(Eigen::MatrixXd & partialCholesky);
 
 		private:
-			Eigen::MatrixXd constantPart_;
-			Eigen::MatrixXd matrix_;
-			Eigen::MatrixXd denseMatrix_;
-			Eigen::MatrixXd choleskyMatrix_;
+
+			int sizeRows_;
+			int sizeCols_;
+
+			std::vector<Eigen::MatrixXd> constantPart_;
+			std::vector<Eigen::MatrixXd> matrix_;
+			std::vector<Eigen::MatrixXd> choleskyMatrix_;
+
+			int nbRowsMin_;
+			int nbColsMin_;
 
 			int nbRows_;
 			int nbCols_;
-			int nbRowsMax_;
-			int nbColsMax_;
+			int vectorElem_;
 
-			bool denseMatrixOutdated_;
 			bool choleskyMatrixOutdated_;
 
 			Eigen::VectorXi rowOrder_;

@@ -9,45 +9,36 @@ using namespace Eigen;
 
 
 
-QPMatrix::QPMatrix(const int nbRows, const int nbCols,
+QPMatrix::QPMatrix(const int nbRowsMin, const int nbColsMin,
 					 const int nbRowsMax, const int nbColsMax)
-	:constantPart_(nbRowsMax,nbColsMax)
-	,matrix_(nbRowsMax,nbColsMax)
-	,denseMatrix_(nbRowsMax,nbColsMax)
-	,choleskyMatrix_(nbRowsMax,nbColsMax)
-	,nbRows_(nbRows)
-	,nbCols_(nbCols)
-	,nbRowsMax_(nbRowsMax)
-	,nbColsMax_(nbColsMax)
-	,denseMatrixOutdated_(true)
+	:sizeRows_(nbRowsMax-nbRowsMin+1)
+	,sizeCols_(nbColsMax-nbColsMin+1)
+	,constantPart_(sizeRows_*sizeCols_)
+	,matrix_(sizeRows_*sizeCols_)
+	,choleskyMatrix_(sizeRows_*sizeCols_)
+	,nbRowsMin_(nbRowsMin)
+	,nbColsMin_(nbColsMin)
+	,nbRows_(nbRowsMin)
+	,nbCols_(nbColsMin)
+	,vectorElem_(0)
 	,choleskyMatrixOutdated_(true)
 	,rowOrder_(nbRowsMax)
 	,colOrder_(nbColsMax)
 {
-	bool undefinedSizeMax=false;
-	if (nbRowsMax<nbRows){
-		nbRowsMax_=nbRows_;
-		undefinedSizeMax=true;
-	}
-	if (nbColsMax<nbCols){
-		nbColsMax_=nbCols_;
-		undefinedSizeMax=true;
-	}
-	if (undefinedSizeMax){
-		constantPart_.resize(nbRowsMax,nbColsMax);
-		matrix_.resize(nbRowsMax,nbColsMax);
-	}
+  for(int i=0;i<sizeRows_;++i){
+    for (int j=0;j<sizeCols_;++j){
+      constantPart_[i+j*sizeRows_].setZero(i+nbRowsMin_, j+nbColsMin_);
+      matrix_[i+j*sizeRows_].setZero(i+nbRowsMin_, j+nbColsMin_);
+      choleskyMatrix_[i+j*sizeRows_].setZero(i+nbRowsMin_, j+nbColsMin_);
+    }
+  }
 
-	constantPart_.fill(0);
-	matrix_.fill(0);
-	denseMatrix_.fill(0);
-	choleskyMatrix_.fill(0);
-	for(int i=0;i<nbRowsMax;++i){
-		rowOrder_(i)=i;
-	}
-	for(int i=0;i<nbColsMax;++i){
-		colOrder_(i)=i;
-	}
+  for(int i=0;i<nbRowsMax;++i){
+    rowOrder_(i)=i;
+  }
+  for(int i=0;i<nbColsMax;++i){
+    colOrder_(i)=i;
+  }
 }
 
 QPMatrix::~QPMatrix(){}
@@ -59,10 +50,9 @@ void QPMatrix::addTerm(const MatrixXd & mat,
 	int nbCols = mat.cols();
 	for (int i=0;i<nbRows;++i){
 		for (int j=0;j<nbCols;++j){
-			matrix_(rowOrder_(row+i),colOrder_(col+j))+=mat(i,j);
+			matrix_[vectorElem_](rowOrder_(row+i),colOrder_(col+j))+=mat(i,j);
 		}
 	}
-	denseMatrixOutdated_=true;
 	choleskyMatrixOutdated_=true;
 
 }
@@ -72,83 +62,31 @@ void QPMatrix::setConstantPart(const MatrixXd & mat){
 	int nbCols = mat.cols();
 	for (int i=0;i<=nbRows;++i){
 		for (int j=0;j<nbCols;++j){
-			constantPart_(rowOrder_(i),colOrder_(j))=mat(i,j);
+			constantPart_[vectorElem_](rowOrder_(i),colOrder_(j))=mat(i,j);
 		}
 	}
 }
 
 void QPMatrix::reset(const bool withConstantPart){
-	if (withConstantPart){
-		matrix_.block(0,0,nbRows_,nbCols_) = constantPart_.block(0,0,nbRows_,nbCols_);
-	}else{
-		matrix_.block(0,0,nbRows_,nbCols_).fill(0);
-	}
-	denseMatrixOutdated_=true;
-	choleskyMatrixOutdated_=true;
+  matrix_[vectorElem_].fill(0);
+  choleskyMatrixOutdated_=true;
 }
 
-void QPMatrix::resize(const int nbRows, const int nbCols,
-		const bool preserve, const bool withConstantPart){
-
-	bool maxSizeChanged=false;
-
-	if (nbRows>nbRowsMax_){
-		nbRowsMax_=nbRows;
-		maxSizeChanged=true;
-	}
-
-	if (nbCols>nbColsMax_){
-		nbColsMax_=nbCols;
-		maxSizeChanged=true;
-	}
-
-	if (maxSizeChanged){
-		if (preserve){
-			MatrixXd tmp1 = constantPart_;
-			MatrixXd tmp2 = matrix_;
-			constantPart_.setZero(nbRowsMax_, nbColsMax_);
-			matrix_.setZero(nbRowsMax_, nbColsMax_);
-			int previousRowMax = tmp1.rows();
-			int previouscolMax = tmp1.cols();
-
-			for(int i=0;i<previousRowMax;++i){
-				for(int j=0;j<previouscolMax;++j){
-					constantPart_(i,j)=tmp1(i,j);
-					matrix_(i,j)=tmp1(i,j);
-				}
-			}
-		}else{
-			constantPart_.resize(nbRowsMax_, nbColsMax_);
-			matrix_.resize(nbRowsMax_, nbColsMax_);
-			reset(withConstantPart);
-		}
-	}
-
-	nbRows_=nbRows;
-	nbCols_=nbCols;
-}
-
-MatrixXd & QPMatrix::dense(){
-	if (denseMatrix_.cols()!=nbCols_ || denseMatrix_.rows()!=nbRows_){
-		denseMatrix_.resize(nbRows_,nbCols_);
-		denseMatrixOutdated_=true;
-	}
-	if (denseMatrixOutdated_){
-		denseMatrix_.block(0,0,nbRows_, nbCols_) = matrix_.block(0,0,nbRows_, nbCols_);
-		denseMatrixOutdated_=false;
-	}
-	return denseMatrix_;
+void QPMatrix::resize(const int nbRows, const int nbCols){
+  nbRows_ = nbRows;
+  nbCols_ = nbCols;
+  vectorElem_ = nbRows_-nbRowsMin_ + (nbCols_-nbColsMin_) *sizeRows_;
 }
 
 MatrixXd & QPMatrix::cholesky(){
 	MatrixXd partialCholesky(0,0);
 	computeCholesky(partialCholesky);
-	return choleskyMatrix_;
+	return choleskyMatrix_[vectorElem_];
 }
 
 MatrixXd & QPMatrix::cholesky(MatrixXd & partialCholesky){
 	computeCholesky(partialCholesky);
-	return choleskyMatrix_;
+	return choleskyMatrix_[vectorElem_];
 }
 
 void QPMatrix::colOrder(const Eigen::VectorXi & order){
@@ -160,47 +98,43 @@ void QPMatrix::rowOrder(const Eigen::VectorXi & order){
 }
 
 void QPMatrix::computeCholesky(MatrixXd & partialCholesky){
-	if (choleskyMatrix_.cols()!=nbCols_ || choleskyMatrix_.rows()!=nbRows_){
-		choleskyMatrix_.resize(nbRows_,nbCols_);
-		choleskyMatrixOutdated_=true;
-	}
 	if (choleskyMatrixOutdated_){
-
+		Eigen::MatrixXd & chol = choleskyMatrix_[vectorElem_];
 		int imin=partialCholesky.rows();
 		if (imin>0){
-			choleskyMatrix_.fill(0);
-			choleskyMatrix_.block(0,0,imin,imin)=partialCholesky;
+			chol.fill(0);
+			chol.block(0,0,imin,imin)=partialCholesky;
 			double tmp;
 			for(int j=0;j<nbCols_;++j){
 				if (j>=imin){
 					for(int i=0;i<j;++i){
-						choleskyMatrix_(j,i)=0;
+						chol(j,i)=0;
 					}
-					tmp = matrix_(j,j);
+					tmp = matrix_[vectorElem_](j,j);
 					for(int k=0;k<j;++k){
-						tmp -= choleskyMatrix_(k,j)*choleskyMatrix_(k,j);
+						tmp -= chol(k,j)*chol(k,j);
 					}
 					if (fabs(tmp)>EPSILON){
-						choleskyMatrix_(j,j) = sqrt(tmp);
+						chol(j,j) = sqrt(tmp);
 					}else{
-						choleskyMatrix_(j,j) = 0;
+						chol(j,j) = 0;
 					}
 
 				}
 				for(int i=std::max(j+1,imin);i<nbRows_;++i){
-					tmp=matrix_(j,i);
+					tmp=matrix_[vectorElem_](j,i);
 					for(int k=0;k<j;++k){
-						tmp -= choleskyMatrix_(k,j)*choleskyMatrix_(k,i);
+						tmp -= chol(k,j)*chol(k,i);
 					}
-					if (fabs(tmp)>EPSILON && fabs(choleskyMatrix_(j,j))>EPSILON){
-						choleskyMatrix_(j,i) = tmp / choleskyMatrix_(j,j);
+					if (fabs(tmp)>EPSILON && fabs(chol(j,j))>EPSILON){
+						chol(j,i) = tmp / chol(j,j);
 					}else{
-						choleskyMatrix_(j,i) = 0;
+						chol(j,i) = 0;
 					}
 				}
 			}
 		}else{
-			choleskyMatrix_=matrix_.block(0,0,nbRows_, nbCols_).llt().matrixL().transpose();
+			chol=matrix_[vectorElem_].llt().matrixL().transpose();
 		}
 		choleskyMatrixOutdated_=false;
 	}
