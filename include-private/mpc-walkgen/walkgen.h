@@ -48,15 +48,15 @@ namespace MPCWalkgen{
 		    /// \name accessors relative to the state of the robot.
 		    /// \{
 			inline const RigidBodySystem *robot() const
-			{return robot_;};
+			{return robot_;}
 
-			virtual inline double comHeight() const;
-			virtual inline void comHeight (double d);
+			virtual double comHeight() const;
+			virtual void comHeight (double d);
 
-			virtual inline double freeFlyingFootMaxHeight() const;
-			virtual inline void freeFlyingFootMaxHeight(double d);
+			virtual double freeFlyingFootMaxHeight() const;
+			virtual void freeFlyingFootMaxHeight(double d);
 
-			virtual inline const SupportState &currentSupportState() const;
+			virtual const SupportState &currentSupportState() const;
 			virtual inline void currentSupportState(const SupportState &newSupportState){
 				newCurrentSupport_=newSupportState;
 				isNewCurrentSupport_=true;
@@ -154,5 +154,7 @@ namespace MPCWalkgen{
 
 	};
 }
+
+
 
 #endif //WALKGEN

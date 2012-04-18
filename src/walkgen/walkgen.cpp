@@ -267,4 +267,26 @@ void Walkgen::ApplyPerturbationVel(Axis axis, BodyType body, double vel){
   perturbation_->applyVel(axis, body, vel);
 }
 
-#include <mpc-walkgen/walkgen-inl.h>
+const SupportState & Walkgen::currentSupportState() const {
+        return robot_->currentSupport(); }
+
+double Walkgen::comHeight() const
+{ return robot_->robotData().CoMHeight; }
+
+void Walkgen::comHeight(double d)
+{ robot_->robotData().CoMHeight=d; }
+
+double Walkgen::freeFlyingFootMaxHeight() const
+{ return robot_->robotData().freeFlyingFootMaxHeight; }
+
+void Walkgen::freeFlyingFootMaxHeight(double d)
+{ robot_->robotData().freeFlyingFootMaxHeight = d; }
+
+const BodyState & Walkgen::bodyState(BodyType body)const{
+	return robot_->body(body)->state();
+}
+
+void Walkgen::bodyState(BodyType body, const BodyState & state){
+	robot_->body(body)->state(state);
+}
+
