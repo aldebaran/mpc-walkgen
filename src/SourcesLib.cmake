@@ -1,8 +1,12 @@
 SET(mpc-walkgen_SRC
- sharedpgtypes.cpp
 
- walkgen/convex-hull.cpp
- walkgen/orientations-preview.cpp
+ sharedpgtypes.cpp 
+ walkgen-abstract.cpp
+ walkgen-abstract-humanoid.cpp
+ 
+ walkgen/convex-hull.cpp 
+ walkgen/orientations-preview.cpp 
+
 
  walkgen/qp-solver.cpp
 

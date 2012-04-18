@@ -25,19 +25,10 @@ using namespace MPCWalkgen;
 using namespace Eigen;
 
 
-MPCWalkgen::WalkgenAbstractHumanoid* MPCWalkgen::mpcFactory(Solver solvertype) {
-	MPCWalkgen::WalkgenAbstractHumanoid* zmpVra = new WalkgenHumanoid(solvertype);
+WalkgenAbstractHumanoid* MPCWalkgen::mpcFactory(Solver solvertype) {
+	WalkgenAbstractHumanoid* zmpVra = new WalkgenHumanoid(solvertype);
 	return zmpVra;
 }
-
-using namespace MPCWalkgen;
-
-WalkgenAbstractHumanoid::WalkgenAbstractHumanoid():WalkgenAbstract(){}
-WalkgenAbstract::WalkgenAbstract(){}
-WalkgenAbstractHumanoid::~WalkgenAbstractHumanoid(){}
-WalkgenAbstract::~WalkgenAbstract(){}
-
-
 
 
 

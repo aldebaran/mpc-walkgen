@@ -112,7 +112,7 @@ namespace MPCWalkgen
 	    /// \}
   };
   /*! Factory of Pattern generator interface. */
-  MPC_WALK_GEN_EXPORT WalkgenAbstractHumanoid * mpcFactory(Solver solvertype);
+  MPC_WALKGEN_API WalkgenAbstractHumanoid * mpcFactory(Solver solvertype);
 }
 
 

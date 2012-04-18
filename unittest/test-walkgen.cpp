@@ -2,8 +2,6 @@
  */
 
 
-
-#include <mpc-walkgen/sharedpgtypes.h>
 #include <mpc-walkgen/walkgen-abstract-humanoid.h>
 
 #include <cmath>
@@ -113,8 +111,7 @@ int main() {
 	// Create and initialize generator:
 	// -------------------------------
 
-	WalkgenAbstractHumanoid * walk = mpcFactory(LSSOL);
-	MPCDebug debug(true);
+	WalkgenAbstractHumanoid * walk = mpcFactory(QPOASES);
 
 	walk->init(robotData, mpcData);
 //	const RigidBodySystem *robot = walk->robot();// Not used yet
