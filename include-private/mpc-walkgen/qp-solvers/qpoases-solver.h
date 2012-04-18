@@ -25,7 +25,7 @@ namespace MPCWalkgen{
 
 	class QPOasesSolver:public QPSolver{
 		public:
-			QPOasesSolver(const int nbVarMax=QPSolver::DefaultNbVarMax_, const int nbCtrMax=QPSolver::DefaultNbCtrMax_);
+			QPOasesSolver(const int nbVarMin=0, const int nbCtrMin=0, const int nbVarMax=QPSolver::DefaultNbVarMax_, const int nbCtrMax=QPSolver::DefaultNbCtrMax_);
 			virtual ~QPOasesSolver();
 
 			// accessors

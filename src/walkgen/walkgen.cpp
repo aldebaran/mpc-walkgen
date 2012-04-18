@@ -60,12 +60,12 @@ Walkgen::Walkgen(Solver solvertype)
 
 #ifdef USE_QPOASES
     if (solvertype == QPOASES)
-      solver_ = new QPOasesSolver();
+      solver_ = new QPOasesSolver(2*generalData_.nbSamplesQP, 0, 2*generalData_.nbSamplesQP+10, 25);
 #endif //USE_QPOASES
 
 #ifdef USE_LSSOL
     if (solvertype == LSSOL)
-      solver_ = new LSSOLSolver();
+      solver_ = new LSSOLSolver(2*generalData_.nbSamplesQP, 0, 2*generalData_.nbSamplesQP+10, 25);
 #endif //USE_LSSOL
 
 	orientPrw_ = new OrientationsPreview();

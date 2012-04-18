@@ -9,16 +9,16 @@ using namespace Eigen;
 const int QPSolver::DefaultNbVarMax_=100;
 const int QPSolver::DefaultNbCtrMax_=100;
 
-QPSolver::QPSolver(const int nbVarMax, const int nbCtrMax)
-	:matrixQ_(0,0,nbVarMax,nbVarMax)
-	,matrixA_(0,0,nbCtrMax,nbVarMax)
-	,vectorP_(0,0,nbVarMax,1)
-	,vectorBU_(0,0,nbCtrMax,1)
-	,vectorBL_(0,0,nbCtrMax,1)
-	,vectorXU_(0,0,nbVarMax,1)
-	,vectorXL_(0,0,nbVarMax,1)
-	,nbVar_(0)
-	,nbCtr_(0)
+QPSolver::QPSolver(const int nbVarMin, const int nbCtrMin, const int nbVarMax, const int nbCtrMax)
+	:matrixQ_(nbVarMin,nbVarMin,nbVarMax,nbVarMax)
+	,matrixA_(nbCtrMin,nbVarMin,nbCtrMax,nbVarMax)
+	,vectorP_(nbVarMin,1,nbVarMax,1)
+	,vectorBU_(nbCtrMin,1,nbCtrMax,1)
+	,vectorBL_(nbCtrMin,1,nbCtrMax,1)
+	,vectorXU_(nbVarMin,1,nbVarMax,1)
+	,vectorXL_(nbVarMin,1,nbVarMax,1)
+	,nbVar_(nbVarMin)
+	,nbCtr_(nbCtrMin)
 	,nbVarMax_(nbVarMax)
 	,nbCtrMax_(nbCtrMax)
 	,varOrder_(nbVarMax)
@@ -159,7 +159,7 @@ void QPSolver::dump(){
 	std::cout << "nbCtr : " << nbCtr_ << std::endl;
 	std::cout << std::endl;
 	std::cout << "Q :" << std::endl;
-	std::cout << matrixQ_.dense() << std::endl;
+	std::cout << matrixQ_() << std::endl;
 	std::cout << std::endl;
 	std::cout << std::endl;
 	std::cout << "chol(Q) :" << std::endl;
@@ -167,18 +167,18 @@ void QPSolver::dump(){
 	std::cout << std::endl;
 	std::cout << std::endl;
 	std::cout << "P :" << std::endl;
-	std::cout << vectorP_.dense().transpose() << std::endl;
+	std::cout << vectorP_().transpose() << std::endl;
 	std::cout << std::endl;
 	std::cout << std::endl;
 	std::cout << "A :" << std::endl;
-	std::cout << matrixA_.dense() << std::endl;
+	std::cout << matrixA_() << std::endl;
 	std::cout << std::endl;
 	std::cout << std::endl;
 	std::cout << "Bl / Bu :" << std::endl;
-	std::cout << vectorBL_.dense().transpose() << std::endl;
-	std::cout << vectorBU_.dense().transpose() << std::endl;
+	std::cout << vectorBL_().transpose() << std::endl;
+	std::cout << vectorBU_().transpose() << std::endl;
 	std::cout << std::endl;
 	std::cout << "Xl / Xu :" << std::endl;
-	std::cout << vectorXL_.dense().transpose() << std::endl;
-	std::cout << vectorXU_.dense().transpose() << std::endl;
+	std::cout << vectorXL_().transpose() << std::endl;
+	std::cout << vectorXU_().transpose() << std::endl;
 }

@@ -27,7 +27,7 @@ namespace MPCWalkgen{
 			static const int DefaultNbCtrMax_;
 
 		public:
-			QPSolver(const int nbVarMax=DefaultNbVarMax_, const int nbCtrMax=DefaultNbCtrMax_);
+			QPSolver(const int nbVarMin=0, const int nbCtrMin=0, const int nbVarMax=DefaultNbVarMax_, const int nbCtrMax=DefaultNbCtrMax_);
 			virtual ~QPSolver()=0;
 
 			void reset(const bool withConstantPart = true);

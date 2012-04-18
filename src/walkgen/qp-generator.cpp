@@ -80,6 +80,7 @@ void QPGenerator::precomputeObjective(){
 			chol.reset();
 			chol.addTerm(QconstN_[nb], 0, 0);
 			chol.addTerm(QconstN_[nb], N, N);
+
 			choleskyConst_[nb] = chol.cholesky();
 
 			pconstCoM_[nb] = VelDynamics.S - VelDynamics.U*CoPDynamics.UInv*CoPDynamics.S;
@@ -92,6 +93,7 @@ void QPGenerator::precomputeObjective(){
 			pconstRef_[nb] = -CoPDynamics.UInvT*VelDynamics.UT*ponderation_->instantVelocity[i]*pondFactor;
 		}
 	}
+
 }
 
 void QPGenerator::buildObjective(const MPCSolution & result) {

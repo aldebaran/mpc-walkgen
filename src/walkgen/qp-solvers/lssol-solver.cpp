@@ -6,8 +6,8 @@ using namespace MPCWalkgen;
 using namespace Eigen;
 
 
-LSSOLSolver::LSSOLSolver(const int nbVarMax, const int nbCtrMax)
-	:QPSolver(nbVarMax, nbCtrMax)
+LSSOLSolver::LSSOLSolver(const int nbVarMin, const int nbCtrMin, const int nbVarMax, const int nbCtrMax)
+	:QPSolver(nbVarMin, nbCtrMin, nbVarMax, nbCtrMax)
 	,kx_(nbVarMax)
 	,bb_(1)
 	,lambda_(nbVarMax+nbCtrMax)
@@ -74,7 +74,7 @@ void LSSOLSolver::solve(MPCSolution & result){
 
 	lssol_(&nbVar_, &nbVar_,
 			&nbCtr_, &nbCtr_, &nbVar_,
-			matrixA_.dense().data(), bl_.data(), bu_.data(),vectorP_().data(),
+			matrixA_().data(), bl_.data(), bu_.data(),vectorP_().data(),
 			result.constraints.data(), kx_.data(), result.qpSolution.data(),
 			matrixQ_.cholesky().data(), bb_.data(), &inform_, &iter_, &obj_, lambda_.data(),
 			iwar_.data(), &leniw_, war_.data(), &lenw_);

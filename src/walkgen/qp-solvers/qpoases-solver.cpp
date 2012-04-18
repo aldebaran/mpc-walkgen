@@ -11,8 +11,8 @@ using namespace MPCWalkgen;
 using namespace Eigen;
 
 
-QPOasesSolver::QPOasesSolver(const int nbVarMax, const int nbCtrMax)
-	:QPSolver(nbVarMax, nbCtrMax)
+QPOasesSolver::QPOasesSolver(const int nbVarMin, const int nbCtrMin, const int nbVarMax, const int nbCtrMax)
+	:QPSolver(nbVarMin, nbCtrMin, nbVarMax, nbCtrMax)
 {}
 
 QPOasesSolver::~QPOasesSolver(){}
@@ -66,8 +66,8 @@ void QPOasesSolver::solve(MPCSolution & result){
 
 	int ittMax=100;
 
-	MatrixXd A = matrixA_.dense().transpose();
-	qp_->init(matrixQ_.dense().data(), vectorP_().data(), A.data(),
+	MatrixXd A = matrixA_().transpose();
+	qp_->init(matrixQ_().data(), vectorP_().data(), A.data(),
 		  vectorXL_().data(), vectorXU_().data(),
 		  vectorBL_().data(), vectorBU_().data(),
 		  ittMax, 0,
