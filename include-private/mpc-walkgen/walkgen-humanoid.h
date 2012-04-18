@@ -1,5 +1,5 @@
-#ifndef WALKGEN
-#define WALKGEN
+#ifndef WALKGENHUMANOID
+#define WALKGENHUMANOID
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -13,7 +13,7 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <mpc-walkgen/walkgen-abstract.h>
+#include <mpc-walkgen/walkgen-abstract-humanoid.h>
 #include <mpc-walkgen/types.h>
 
 namespace MPCWalkgen{
@@ -26,13 +26,13 @@ namespace MPCWalkgen{
 	class MPCDebug;
 	class Perturbation;
 
-	class Walkgen :
-		public WalkgenAbstract
+	class WalkgenHumanoid :
+		public WalkgenAbstractHumanoid
 	{
 
 		public:
-			Walkgen(Solver solvertype);
-			~Walkgen();
+			WalkgenHumanoid(Solver solvertype);
+			~WalkgenHumanoid();
 
 			virtual void init(const RobotData &robotData, const MPCData &mpcData);
 
@@ -105,7 +105,7 @@ namespace MPCWalkgen{
 			virtual inline double actuationSamplingPeriod()const
 			{return generalData_.actuationSamplingPeriod;}
 			virtual void actuationSamplingPeriod(double period)
-			{generalData_.actuationSamplingPeriod = period;};
+			{generalData_.actuationSamplingPeriod = period;}
 
 			virtual inline int QPNbSamplings()const
 			{return generalData_.nbSamplesQP;}
@@ -157,4 +157,4 @@ namespace MPCWalkgen{
 
 
 
-#endif //WALKGEN
+#endif //WALKGENHUMANOID

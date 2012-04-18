@@ -1,4 +1,4 @@
-#include <mpc-walkgen/walkgen.h>
+#include <mpc-walkgen/walkgen-humanoid.h>
 
 #include <mpc-walkgen/orientations-preview.h>
 
@@ -25,21 +25,26 @@ using namespace MPCWalkgen;
 using namespace Eigen;
 
 
-MPCWalkgen::WalkgenAbstract *MPCWalkgen::mpcFactory(Solver solvertype) {
-	MPCWalkgen::WalkgenAbstract *zmpVra = new Walkgen(solvertype);
+MPCWalkgen::WalkgenAbstractHumanoid* MPCWalkgen::mpcFactory(Solver solvertype) {
+	MPCWalkgen::WalkgenAbstractHumanoid* zmpVra = new WalkgenHumanoid(solvertype);
 	return zmpVra;
 }
 
 using namespace MPCWalkgen;
 
-WalkgenAbstract::WalkgenAbstract() {}
-
+WalkgenAbstractHumanoid::WalkgenAbstractHumanoid():WalkgenAbstract(){}
+WalkgenAbstract::WalkgenAbstract(){}
+WalkgenAbstractHumanoid::~WalkgenAbstractHumanoid(){}
 WalkgenAbstract::~WalkgenAbstract(){}
 
 
+
+
+
+
 // Implementation of the private interface
-Walkgen::Walkgen(Solver solvertype)
-	: WalkgenAbstract()
+WalkgenHumanoid::WalkgenHumanoid(Solver solvertype)
+	: WalkgenAbstractHumanoid()
 	,generalData_()
 	,solver_(0x0)
 	,generator_(0x0)
@@ -84,7 +89,7 @@ Walkgen::Walkgen(Solver solvertype)
 }
 
 
-Walkgen::~Walkgen(){
+WalkgenHumanoid::~WalkgenHumanoid(){
 	if (debug_ != 0x0)
 		delete debug_;
 
@@ -108,7 +113,7 @@ Walkgen::~Walkgen(){
 
 }
 
-void Walkgen::init(const RobotData &robotData, const MPCData &mpcData) {
+void WalkgenHumanoid::init(const RobotData &robotData, const MPCData &mpcData) {
 
 	robot_->init(robotData);
 
@@ -159,7 +164,7 @@ void Walkgen::init(const RobotData &robotData, const MPCData &mpcData) {
 
 }
 
-const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
+const MPCSolution & WalkgenHumanoid::online(double time, bool previewBodiesNextState){
 	solution_.newTraj = false;
 	if(time  > upperTimeLimitToUpdate_+EPSILON){
 		upperTimeLimitToUpdate_ += generalData_.QPSamplingPeriod;
@@ -228,65 +233,65 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
 	return solution_;
 }
 
-void Walkgen::reference(double dx, double dy, double dyaw){
+void WalkgenHumanoid::reference(double dx, double dy, double dyaw){
 	newVelRef_.local.x.fill(dx);
 	newVelRef_.local.y.fill(dy);
 	newVelRef_.local.yaw.fill(dyaw);
 }
 
-void Walkgen::reference(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw){
+void WalkgenHumanoid::reference(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw){
 	newVelRef_.local.x=dx;
 	newVelRef_.local.y=dy;
 	newVelRef_.local.yaw=dyaw;
 }
 
-void Walkgen::QPSamplingPeriod(double)
+void WalkgenHumanoid::QPSamplingPeriod(double)
 {
 	std::cerr << " The method Walkgen::QPSamplingPeriod(d) is not implemented yet. " << std::endl;
 }
 
-void Walkgen::mpcSamplingPeriod(double)
+void WalkgenHumanoid::mpcSamplingPeriod(double)
 {
 	std::cerr << " The method Walkgen::mpcSamplingPeriod(d) is not implemented yet. " << std::endl;
 }
 
-void Walkgen::QPNbSamplings(int)
+void WalkgenHumanoid::QPNbSamplings(int)
 {
 	std::cerr << " The method Walkgen::QPNbSamplings(d) is not implemented yet. " << std::endl;
 }
 
-void Walkgen::ApplyPerturbationForce(Axis axis, BodyType body, double f){
+void WalkgenHumanoid::ApplyPerturbationForce(Axis axis, BodyType body, double f){
   perturbation_->applyForce(axis, body, f);
 }
 
-void Walkgen::ApplyPerturbationAcc(Axis axis, BodyType body, double acc){
+void WalkgenHumanoid::ApplyPerturbationAcc(Axis axis, BodyType body, double acc){
   perturbation_->applyAcc(axis, body, acc);
 }
 
-void Walkgen::ApplyPerturbationVel(Axis axis, BodyType body, double vel){
+void WalkgenHumanoid::ApplyPerturbationVel(Axis axis, BodyType body, double vel){
   perturbation_->applyVel(axis, body, vel);
 }
 
-const SupportState & Walkgen::currentSupportState() const {
+const SupportState & WalkgenHumanoid::currentSupportState() const {
         return robot_->currentSupport(); }
 
-double Walkgen::comHeight() const
+double WalkgenHumanoid::comHeight() const
 { return robot_->robotData().CoMHeight; }
 
-void Walkgen::comHeight(double d)
+void WalkgenHumanoid::comHeight(double d)
 { robot_->robotData().CoMHeight=d; }
 
-double Walkgen::freeFlyingFootMaxHeight() const
+double WalkgenHumanoid::freeFlyingFootMaxHeight() const
 { return robot_->robotData().freeFlyingFootMaxHeight; }
 
-void Walkgen::freeFlyingFootMaxHeight(double d)
+void WalkgenHumanoid::freeFlyingFootMaxHeight(double d)
 { robot_->robotData().freeFlyingFootMaxHeight = d; }
 
-const BodyState & Walkgen::bodyState(BodyType body)const{
+const BodyState & WalkgenHumanoid::bodyState(BodyType body)const{
 	return robot_->body(body)->state();
 }
 
-void Walkgen::bodyState(BodyType body, const BodyState & state){
+void WalkgenHumanoid::bodyState(BodyType body, const BodyState & state){
 	robot_->body(body)->state(state);
 }
 

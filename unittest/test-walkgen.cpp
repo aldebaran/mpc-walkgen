@@ -4,7 +4,7 @@
 
 
 #include <mpc-walkgen/sharedpgtypes.h>
-#include <mpc-walkgen/walkgen-abstract.h>
+#include <mpc-walkgen/walkgen-abstract-humanoid.h>
 
 #include <cmath>
 #include <cstdio>
@@ -110,9 +110,11 @@ int main() {
 		robotData.CoPRightDSHull.y(i) =- DefaultCoPDSEdgesY[i];
 	}
 
-	// Creat and initialize generator:
+	// Create and initialize generator:
 	// -------------------------------
-	WalkgenAbstract * walk = mpcFactory(QPOASES);
+
+	WalkgenAbstractHumanoid * walk = mpcFactory(LSSOL);
+	MPCDebug debug(true);
 
 	walk->init(robotData, mpcData);
 //	const RigidBodySystem *robot = walk->robot();// Not used yet

@@ -1,20 +1,24 @@
 ////////////////////////////////////////////////////////////////////////////////
 ///
 ///\file	walkgen-abstract.h
-///\brief	Abstract class to instanciate Walkgen algorithm
+///\brief	Abstract class to instanciate Walkgen algorithm for humanoid robot
 ///\author	Herdt Andrei
 ///\author	Lafaye Jory
 ///\author	Keith François
 ///\version	1.0
-///\date	05/01/12
+///\date	18/04/12
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
 
-#ifndef _MPC_WALKGEN_ABSTRACT_H_
-#define _MPC_WALKGEN_ABSTRACT_H_
+
+#ifndef WALKGEN_ABSTRACT_HUMANOID_H
+#define WALKGEN_ABSTRACT_HUMANOID_H
+
+
 
 #include <mpc-walkgen/sharedpgtypes.h>
+#include <mpc-walkgen/walkgen-abstract.h>
 
 #include <Eigen/Core>
 #include <cstring>
@@ -23,16 +27,17 @@
 
 namespace MPCWalkgen
 {
-	class MPC_WALKGEN_API WalkgenAbstract
-	{
-	    //
-	    // Public methods:
-	    //
-	  public:
+  class  WalkgenAbstractHumanoid:
+                public WalkgenAbstract
+  {
+            //
+            // Public methods:
+            //
+          public:
 
-	  WalkgenAbstract();
+          WalkgenAbstractHumanoid();
 
-	  virtual ~WalkgenAbstract() =0;
+          virtual ~WalkgenAbstractHumanoid() =0;
 
 	    /// \brief Initialize the system
 	    /// \param[in] robotData: data relative to the robot
@@ -57,10 +62,34 @@ namespace MPCWalkgen
 
 	    /// \name accessors relative to the state of the robot.
 	    /// \{
+		virtual double comHeight()const=0;
+		virtual void comHeight(double d)=0;
+
+		virtual double freeFlyingFootMaxHeight() const = 0;
+		virtual void freeFlyingFootMaxHeight(double d)=0;
+
+		virtual const SupportState & currentSupportState() const = 0;
+		virtual void currentSupportState(const SupportState & newSupportState)=0;
+
 		virtual const BodyState & bodyState(BodyType body)const=0;
 		virtual void bodyState(BodyType body, const BodyState & state)=0;
 	    /// \}
 
+	  public:
+		/// \name accessors relative to the solver, modifiable on line
+	    /// \{
+		virtual double stepPeriod()const=0;
+		virtual void stepPeriod(double d)=0;
+
+		virtual double DSPeriod()const=0;
+		virtual void DSPeriod(double d)=0;
+
+		virtual double DSSSPeriod()const=0;
+		virtual void DSSSPeriod(double d)=0;
+
+		virtual int nbStepSSDS()const=0;
+		virtual void nbStepSSDS(int d)=0;
+	    /// \}
 
 	  public:
 		/// \name accessors relative to the solver, costly when modified on line
@@ -81,10 +110,11 @@ namespace MPCWalkgen
 		virtual void ApplyPerturbationAcc(Axis axis, BodyType body, double acc)=0;
 		virtual void ApplyPerturbationVel(Axis axis, BodyType body, double vel)=0;
 	    /// \}
-
   };
-
-
+  /*! Factory of Pattern generator interface. */
+  MPC_WALK_GEN_EXPORT WalkgenAbstractHumanoid * mpcFactory(Solver solvertype);
 }
 
-#endif /* _MPC_WALKGEN_ABSTRACT_H_ */
+
+
+#endif // WALKGEN_ABSTRACT_HUMANOID_H

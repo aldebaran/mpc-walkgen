@@ -5,7 +5,7 @@
 
 
 #include <mpc-walkgen/sharedpgtypes.h>
-#include <mpc-walkgen/walkgen.h>
+#include <mpc-walkgen/walkgen-humanoid.h>
 #include <mpc-walkgen/mpc-debug.h>
 
 #include <cmath>
@@ -88,11 +88,11 @@ int main() {
 	// Creat and initialize generator:
 	// -------------------------------
 
-	WalkgenAbstract * walk1 = mpcFactory(LSSOL);
-	WalkgenAbstract * walk2 = mpcFactory(QPOASES);
+	WalkgenHumanoid walk1(LSSOL);
+	WalkgenHumanoid walk2(QPOASES);
+	walk1.init(robotData, mpcData);
+	walk2.init(robotData, mpcData);
 
-	walk1->init(robotData, mpcData);
-	walk2->init(robotData, mpcData);
 
 	MPCDebug debug(true);
 

@@ -22,7 +22,7 @@ SET(mpc-walkgen_INCL_PRIVATE
  mpc-walkgen/tools-inl.h
  mpc-walkgen/types.h
  mpc-walkgen/enums.h
- mpc-walkgen/walkgen.h
+ mpc-walkgen/walkgen-humanoid.h
 
  mpc-walkgen/mpc-debug.h
  mpc-walkgen/perturbation.h

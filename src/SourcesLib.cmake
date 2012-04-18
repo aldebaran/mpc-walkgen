@@ -22,9 +22,11 @@ SET(mpc-walkgen_SRC
  walkgen/interpolation.cpp
  walkgen/tools.cpp
  walkgen/types.cpp
- walkgen/walkgen.cpp
+
+ walkgen/walkgen-humanoid.cpp
 
  walkgen/gettimeofday.cpp
+
  walkgen/mpc-debug.cpp
  walkgen/perturbation.cpp
 )
