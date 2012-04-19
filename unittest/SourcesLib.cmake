@@ -6,6 +6,7 @@ set(test-rotation_SRC
 	test-rotation.cpp
 	../include-private/mpc-walkgen/tools.h
 	../src/walkgen/tools.cpp
+	../src/walkgen/gettimeofday.cpp
 	tools-rotation.h
 	tools-rotation.cpp
 )
@@ -43,6 +44,7 @@ set(bench-qpsolver_SRC
   ../src/walkgen/qp-matrix.cpp
   ../src/walkgen/convex-hull.cpp
   ../src/walkgen/mpc-debug.cpp
+  ../src/walkgen/gettimeofday.cpp
   ../src/sharedpgtypes.cpp
 )
 

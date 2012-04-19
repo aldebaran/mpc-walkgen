@@ -23,6 +23,7 @@ SET(mpc-walkgen_SRC
  walkgen/types.cpp
  walkgen/walkgen.cpp
 
+ walkgen/gettimeofday.cpp
  walkgen/mpc-debug.cpp
  walkgen/perturbation.cpp
 )

@@ -8,13 +8,17 @@
 #include <cstring>
 #include <fstream>
 
-#include <sys/time.h>
-
 #include <mpc-walkgen/tools.h>
 
 #include "tools-rotation.h"
 
 #include <Eigen/Core>
+
+#include <mpc-walkgen/gettimeofday.h>
+#ifdef WIN32
+# include <Windows.h>
+#endif //WIN32
+
 using namespace Eigen;
 using namespace MPCWalkgen;
 

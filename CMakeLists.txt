@@ -26,6 +26,13 @@ SETUP_PROJECT()
 SEARCH_FOR_BOOST()
 SEARCH_FOR_EIGEN()
 
+# Handle OS specificities 
+INCLUDE(CheckIncludeFiles)
+CHECK_INCLUDE_FILES("sys/time.h" SYS_TIME_H)
+IF(SYS_TIME_H)
+ ADD_DEFINITIONS("-DHAVE_SYS_TIME_H")
+ENDIF(SYS_TIME_H)
+
 # Optional dependencies: use a external qp solver library.
 ADD_OPTIONAL_DEPENDENCY("lssol >= 0.1.0")
 FIND_PACKAGE(QPOASES)

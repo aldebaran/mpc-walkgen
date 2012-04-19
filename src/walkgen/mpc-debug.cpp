@@ -1,6 +1,8 @@
 #include <mpc-walkgen/mpc-debug.h>
-
-#include <sys/time.h>
+#include <mpc-walkgen/gettimeofday.h>
+#ifdef WIN32
+# include <Windows.h>
+#endif // WIN32
 
 using namespace MPCWalkgen;
 
