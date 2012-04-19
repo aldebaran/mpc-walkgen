@@ -56,6 +56,7 @@ if(UNIX)
 endif()
 # Define the set of headers to be installed
 SET(${PROJECT_NAME}_HEADERS
+  include/mpc-walkgen/api.h
   include/mpc-walkgen/sharedpgtypes.h
   include/mpc-walkgen/walkgen-abstract.h
   ${CMAKE_BINARY_DIR}/include/mpc-walkgen/solvers.h

@@ -20,5 +20,5 @@ if(QPOASES_FOUND)
   addSolver("QPOASES" _SOLVER_LIST_)
 endif(QPOASES_FOUND)
 
-CONFIGURE_FILE(mpc-walkgen/solvers.h.in mpc-walkgen/solvers.h)
+CONFIG_FILES(mpc-walkgen/solvers.h)
 
