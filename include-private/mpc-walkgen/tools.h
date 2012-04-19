@@ -15,6 +15,13 @@
 
 #include <Eigen/Dense>
 
+#ifdef WIN32
+#include <cmath>
+inline double round( double d )
+{	return floor( d + 0.5 );	}
+#endif /* WIN32 */
+
+
 namespace MPCWalkgen{
 
 	void pseudoInverse(const Eigen::MatrixXd & X, Eigen::MatrixXd & Xinv, double eps=1e-8);

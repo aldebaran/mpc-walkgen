@@ -3,6 +3,10 @@
 #include <Eigen/SVD>
 #include <Eigen/LU>
 
+#ifdef WIN32
+# include <cmath>
+#endif
+
 using namespace Eigen;
 #include <iostream>
 void MPCWalkgen::pseudoInverse(const MatrixXd & A, MatrixXd & Ap, double eps){
@@ -57,8 +61,8 @@ bool MPCWalkgen::isSparseRotationMatrix(const Eigen::MatrixXd & rot)
 		{
 			if (rot(i,j) != 0)
 			{
-				int halfi = 2* static_cast <int>(floor (i/2) );
-				int halfj = 2* static_cast <int>(floor (j/2) );
+				int halfi = 2* static_cast <int>(floor (i/2.) );
+				int halfj = 2* static_cast <int>(floor (j/2.) );
 				if(	halfi != halfj)
 					return false;
 			}
@@ -91,7 +95,7 @@ bool MPCWalkgen::hasCholeskyForm(const Eigen::MatrixXd & m)
 				return false;
 
 
-	int n2 = static_cast <int> (floor(m.rows()/2));
+	int n2 = static_cast <int> (floor(m.rows()/2.));
 
 	// (b)
 	for (int i=0; i<n2; ++i)

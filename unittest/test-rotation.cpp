@@ -81,7 +81,7 @@ bool testCholeskyRotation(int n, std::ofstream &out)
 	for (int j=0; j<i; ++j)
 	  chol(i,j) = 0;
 
-  int n2 = static_cast <int> (floor(n/2));
+  int n2 = static_cast <int> (floor(n/2.));
   // (b)
   for (int i=0; i<n2; ++i)
 	  chol(2*i+1,2*i+1) = chol(2*i,2*i);

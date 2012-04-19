@@ -23,6 +23,7 @@
  *  Joint Japanese-French Robotics Laboratory (JRL)
  */
 #include <mpc-walkgen/sharedpgtypes.h>
+#include <mpc-walkgen/tools.h>
 
 #include <iostream>
 #include <fstream>
