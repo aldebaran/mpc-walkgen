@@ -6,8 +6,6 @@
 #include <mpc-walkgen/sharedpgtypes.h>
 #include <mpc-walkgen/walkgen-abstract.h>
 
-#include <mpc-walkgen/mpc-debug.h>
-
 #include <cmath>
 #include <cstdio>
 #include <cstring>
@@ -115,7 +113,7 @@ int main() {
 	// Creat and initialize generator:
 	// -------------------------------
 	WalkgenAbstract * walk = mpcFactory(QPOASES);
-	MPCDebug debug(true);
+
 	walk->init(robotData, mpcData);
 //	const RigidBodySystem *robot = walk->robot();// Not used yet
 
@@ -126,30 +124,22 @@ int main() {
 	walk->online(0);
 	double t = 0;
 	for (; t < 5; t += 0.005){
-		debug.getTime(1,true);
 		MPCSolution result = walk->online(t);
-		debug.getTime(1,false);
 		dumpTrajectory(result, data_vec);
 	}
 	walk->reference(velocity, 0, 0);
 	for (; t < 10; t += 0.005){
-		debug.getTime(1,true);
 		MPCSolution result = walk->online(t);
-		debug.getTime(1,false);
 		dumpTrajectory(result, data_vec);
 	}
 	walk->reference(0, velocity, 0);
 	for (; t < 20; t += 0.005){
-		debug.getTime(1,true);
 		MPCSolution result = walk->online(t);
-		debug.getTime(1,false);
 		dumpTrajectory(result, data_vec);
 	}
 	walk->reference(velocity, 0, velocity);
 	for (; t < 30; t += 0.005){
-		debug.getTime(1,true);
 		MPCSolution result = walk->online(t);
-		debug.getTime(1,false);
 		dumpTrajectory(result, data_vec);
 	}
 	for(unsigned i = 0; i < data_vec.size(); ++i){
@@ -189,10 +179,6 @@ int main() {
 		delete data_vec[i];
 	}
 	delete walk;
-
-	std::cout << "Mean iteration duration : " << debug.computeInterval(1) << std::endl;
-
-
 	return (success)?0:1;
 }
 
