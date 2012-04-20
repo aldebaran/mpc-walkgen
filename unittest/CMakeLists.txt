@@ -65,12 +65,7 @@ endif(LSSOL_FOUND AND QPOASES_FOUND)
 
 addUnitTest(test-walkgen  "mpc-walkgen" "" ${use_gfortran})
 
-# a simple execution of the walkgen. For link reasons,
-#  it only works with unix systems.
-if(UNIX AND NOT APPLE)
-
-  if(LSSOL_FOUND AND QPOASES_FOUND)
-    addUnitTest(bench-solvers "mpc-walkgen;timer" "" 1)
-  endif(LSSOL_FOUND AND QPOASES_FOUND)
-
-endif(UNIX AND NOT APPLE)
+# a simple execution of the walkgen.
+if(LSSOL_FOUND AND QPOASES_FOUND)
+  addUnitTest(bench-solvers "mpc-walkgen;timer" "" 1)
+endif(LSSOL_FOUND AND QPOASES_FOUND)
