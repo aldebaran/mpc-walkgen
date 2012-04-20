@@ -8,8 +8,7 @@ INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/src)
 #  name is the name of the unit test.
 #  internal_dep indicates if the internal dep (aka does that depends on mpc-walkgen?)
 #  external_dep lists the external dependencies (such as the solver)
-#  use_gfortran is not used
-macro(addUnitTest name internal_dep external_dep use_gfortran)
+macro(addUnitTest name internal_dep external_dep)
   ADD_EXECUTABLE(${name}  ${${name}_SRC})
   ADD_TEST(${name} ${name})
 
@@ -29,43 +28,37 @@ add_library(solver STATIC ${solver_SRC})
 add_library(timer STATIC ${timer_SRC})
 
 ## test the rotation of the cholesky matrix
-addUnitTest(test-rotation "timer" "" 0)
+addUnitTest(test-rotation "timer" "")
 
 ## Testing the solvers
 set(solverAvailable "")
 
-if(LSSOL_FOUND)
-    set(use_gfortran ON)
-else()
-    set(use_gfortran OFF)
-endif()
-
 # test the lssol solver
 if(LSSOL_FOUND)
   list(APPEND solverAvailable "lssol")
-  addUnitTest(test-lssol "" "lssol" ON)
+  addUnitTest(test-lssol "" "lssol")
 endif(LSSOL_FOUND)
 
 
 # test the qpoases solver
 if(QPOASES_FOUND)
   list(APPEND solverAvailable "QPOASES")
-  addUnitTest(test-qpoases "" "QPOASES" OFF)
+  addUnitTest(test-qpoases "" "QPOASES")
 endif(QPOASES_FOUND)
 
 
 ## Testing all the solvers
-addUnitTest(bench-qpsolver   "solver;timer" "${solverAvailable}" ${use_gfortran})
-addUnitTest(test-qpsolver    "solver" "${solverAvailable}" ${use_gfortran})
+addUnitTest(bench-qpsolver   "solver;timer" "${solverAvailable}")
+addUnitTest(test-qpsolver    "solver" "${solverAvailable}")
 
 ## Compare LSSOL and QPOASES.
 if(LSSOL_FOUND AND QPOASES_FOUND)
-  addUnitTest(test-all-solvers "solver" "${solverAvailable}" 1)
+  addUnitTest(test-all-solvers "solver" "${solverAvailable}")
 endif(LSSOL_FOUND AND QPOASES_FOUND)
 
-addUnitTest(test-walkgen  "mpc-walkgen" "" ${use_gfortran})
+addUnitTest(test-walkgen  "mpc-walkgen" "")
 
 # a simple execution of the walkgen.
 if(LSSOL_FOUND AND QPOASES_FOUND)
-  addUnitTest(bench-solvers "mpc-walkgen;timer" "" 1)
+  addUnitTest(bench-solvers "mpc-walkgen;timer" "")
 endif(LSSOL_FOUND AND QPOASES_FOUND)
