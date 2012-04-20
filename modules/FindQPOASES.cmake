@@ -39,6 +39,10 @@ if(${uprefix}_FOUND)
   set("${uprefix}_INCLUDE_DIRS" "${${uprefix}_INCLUDE_DIRS}" CACHE INTERNAL "" FORCE)
   set("${uprefix}_LIBRARIES" "${${uprefix}_LIBRARIES}" CACHE INTERNAL "" FORCE)
   set("${uprefix}_VERSION" "${${uprefix}_VERSION}" CACHE INTERNAL "" FORCE)
+
+  # Fill the information required by the macro PKG_CONFIG_USE_DEPENDENCY
+  set("${uprefix}_CFLAGS"  "-I${${uprefix}_INCLUDE_DIRS}" CACHE INTERNAL "" FORCE)
+  set("${uprefix}_LDFLAGS" "${${uprefix}_LIBRARIES}" CACHE INTERNAL "" FORCE)
 endif()
 endif()
 
