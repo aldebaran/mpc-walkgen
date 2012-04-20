@@ -78,8 +78,10 @@ namespace MPCWalkgen{
 		    std::vector<Eigen::MatrixXd> pconstVc_;
 		    std::vector<Eigen::MatrixXd> pconstRef_;
 
+			ConvexHull FootFeasibilityEdges;
+			ConvexHull COPFeasibilityEdges;
+			ConvexHull hull;
 	};
-
 }
 
 /*! \fn MPCWalkgen::QPGenerator::QPGenerator(QPPreview * preview, QPSolver * solver,

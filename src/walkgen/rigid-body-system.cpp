@@ -111,8 +111,7 @@ const RigidBody * RigidBodySystem::body(BodyType type) const{
 
 
 
-ConvexHull RigidBodySystem::convexHull(HullType type, const SupportState & prwSupport, bool computeLinearSystem, bool rotateHull) const {
-	ConvexHull hull;
+void RigidBodySystem::convexHull(ConvexHull &hull, HullType type, const SupportState & prwSupport, bool computeLinearSystem, bool rotateHull) const {
 	switch (type){
 		case FootHull:
 			if (prwSupport.foot == LEFT){
@@ -145,6 +144,4 @@ ConvexHull RigidBodySystem::convexHull(HullType type, const SupportState & prwSu
 	if (computeLinearSystem){
 		hull.computeLinearSystem(prwSupport.foot);
 	}
-
-	return hull;
 }

@@ -253,21 +253,20 @@ void QPGenerator::computeWarmStart(MPCSolution & result){
 	currentSupport = *prwSS_it;
 	}
 	int j = 0;
-	ConvexHull FootFeasibilityEdges, COPFeasibilityEdges;
+
 	double shiftx,shifty;
 	bool noActiveConstraints;
 	for (int i=0; i<nbSamples; i++){
 		// Get COP convex hull for current support
-		COPFeasibilityEdges = robot_->convexHull(CoPHull, *prwSS_it, false);
+		robot_->convexHull(COPFeasibilityEdges, CoPHull, *prwSS_it, false);
+
 		// Check if the support foot has changed
 		if (prwSS_it->stateChanged && prwSS_it->stepNumber>0){
 
 			// Get feet convex hull for current support
 			prwSS_it--;
-			FootFeasibilityEdges = robot_->convexHull(FootHull,*prwSS_it, false);
+			robot_->convexHull(FootFeasibilityEdges, FootHull,*prwSS_it, false);
 			prwSS_it++;
-
-
 
 			// Place the foot on active constraints
 			shiftx=shifty=0;
@@ -428,8 +427,6 @@ void QPGenerator::buildInequalitiesFeet(const MPCSolution & result){
 
 	feetInequalities_.resize(nbIneq*nbSteps , nbSteps);
 
-	ConvexHull hull;
-
 	std::vector<SupportState>::const_iterator prwSS_it = result.supportStates_vec.begin();
 	prwSS_it++;//Point at the first previewed instant
 	for( int i=0; i<generalData_->nbSamplesQP; ++i ){
@@ -437,7 +434,7 @@ void QPGenerator::buildInequalitiesFeet(const MPCSolution & result){
 		if( prwSS_it->stateChanged && prwSS_it->stepNumber>0 && prwSS_it->phase != DS){
 
 			prwSS_it--;//Take the support state before
-			hull = robot_->convexHull(FootHull, *prwSS_it);
+			robot_->convexHull(hull, FootHull, *prwSS_it);
 			prwSS_it++;
 
 			int stepNumber = (prwSS_it->stepNumber-1);
@@ -481,7 +478,7 @@ void QPGenerator::buildConstraintsCOP(const MPCSolution & result){
 	int nbSampling = generalData_->nbSamplesQP;
 	std::vector<SupportState>::const_iterator prwSS_it = result.supportStates_vec.begin();
 
-	ConvexHull hull = robot_->convexHull(CoPHull, *prwSS_it, false, false);
+	robot_->convexHull(hull, CoPHull, *prwSS_it, false, false);
 
 	int nbStepsPreviewed = result.supportStates_vec.back().stepNumber;
 	int size = 2*generalData_->nbSamplesQP+2*nbStepsPreviewed;
@@ -492,7 +489,7 @@ void QPGenerator::buildConstraintsCOP(const MPCSolution & result){
 	++prwSS_it;//Point at the first previewed instant
 	for(int i=0; i<generalData_->nbSamplesQP; ++i ){
 		if( prwSS_it->stateChanged ){
-			hull = robot_->convexHull(CoPHull, *prwSS_it, false, false);
+			robot_->convexHull(hull, CoPHull, *prwSS_it, false, false);
 		}
 		tmpVec_(i)    = std::min(hull.x(0),hull.x(3));
 		tmpVec2_(i)   = std::max(hull.x(0),hull.x(3));

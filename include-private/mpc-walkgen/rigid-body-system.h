@@ -39,7 +39,13 @@ namespace MPCWalkgen{
 
 			void firstSamplingPeriod(double firstSamplingPeriod);
 
-			ConvexHull convexHull(HullType type, const SupportState &prwSupport, bool computeLinearSystem=true, bool rotateHull=true) const;
+			inline ConvexHull convexHull(HullType type, const SupportState &prwSupport, bool computeLinearSystem=true, bool rotateHull=true) const
+			{
+				ConvexHull hull;
+				convexHull(hull, type, prwSupport, computeLinearSystem, rotateHull);
+				return hull;
+			}
+			void convexHull(ConvexHull &hull, HullType type, const SupportState &prwSupport, bool computeLinearSystem=true, bool rotateHull=true) const;
 
 			RigidBody *body(BodyType type);
 			const RigidBody *body(BodyType type) const;
