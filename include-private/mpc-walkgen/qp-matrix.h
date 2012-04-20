@@ -45,6 +45,10 @@ namespace MPCWalkgen{
 				choleskyMatrixOutdated_=true;
 				return matrix_[vectorElem_];
 			}
+			inline const Eigen::MatrixXd & operator()(void) const {
+				return matrix_[vectorElem_];
+			}
+
 			inline double & operator()(int row, int col=0){return matrix_[vectorElem_](row,col);}
 
 			inline int nbRows() const	 {return nbRows_;}
