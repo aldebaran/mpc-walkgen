@@ -23,6 +23,7 @@ set(test-qpoases_SRC test-qpoases.cpp)
 set(solver_SRC
   ../src/walkgen/qp-solver.cpp
   ../src/walkgen/qp-matrix.cpp
+  ../src/walkgen/qp-vector.cpp
   ../src/walkgen/convex-hull.cpp
   ../src/sharedpgtypes.cpp
 )

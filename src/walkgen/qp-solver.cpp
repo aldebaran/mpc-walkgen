@@ -38,6 +38,16 @@ QPMatrix & QPSolver::matrix(const QPMatrixType type){
 	switch(type){
 		case matrixA:
 			return matrixA_;
+		case matrixQ:
+			return matrixQ_;
+		default:
+			throw ("Call of QPSolver::matrix with a wrong type attribute " + type);
+	}
+}
+
+
+QPVector & QPSolver::vector(const QPMatrixType type){
+	switch(type){
 		case vectorP:
 			return vectorP_;
 		case vectorBU:
@@ -49,9 +59,8 @@ QPMatrix & QPSolver::matrix(const QPMatrixType type){
 		case vectorXL:
 			return vectorXL_;
 		default:
-			return matrixQ_;
+			throw ("Call of QPSolver::vector with a wrong type attribute " + type);
 	}
-
 }
 
 void QPSolver::reset(){

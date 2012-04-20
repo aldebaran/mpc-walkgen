@@ -1,5 +1,6 @@
 #include <mpc-walkgen/qp-generator.h>
 #include <mpc-walkgen/qp-matrix.h>
+#include <mpc-walkgen/qp-vector.h>
 #include <mpc-walkgen/tools.h>
 
 #include <iostream>
@@ -181,15 +182,15 @@ void QPGenerator::buildObjective(const MPCSolution & result) {
 
 	if (nbStepsPreviewed>0){
 		tmpVec_ = state.VT*HX;
-		solver_->matrix(vectorP).addTerm(tmpVec_, 2*N);
+		solver_->vector(vectorP).addTerm(tmpVec_, 2*N);
 		tmpVec_ = state.VT*HY;
-		solver_->matrix(vectorP).addTerm(tmpVec_, 2*N+nbStepsPreviewed);
+		solver_->vector(vectorP).addTerm(tmpVec_, 2*N+nbStepsPreviewed);
 	}
 
 	H << HX, HY;
 	H = rot*H;
 
-	solver_->matrix(vectorP).addTerm(H, 0 );
+	solver_->vector(vectorP).addTerm(H, 0 );
 
 }
 
@@ -466,13 +467,13 @@ void QPGenerator::buildConstraintsFeet(const MPCSolution & result){
 	solver_->matrix(matrixA).addTerm(tmpMat_,nbCtr, 2*generalData_->nbSamplesQP+nbStepsPreviewed);
 
 
-	solver_->matrix(vectorBL).addTerm(feetInequalities_.Dc,nbCtr);
+	solver_->vector(vectorBL).addTerm(feetInequalities_.Dc,nbCtr);
 
 	tmpVec_ =  feetInequalities_.DX*State.VcfX;
 	tmpVec_ += feetInequalities_.DY*State.VcfY;
-	solver_->matrix(vectorBL).addTerm(tmpVec_,nbCtr);
+	solver_->vector(vectorBL).addTerm(tmpVec_,nbCtr);
 
-	solver_->matrix(vectorBU)().block(nbCtr,0,tmpVec_.size(),1).fill(10e10);
+	solver_->vector(vectorBU)().segment(nbCtr,tmpVec_.size()).fill(10e10);
 }
 
 void QPGenerator::buildConstraintsCOP(const MPCSolution & result){
@@ -504,8 +505,8 @@ void QPGenerator::buildConstraintsCOP(const MPCSolution & result){
 	tmpVec_.segment( 2*nbSampling, 2*nbStepsPreviewed).fill(-10e10);
 	tmpVec2_.segment(2*nbSampling, 2*nbStepsPreviewed).fill(10e10);
 
-	solver_->matrix(vectorXL).addTerm(tmpVec_,0);
-	solver_->matrix(vectorXU).addTerm(tmpVec2_,0);
+	solver_->vector(vectorXL).addTerm(tmpVec_,0);
+	solver_->vector(vectorXU).addTerm(tmpVec2_,0);
 
 
 }

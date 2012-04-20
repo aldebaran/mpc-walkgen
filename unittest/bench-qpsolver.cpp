@@ -231,17 +231,17 @@ bool testBenchmarkQP (QPSolver &qp, unsigned fDofWb, unsigned fNconstraints)
 
     qp.matrix(matrixQ).addTerm(H_List.at(i));
 
-    qp.matrix(vectorP).addTerm(g_List.at(i));
+    qp.vector(vectorP).addTerm(g_List.at(i));
 
     qp.matrix(matrixA).addTerm(A_List.at(i));
 
-    qp.matrix(vectorBL).addTerm(lbA_List.at(i));
+    qp.vector(vectorBL).addTerm(lbA_List.at(i));
 
-    qp.matrix(vectorBU).addTerm(ubA_List.at(i));
+    qp.vector(vectorBU).addTerm(ubA_List.at(i));
 
-    qp.matrix(vectorXL).addTerm(lb_List.at(i));
+    qp.vector(vectorXL).addTerm(lb_List.at(i));
 
-    qp.matrix(vectorXU).addTerm(ub_List.at(i));
+    qp.vector(vectorXU).addTerm(ub_List.at(i));
 
     result.reset();
     if (i==0)

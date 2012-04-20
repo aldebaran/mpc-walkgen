@@ -31,7 +31,7 @@ namespace MPCWalkgen{
 
 			void reset();
 
-			void resize(const int nbRows, const int nbCols=1);
+			void resize(const int nbRows, const int nbCols);
 
 			Eigen::MatrixXd & cholesky();
 			Eigen::MatrixXd & cholesky(Eigen::MatrixXd & partialCholesky);

@@ -16,6 +16,7 @@
 
 #include <Eigen/Dense>
 #include <mpc-walkgen/qp-matrix.h>
+#include <mpc-walkgen/qp-vector.h>
 #include <mpc-walkgen/types.h>
 
 
@@ -37,6 +38,8 @@ namespace MPCWalkgen{
 
 		public:
 			QPMatrix & matrix(const QPMatrixType type);
+			QPVector & vector(const QPMatrixType type);
+
 			void nbVar(const int nbVar);
 			void nbCtr(const int nbCtr);
 			inline int nbCtr() const {return nbCtr_;}
@@ -60,11 +63,11 @@ namespace MPCWalkgen{
 		protected:
 			QPMatrix matrixQ_;
 			QPMatrix matrixA_;
-			QPMatrix vectorP_;
-			QPMatrix vectorBU_;
-			QPMatrix vectorBL_;
-			QPMatrix vectorXU_;
-			QPMatrix vectorXL_;
+			QPVector vectorP_;
+			QPVector vectorBU_;
+			QPVector vectorBL_;
+			QPVector vectorXU_;
+			QPVector vectorXL_;
 
 			int nbVar_;
 			int nbCtr_;

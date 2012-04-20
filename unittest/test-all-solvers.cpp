@@ -36,8 +36,8 @@ int main ()
 
   VectorXd P(nbVar);
   P << -2, -6, 0.5, -1.5, 8;
-  qp1.matrix(vectorP).addTerm(P);
-  qp2.matrix(vectorP).addTerm(P);
+  qp1.vector(vectorP).addTerm(P);
+  qp2.vector(vectorP).addTerm(P);
 
   MatrixXd A(nbCtr,nbVar);
   A << 1,  1, 0.5, 0, 0,
@@ -48,23 +48,23 @@ int main ()
 
   VectorXd bl(nbCtr);
   bl << -4,0,-5;
-  qp1.matrix(vectorBL).addTerm(bl);
-  qp2.matrix(vectorBL).addTerm(bl);
+  qp1.vector(vectorBL).addTerm(bl);
+  qp2.vector(vectorBL).addTerm(bl);
 
   VectorXd bu(nbCtr);
   bu << -2,2,3;
-  qp1.matrix(vectorBU).addTerm(bu);
-  qp2.matrix(vectorBU).addTerm(bu);
+  qp1.vector(vectorBU).addTerm(bu);
+  qp2.vector(vectorBU).addTerm(bu);
 
   VectorXd xl(nbVar);
   xl.fill(-2);
-  qp1.matrix(vectorXL).addTerm(xl);
-  qp2.matrix(vectorXL).addTerm(xl);
+  qp1.vector(vectorXL).addTerm(xl);
+  qp2.vector(vectorXL).addTerm(xl);
 
   VectorXd xu(nbVar);
   xu.fill(4);
-  qp1.matrix(vectorXU).addTerm(xu);
-  qp2.matrix(vectorXU).addTerm(xu);
+  qp1.vector(vectorXU).addTerm(xu);
+  qp2.vector(vectorXU).addTerm(xu);
 
   MPCSolution result1, result2;
   result1.reset();

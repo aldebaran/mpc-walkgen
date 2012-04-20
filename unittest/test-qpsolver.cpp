@@ -52,7 +52,7 @@ bool testQP (QPSolver & qp)
 
 	Vector2d P;
 	P << -2, -6;
-	qp.matrix(vectorP).addTerm(P);
+	qp.vector(vectorP).addTerm(P);
 
 	MatrixXd A(3,2);
 	A << 1,  1,
@@ -62,20 +62,20 @@ bool testQP (QPSolver & qp)
 
 	Vector3d bl;
 	bl << -1e10, -1e10, -1e10;
-	qp.matrix(vectorBL).addTerm(bl);
+	qp.vector(vectorBL).addTerm(bl);
 
 
 	Vector3d bu;
 	bu << 2,2,3;
-	qp.matrix(vectorBU).addTerm(bu);
+	qp.vector(vectorBU).addTerm(bu);
 
 	Vector2d xl;
 	xl.fill(0);
-	qp.matrix(vectorXL).addTerm(xl);
+	qp.vector(vectorXL).addTerm(xl);
 
 	Vector2d xu;
 	xu.fill(1e10);
-	qp.matrix(vectorXU).addTerm(xu);
+	qp.vector(vectorXU).addTerm(xu);
 
 	MPCSolution result;
 	result.reset();

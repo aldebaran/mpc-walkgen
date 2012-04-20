@@ -15,6 +15,7 @@ SET(mpc-walkgen_SRC
  walkgen/rigid-bodies/foot-body.cpp
 
  walkgen/qp-matrix.cpp
+ walkgen/qp-vector.cpp
  walkgen/qp-generator.cpp
  walkgen/qp-preview.cpp
 
