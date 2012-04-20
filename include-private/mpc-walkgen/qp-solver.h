@@ -30,7 +30,7 @@ namespace MPCWalkgen{
 			QPSolver(const int nbVarMin=0, const int nbCtrMin=0, const int nbVarMax=DefaultNbVarMax_, const int nbCtrMax=DefaultNbCtrMax_);
 			virtual ~QPSolver()=0;
 
-			void reset(const bool withConstantPart = true);
+			void reset();
 			virtual void solve(MPCSolution & result)=0;
 
 			void dump();

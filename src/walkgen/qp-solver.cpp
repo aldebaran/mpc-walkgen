@@ -54,14 +54,14 @@ QPMatrix & QPSolver::matrix(const QPMatrixType type){
 
 }
 
-void QPSolver::reset(const bool withConstantPart){
-	matrixQ_.reset(withConstantPart);
-	matrixA_.reset(withConstantPart);
-	vectorP_.reset(withConstantPart);
-	vectorBU_.reset(withConstantPart);
-	vectorBL_.reset(withConstantPart);
-	vectorXU_.reset(withConstantPart);
-	vectorXL_.reset(withConstantPart);
+void QPSolver::reset(){
+	matrixQ_.reset();
+	matrixA_.reset();
+	vectorP_.reset();
+	vectorBU_.reset();
+	vectorBL_.reset();
+	vectorXU_.reset();
+	vectorXL_.reset();
 }
 
 void QPSolver::nbVar(const int nbVar){

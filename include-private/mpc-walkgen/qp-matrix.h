@@ -29,7 +29,7 @@ namespace MPCWalkgen{
 
 			void setConstantPart(const Eigen::MatrixXd & mat);
 
-			void reset(const bool withConstantPart = false);
+			void reset();
 
 			void resize(const int nbRows, const int nbCols=1);
 

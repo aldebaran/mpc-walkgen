@@ -67,7 +67,7 @@ void QPMatrix::setConstantPart(const MatrixXd & mat){
 	}
 }
 
-void QPMatrix::reset(const bool withConstantPart){
+void QPMatrix::reset(){
   matrix_[vectorElem_].fill(0);
   choleskyMatrixOutdated_=true;
 }
