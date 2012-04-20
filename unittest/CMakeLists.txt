@@ -23,8 +23,13 @@ macro(addUnitTest name internal_dep external_dep use_gfortran)
   endforeach(dep)
 endmacro(addUnitTest)
 
+## Add static libraries to gather some code used in the unit tests
+## and avoid compiling the same files over and over
+add_library(solver STATIC ${solver_SRC})
+add_library(timer STATIC ${timer_SRC})
+
 ## test the rotation of the cholesky matrix
-addUnitTest(test-rotation "" "" 0)
+addUnitTest(test-rotation "timer" "" 0)
 
 ## Testing the solvers
 set(solverAvailable "")
@@ -50,12 +55,12 @@ endif(QPOASES_FOUND)
 
 
 ## Testing all the solvers
-addUnitTest(bench-qpsolver   "" "${solverAvailable}" ${use_gfortran})
-addUnitTest(test-qpsolver    "" "${solverAvailable}" ${use_gfortran})
+addUnitTest(bench-qpsolver   "solver;timer" "${solverAvailable}" ${use_gfortran})
+addUnitTest(test-qpsolver    "solver" "${solverAvailable}" ${use_gfortran})
 
 ## Compare LSSOL and QPOASES.
 if(LSSOL_FOUND AND QPOASES_FOUND)
-  addUnitTest(test-all-solvers "" "${solverAvailable}" 1)
+  addUnitTest(test-all-solvers "solver" "${solverAvailable}" 1)
 endif(LSSOL_FOUND AND QPOASES_FOUND)
 
 addUnitTest(test-walkgen  "mpc-walkgen" "" ${use_gfortran})
@@ -65,7 +70,7 @@ addUnitTest(test-walkgen  "mpc-walkgen" "" ${use_gfortran})
 if(UNIX AND NOT APPLE)
 
   if(LSSOL_FOUND AND QPOASES_FOUND)
-    addUnitTest(bench-solvers "mpc-walkgen" "" 1)
+    addUnitTest(bench-solvers "mpc-walkgen;timer" "" 1)
   endif(LSSOL_FOUND AND QPOASES_FOUND)
 
 endif(UNIX AND NOT APPLE)
