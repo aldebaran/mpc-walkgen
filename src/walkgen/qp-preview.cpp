@@ -12,8 +12,8 @@ QPPreview::QPPreview(VelReference * velRef, RigidBodySystem * robot, const MPCDa
 	:robot_(robot)
 	,generalData_(generalData)
 	,selectionMatrices_(*generalData)
-	,rotationMatrix_(2*generalData_->nbSamplesQP, 2*generalData_->nbSamplesQP)
-	,rotationMatrix2_(2*generalData_->nbSamplesQP, 2*generalData_->nbSamplesQP) {
+	,rotationMatrix_ (Eigen::MatrixXd::Zero(2*generalData_->nbSamplesQP, 2*generalData_->nbSamplesQP))
+	,rotationMatrix2_(Eigen::MatrixXd::Zero(2*generalData_->nbSamplesQP, 2*generalData_->nbSamplesQP)) {
 
 	statesolver_ = new FSMSolver(velRef, generalData);
 }
@@ -102,10 +102,17 @@ void QPPreview::previewSupportStates(const double currentTime,
 	buildSelectionMatrices(solution);
 }
 
+// Fill the two rotation matrices.
+//  The indexes not given are supposed to be zero and are not reset
+//  to reduce computation time.
 void QPPreview::computeRotationMatrix(MPCSolution &result){
 	int N = generalData_->nbSamplesQP;
-	rotationMatrix_.fill(0);
-	rotationMatrix2_.fill(0);
+
+	// check that the elements not on the diagonal are null
+	assert(isSparseRotationMatrix(rotationMatrix_) && "The matrix rotationMatrix_ is not 2.2 block diagonal");
+
+	// check that the elements not on the diagonal are null
+	assert(isDiagonalRotationMatrix(rotationMatrix2_) && "The matrix rotationMatrix2_ is not 2.2 block diagonal");
 
 	for (int i=0; i<N; ++i) {
 		double cosYaw = cos(result.supportStates_vec[i+1].yaw);

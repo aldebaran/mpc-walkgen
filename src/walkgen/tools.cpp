@@ -52,13 +52,26 @@ void MPCWalkgen::inverse(const MatrixXd & A, MatrixXd & Ap, double eps){
 
 }
 
+// Every elmt is supposed to be 0, execpted the diagonal.
+bool MPCWalkgen::isSparseRotationMatrix (const MatrixXd & rot1)
+{
+	int N = rot1.rows() / 2;
+	bool result = true;
+	for (int i=0; i<2*N; ++i)
+		for (int j=0; j<2*N; ++j)
+			result = result && ( rot1(i,j) == 0
+					|| (i==j) || (i==j+N) || (i+N==j) );
+	return result;
+}
+
 //
-bool MPCWalkgen::isSparseRotationMatrix(const Eigen::MatrixXd & rot)
+bool MPCWalkgen::isDiagonalRotationMatrix(const Eigen::MatrixXd & rot)
 {
 	for (int i=0; i<rot.rows(); ++i)
 	{
 		for (int j=0; j<rot.cols(); ++j)
 		{
+			// the only non null elements should be on the diagonal.
 			if (rot(i,j) != 0)
 			{
 				int halfi = 2* static_cast <int>(floor (i/2.) );
@@ -119,7 +132,7 @@ bool MPCWalkgen::hasCholeskyForm(const Eigen::MatrixXd & m)
 
 void MPCWalkgen::rotateCholeskyMatrix(MatrixXd & mInOut, const MatrixXd & rot)
 {
-	assert(isSparseRotationMatrix(rot) && "The matrix rot is not 2.2 block diagonal");
+	assert(isDiagonalRotationMatrix(rot) && "The matrix rot is not 2.2 block diagonal");
 	assert(hasCholeskyForm(mInOut) && "The cholesky matrix has not the form required for a cholesky matrix");
 
 	int N = mInOut.rows();
@@ -137,7 +150,7 @@ void MPCWalkgen::rotateCholeskyMatrix(MatrixXd & mInOut, const MatrixXd & rot)
 
 void MPCWalkgen::computeRM(MatrixXd & mIn, const MatrixXd & rot)
 {
-	assert(isSparseRotationMatrix(rot) && "The matrix rot is not 2.2 block diagonal");
+	assert(isDiagonalRotationMatrix(rot) && "The matrix rot is not 2.2 block diagonal");
 
 	// first step: compute rot*chol
 	for (int i=0; i<mIn.rows()/2; ++i)
@@ -150,7 +163,7 @@ void MPCWalkgen::computeRM(MatrixXd & mIn, const MatrixXd & rot)
 
 void MPCWalkgen::computeMRt(MatrixXd & mIn, const MatrixXd & rot)
 {
-	assert(isSparseRotationMatrix(rot) && "The matrix rot is not 2.2 block diagonal");
+	assert(isDiagonalRotationMatrix(rot) && "The matrix rot is not 2.2 block diagonal");
 
 	// compute chol*col^T
 	for (int j=0; j<mIn.cols()/2; ++j)

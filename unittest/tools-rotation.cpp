@@ -7,7 +7,7 @@ using namespace Eigen;
 
 // The naive implementation" a brute force multiplication
 MatrixXd MPCWalkgen::computeRMRt_Naive(const MatrixXd & chol, const MatrixXd & rot){
-	assert(isSparseRotationMatrix(rot) && "The matrix rot is not 2.2 block diagonal");
+	assert(isDiagonalRotationMatrix(rot) && "The matrix rot is not 2.2 block diagonal");
 
 	MatrixXd rotatedChol;
 	rotatedChol.noalias() =rot*chol*rot.transpose();
@@ -17,7 +17,7 @@ MatrixXd MPCWalkgen::computeRMRt_Naive(const MatrixXd & chol, const MatrixXd & r
 //  This method considers only blocks of matrices 2.2, so as to reduce the
 // number of multiplications
 MatrixXd MPCWalkgen::computeRMRt_1a(const MatrixXd & chol, const MatrixXd & rot){
-	assert(isSparseRotationMatrix(rot) && "The matrix rot is not 2.2 block diagonal");
+	assert(isDiagonalRotationMatrix(rot) && "The matrix rot is not 2.2 block diagonal");
 
 	int N = chol.rows();
 	MatrixXd rotatedChol( N, N );
@@ -41,7 +41,7 @@ MatrixXd MPCWalkgen::computeRMRt_1a(const MatrixXd & chol, const MatrixXd & rot)
 }
 
 void MPCWalkgen::computeRMRt_1b(MatrixXd & mInOut, const MatrixXd & rot){
-	assert(isSparseRotationMatrix(rot) && "The matrix rot is not 2.2 block diagonal");
+	assert(isDiagonalRotationMatrix(rot) && "The matrix rot is not 2.2 block diagonal");
 
 	int N = mInOut.rows();
 
@@ -66,7 +66,7 @@ void MPCWalkgen::computeRMRt_1b(MatrixXd & mInOut, const MatrixXd & rot){
 // number of multiplications. It is slightly different of the previous one
 // (avoid the decomposition in two steps.
 MatrixXd MPCWalkgen::computeRMRt_2a(const MatrixXd & chol, const MatrixXd & rot){
-	assert(isSparseRotationMatrix(rot) && "The matrix rot is not 2.2 block diagonal");
+	assert(isDiagonalRotationMatrix(rot) && "The matrix rot is not 2.2 block diagonal");
 
 	int N = chol.rows();
 	MatrixXd rotatedChol( N, N );
@@ -89,7 +89,7 @@ MatrixXd MPCWalkgen::computeRMRt_2a(const MatrixXd & chol, const MatrixXd & rot)
 //  on the left
 MatrixXd MPCWalkgen::compute_RM1(const MatrixXd & mIn, const MatrixXd & rot)
 {
-	assert(isSparseRotationMatrix(rot) && "The matrix rot is not 2.2 block diagonal");
+	assert(isDiagonalRotationMatrix(rot) && "The matrix rot is not 2.2 block diagonal");
 
 	MatrixXd mOut(mIn);
 
@@ -108,7 +108,7 @@ MatrixXd MPCWalkgen::compute_RM1(const MatrixXd & mIn, const MatrixXd & rot)
 //  on the right
 MatrixXd MPCWalkgen::compute_MRt1(const MatrixXd & mIn, const MatrixXd & rot)
 {
-	assert(isSparseRotationMatrix(rot) && "The matrix rot is not 2.2 block diagonal");
+	assert(isDiagonalRotationMatrix(rot) && "The matrix rot is not 2.2 block diagonal");
 	MatrixXd mOut(mIn);
 
 	// compute chol*col^T
