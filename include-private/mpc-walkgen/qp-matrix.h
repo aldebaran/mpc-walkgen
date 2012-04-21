@@ -58,7 +58,8 @@ namespace MPCWalkgen{
 			inline int nbColsMax() const {return nbColsMin_+sizeCols_-1;}
 
 		private:
-			void computeCholesky(Eigen::MatrixXd & partialCholesky);
+			void computeCholesky(const Eigen::MatrixXd & partialCholesky);
+			void computeCholesky();
 
 		private:
 

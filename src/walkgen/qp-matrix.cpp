@@ -79,8 +79,7 @@ void QPMatrix::resize(const int nbRows, const int nbCols){
 }
 
 MatrixXd & QPMatrix::cholesky(){
-	MatrixXd partialCholesky(0,0);
-	computeCholesky(partialCholesky);
+	computeCholesky();
 	return choleskyMatrix_[vectorElem_];
 }
 
@@ -97,7 +96,7 @@ void QPMatrix::rowOrder(const Eigen::VectorXi & order){
 	rowOrder_=order;
 }
 
-void QPMatrix::computeCholesky(MatrixXd & partialCholesky){
+void QPMatrix::computeCholesky(const MatrixXd & partialCholesky){
 	if (choleskyMatrixOutdated_){
 		Eigen::MatrixXd & chol = choleskyMatrix_[vectorElem_];
 		int imin=partialCholesky.rows();
@@ -136,6 +135,14 @@ void QPMatrix::computeCholesky(MatrixXd & partialCholesky){
 		}else{
 			chol=matrix_[vectorElem_].llt().matrixL().transpose();
 		}
+		choleskyMatrixOutdated_=false;
+	}
+}
+
+void QPMatrix::computeCholesky(){
+	if (choleskyMatrixOutdated_){
+		Eigen::MatrixXd & chol = choleskyMatrix_[vectorElem_];
+		chol=matrix_[vectorElem_].llt().matrixL().transpose();
 		choleskyMatrixOutdated_=false;
 	}
 }
