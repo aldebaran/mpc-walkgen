@@ -27,7 +27,7 @@ SETUP_PROJECT()
 SEARCH_FOR_BOOST()
 SEARCH_FOR_EIGEN()
 
-# Handle OS specificities 
+# Handle OS specificities
 INCLUDE(CheckIncludeFiles)
 CHECK_INCLUDE_FILES("sys/time.h" SYS_TIME_H)
 IF(SYS_TIME_H)
@@ -174,11 +174,11 @@ SET_TARGET_PROPERTIES(mpc-walkgen PROPERTIES SOVERSION ${PROJECT_VERSION})
 INSTALL(TARGETS mpc-walkgen DESTINATION lib)
 
 if(LSSOL_FOUND)
- PKG_CONFIG_USE_DEPENDENCY(mpc-walkgen lssol)
+  PKG_CONFIG_USE_DEPENDENCY(mpc-walkgen lssol)
 endif(LSSOL_FOUND)
 
 if(QPOASES_FOUND)
- PKG_CONFIG_USE_DEPENDENCY(mpc-walkgen qpoases)
+  PKG_CONFIG_USE_DEPENDENCY(mpc-walkgen qpoases)
 endif(QPOASES_FOUND)
 
 # Define subdirectories to explore for cmake
