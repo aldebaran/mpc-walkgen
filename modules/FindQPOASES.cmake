@@ -34,9 +34,9 @@ find_package_handle_standard_args(${prefix}
 # publish
 if(${uprefix}_FOUND)
   set("${uprefix}_FOUND" TRUE CACHE INTERNAL "" FORCE)
-  set("${uprefix}_INCLUDE_DIRS" "${${uprefix}_INCLUDE_DIRS}" CACHE INTERNAL "" FORCE)
-  set("${uprefix}_LIBRARIES" "${${uprefix}_LIBRARIES}" CACHE INTERNAL "" FORCE)
-  set("${uprefix}_VERSION" "${${uprefix}_VERSION}" CACHE INTERNAL "" FORCE)
+  set("${uprefix}_INCLUDE_DIRS" "${${uprefix}_INCLUDE_DIRS}" CACHE PATH "")
+  set("${uprefix}_LIBRARIES" "${${uprefix}_LIBRARIES}" CACHE PATH "")
+  set("${uprefix}_VERSION" "${${uprefix}_VERSION}" CACHE STRING "")
 
   # Fill the information required by the macro PKG_CONFIG_USE_DEPENDENCY
   set("${uprefix}_CFLAGS"  "-I${${uprefix}_INCLUDE_DIRS}" CACHE INTERNAL "" FORCE)
