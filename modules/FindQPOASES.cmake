@@ -1,8 +1,6 @@
 set(prefix "QPOASES")
 string(TOUPPER ${prefix} uprefix)
 
-ADD_OPTIONAL_DEPENDENCY("qpoases >= 3.0")
-if(NOT ${uprefix}_FOUND)
 macro(find_qpoases_2)
   find_path(${uprefix}_INCLUDE_DIRS QProblem.hpp
       PATH_SUFFIXES qpoases)
@@ -43,6 +41,5 @@ if(${uprefix}_FOUND)
   # Fill the information required by the macro PKG_CONFIG_USE_DEPENDENCY
   set("${uprefix}_CFLAGS"  "-I${${uprefix}_INCLUDE_DIRS}" CACHE INTERNAL "" FORCE)
   set("${uprefix}_LDFLAGS" "${${uprefix}_LIBRARIES}" CACHE INTERNAL "" FORCE)
-endif()
 endif()
 
