@@ -14,8 +14,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 
-#include <mpc-walkgen/types.h>
-#include <mpc-walkgen/interpolation.h>
+#include "types.h"
+#include "interpolation.h"
 #include <vector>
 
 namespace MPCWalkgen{

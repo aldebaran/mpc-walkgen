@@ -1,7 +1,6 @@
 # Load the file listing the sources required for each unit test.
 include(SourcesLib.cmake)
 
-INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/include-private)
 INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/src)
 
 # define a macro wrapper to add an unit test.

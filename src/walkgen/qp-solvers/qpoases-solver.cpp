@@ -1,4 +1,4 @@
-#include <mpc-walkgen/qp-solvers/qpoases-solver.h>
+#include "qpoases-solver.h"
 
 
 #ifdef USE_QPOASES_3_0

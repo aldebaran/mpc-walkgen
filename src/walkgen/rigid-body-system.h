@@ -14,8 +14,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 
-#include <mpc-walkgen/types.h>
-#include <mpc-walkgen/rigid-body.h>
+#include "types.h"
+#include "rigid-body.h"
 
 #include <Eigen/Dense>
 #include <vector>

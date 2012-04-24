@@ -15,8 +15,8 @@
 
 
 #include <Eigen/Dense>
-#include <mpc-walkgen/qp-solver.h>
-#include <mpc-walkgen/types.h>
+#include "../qp-solver.h"
+#include "../types.h"
 
 
 namespace MPCWalkgen{

@@ -15,10 +15,10 @@
 
 
 
-#include <mpc-walkgen/types.h>
+#include "types.h"
 
-#include <mpc-walkgen/qp-solver.h>
-#include <mpc-walkgen/qp-preview.h>
+#include "qp-solver.h"
+#include "qp-preview.h"
 
 #include <Eigen/Dense>
 #include <vector>

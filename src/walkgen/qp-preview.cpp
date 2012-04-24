@@ -1,5 +1,5 @@
-#include <mpc-walkgen/qp-preview.h>
-#include <mpc-walkgen/state-solvers/fsm-solver.h>
+#include "qp-preview.h"
+#include "state-solvers/fsm-solver.h"
 #include <cmath>
 
 using namespace MPCWalkgen;

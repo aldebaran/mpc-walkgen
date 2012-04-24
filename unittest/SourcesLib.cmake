@@ -4,7 +4,7 @@ INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/src)
 ## test the rotation of the cholesky matrix
 set(test-rotation_SRC
 	test-rotation.cpp
-	../include-private/mpc-walkgen/tools.h
+	../src/walkgen/tools.h
 	../src/walkgen/tools.cpp
 	tools-rotation.h
 	tools-rotation.cpp

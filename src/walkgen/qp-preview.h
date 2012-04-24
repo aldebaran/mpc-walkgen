@@ -14,9 +14,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 
-#include <mpc-walkgen/rigid-body-system.h>
-#include <mpc-walkgen/state-solver.h>
-#include <mpc-walkgen/types.h>
+#include "rigid-body-system.h"
+#include "state-solver.h"
+#include "types.h"
 
 #include <Eigen/Dense>
 

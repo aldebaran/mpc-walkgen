@@ -30,7 +30,7 @@
 #include <iostream>
 #include <fstream>
 
-#include <mpc-walkgen/orientations-preview.h>
+#include "orientations-preview.h"
 #include <vector>
 
 using namespace MPCWalkgen;

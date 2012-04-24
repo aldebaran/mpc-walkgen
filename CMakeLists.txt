@@ -61,17 +61,113 @@ endif(QPOASES_FOUND)
 if(UNIX)
   ADD_DEFINITIONS("-fvisibility=hidden")
 endif()
+
+# addSolver:  create the list of solvers available that will be used
+#             to create a enum list in C++
+# solver:     the name of the enum.
+# solverList: the enum list
+macro(addSolver solver solverList)
+  if(NOT ${solverList})
+    SET(${solverList} "\t\t${solver}")
+  else(NOT solverList)
+    SET(${solverList} "${${solverList}},\n\t\t${solver}")
+  endif(NOT ${solverList})
+endmacro(addSolver)
+
+set (_SOLVER_LIST_ "")
+if(LSSOL_FOUND)
+  addSolver("LSSOL" _SOLVER_LIST_)
+endif(LSSOL_FOUND)
+
+if(QPOASES_FOUND)
+  addSolver("QPOASES" _SOLVER_LIST_)
+endif(QPOASES_FOUND)
+CONFIG_FILES(include/mpc-walkgen/solvers.h)
 # Define the set of headers to be installed
 SET(${PROJECT_NAME}_HEADERS
   include/mpc-walkgen/api.h
   include/mpc-walkgen/sharedpgtypes.h
   include/mpc-walkgen/walkgen-abstract.h
+  include/mpc-walkgen/walkgen-abstract-humanoid.h
   ${CMAKE_BINARY_DIR}/include/mpc-walkgen/solvers.h
 )
 
+SET(mpc-walkgen_SRC
+ src/sharedpgtypes.cpp
+ src/walkgen-abstract.cpp
+ src/walkgen-abstract-humanoid.cpp
+ src/walkgen/convex-hull.cpp
+ src/walkgen/orientations-preview.cpp
+ src/walkgen/qp-solver.h
+ src/walkgen/qp-solvers/lssol-solver.h
+ src/walkgen/qp-solvers/qpoases-solver.h
+ src/walkgen/qp-solver.cpp
+ src/walkgen/state-solver.cpp
+ src/walkgen/state-solvers/fsm-solver.cpp
+ src/walkgen/rigid-body-system.h
+ src/walkgen/rigid-body.h
+ src/walkgen/rigid-bodies/com-body.h
+ src/walkgen/rigid-bodies/foot-body.h
+ src/walkgen/rigid-body-system.cpp
+ src/walkgen/rigid-body.cpp
+ src/walkgen/rigid-bodies/com-body.cpp
+ src/walkgen/rigid-bodies/foot-body.cpp
+ src/walkgen/qp-matrix.cpp
+ src/walkgen/qp-vector.cpp
+ src/walkgen/qp-generator.cpp
+ src/walkgen/qp-preview.cpp
+ src/walkgen/interpolation.cpp
+ src/walkgen/tools.cpp
+ src/walkgen/types.cpp
+ src/walkgen/walkgen-humanoid.cpp
+ src/walkgen/gettimeofday.cpp
+ src/walkgen/mpc-debug.cpp
+ src/walkgen/perturbation.cpp
+ src/walkgen/orientations-preview.h
+ src/walkgen/state-solver.h
+ src/walkgen/state-solvers/fsm-solver.h
+ src/walkgen/qp-matrix.h
+ src/walkgen/qp-vector.h
+ src/walkgen/qp-generator.h
+ src/walkgen/qp-preview.h
+ src/walkgen/interpolation.h
+ src/walkgen/tools.h
+ src/walkgen/tools-inl.h
+ src/walkgen/types.h
+ src/walkgen/enums.h
+ src/walkgen/walkgen-humanoid.h
+ src/walkgen/mpc-debug.h
+ src/walkgen/perturbation.h
+)
+
+if(LSSOL_FOUND)
+  list(APPEND mpc-walkgen_SRC
+    src/walkgen/qp-solvers/lssol-solver.cpp
+  )
+endif(LSSOL_FOUND)
+
+if(QPOASES_FOUND)
+  list(APPEND mpc-walkgen_SRC
+    src/walkgen/qp-solvers/qpoases-solver.cpp
+  )
+endif(QPOASES_FOUND)
+
+# Add Boost path to include directories.
+INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
+
+ADD_LIBRARY(mpc-walkgen SHARED ${mpc-walkgen_SRC} ${${PROJECT_NAME}_HEADERS})
+SET_TARGET_PROPERTIES(mpc-walkgen PROPERTIES SOVERSION ${PROJECT_VERSION})
+INSTALL(TARGETS mpc-walkgen DESTINATION lib)
+
+if(LSSOL_FOUND)
+ PKG_CONFIG_USE_DEPENDENCY(mpc-walkgen lssol)
+endif(LSSOL_FOUND)
+
+if(QPOASES_FOUND)
+ PKG_CONFIG_USE_DEPENDENCY(mpc-walkgen qpoases)
+endif(QPOASES_FOUND)
+
 # Define subdirectories to explore for cmake
-ADD_SUBDIRECTORY(include)
-ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(unittest)
 
 # Generate dependency to jrl-walkgen in pc file

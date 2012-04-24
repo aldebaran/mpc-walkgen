@@ -1,4 +1,4 @@
-#include <mpc-walkgen/state-solvers/fsm-solver.h>
+#include "fsm-solver.h"
 
 using namespace MPCWalkgen;
 

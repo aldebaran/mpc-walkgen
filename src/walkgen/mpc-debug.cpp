@@ -1,5 +1,5 @@
-#include <mpc-walkgen/mpc-debug.h>
-#include <mpc-walkgen/gettimeofday.h>
+#include "mpc-debug.h"
+#include "gettimeofday.h"
 #ifdef WIN32
 # include <Windows.h>
 #endif // WIN32

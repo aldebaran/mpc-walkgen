@@ -18,7 +18,7 @@
 #include <vector>
 #include <iostream>
 
-#include <mpc-walkgen/enums.h>
+#include "enums.h"
 #include <mpc-walkgen/sharedpgtypes.h>
 
 

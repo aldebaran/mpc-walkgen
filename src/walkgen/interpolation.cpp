@@ -1,4 +1,4 @@
-#include <mpc-walkgen/interpolation.h>
+#include "interpolation.h"
 
 using namespace MPCWalkgen;
 using namespace Eigen;

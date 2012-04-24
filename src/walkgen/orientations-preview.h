@@ -37,8 +37,8 @@
 #include <vector>
 
 
-#include <mpc-walkgen/types.h>
-#include <mpc-walkgen/rigid-body-system.h>
+#include "types.h"
+#include "rigid-body-system.h"
 
 namespace MPCWalkgen
 {

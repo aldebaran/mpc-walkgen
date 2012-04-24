@@ -15,8 +15,8 @@
 
 
 
-#include <mpc-walkgen/types.h>
-#include <mpc-walkgen/tools.h>
+#include "types.h"
+#include "tools.h"
 #include <Eigen/Dense>
 
 namespace MPCWalkgen{

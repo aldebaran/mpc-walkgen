@@ -14,7 +14,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <mpc-walkgen/walkgen-abstract-humanoid.h>
-#include <mpc-walkgen/types.h>
+#include "types.h"
 
 namespace MPCWalkgen{
 	class QPSolver;

@@ -1,22 +1,22 @@
-#include <mpc-walkgen/walkgen-humanoid.h>
+#include "walkgen-humanoid.h"
 
-#include <mpc-walkgen/orientations-preview.h>
+#include "orientations-preview.h"
 
 #ifdef USE_QPOASES
-# include <mpc-walkgen/qp-solvers/qpoases-solver.h>
+# include "qp-solvers/qpoases-solver.h"
 #endif //USE_QPOASES
 
 #ifdef USE_LSSOL
-# include <mpc-walkgen/qp-solvers/lssol-solver.h>
+# include "qp-solvers/lssol-solver.h"
 #endif //USE_LSSOL
 
-#include <mpc-walkgen/qp-generator.h>
-#include <mpc-walkgen/qp-preview.h>
-#include <mpc-walkgen/rigid-body-system.h>
-#include <mpc-walkgen/interpolation.h>
+#include "qp-generator.h"
+#include "qp-preview.h"
+#include "rigid-body-system.h"
+#include "interpolation.h"
 
-#include <mpc-walkgen/mpc-debug.h>
-#include <mpc-walkgen/perturbation.h>
+#include "mpc-debug.h"
+#include "perturbation.h"
 
 #include <iostream>
 #include <Eigen/Dense>

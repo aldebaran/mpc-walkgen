@@ -1,5 +1,5 @@
-#include <mpc-walkgen/qp-vector.h>
-#include <mpc-walkgen/types.h>
+#include "qp-vector.h"
+#include "types.h"
 #include <Eigen/Cholesky>
 #include <cmath>
 

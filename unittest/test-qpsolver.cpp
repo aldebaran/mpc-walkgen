@@ -13,11 +13,11 @@
 #include <cstring>
 
 #ifdef USE_QPOASES
-# include <mpc-walkgen/qp-solvers/qpoases-solver.h>
+# include "../src/walkgen/qp-solvers/qpoases-solver.h"
 #endif //USE_QPOASES
 
 #ifdef USE_LSSOL
-# include <mpc-walkgen/qp-solvers/lssol-solver.h>
+# include "src/walkgen/qp-solvers/lssol-solver.h""
 #endif //USE_LSSOL
 
 using namespace Eigen;

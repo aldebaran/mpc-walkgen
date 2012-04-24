@@ -1,5 +1,5 @@
-#include <mpc-walkgen/qp-matrix.h>
-#include <mpc-walkgen/types.h>
+#include "qp-matrix.h"
+#include "types.h"
 #include <Eigen/Cholesky>
 #include <cmath>
 

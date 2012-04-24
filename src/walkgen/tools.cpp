@@ -1,4 +1,4 @@
-#include <mpc-walkgen/tools.h>
+#include "tools.h"
 
 #include <Eigen/SVD>
 #include <Eigen/LU>

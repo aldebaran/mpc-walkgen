@@ -8,13 +8,13 @@
 #include <cstring>
 #include <fstream>
 
-#include <mpc-walkgen/tools.h>
+#include "../src/walkgen/tools.h"
 
 #include "tools-rotation.h"
 
 #include <Eigen/Core>
 
-#include <mpc-walkgen/gettimeofday.h>
+#include "../src/walkgen/gettimeofday.h"
 #ifdef WIN32
 # include <Windows.h>
 #endif //WIN32

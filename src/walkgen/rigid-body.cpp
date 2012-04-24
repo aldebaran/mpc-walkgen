@@ -1,4 +1,4 @@
-#include <mpc-walkgen/rigid-body.h>
+#include "rigid-body.h"
 
 using namespace MPCWalkgen;
 

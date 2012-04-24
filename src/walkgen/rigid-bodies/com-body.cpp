@@ -1,5 +1,5 @@
-#include <mpc-walkgen/rigid-bodies/com-body.h>
-#include <mpc-walkgen/tools.h>
+#include "com-body.h"
+#include "../tools.h"
 
 using namespace MPCWalkgen;
 using namespace Eigen;

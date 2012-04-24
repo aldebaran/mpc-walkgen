@@ -1,7 +1,8 @@
-#include <mpc-walkgen/qp-generator.h>
-#include <mpc-walkgen/qp-matrix.h>
-#include <mpc-walkgen/qp-vector.h>
-#include <mpc-walkgen/tools.h>
+#include "qp-generator.h"
+#include "qp-matrix.h"
+#include "qp-vector.h"
+#include "tools.h"
+
 
 #include <iostream>
 #include <fstream>

@@ -1,4 +1,4 @@
-#include <mpc-walkgen/qp-solver.h>
+#include "qp-solver.h"
 
 
 using namespace MPCWalkgen;

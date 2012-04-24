@@ -13,8 +13,8 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <mpc-walkgen/types.h>
-#include <mpc-walkgen/state-solver.h>
+#include "../types.h"
+#include "../state-solver.h"
 
 namespace MPCWalkgen{
 //TODO: Change name of these classes

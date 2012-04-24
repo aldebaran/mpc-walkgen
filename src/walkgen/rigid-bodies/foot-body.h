@@ -1,5 +1,5 @@
-#ifndef COM_BODY
-#define COM_BODY
+#ifndef FOOT_BODY
+#define FOOT_BODY
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -13,18 +13,19 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <mpc-walkgen/types.h>
-#include <mpc-walkgen/rigid-body.h>
+#include "../types.h"
+#include "../rigid-body.h"
+
 #include <Eigen/Dense>
 
 namespace MPCWalkgen{
 
-	class CoMBody:public RigidBody{
+	class FootBody:public RigidBody{
 		public:
-			CoMBody(const MPCData * generalData,
+			FootBody(const MPCData * generalData,
 					const RobotData * robotData,
-					const Interpolation * interpolation);
-			virtual ~CoMBody();
+					const Interpolation * interpolation, Foot type);
+			virtual ~FootBody();
 
 			virtual void interpolate(MPCSolution & result, double currentTime, const VelReference & velRef);
 
@@ -33,13 +34,16 @@ namespace MPCWalkgen{
 					double S, double T, int N, DynamicMatrixType type);
 
 		private:
-			void interpolateTrunkOrientation(MPCSolution & result,
-					double /*currentTime*/, const VelReference & velRef);
+			Eigen::VectorXd & getFootVector(MPCSolution & solution, Axis axis, unsigned derivative);
 
+			void computeFootInterpolationByPolynomial(MPCSolution & result, Axis axis, int nbSampling,
+					const Eigen::Vector3d & FootCurrentState,
+					double T, const Eigen::Vector3d & nextSupportFootState);
 
+		private:
+			Foot footType_;
 	};
 
 }
 
-
-#endif //COM_BODY
+#endif //FOOT_BODY

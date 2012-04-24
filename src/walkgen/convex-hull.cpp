@@ -1,4 +1,4 @@
-#include <mpc-walkgen/types.h>
+#include "types.h"
 
 
 namespace MPCWalkgen

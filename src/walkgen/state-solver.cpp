@@ -1,4 +1,4 @@
-#include <mpc-walkgen/state-solver.h>
+#include "state-solver.h"
 
 using namespace MPCWalkgen;
 
