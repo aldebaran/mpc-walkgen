@@ -1,7 +1,7 @@
 #include "qp-generator.h"
 #include "../common/qp-matrix.h"
 #include "../common/qp-vector.h"
-#include "tools.h"
+#include "../common/tools.h"
 
 
 #include <iostream>

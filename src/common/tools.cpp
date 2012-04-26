@@ -1,5 +1,5 @@
 #include "tools.h"
-
+#include <iostream>
 #include <Eigen/SVD>
 #include <Eigen/LU>
 
@@ -8,7 +8,7 @@
 #endif
 
 using namespace Eigen;
-#include <iostream>
+
 void MPCWalkgen::pseudoInverse(const MatrixXd & A, MatrixXd & Ap, double eps){
 	JacobiSVD<MatrixXd> svd(A,ComputeFullU+ComputeFullV);
 

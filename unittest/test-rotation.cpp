@@ -8,7 +8,7 @@
 #include <cstring>
 #include <fstream>
 
-#include "../src/walkgen/tools.h"
+#include "../src/common/tools.h"
 
 #include "tools-rotation.h"
 

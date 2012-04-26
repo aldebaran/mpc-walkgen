@@ -1,5 +1,5 @@
 #include "com-body.h"
-#include "../tools.h"
+#include "../../common/tools.h"
 
 using namespace MPCWalkgen;
 using namespace Eigen;

@@ -1,4 +1,4 @@
-#include "../src/walkgen/tools.h"
+#include "../src/common/tools.h"
 #include "tools-rotation.h"
 #include <iostream>
 
