@@ -133,34 +133,36 @@ bool QPSolver::resizeAll(){
 	return maxSizechanged;
 }
 
-void QPSolver::reorderInitialSolution(MPCSolution & result){
-	assert(result.initialSolution.size() >= nbVar_);
-	assert(result.initialConstraints.size() >= nbCtr_ + nbVar_);
-	VectorXd initialSolution = result.initialSolution;
-	VectorXi initialConstraints = result.initialConstraints;
+void QPSolver::reorderInitialSolution(VectorXd & initialSolution,
+				      VectorXi & initialConstraints){
+	assert(initialSolution.size() >= nbVar_);
+	assert(initialConstraints.size() >= nbCtr_ + nbVar_);
+	VectorXd initialSolutionTmp = initialSolution;
+	VectorXi initialConstraintsTmp = initialConstraints;
 	for(int i=0;i<nbVar_;++i){
-		result.initialSolution(varOrder_(i))=initialSolution(i);
-		result.initialConstraints(varOrder_(i))=initialConstraints(i);
+		initialSolution(varOrder_(i))=initialSolutionTmp(i);
+		initialConstraints(varOrder_(i))=initialConstraintsTmp(i);
 	}
 	for(int i=0;i<nbCtr_;++i){
-		result.initialConstraints(ctrOrder_(i+nbVar_))=initialConstraints(i+nbVar_);
+		initialConstraints(ctrOrder_(i+nbVar_))=initialConstraintsTmp(i+nbVar_);
 	}
 
 }
 
-void QPSolver::reorderSolution(MPCSolution & result){
-	VectorXd solution = result.qpSolution;
-	VectorXi constraints = result.constraints;
+void QPSolver::reorderSolution(VectorXd & qpSolution, VectorXi & constraints,
+			       VectorXi & initialConstraints){
+	VectorXd solutionTmp = qpSolution;
+	VectorXi constraintsTmp = constraints;
 
 	for (int i=0;i<nbVar_;++i) {
-		result.qpSolution(i) = solution(varOrder_(i));
-		result.constraints(i) = constraints(varOrder_(i));
+		qpSolution(i) = solutionTmp(varOrder_(i));
+		constraints(i) = constraintsTmp(varOrder_(i));
 	}
 	for(int i=0;i<nbCtr_;++i) {
-		result.constraints(i+nbVar_) = constraints(ctrOrder_(i+nbVar_));
+		constraints(i+nbVar_) = constraintsTmp(ctrOrder_(i+nbVar_));
 	}
 
-	result.initialConstraints=	result.constraints;
+	initialConstraints= constraints;
 }
 
 void QPSolver::dump(){
@@ -176,7 +178,7 @@ void QPSolver::dump(){
 	std::cout << std::endl;
 	std::cout << std::endl;
 	std::cout << "P :" << std::endl;
-	std::cout << vectorP_().transpose() << std::endl;
+	std::cout << vectorP_() << std::endl;
 	std::cout << std::endl;
 	std::cout << std::endl;
 	std::cout << "A :" << std::endl;
@@ -184,10 +186,10 @@ void QPSolver::dump(){
 	std::cout << std::endl;
 	std::cout << std::endl;
 	std::cout << "Bl / Bu :" << std::endl;
-	std::cout << vectorBL_().transpose() << std::endl;
-	std::cout << vectorBU_().transpose() << std::endl;
+	std::cout << vectorBL_() << std::endl;
+	std::cout << vectorBU_() << std::endl;
 	std::cout << std::endl;
 	std::cout << "Xl / Xu :" << std::endl;
-	std::cout << vectorXL_().transpose() << std::endl;
-	std::cout << vectorXU_().transpose() << std::endl;
+	std::cout << vectorXL_() << std::endl;
+	std::cout << vectorXU_() << std::endl;
 }

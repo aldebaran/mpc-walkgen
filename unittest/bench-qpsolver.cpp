@@ -9,11 +9,11 @@
 #include <fstream>
 
 #ifdef USE_QPOASES
-#include "../src/walkgen/qp-solvers/qpoases-solver.h"
+#include "../src/common/qp-solvers/qpoases-solver.h"
 #endif //USE_QPOASES
 
 #ifdef USE_LSSOL
-#include "../src/walkgen/qp-solvers/lssol-solver.h"
+#include "../src/common/qp-solvers/lssol-solver.h"
 #endif //USE_LSSOL
 
 using namespace Eigen;
@@ -254,7 +254,9 @@ bool testBenchmarkQP (QPSolver &qp, unsigned fDofWb, unsigned fNconstraints)
     }
 
     debug.getTime(1, true);
-    qp.solve(result);
+    qp.solve(result.qpSolution, result.constraints,
+             result.initialSolution, result.initialConstraints,
+             result.useWarmStart);
     debug.getTime(1, false);
 
 

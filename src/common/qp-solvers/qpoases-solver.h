@@ -14,7 +14,7 @@
 
 #include <Eigen/Dense>
 #include "../qp-solver.h"
-#include "../types.h"
+
 
 namespace qpOASES{
   class QProblem;
@@ -36,7 +36,11 @@ namespace MPCWalkgen{
 			inline void useCholesky(bool /*ch*/)
 			{}
 
-			virtual void solve(MPCSolution & solution);
+			virtual void solve(Eigen::VectorXd & qpSolution,
+					   Eigen::VectorXi & constraints,
+					   Eigen::VectorXd & initialSolution,
+					   Eigen::VectorXi & initialConstraints,
+					   bool useWarmStart);
 
 		protected:
 			virtual bool resizeAll();

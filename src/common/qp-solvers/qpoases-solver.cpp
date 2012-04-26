@@ -17,32 +17,36 @@ QPOasesSolver::QPOasesSolver(const int nbVarMin, const int nbCtrMin, const int n
 
 QPOasesSolver::~QPOasesSolver(){}
 
-void QPOasesSolver::solve(MPCSolution & result){
+void QPOasesSolver::solve(VectorXd & qpSolution,
+			  VectorXi & constraints,
+			  VectorXd & initialSolution,
+			  VectorXi & initialConstraints,
+			  bool useWarmStart){
 
 
 	qp_ = new qpOASES::QProblem(nbVar_, nbCtr_);
 	qp_->setPrintLevel(qpOASES::PL_NONE);
 
-	reorderInitialSolution(result);
+	reorderInitialSolution(initialSolution, initialConstraints);
 
 	qpOASES::Constraints* ctrInit = new  qpOASES::Constraints(nbCtr_);
 	qpOASES::Bounds* boundsInit = new  qpOASES::Bounds(nbVar_);
-	if (result.useWarmStart){
-		result.qpSolution = result.initialSolution;
-		result.constraints = result.initialConstraints;
+	if (useWarmStart){
+		qpSolution = initialSolution;
+		constraints = initialConstraints;
 		for(int i=0;i<nbVar_;++i){
-		      if (result.constraints(i)==0){
+		      if (constraints(i)==0){
 			    boundsInit->setupBound(i,qpOASES::ST_INACTIVE);
-		      }else if (result.constraints(i)==1){
+		      }else if (constraints(i)==1){
 			   boundsInit->setupBound(i,qpOASES::ST_LOWER);
 		      }else{
 			   boundsInit->setupBound(i,qpOASES::ST_UPPER);
 		      }
 		}
 		for(int i=0;i<nbCtr_;++i){
-		      if (result.constraints(nbVar_+i)==0){
+		      if (constraints(nbVar_+i)==0){
 			   ctrInit->setupConstraint(i,qpOASES::ST_INACTIVE);
-		      }else if (result.constraints(nbVar_+i)==1){
+		      }else if (constraints(nbVar_+i)==1){
 			   ctrInit->setupConstraint(i,qpOASES::ST_LOWER);
 		      }else{
 			   ctrInit->setupConstraint(i,qpOASES::ST_UPPER);
@@ -52,15 +56,15 @@ void QPOasesSolver::solve(MPCSolution & result){
 	}else{
 		ctrInit->setupAllInactive();
 		boundsInit->setupAllFree();
-		if (result.qpSolution.rows()!=nbVar_){
-			result.qpSolution.setZero(nbVar_);
+		if (qpSolution.rows()!=nbVar_){
+			qpSolution.setZero(nbVar_);
 		}else{
-			result.qpSolution.fill(0);
+			qpSolution.fill(0);
 		}
-		if (result.constraints.rows()!=nbVar_ + nbCtr_){
-			result.constraints.setZero(nbVar_ + nbCtr_);
+		if (constraints.rows()!=nbVar_ + nbCtr_){
+			constraints.setZero(nbVar_ + nbCtr_);
 		}else{
-			result.constraints.fill(0);
+			constraints.fill(0);
 		}
 	}
 
@@ -71,13 +75,13 @@ void QPOasesSolver::solve(MPCSolution & result){
 		  vectorXL_().data(), vectorXU_().data(),
 		  vectorBL_().data(), vectorBU_().data(),
 		  ittMax, 0,
-		  result.qpSolution.data(),NULL,
+		  qpSolution.data(),NULL,
 		  boundsInit, ctrInit);
 
         double* sol = new double[nbVar_];
         qp_->getPrimalSolution(sol);
         for(int i=0;i<nbVar_;++i){
-            result.qpSolution(i) = sol[i];
+            qpSolution(i) = sol[i];
         }
 
         qpOASES::Constraints ctr;
@@ -86,24 +90,24 @@ void QPOasesSolver::solve(MPCSolution & result){
         qp_->getBounds(bounds);
         for(int i=0;i<nbVar_;++i){
             if (bounds.getStatus(i)==qpOASES::ST_LOWER){
-                result.constraints(i)=1;
+                constraints(i)=1;
             }else if (bounds.getStatus(i)==qpOASES::ST_UPPER){
-                result.constraints(i)=2;
+                constraints(i)=2;
             }else{
-                result.constraints(i)=0;
+                constraints(i)=0;
             }
         }
         for(int i=0;i<nbCtr_;++i){
             if (ctr.getStatus(i)==qpOASES::ST_LOWER){
-                result.constraints(i+nbVar_)=1;
+                constraints(i+nbVar_)=1;
             }else if (ctr.getStatus(i)==qpOASES::ST_UPPER){
-                result.constraints(i+nbVar_)=2;
+                constraints(i+nbVar_)=2;
             }else{
-                result.constraints(i+nbVar_)=0;
+                constraints(i+nbVar_)=0;
             }
         }
 
-	reorderSolution(result);
+        reorderSolution(qpSolution, constraints, initialConstraints);
 
 	delete qp_;
 	delete ctrInit;

@@ -3,11 +3,11 @@
 #include "orientations-preview.h"
 
 #ifdef USE_QPOASES
-# include "qp-solvers/qpoases-solver.h"
+# include "../common/qp-solvers/qpoases-solver.h"
 #endif //USE_QPOASES
 
 #ifdef USE_LSSOL
-# include "qp-solvers/lssol-solver.h"
+# include "../common/qp-solvers/lssol-solver.h"
 #endif //USE_LSSOL
 
 #include "qp-generator.h"
@@ -205,7 +205,11 @@ const MPCSolution & WalkgenHumanoid::online(double time, bool previewBodiesNextS
 		generator_->buildConstraints(solution_);
 		generator_->computeWarmStart(solution_);
 
-		solver_->solve(solution_);
+		solver_->solve(solution_.qpSolution,
+			       solution_.constraints,
+			       solution_.initialSolution,
+			       solution_.initialConstraints,
+			       solution_.useWarmStart);
 
 		if (enableDisplay_)
 			generator_->display(solution_, "pg-data-displayer.dat");

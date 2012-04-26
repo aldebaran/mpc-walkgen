@@ -31,21 +31,6 @@ namespace MPCWalkgen{
 		interpolationCoP
 	};
 
-	//TODO: The QP matrices and vectors in the class solver can be encapsulated 
-	// QPProblem & QP = solver_.QP();
-	// QP.vectoP.addTerm();
-	// instead of solver_->matrix(VECTOR_P).addTerm();
-	// which would also make these enums unnecessary
-	enum QPMatrixType{
-		matrixQ,
-		matrixA,
-		vectorP,
-		vectorBU,
-		vectorBL,
-		vectorXU,
-		vectorXL
-	};
-
 
 	enum HullType{
 		FootHull,

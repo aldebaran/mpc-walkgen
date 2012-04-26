@@ -17,7 +17,7 @@
 #include <Eigen/Dense>
 #include "qp-matrix.h"
 #include "qp-vector.h"
-#include "types.h"
+#include "common-types.h"
 
 
 namespace MPCWalkgen{
@@ -32,7 +32,11 @@ namespace MPCWalkgen{
 			virtual ~QPSolver()=0;
 
 			void reset();
-			virtual void solve(MPCSolution & result)=0;
+			virtual void solve(Eigen::VectorXd & qpSolution,
+					   Eigen::VectorXi & constraints,
+					   Eigen::VectorXd & initialSolution,
+					   Eigen::VectorXi & initialConstraints,
+					   bool useWarmStart)=0;
 
 			void dump();
 
@@ -57,8 +61,11 @@ namespace MPCWalkgen{
 		protected:
 			virtual bool resizeAll();
 
-			void reorderInitialSolution(MPCSolution & solution);
-			void reorderSolution(MPCSolution & solution);
+			void reorderInitialSolution(Eigen::VectorXd & initialSolution,
+						    Eigen::VectorXi & initialConstraints);
+			void reorderSolution(Eigen::VectorXd & qpSolution,
+					     Eigen::VectorXi & constraints,
+					     Eigen::VectorXi & initialConstraints);
 
 		protected:
 			QPMatrix matrixQ_;

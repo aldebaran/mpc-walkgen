@@ -101,10 +101,18 @@ SET(mpc-walkgen_SRC
 
  src/walkgen/convex-hull.cpp
  src/walkgen/orientations-preview.cpp
- src/walkgen/qp-solver.h
- src/walkgen/qp-solvers/lssol-solver.h
- src/walkgen/qp-solvers/qpoases-solver.h
- src/walkgen/qp-solver.cpp
+
+ src/common/qp-solver.h
+ src/common/qp-solvers/lssol-solver.h
+ src/common/qp-solvers/qpoases-solver.h
+ src/common/qp-solver.cpp
+ src/common/qp-matrix.cpp
+ src/common/qp-vector.cpp
+ src/common/qp-matrix.h
+ src/common/qp-vector.h
+ src/common/common-types.h
+
+
  src/walkgen/state-solver.cpp
  src/walkgen/state-solvers/fsm-solver.cpp
  src/walkgen/rigid-body-system.h
@@ -115,8 +123,7 @@ SET(mpc-walkgen_SRC
  src/walkgen/rigid-body.cpp
  src/walkgen/rigid-bodies/com-body.cpp
  src/walkgen/rigid-bodies/foot-body.cpp
- src/walkgen/qp-matrix.cpp
- src/walkgen/qp-vector.cpp
+
  src/walkgen/qp-generator.cpp
  src/walkgen/qp-preview.cpp
  src/walkgen/interpolation.cpp
@@ -129,8 +136,7 @@ SET(mpc-walkgen_SRC
  src/walkgen/orientations-preview.h
  src/walkgen/state-solver.h
  src/walkgen/state-solvers/fsm-solver.h
- src/walkgen/qp-matrix.h
- src/walkgen/qp-vector.h
+
  src/walkgen/qp-generator.h
  src/walkgen/qp-preview.h
  src/walkgen/interpolation.h
@@ -145,13 +151,13 @@ SET(mpc-walkgen_SRC
 
 if(LSSOL_FOUND)
   list(APPEND mpc-walkgen_SRC
-    src/walkgen/qp-solvers/lssol-solver.cpp
+    src/common/qp-solvers/lssol-solver.cpp
   )
 endif(LSSOL_FOUND)
 
 if(QPOASES_FOUND)
   list(APPEND mpc-walkgen_SRC
-    src/walkgen/qp-solvers/qpoases-solver.cpp
+    src/common/qp-solvers/qpoases-solver.cpp
   )
 endif(QPOASES_FOUND)
 

@@ -20,11 +20,9 @@
 
 #include "enums.h"
 #include <mpc-walkgen/sharedpgtypes-humanoid.h>
-
+#include "../common/common-types.h"
 
 namespace MPCWalkgen{
-
-	static const double EPSILON = 0.000001;
 
 	struct VelReference{
 		struct Frame{

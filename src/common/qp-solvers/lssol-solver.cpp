@@ -1,4 +1,4 @@
-#include <mpc-walkgen/qp-solvers/lssol-solver.h>
+#include "lssol-solver.h"
 
 #include <lssol/lssol.h>
 
@@ -29,9 +29,14 @@ LSSOLSolver::LSSOLSolver(const int nbVarMin, const int nbCtrMin, const int nbVar
 
 LSSOLSolver::~LSSOLSolver(){}
 
-void LSSOLSolver::solve(MPCSolution & result){
+void LSSOLSolver::solve(VectorXd & qpSolution,
+			VectorXi & constraints,
+			VectorXd & initialSolution,
+			VectorXi & initialConstraints,
+			bool useWarmStart){
 
-	reorderInitialSolution(result);
+	reorderInitialSolution(initialSolution, initialConstraints);
+
 
 	// Pile up XL and BL
 	bl_.segment(0,      nbVar_) = vectorXL_().block(0,0,nbVar_,1);
@@ -41,19 +46,19 @@ void LSSOLSolver::solve(MPCSolution & result){
 	bu_.segment(0,      nbVar_) = vectorXU_().block(0,0,nbVar_,1);
 	bu_.segment(nbVar_, nbCtr_) = vectorBU_().block(0,0,nbCtr_,1);
 
-	if (result.useWarmStart){
-		result.qpSolution = result.initialSolution;
-		result.constraints = result.initialConstraints;
+	if (useWarmStart){
+		qpSolution = initialSolution;
+		constraints = initialConstraints;
 	}else{
-		if (result.qpSolution.rows() != nbVar_){
-			result.qpSolution.setZero(nbVar_);
+		if (qpSolution.rows() != nbVar_){
+			qpSolution.setZero(nbVar_);
 		}else{
-			result.qpSolution.fill(0);
+			qpSolution.fill(0);
 		}
-		if (result.constraints.rows()!=nbVar_ + nbCtr_){
-			result.constraints.setZero(nbVar_ + nbCtr_);
+		if (constraints.rows()!=nbVar_ + nbCtr_){
+			constraints.setZero(nbVar_ + nbCtr_);
 		}else{
-			result.constraints.fill(0);
+			constraints.fill(0);
 		}
 	}
 
@@ -66,7 +71,7 @@ void LSSOLSolver::solve(MPCSolution & result){
 	assert(bl_.size() >= nbVar_ + nbCtr_);
 	assert(bu_.size() >= nbVar_ + nbCtr_);
 	assert(vectorP_().size() >= nbVar_);
-	assert(result.constraints.size() >= nbVar_ + nbCtr_);
+	assert(constraints.size() >= nbVar_ + nbCtr_);
 	assert(leniw_>=nbVar_);
 	assert((nbCtr_ > 0)  || (lenw_ >=10*nbVar_));
 	assert((nbCtr_ == 0) || (lenw_ >=2*nbVar_*nbVar_ + 10*nbVar_+ 6*nbCtr_));
@@ -75,12 +80,12 @@ void LSSOLSolver::solve(MPCSolution & result){
 	lssol_(&nbVar_, &nbVar_,
 			&nbCtr_, &nbCtr_, &nbVar_,
 			matrixA_().data(), bl_.data(), bu_.data(),vectorP_().data(),
-			result.constraints.data(), kx_.data(), result.qpSolution.data(),
+			constraints.data(), kx_.data(), qpSolution.data(),
 			matrixQ_.cholesky().data(), bb_.data(), &inform_, &iter_, &obj_, lambda_.data(),
 			iwar_.data(), &leniw_, war_.data(), &lenw_);
 
 
-	reorderSolution(result);
+	reorderSolution(qpSolution, constraints, initialConstraints);
 }
 
 

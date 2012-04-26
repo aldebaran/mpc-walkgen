@@ -17,7 +17,7 @@
 
 #include "types.h"
 
-#include "qp-solver.h"
+#include "../common/qp-solver.h"
 #include "qp-preview.h"
 
 #include <Eigen/Dense>

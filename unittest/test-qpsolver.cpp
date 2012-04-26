@@ -13,12 +13,14 @@
 #include <cstring>
 
 #ifdef USE_QPOASES
-# include "../src/walkgen/qp-solvers/qpoases-solver.h"
+# include "../src/common/qp-solvers/qpoases-solver.h"
 #endif //USE_QPOASES
 
 #ifdef USE_LSSOL
-# include "src/walkgen/qp-solvers/lssol-solver.h""
+# include "../src/common/qp-solvers/lssol-solver.h"
 #endif //USE_LSSOL
+
+#include "../src/walkgen/types.h"
 
 using namespace Eigen;
 using namespace MPCWalkgen;
@@ -83,7 +85,9 @@ bool testQP (QPSolver & qp)
 	result.initialSolution.resize(2);
 	result.initialConstraints.resize(2+3);
 
-	qp.solve(result);
+	qp.solve(result.qpSolution, result.constraints,
+		 result.initialSolution, result.initialConstraints,
+		 result.useWarmStart);
 
 	Vector2d expectedResult;
 	expectedResult << 2./3., 4./3.;

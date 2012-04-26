@@ -1,5 +1,4 @@
 #include "qp-vector.h"
-#include "types.h"
 #include <Eigen/Cholesky>
 #include <cmath>
 

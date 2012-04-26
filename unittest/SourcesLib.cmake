@@ -22,9 +22,9 @@ set(test-qpoases_SRC test-qpoases.cpp)
 ## Static libraries
 # for the solver
 set(solver_SRC
-  ../src/walkgen/qp-solver.cpp
-  ../src/walkgen/qp-matrix.cpp
-  ../src/walkgen/qp-vector.cpp
+  ../src/common/qp-solver.cpp
+  ../src/common/qp-matrix.cpp
+  ../src/common/qp-vector.cpp
   ../src/walkgen/convex-hull.cpp
   ../src/sharedpgtypes.cpp
   ../src/sharedpgtypes-humanoid.cpp
@@ -35,8 +35,8 @@ set(solver_SRC
 ## Testing all the solvers
 set(test-qpsolver_SRC 
 	test-qpsolver.cpp
-	../src/walkgen/qp-solver.cpp
- 	../src/walkgen/qp-matrix.cpp
+	../src/common/qp-solver.cpp
+	../src/common/qp-matrix.cpp
  	../src/walkgen/convex-hull.cpp
  	../src/sharedpgtypes.cpp
         ../src/sharedpgtypes-humanoid.cpp
@@ -47,10 +47,10 @@ set(test-qpsolver_SRC
 # 
 set(test-all-solvers_SRC 
         test-all-solvers.cpp
-        ../src/walkgen/qp-solver.cpp
-        ../src/walkgen/qp-solvers/lssol-solver.cpp
-        ../src/walkgen/qp-solvers/qpoases-solver.cpp
-        ../src/walkgen/qp-matrix.cpp
+        ../src/common/qp-solver.cpp
+        ../src/common/qp-solvers/lssol-solver.cpp
+        ../src/common/qp-solvers/qpoases-solver.cpp
+        ../src/common/qp-matrix.cpp
         ../src/walkgen/convex-hull.cpp
         ../src/sharedpgtypes.cpp
         ../src/sharedpgtypes-humanoid.cpp
@@ -61,8 +61,8 @@ set(test-all-solvers_SRC
 # 
 set(bench-qpsolver_SRC 
   bench-qpsolver.cpp
-  ../src/walkgen/qp-solver.cpp
-  ../src/walkgen/qp-matrix.cpp
+  ../src/common/qp-solver.cpp
+  ../src/common/qp-matrix.cpp
   ../src/walkgen/convex-hull.cpp
   ../src/sharedpgtypes.cpp
   ../src/sharedpgtypes-humanoid.cpp
@@ -71,11 +71,11 @@ set(bench-qpsolver_SRC
 
 )
 if(LSSOL_FOUND)
-  list(APPEND solver_SRC ../src/walkgen/qp-solvers/lssol-solver.cpp)
+  list(APPEND solver_SRC ../src/common/qp-solvers/lssol-solver.cpp)
 endif(LSSOL_FOUND)
 
 if(QPOASES_FOUND)
-  list(APPEND solver_SRC ../src/walkgen/qp-solvers/qpoases-solver.cpp)
+  list(APPEND solver_SRC ../src/common/qp-solvers/qpoases-solver.cpp)
 endif(QPOASES_FOUND)
 
 # for the timer

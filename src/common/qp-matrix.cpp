@@ -1,5 +1,4 @@
 #include "qp-matrix.h"
-#include "types.h"
 #include <Eigen/Cholesky>
 #include <cmath>
 
