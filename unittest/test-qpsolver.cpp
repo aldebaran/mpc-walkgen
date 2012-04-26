@@ -20,7 +20,7 @@
 # include "../src/common/qp-solvers/lssol-solver.h"
 #endif //USE_LSSOL
 
-#include "../src/walkgen/types.h"
+#include "../src/humanoid/types.h"
 
 using namespace Eigen;
 using namespace MPCWalkgen;

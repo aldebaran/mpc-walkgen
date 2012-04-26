@@ -99,7 +99,7 @@ SET(mpc-walkgen_SRC
  src/walkgen-abstract.cpp
  src/walkgen-abstract-humanoid.cpp
 
- src/walkgen/orientations-preview.cpp
+ src/humanoid/orientations-preview.cpp
 
  src/common/qp-solver.h
  src/common/qp-solvers/lssol-solver.h
@@ -122,36 +122,36 @@ SET(mpc-walkgen_SRC
  src/common/gettimeofday.h
 
 
- src/walkgen/state-solver.cpp
- src/walkgen/state-solver.h
+ src/humanoid/state-solver.cpp
+ src/humanoid/state-solver.h
 
 
- src/walkgen/rigid-body-system.h
- src/walkgen/rigid-body.h
- src/walkgen/rigid-bodies/com-body.h
- src/walkgen/rigid-bodies/foot-body.h
- src/walkgen/rigid-body-system.cpp
- src/walkgen/rigid-body.cpp
- src/walkgen/rigid-bodies/com-body.cpp
- src/walkgen/rigid-bodies/foot-body.cpp
+ src/humanoid/rigid-body-system.h
+ src/humanoid/rigid-body.h
+ src/humanoid/rigid-bodies/com-body.h
+ src/humanoid/rigid-bodies/foot-body.h
+ src/humanoid/rigid-body-system.cpp
+ src/humanoid/rigid-body.cpp
+ src/humanoid/rigid-bodies/com-body.cpp
+ src/humanoid/rigid-bodies/foot-body.cpp
 
- src/walkgen/qp-generator.cpp
- src/walkgen/qp-preview.cpp
-
-
- src/walkgen/types.cpp
- src/walkgen/walkgen-humanoid.cpp
+ src/humanoid/qp-generator.cpp
+ src/humanoid/qp-preview.cpp
 
 
- src/walkgen/orientations-preview.h
+ src/humanoid/types.cpp
+ src/humanoid/walkgen-humanoid.cpp
 
 
- src/walkgen/qp-generator.h
- src/walkgen/qp-preview.h
+ src/humanoid/orientations-preview.h
 
 
- src/walkgen/types.h
- src/walkgen/walkgen-humanoid.h
+ src/humanoid/qp-generator.h
+ src/humanoid/qp-preview.h
+
+
+ src/humanoid/types.h
+ src/humanoid/walkgen-humanoid.h
 
 
 )
