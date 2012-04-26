@@ -18,12 +18,16 @@
 #include <vector>
 #include <iostream>
 
-#include "enums.h"
 #include <mpc-walkgen/sharedpgtypes-humanoid.h>
 #include "../common/common-types.h"
 
 namespace MPCWalkgen{
 
+
+	enum HullType{
+		FootHull,
+		CoPHull
+	};
 
 	struct SelectionMatrices{
 		Eigen::MatrixXd V;

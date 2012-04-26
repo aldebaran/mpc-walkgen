@@ -152,7 +152,6 @@ SET(mpc-walkgen_SRC
 
 
  src/walkgen/types.h
- src/walkgen/enums.h
  src/walkgen/walkgen-humanoid.h
 
  src/walkgen/perturbation.h
