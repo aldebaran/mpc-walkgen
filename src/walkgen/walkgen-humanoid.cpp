@@ -15,8 +15,6 @@
 #include "rigid-body-system.h"
 #include "../common/interpolation.h"
 
-#include "../common/mpc-debug.h"
-
 #include <iostream>
 #include <Eigen/Dense>
 
@@ -46,8 +44,6 @@ WalkgenHumanoid::WalkgenHumanoid(Solver solvertype)
 	,velRef_()
 	,newCurrentSupport_()
 	,isNewCurrentSupport_(false)
-	,debug_(0x0)
-	,enableDisplay_(false)
 	,upperTimeLimitToUpdate_(0)
 	,upperTimeLimitToFeedback_(0)
 {
@@ -72,15 +68,10 @@ WalkgenHumanoid::WalkgenHumanoid(Solver solvertype)
 
 	generator_= new QPGenerator(preview_, solver_, &velRef_, &ponderation_, robot_, &generalData_);
 
-	debug_ = new MPCDebug(true);
-
 }
 
 
 WalkgenHumanoid::~WalkgenHumanoid(){
-	if (debug_ != 0x0)
-		delete debug_;
-
 	if (orientPrw_ != 0x0)
 		delete orientPrw_;
 
@@ -207,9 +198,6 @@ const MPCSolution & WalkgenHumanoid::online(double time, bool previewBodiesNextS
 			       solution_.initialSolution,
 			       solution_.initialConstraints,
 			       solution_.useWarmStart);
-
-		if (enableDisplay_)
-			generator_->display(solution_, "pg-data-displayer.dat");
 
 		generator_->convertCopToJerk(solution_);
 

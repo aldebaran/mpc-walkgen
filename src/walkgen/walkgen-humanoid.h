@@ -131,8 +131,6 @@ namespace MPCWalkgen{
 			SupportState newCurrentSupport_;
 			bool isNewCurrentSupport_;
 
-			MPCDebug* debug_;
-			bool enableDisplay_;
 
 		    /// \brief Time at which the problem should be updated
 			double upperTimeLimitToUpdate_;
