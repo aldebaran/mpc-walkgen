@@ -17,8 +17,7 @@
 #include <mpc-walkgen/sharedpgtypes.h>
 
 #include <Eigen/Core>
-#include <cstring>
-#include <deque>
+
 
 
 namespace MPCWalkgen

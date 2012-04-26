@@ -13,10 +13,8 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <deque>
+
 #include <Eigen/Dense>
-#include <vector>
-#include <iostream>
 
 #include <mpc-walkgen/sharedpgtypes-humanoid.h>
 #include "../common/common-types.h"

@@ -5,7 +5,7 @@
 #ifndef _SHARED_PG_TYPE_HUMANOID
 #define  _SHARED_PG_TYPE_HUMANOID
 #include <mpc-walkgen/api.h>
-#include <deque>
+
 #include <Eigen/Dense>
 #include <vector>
 #include <mpc-walkgen/solvers.h>

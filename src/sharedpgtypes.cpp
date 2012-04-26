@@ -1,9 +1,5 @@
 #include <mpc-walkgen/sharedpgtypes.h>
 
-
-#include <iostream>
-#include <fstream>
-
 namespace MPCWalkgen
 {
 

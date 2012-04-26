@@ -13,9 +13,9 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <deque>
+
 #include <Eigen/Dense>
-#include <vector>
+
 #include <iostream>
 #include <mpc-walkgen/sharedpgtypes.h>
 

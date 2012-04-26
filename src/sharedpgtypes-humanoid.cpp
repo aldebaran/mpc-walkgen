@@ -1,7 +1,6 @@
 #include <mpc-walkgen/sharedpgtypes-humanoid.h>
 
-#include <iostream>
-#include <fstream>
+
 
 namespace MPCWalkgen
 {

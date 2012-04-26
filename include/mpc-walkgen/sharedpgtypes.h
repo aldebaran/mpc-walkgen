@@ -5,9 +5,9 @@
 #ifndef _SHARED_PG_TYPE
 #define  _SHARED_PG_TYPE
 #include <mpc-walkgen/api.h>
-#include <deque>
+
 #include <Eigen/Dense>
-#include <vector>
+
 #include <mpc-walkgen/solvers.h>
 
 namespace MPCWalkgen

@@ -21,8 +21,7 @@
 #include <mpc-walkgen/walkgen-abstract.h>
 
 #include <Eigen/Core>
-#include <cstring>
-#include <deque>
+
 
 
 namespace MPCWalkgen
