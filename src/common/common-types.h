@@ -38,6 +38,15 @@ namespace MPCWalkgen{
 		vectorXU,
 		vectorXL
 	};
+
+
+	struct LinearDynamics{
+		Eigen::MatrixXd S;
+		Eigen::MatrixXd U;
+		Eigen::MatrixXd UT;
+		Eigen::MatrixXd UInv;
+		Eigen::MatrixXd UInvT;
+	};
 }
 
 

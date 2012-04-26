@@ -172,4 +172,6 @@ void MPCWalkgen::computeMRt(MatrixXd & mIn, const MatrixXd & rot)
 		for (int i=0; i<mIn.rows()/2; ++i)
 			mIn.block<2,2>(2*i, 2*j) = mIn.block<2,2>(2*i, 2*j)*rot_j;
 	}
+
+
 }

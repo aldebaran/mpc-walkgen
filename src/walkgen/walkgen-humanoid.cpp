@@ -13,7 +13,7 @@
 #include "qp-generator.h"
 #include "qp-preview.h"
 #include "rigid-body-system.h"
-#include "interpolation.h"
+#include "../common/interpolation.h"
 
 #include "mpc-debug.h"
 #include "perturbation.h"

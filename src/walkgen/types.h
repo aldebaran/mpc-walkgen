@@ -55,13 +55,6 @@ namespace MPCWalkgen{
 		SelectionMatrices(const MPCData & generalData);
 	};
 
-	struct LinearDynamics{
-		Eigen::MatrixXd S;
-		Eigen::MatrixXd U;
-		Eigen::MatrixXd UT;
-		Eigen::MatrixXd UInv;
-		Eigen::MatrixXd UInvT;
-	};
 
 	struct RelativeInequalities{
 		Eigen::MatrixXd DX;

@@ -15,7 +15,7 @@
 
 
 #include "types.h"
-#include "interpolation.h"
+#include "../common/interpolation.h"
 #include <vector>
 
 namespace MPCWalkgen{

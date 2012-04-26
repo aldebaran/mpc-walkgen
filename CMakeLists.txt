@@ -114,6 +114,8 @@ SET(mpc-walkgen_SRC
  src/common/tools.h
  src/common/tools-inl.h
  src/common/tools.cpp
+ src/common/interpolation.cpp
+ src/common/interpolation.h
 
  src/walkgen/state-solver.cpp
  src/walkgen/state-solvers/fsm-solver.cpp
@@ -128,7 +130,7 @@ SET(mpc-walkgen_SRC
 
  src/walkgen/qp-generator.cpp
  src/walkgen/qp-preview.cpp
- src/walkgen/interpolation.cpp
+
 
  src/walkgen/types.cpp
  src/walkgen/walkgen-humanoid.cpp
@@ -141,7 +143,7 @@ SET(mpc-walkgen_SRC
 
  src/walkgen/qp-generator.h
  src/walkgen/qp-preview.h
- src/walkgen/interpolation.h
+
 
  src/walkgen/types.h
  src/walkgen/enums.h
