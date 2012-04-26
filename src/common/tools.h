@@ -23,8 +23,6 @@ inline double round( double d )
 
 
 namespace MPCWalkgen{
-	void pseudoInverse(const Eigen::MatrixXd & X, Eigen::MatrixXd & Xinv, double eps=1e-8);
-
 	void inverse(const Eigen::MatrixXd & X, Eigen::MatrixXd & Xinv, double eps=1e-8);
 
 	inline double pow2(double v);

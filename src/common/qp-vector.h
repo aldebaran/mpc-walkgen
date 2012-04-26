@@ -20,8 +20,7 @@ namespace MPCWalkgen{
 
 	class QPVector{
 		public:
-			QPVector(const int nbRowsMin=1, const int nbColsMin=1,
-					 const int nbRowsMax=1, const int nbColsMax=1);
+			QPVector(const int nbRowsMin=1, const int nbRowsMax=1);
 			~QPVector();
 
 			void addTerm(const Eigen::VectorXd & mat, const int row = 0);

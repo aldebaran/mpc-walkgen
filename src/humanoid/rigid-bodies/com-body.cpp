@@ -135,7 +135,6 @@ void CoMBody::interpolateTrunkOrientation(MPCSolution &result,
 
 	double orientation0 = result.supportTrunkOrientations_vec[0];
 	double orientation1;
-	double orientation2;
 
 	int size = result.supportTrunkOrientations_vec.size();
 
@@ -144,11 +143,6 @@ void CoMBody::interpolateTrunkOrientation(MPCSolution &result,
 		orientation1 = result.supportTrunkOrientations_vec[1];
 	} else {
 		orientation1 = orientation0;
-	}
-	if (size >= 3) {
-		orientation2 = result.supportTrunkOrientations_vec[2];
-	} else {
-		orientation2 = orientation1;
 	}
 
 	Vector3d nextTrunkState(orientation1, -velRef.local.yaw(0), 0);

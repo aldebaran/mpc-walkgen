@@ -71,6 +71,7 @@ void QPOasesSolver::solve(VectorXd & qpSolution,
 	int ittMax=100;
 
 	MatrixXd A = matrixA_().transpose();
+
 	qp_->init(matrixQ_().data(), vectorP_().data(), A.data(),
 		  vectorXL_().data(), vectorXU_().data(),
 		  vectorBL_().data(), vectorBU_().data(),

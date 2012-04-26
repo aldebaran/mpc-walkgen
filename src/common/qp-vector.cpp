@@ -8,8 +8,7 @@ using namespace Eigen;
 
 
 
-QPVector::QPVector(const int nbRowsMin, const int nbColsMin,
-					 const int nbRowsMax, const int nbColsMax)
+QPVector::QPVector(const int nbRowsMin, const int nbRowsMax)
 	:sizeRows_(nbRowsMax-nbRowsMin+1)
 	,constantPart_(sizeRows_)
 	,matrix_(sizeRows_)

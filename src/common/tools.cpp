@@ -9,32 +9,6 @@
 
 using namespace Eigen;
 
-void MPCWalkgen::pseudoInverse(const MatrixXd & A, MatrixXd & Ap, double eps){
-	JacobiSVD<MatrixXd> svd(A,ComputeFullU+ComputeFullV);
-
-	VectorXd sigmav=svd.singularValues();
-	MatrixXd sigmap(svd.matrixU().cols(),svd.matrixV().rows());
-	sigmap.fill(0);
-	for(int i=0;i<sigmav.rows();++i){
-		if (sigmav(i)*sigmav(i)<eps*eps){
-			sigmap(i,i)=0;
-		}else{
-			sigmap(i,i)=1/sigmav(i);
-		}
-	}
-	MatrixXd sigmapT=sigmap.transpose();
-	Ap.resize(svd.matrixV().rows(),svd.matrixU().cols());
-	Ap=svd.matrixV()*sigmapT*(svd.matrixU().adjoint());
-
-	for(int i=0;i<Ap.rows();++i){
-		for(int j=0;j<Ap.cols();++j){
-			if (fabs(Ap(i,j))<eps){
-				Ap(i,j)=0;
-			}
-		}
-	}
-
-}
 
 
 void MPCWalkgen::inverse(const MatrixXd & A, MatrixXd & Ap, double eps){
@@ -139,7 +113,8 @@ void MPCWalkgen::rotateCholeskyMatrix(MatrixXd & mInOut, const MatrixXd & rot)
 	int n2 = N/2;
 
 	for (int j=0; j<n2; ++j){
-		const Eigen::Matrix2d & rotT_j = rot.block<2,2>(2*j, 2*j).transpose();
+		Eigen::Matrix2d rotT_j= rot.block<2,2>(2*j, 2*j);
+		rotT_j.transposeInPlace();
 		for (int i=0; i<j; ++i){
 			mInOut.block<2,2>(2*i, 2*j) =
 					rot.block<2,2>(2*i, 2*i) * mInOut.block<2,2>(2*i, 2*j)* rotT_j;
@@ -168,7 +143,8 @@ void MPCWalkgen::computeMRt(MatrixXd & mIn, const MatrixXd & rot)
 	// compute chol*col^T
 	for (int j=0; j<mIn.cols()/2; ++j)
 	{
-		const Matrix2d & rot_j = (rot.block<2,2>(2*j, 2*j)).transpose();
+		Matrix2d rot_j = (rot.block<2,2>(2*j, 2*j));
+		rot_j.transposeInPlace();
 		for (int i=0; i<mIn.rows()/2; ++i)
 			mIn.block<2,2>(2*i, 2*j) = mIn.block<2,2>(2*i, 2*j)*rot_j;
 	}

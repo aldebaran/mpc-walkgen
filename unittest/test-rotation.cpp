@@ -159,7 +159,7 @@ bool testCholeskyRotation(int n, std::ofstream &out)
 
 
 
-bool testRotation2(int n, int nbSP, std::ofstream &out)
+bool testRotation2(int n, int nbSP, std::ofstream &/*out*/)
 {
 	MatrixXd chol (MatrixXd::Random(2*(n+nbSP),2*(n+nbSP)));
 	MatrixXd test0(chol);
