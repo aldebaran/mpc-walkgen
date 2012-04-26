@@ -143,7 +143,6 @@ SET(mpc-walkgen_SRC
  src/walkgen/walkgen-humanoid.cpp
 
 
- src/walkgen/perturbation.cpp
  src/walkgen/orientations-preview.h
 
 
@@ -154,7 +153,7 @@ SET(mpc-walkgen_SRC
  src/walkgen/types.h
  src/walkgen/walkgen-humanoid.h
 
- src/walkgen/perturbation.h
+
 )
 
 if(LSSOL_FOUND)

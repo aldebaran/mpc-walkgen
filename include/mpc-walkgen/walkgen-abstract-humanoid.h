@@ -105,9 +105,6 @@ namespace MPCWalkgen
 		virtual int QPNbSamplings()const=0;
 		virtual void QPNbSamplings(int d)=0;
 
-		virtual void ApplyPerturbationForce(Axis axis, BodyType body, double f)=0;
-		virtual void ApplyPerturbationAcc(Axis axis, BodyType body, double acc)=0;
-		virtual void ApplyPerturbationVel(Axis axis, BodyType body, double vel)=0;
 	    /// \}
   };
   /*! Factory of Pattern generator interface. */

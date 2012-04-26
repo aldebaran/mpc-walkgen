@@ -16,7 +16,6 @@
 #include "../common/interpolation.h"
 
 #include "../common/mpc-debug.h"
-#include "perturbation.h"
 
 #include <iostream>
 #include <Eigen/Dense>
@@ -47,7 +46,6 @@ WalkgenHumanoid::WalkgenHumanoid(Solver solvertype)
 	,velRef_()
 	,newCurrentSupport_()
 	,isNewCurrentSupport_(false)
-	,perturbation_(0x0)
 	,debug_(0x0)
 	,enableDisplay_(false)
 	,upperTimeLimitToUpdate_(0)
@@ -76,7 +74,6 @@ WalkgenHumanoid::WalkgenHumanoid(Solver solvertype)
 
 	debug_ = new MPCDebug(true);
 
-	perturbation_ = new Perturbation(robot_);
 }
 
 
@@ -253,18 +250,6 @@ void WalkgenHumanoid::mpcSamplingPeriod(double)
 void WalkgenHumanoid::QPNbSamplings(int)
 {
 	std::cerr << " The method Walkgen::QPNbSamplings(d) is not implemented yet. " << std::endl;
-}
-
-void WalkgenHumanoid::ApplyPerturbationForce(Axis axis, BodyType body, double f){
-  perturbation_->applyForce(axis, body, f);
-}
-
-void WalkgenHumanoid::ApplyPerturbationAcc(Axis axis, BodyType body, double acc){
-  perturbation_->applyAcc(axis, body, acc);
-}
-
-void WalkgenHumanoid::ApplyPerturbationVel(Axis axis, BodyType body, double vel){
-  perturbation_->applyVel(axis, body, vel);
 }
 
 const SupportState & WalkgenHumanoid::currentSupportState() const {
