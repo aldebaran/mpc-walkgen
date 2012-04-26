@@ -19,7 +19,7 @@
 #include <iostream>
 
 #include "enums.h"
-#include <mpc-walkgen/sharedpgtypes.h>
+#include <mpc-walkgen/sharedpgtypes-humanoid.h>
 
 
 namespace MPCWalkgen{

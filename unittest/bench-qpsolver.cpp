@@ -1,8 +1,6 @@
-/*
-*/
 
 #include "../src/walkgen/mpc-debug.h"
-
+#include <mpc-walkgen/sharedpgtypes-humanoid.h>
 #include <cmath>
 #include <cstdio>
 #include <iostream>
@@ -221,7 +219,7 @@ bool testBenchmarkQP (QPSolver &qp, unsigned fDofWb, unsigned fNconstraints)
 
   MPCWalkgen::MPCDebug debug(true);
 
-  MPCSolution result;
+  MPCWalkgen::MPCSolution result;
   result.initialSolution.resize(6+fDofWb);
   result.initialConstraints.resize(fNconstraints+6+fDofWb);
 

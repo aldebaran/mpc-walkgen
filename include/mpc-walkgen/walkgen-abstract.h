@@ -55,32 +55,6 @@ namespace MPCWalkgen
 	    virtual void reference(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw) = 0;
 	    /// \}
 
-	    /// \name accessors relative to the state of the robot.
-	    /// \{
-		virtual const BodyState & bodyState(BodyType body)const=0;
-		virtual void bodyState(BodyType body, const BodyState & state)=0;
-	    /// \}
-
-
-	  public:
-		/// \name accessors relative to the solver, costly when modified on line
-	    /// \{
-		virtual double QPSamplingPeriod()const=0;
-		virtual void QPSamplingPeriod(double d)=0;
-
-		virtual double mpcSamplingPeriod()const=0;
-		virtual void mpcSamplingPeriod(double d)=0;
-
-		virtual double actuationSamplingPeriod()const=0;
-		virtual void actuationSamplingPeriod(double d)=0;
-
-		virtual int QPNbSamplings()const=0;
-		virtual void QPNbSamplings(int d)=0;
-
-		virtual void ApplyPerturbationForce(Axis axis, BodyType body, double f)=0;
-		virtual void ApplyPerturbationAcc(Axis axis, BodyType body, double acc)=0;
-		virtual void ApplyPerturbationVel(Axis axis, BodyType body, double vel)=0;
-	    /// \}
 
   };
 

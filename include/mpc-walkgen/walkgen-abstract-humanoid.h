@@ -17,7 +17,7 @@
 
 
 
-#include <mpc-walkgen/sharedpgtypes.h>
+#include <mpc-walkgen/sharedpgtypes-humanoid.h>
 #include <mpc-walkgen/walkgen-abstract.h>
 
 #include <Eigen/Core>

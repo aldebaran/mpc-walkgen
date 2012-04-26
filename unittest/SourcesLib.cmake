@@ -27,6 +27,7 @@ set(solver_SRC
   ../src/walkgen/qp-vector.cpp
   ../src/walkgen/convex-hull.cpp
   ../src/sharedpgtypes.cpp
+  ../src/sharedpgtypes-humanoid.cpp
   ../src/walkgen-abstract.cpp
   ../src/walkgen-abstract-humanoid.cpp
 )
@@ -38,6 +39,7 @@ set(test-qpsolver_SRC
  	../src/walkgen/qp-matrix.cpp
  	../src/walkgen/convex-hull.cpp
  	../src/sharedpgtypes.cpp
+        ../src/sharedpgtypes-humanoid.cpp
         ../src/walkgen-abstract.cpp
         ../src/walkgen-abstract-humanoid.cpp
 )
@@ -51,6 +53,7 @@ set(test-all-solvers_SRC
         ../src/walkgen/qp-matrix.cpp
         ../src/walkgen/convex-hull.cpp
         ../src/sharedpgtypes.cpp
+        ../src/sharedpgtypes-humanoid.cpp
         ../src/walkgen-abstract.cpp
         ../src/walkgen-abstract-humanoid.cpp
 )
@@ -62,8 +65,10 @@ set(bench-qpsolver_SRC
   ../src/walkgen/qp-matrix.cpp
   ../src/walkgen/convex-hull.cpp
   ../src/sharedpgtypes.cpp
+  ../src/sharedpgtypes-humanoid.cpp
   ../src/walkgen-abstract.cpp
   ../src/walkgen-abstract-humanoid.cpp
+
 )
 if(LSSOL_FOUND)
   list(APPEND solver_SRC ../src/walkgen/qp-solvers/lssol-solver.cpp)
