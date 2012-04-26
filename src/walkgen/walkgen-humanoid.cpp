@@ -15,7 +15,7 @@
 #include "rigid-body-system.h"
 #include "../common/interpolation.h"
 
-#include "mpc-debug.h"
+#include "../common/mpc-debug.h"
 #include "perturbation.h"
 
 #include <iostream>

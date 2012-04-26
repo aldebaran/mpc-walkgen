@@ -24,24 +24,6 @@
 
 namespace MPCWalkgen{
 
-	struct VelReference{
-		struct Frame{
-			Eigen::VectorXd x;
-			Eigen::VectorXd y;
-			Eigen::VectorXd yaw;
-
-			Frame();
-
-			void resize(int size);
-		};
-
-		Frame global;
-		Frame local;
-
-		VelReference();
-
-		void resize(int size);
-	};
 
 	struct SelectionMatrices{
 		Eigen::MatrixXd V;

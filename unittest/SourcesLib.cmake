@@ -1,4 +1,3 @@
-INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/include-private)
 INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/src)
 
 ## test the rotation of the cholesky matrix
@@ -80,8 +79,8 @@ endif(QPOASES_FOUND)
 
 # for the timer
 set(timer_SRC
-  ../src/walkgen/mpc-debug.cpp
-  ../src/walkgen/gettimeofday.cpp
+  ../src/common/mpc-debug.cpp
+  ../src/common/gettimeofday.cpp
 )
 
 ## Testing all the solvers
@@ -94,5 +93,5 @@ set(test-all-solvers_SRC test-all-solvers.cpp)
 set(bench-qpsolver_SRC bench-qpsolver.cpp)
 
 # tests of the walkgen
-set(test-walkgen_SRC  test-walkgen.cpp ../src/walkgen/mpc-debug.cpp)
+set(test-walkgen_SRC  test-walkgen.cpp ../src/common/mpc-debug.cpp)
 set(bench-solvers_SRC  bench-solvers.cpp)

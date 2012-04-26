@@ -14,7 +14,7 @@
 
 #include <Eigen/Core>
 
-#include "../src/walkgen/gettimeofday.h"
+#include "../src/common/gettimeofday.h"
 #ifdef WIN32
 # include <Windows.h>
 #endif //WIN32

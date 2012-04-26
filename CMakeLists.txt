@@ -111,11 +111,17 @@ SET(mpc-walkgen_SRC
  src/common/qp-matrix.h
  src/common/qp-vector.h
  src/common/common-types.h
+ src/common/common-types.cpp
  src/common/tools.h
  src/common/tools-inl.h
  src/common/tools.cpp
  src/common/interpolation.cpp
  src/common/interpolation.h
+ src/common/mpc-debug.cpp
+ src/common/mpc-debug.h
+ src/common/gettimeofday.cpp
+ src/common/gettimeofday.h
+
 
  src/walkgen/state-solver.cpp
  src/walkgen/state-solvers/fsm-solver.cpp
@@ -134,8 +140,8 @@ SET(mpc-walkgen_SRC
 
  src/walkgen/types.cpp
  src/walkgen/walkgen-humanoid.cpp
- src/walkgen/gettimeofday.cpp
- src/walkgen/mpc-debug.cpp
+
+
  src/walkgen/perturbation.cpp
  src/walkgen/orientations-preview.h
  src/walkgen/state-solver.h
@@ -148,7 +154,7 @@ SET(mpc-walkgen_SRC
  src/walkgen/types.h
  src/walkgen/enums.h
  src/walkgen/walkgen-humanoid.h
- src/walkgen/mpc-debug.h
+
  src/walkgen/perturbation.h
 )
 

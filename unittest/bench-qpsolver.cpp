@@ -1,5 +1,5 @@
 
-#include "../src/walkgen/mpc-debug.h"
+#include "../src/common/mpc-debug.h"
 #include <mpc-walkgen/sharedpgtypes-humanoid.h>
 #include <cmath>
 #include <cstdio>

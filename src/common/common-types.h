@@ -24,11 +24,6 @@ namespace MPCWalkgen{
 
 	static const double EPSILON = 0.000001;
 
-	//TODO: The QP matrices and vectors in the class solver can be encapsulated
-	// QPProblem & QP = solver_.QP();
-	// QP.vectoP.addTerm();
-	// instead of solver_->matrix(VECTOR_P).addTerm();
-	// which would also make these enums unnecessary
 	enum QPMatrixType{
 		matrixQ,
 		matrixA,
@@ -39,6 +34,17 @@ namespace MPCWalkgen{
 		vectorXL
 	};
 
+	enum DynamicMatrixType{
+		posDynamic,
+		velDynamic,
+		accDynamic,
+		jerkDynamic,
+		copDynamic,
+		interpolationPos,
+		interpolationVel,
+		interpolationAcc,
+		interpolationCoP
+	};
 
 	struct LinearDynamics{
 		Eigen::MatrixXd S;
@@ -47,6 +53,26 @@ namespace MPCWalkgen{
 		Eigen::MatrixXd UInv;
 		Eigen::MatrixXd UInvT;
 	};
+
+	struct VelReference{
+		struct Frame{
+			Eigen::VectorXd x;
+			Eigen::VectorXd y;
+			Eigen::VectorXd yaw;
+
+			Frame();
+
+			void resize(int size);
+		};
+
+		Frame global;
+		Frame local;
+
+		VelReference();
+
+		void resize(int size);
+	};
+
 }
 
 
