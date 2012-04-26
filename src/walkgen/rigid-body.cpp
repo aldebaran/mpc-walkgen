@@ -79,6 +79,3 @@ void RigidBody::computeDynamics(){
 			generalData_->actuationSamplingPeriod, nbSamplingSim, copDynamic);
 }
 
-//void RigidBody::simulateForward() {
-//
-//}

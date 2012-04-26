@@ -1,5 +1,5 @@
 #include "qp-preview.h"
-#include "state-solvers/fsm-solver.h"
+
 #include <cmath>
 
 using namespace MPCWalkgen;
@@ -15,7 +15,7 @@ QPPreview::QPPreview(VelReference * velRef, RigidBodySystem * robot, const MPCDa
 	,rotationMatrix_ (Eigen::MatrixXd::Zero(2*generalData_->nbSamplesQP, 2*generalData_->nbSamplesQP))
 	,rotationMatrix2_(Eigen::MatrixXd::Zero(2*generalData_->nbSamplesQP, 2*generalData_->nbSamplesQP)) {
 
-	statesolver_ = new FSMSolver(velRef, generalData);
+	statesolver_ = new StateSolver(velRef, generalData);
 }
 
 QPPreview::~QPPreview()

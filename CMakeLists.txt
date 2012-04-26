@@ -99,7 +99,6 @@ SET(mpc-walkgen_SRC
  src/walkgen-abstract.cpp
  src/walkgen-abstract-humanoid.cpp
 
- src/walkgen/convex-hull.cpp
  src/walkgen/orientations-preview.cpp
 
  src/common/qp-solver.h
@@ -124,7 +123,9 @@ SET(mpc-walkgen_SRC
 
 
  src/walkgen/state-solver.cpp
- src/walkgen/state-solvers/fsm-solver.cpp
+ src/walkgen/state-solver.h
+
+
  src/walkgen/rigid-body-system.h
  src/walkgen/rigid-body.h
  src/walkgen/rigid-bodies/com-body.h
@@ -144,8 +145,7 @@ SET(mpc-walkgen_SRC
 
  src/walkgen/perturbation.cpp
  src/walkgen/orientations-preview.h
- src/walkgen/state-solver.h
- src/walkgen/state-solvers/fsm-solver.h
+
 
  src/walkgen/qp-generator.h
  src/walkgen/qp-preview.h

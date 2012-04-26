@@ -20,9 +20,9 @@ namespace MPCWalkgen{
 	class StateSolver{
 		public:
 			StateSolver(VelReference * velRef, const MPCData * generalData);
-			virtual ~StateSolver();
+			~StateSolver();
 
-			virtual void setSupportState(double time, int pi, const std::vector<double> &samplingTimes_vec, SupportState & Support)=0;
+			void setSupportState(double time, int pi, const std::vector<double> &samplingTimes_vec, SupportState & Support);
 
 		protected:
 			VelReference * velRef_;
