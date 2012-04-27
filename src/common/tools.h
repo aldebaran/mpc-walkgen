@@ -4,12 +4,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 ///
 ///\file	tools.h
-///\brief	A class to compute bodies interpolation
-///\author	Herdt Andrei
+///\brief	A class of tools
+///\author      Keith François
 ///\author	Lafaye Jory
-///\author	Keith François
-///\version	1.0
-///\date	05/01/12
+///\version	1.2
+///\date	27/04/12
 ///
 ////////////////////////////////////////////////////////////////////////////////
 

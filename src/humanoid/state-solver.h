@@ -6,10 +6,8 @@
 ///\file	state-solver.h
 ///\brief	A abstract class to regroup all state-solvers
 ///\author	Herdt Andrei
-///\author	Lafaye Jory
-///\author	Keith François
-///\version	1.0
-///\date	14/02/12
+///\version	1.2
+///\date	27/04/12
 ///
 ////////////////////////////////////////////////////////////////////////////////
 

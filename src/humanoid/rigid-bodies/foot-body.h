@@ -5,11 +5,11 @@
 ///
 ///\file	com-body.h
 ///\brief	A class to store CoM rigid body
-///\author	Herdt Andrei
 ///\author	Lafaye Jory
-///\author	Keith François
-///\version	1.0
-///\date	16/02/12
+///\author      Keith François
+///\author	Herdt Andrei
+///\version	1.2
+///\date	27/04/12
 ///
 ////////////////////////////////////////////////////////////////////////////////
 

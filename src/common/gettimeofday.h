@@ -1,6 +1,16 @@
 #ifndef PORTABILITY_GETTIMEOFDAY_HH
 # define PORTABILITY_GETTIMEOFDAY_HH
 
+////////////////////////////////////////////////////////////////////////////////
+///
+///\file	qpoases-solver.h
+///\brief	GetTimeOfDay portability
+///\author	Keith François
+///\version	1.2
+///\date	27/04/12
+///
+////////////////////////////////////////////////////////////////////////////////
+
 // This deals with gettimeofday portability issues.
 # ifdef HAVE_SYS_TIME_H
 #  include <sys/time.h>

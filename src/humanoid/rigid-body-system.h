@@ -5,11 +5,11 @@
 ///
 ///\file	rigid-body-system.h
 ///\brief	A class to store the rigid body model
-///\author	Herdt Andrei
 ///\author	Lafaye Jory
-///\author	Keith François
-///\version	1.0
-///\date	05/01/12
+///\author      Keith François
+///\author	Herdt Andrei
+///\version	1.2
+///\date	27/04/12
 ///
 ////////////////////////////////////////////////////////////////////////////////
 

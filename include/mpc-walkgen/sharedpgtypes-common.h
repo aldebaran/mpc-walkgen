@@ -1,6 +1,18 @@
 #ifndef SHAREDPGTYPESCOMMON_H
 #define SHAREDPGTYPESCOMMON_H
 
+////////////////////////////////////////////////////////////////////////////////
+///
+///\file	api.h
+///\brief	Definition of common types between each walkgen
+///\author	Lafaye Jory
+///\author      Keith François
+///\author	Herdt Andrei
+///\version	1.2
+///\date	27/04/12
+///
+////////////////////////////////////////////////////////////////////////////////
+
 #include <mpc-walkgen/solvers.h>
 #include <mpc-walkgen/api.h>
 

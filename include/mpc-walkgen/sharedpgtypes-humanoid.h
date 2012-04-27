@@ -1,9 +1,16 @@
-/*! \file sharedpgtypes-humanoid.h
-  \brief Defines basic types for the Humanoid Walking Pattern Generator.
-*/
-
 #ifndef _SHARED_PG_TYPE_HUMANOID
 #define  _SHARED_PG_TYPE_HUMANOID
+
+////////////////////////////////////////////////////////////////////////////////
+///
+///\file	api.h
+///\brief	Definition of common types between each walkgen
+///\author	Lafaye Jory
+///\author      Keith François
+///\version	1.2
+///\date	27/04/12
+///
+////////////////////////////////////////////////////////////////////////////////
 
 #include <mpc-walkgen/sharedpgtypes-common.h>
 #include <Eigen/Dense>

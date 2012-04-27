@@ -5,11 +5,9 @@
 ///
 ///\file	mpc-debug.h
 ///\brief	A class to debug the program
-///\author	Herdt Andrei
 ///\author	Lafaye Jory
-///\author	Keith François
-///\version	1.0
-///\date	30/01/12
+///\version	1.2
+///\date	27/04/12
 ///
 ////////////////////////////////////////////////////////////////////////////////
 

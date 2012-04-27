@@ -5,11 +5,10 @@
 ///
 ///\file	qp-vector.h
 ///\brief	A class to store QP matrices
-///\author	Herdt Andrei
 ///\author	Lafaye Jory
-///\author	Keith François
-///\version	1.0
-///\date	05/01/12
+///\author      Keith François
+///\version	1.2
+///\date	27/04/12
 ///
 ////////////////////////////////////////////////////////////////////////////////
 

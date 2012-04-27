@@ -6,8 +6,8 @@
 ///\file	qpoases-solver.h
 ///\brief	A class to solver the QP problem using qpoases solver
 ///\author	Lafaye Jory
-///\version	1.0
-///\date	05/01/12
+///\version	1.2
+///\date	27/04/12
 ///
 ////////////////////////////////////////////////////////////////////////////////
 

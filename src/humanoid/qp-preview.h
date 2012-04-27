@@ -6,10 +6,10 @@
 ///\file	qp-preview.h
 ///\brief	A class to compute preview support state and selection matrices
 ///\author	Herdt Andrei
+///\author      Keith François
 ///\author	Lafaye Jory
-///\author	Keith François
-///\version	1.0
-///\date	05/01/12
+///\version	1.2
+///\date	27/04/12
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
