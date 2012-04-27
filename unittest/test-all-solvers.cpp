@@ -4,9 +4,9 @@
 #include <iostream>
 #include <cstring>
 
-#include <mpc-walkgen/qp-solvers/qpoases-solver.h>
-
-#include <mpc-walkgen/qp-solvers/lssol-solver.h>
+#include <../src/common/qp-solvers/qpoases-solver.h>
+#include <../src/humanoid/types.h>
+#include <../src/common/qp-solvers/lssol-solver.h>
 using namespace Eigen;
 using namespace MPCWalkgen;
 
@@ -85,8 +85,10 @@ int main ()
   result2.initialSolution.resize(nbVar);
   result2.initialConstraints.resize(nbVar+nbCtr);
 
-  qp1.solve(result1);
-  qp2.solve(result2);
+  qp1.solve(result1.qpSolution, result1.constraints,
+     result1.initialSolution, result1.initialConstraints, result1.useWarmStart);
+  qp2.solve(result2.qpSolution, result2.constraints,
+     result2.initialSolution, result2.initialConstraints, result2.useWarmStart);
 
   std::cout << "Solution LSSOL   : " << result1.qpSolution.transpose() << std::endl;
   std::cout << "Solution QPOASES : " << result2.qpSolution.transpose() << std::endl;

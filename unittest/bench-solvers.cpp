@@ -4,9 +4,9 @@
 
 
 
-#include <mpc-walkgen/sharedpgtypes.h>
-#include <mpc-walkgen/walkgen-humanoid.h>
-#include <mpc-walkgen/mpc-debug.h>
+#include <mpc-walkgen/sharedpgtypes-humanoid.h>
+#include <mpc-walkgen/walkgen-abstract-humanoid.h>
+#include <../src/common/mpc-debug.h>
 
 #include <cmath>
 #include <cstdio>
@@ -88,10 +88,10 @@ int main() {
 	// Creat and initialize generator:
 	// -------------------------------
 
-	WalkgenHumanoid walk1(LSSOL);
-	WalkgenHumanoid walk2(QPOASES);
-	walk1.init(robotData, mpcData);
-	walk2.init(robotData, mpcData);
+	WalkgenAbstractHumanoid * walk1 = mpcFactory(LSSOL);
+	WalkgenAbstractHumanoid * walk2 = mpcFactory(QPOASES);
+	walk2->init(robotData, mpcData);
+	walk1->init(robotData, mpcData);
 
 
 	MPCDebug debug(true);
@@ -99,50 +99,50 @@ int main() {
 	// Run:
 	// ----
 	double velocity = 0.25;
-	walk1->reference(0, 0, 0);
-	walk1->online(0);
 	walk2->reference(0, 0, 0);
 	walk2->online(0);
+	walk1->reference(0, 0, 0);
+	walk1->online(0);
 	double t = 0;
-	for (t; t < 5; t += 0.005){
+	for (; t < 5; t += 0.005){
 		debug.getTime(1,true);
-		walk1->online(t);
+		walk2->online(t);
 		debug.getTime(1,false);
 		debug.getTime(2,true);
-		walk2->online(t);
+		walk1->online(t);
 		debug.getTime(2,false);
 	}
 	std::cout << "25%" << std::endl;
-	walk1->reference(velocity, 0, 0);
 	walk2->reference(velocity, 0, 0);
-	for (t; t < 10; t += 0.005){
+	walk1->reference(velocity, 0, 0);
+	for (; t < 10; t += 0.005){
 		debug.getTime(1,true);
-		walk1->online(t);
+		walk2->online(t);
 		debug.getTime(1,false);
 		debug.getTime(2,true);
-		walk2->online(t);
+		walk1->online(t);
 		debug.getTime(2,false);
 	}
 	std::cout << "50%" << std::endl;
-	walk1->reference(0, velocity, 0);
 	walk2->reference(0, velocity, 0);
-	for (t; t < 20; t += 0.005){
+	walk1->reference(0, velocity, 0);
+	for (; t < 20; t += 0.005){
 		debug.getTime(1,true);
-		walk1->online(t);
+		walk2->online(t);
 		debug.getTime(1,false);
 		debug.getTime(2,true);
-		walk2->online(t);
+		walk1->online(t);
 		debug.getTime(2,false);
 	}
 	std::cout << "75%" << std::endl;
-	walk1->reference(velocity, 0, velocity);
 	walk2->reference(velocity, 0, velocity);
-	for (t; t < 30; t += 0.005){
+	walk1->reference(velocity, 0, velocity);
+	for (; t < 30; t += 0.005){
 		debug.getTime(1,true);
-		walk1->online(t);
+		walk2->online(t);
 		debug.getTime(1,false);
 		debug.getTime(2,true);
-		walk2->online(t);
+		walk1->online(t);
 		debug.getTime(2,false);
 	}
 
@@ -152,7 +152,5 @@ int main() {
 	std::cout << "Mean iteration duration with LSSOL   : " << debug.computeInterval(1) << " us" << std::endl;
 	std::cout << "Mean iteration duration with QPOASES : " << debug.computeInterval(2) << " us" << std::endl;
 
-	delete walk2;
-	delete walk1;
 	return 0;
 }

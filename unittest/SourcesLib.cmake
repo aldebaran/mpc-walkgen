@@ -87,11 +87,17 @@ set(timer_SRC
 set(test-qpsolver_SRC test-qpsolver.cpp)
 
 #
-set(test-all-solvers_SRC test-all-solvers.cpp)
+set(test-all-solvers_SRC
+        test-all-solvers.cpp
+        ../src/common/qp-solvers/qpoases-solver.cpp
+        ../src/common/qp-solvers/lssol-solver.cpp
+        ../src/sharedpgtypes.cpp
+        ../src/sharedpgtypes-humanoid.cpp
+        ../src/humanoid/types.cpp        )
 
 #
 set(bench-qpsolver_SRC bench-qpsolver.cpp)
 
 # tests of the walkgen
 set(test-walkgen_SRC  test-walkgen.cpp ../src/common/mpc-debug.cpp)
-set(bench-solvers_SRC  bench-solvers.cpp)
+set(bench-solvers_SRC  bench-solvers.cpp ../src/common/mpc-debug.cpp)
