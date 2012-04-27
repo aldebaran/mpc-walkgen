@@ -55,7 +55,9 @@ if(LSSOL_FOUND AND QPOASES_FOUND)
   addUnitTest(test-all-solvers "solver" "${solverAvailable}")
 endif(LSSOL_FOUND AND QPOASES_FOUND)
 
-addUnitTest(test-walkgen  "mpc-walkgen" "")
+if(QPOASES_FOUND)
+  addUnitTest(test-walkgen  "mpc-walkgen" "")
+endif(QPOASES_FOUND)
 
 # a simple execution of the walkgen.
 if(LSSOL_FOUND AND QPOASES_FOUND)
