@@ -94,64 +94,48 @@ SET(${PROJECT_NAME}_HEADERS
 )
 
 SET(mpc-walkgen_SRC
- src/sharedpgtypes-humanoid.cpp
- src/walkgen-abstract-humanoid.cpp
- src/sharedpgtypes-common.cpp
- src/humanoid/orientations-preview.cpp
-
- src/common/qp-solver.h
- src/common/qp-solvers/lssol-solver.h
- src/common/qp-solvers/qpoases-solver.h
- src/common/qp-solver.cpp
- src/common/qp-matrix.cpp
- src/common/qp-vector.cpp
- src/common/qp-matrix.h
- src/common/qp-vector.h
- src/common/common-types.h
- src/common/common-types.cpp
- src/common/tools.h
- src/common/tools-inl.h
- src/common/tools.cpp
- src/common/interpolation.cpp
- src/common/interpolation.h
- src/common/mpc-debug.cpp
- src/common/mpc-debug.h
- src/common/gettimeofday.cpp
- src/common/gettimeofday.h
-
-
- src/humanoid/state-solver.cpp
- src/humanoid/state-solver.h
-
-
- src/humanoid/rigid-body-system.h
- src/humanoid/rigid-body.h
- src/humanoid/rigid-bodies/com-body.h
- src/humanoid/rigid-bodies/foot-body.h
- src/humanoid/rigid-body-system.cpp
- src/humanoid/rigid-body.cpp
- src/humanoid/rigid-bodies/com-body.cpp
- src/humanoid/rigid-bodies/foot-body.cpp
-
- src/humanoid/qp-generator.cpp
- src/humanoid/qp-preview.cpp
-
-
- src/humanoid/types.cpp
- src/humanoid/walkgen-humanoid.cpp
-
-
- src/humanoid/orientations-preview.h
-
-
- src/humanoid/qp-generator.h
- src/humanoid/qp-preview.h
-
-
- src/humanoid/types.h
- src/humanoid/walkgen-humanoid.h
-
-
+  src/common/common-types.cpp
+  src/common/common-types.h
+  src/common/gettimeofday.cpp
+  src/common/gettimeofday.h
+  src/common/interpolation.cpp
+  src/common/interpolation.h
+  src/common/mpc-debug.cpp
+  src/common/mpc-debug.h
+  src/common/qp-matrix.cpp
+  src/common/qp-matrix.h
+  src/common/qp-solver.cpp
+  src/common/qp-solver.h
+  src/common/qp-solvers/lssol-solver.h
+  src/common/qp-solvers/qpoases-solver.h
+  src/common/qp-vector.cpp
+  src/common/qp-vector.h
+  src/common/tools.cpp
+  src/common/tools.h
+  src/common/tools-inl.h
+  src/humanoid/orientations-preview.cpp
+  src/humanoid/orientations-preview.h
+  src/humanoid/qp-generator.cpp
+  src/humanoid/qp-generator.h
+  src/humanoid/qp-preview.cpp
+  src/humanoid/qp-preview.h
+  src/humanoid/rigid-bodies/com-body.cpp
+  src/humanoid/rigid-bodies/com-body.h
+  src/humanoid/rigid-bodies/foot-body.cpp
+  src/humanoid/rigid-bodies/foot-body.h
+  src/humanoid/rigid-body.cpp
+  src/humanoid/rigid-body.h
+  src/humanoid/rigid-body-system.cpp
+  src/humanoid/rigid-body-system.h
+  src/humanoid/state-solver.cpp
+  src/humanoid/state-solver.h
+  src/humanoid/types.cpp
+  src/humanoid/types.h
+  src/humanoid/walkgen-humanoid.cpp
+  src/humanoid/walkgen-humanoid.h
+  src/sharedpgtypes-common.cpp
+  src/sharedpgtypes-humanoid.cpp
+  src/walkgen-abstract-humanoid.cpp
 )
 
 if(LSSOL_FOUND)
