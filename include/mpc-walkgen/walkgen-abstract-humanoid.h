@@ -18,7 +18,6 @@
 
 
 #include <mpc-walkgen/sharedpgtypes-humanoid.h>
-#include <mpc-walkgen/walkgen-abstract.h>
 
 #include <Eigen/Core>
 
@@ -26,8 +25,7 @@
 
 namespace MPCWalkgen
 {
-  class  WalkgenAbstractHumanoid:
-                public WalkgenAbstract
+  class  WalkgenAbstractHumanoid
   {
             //
             // Public methods:

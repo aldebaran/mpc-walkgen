@@ -4,12 +4,14 @@
 
 #ifndef _SHARED_PG_TYPE_HUMANOID
 #define  _SHARED_PG_TYPE_HUMANOID
-#include <mpc-walkgen/api.h>
 
+#include <mpc-walkgen/sharedpgtypes-common.h>
 #include <Eigen/Dense>
 #include <vector>
-#include <mpc-walkgen/solvers.h>
-#include <mpc-walkgen/sharedpgtypes.h>
+
+
+
+
 
 namespace MPCWalkgen
 {
@@ -34,6 +36,8 @@ namespace MPCWalkgen
 		RIGHT_FOOT,
 		COM
 	};
+
+
 	/// \}
 
 	//
@@ -42,6 +46,9 @@ namespace MPCWalkgen
 
 	/// \name Structures
 	/// \{
+
+
+
 	struct MPC_WALKGEN_API FootData{
 		double soleWidth;
 		double soleHeight;

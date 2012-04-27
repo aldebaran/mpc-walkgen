@@ -86,19 +86,16 @@ CONFIG_FILES(include/mpc-walkgen/solvers.h)
 # Define the set of headers to be installed
 SET(${PROJECT_NAME}_HEADERS
   include/mpc-walkgen/api.h
-  include/mpc-walkgen/sharedpgtypes.h
   include/mpc-walkgen/sharedpgtypes-humanoid.h
-  include/mpc-walkgen/walkgen-abstract.h
+  include/mpc-walkgen/sharedpgtypes-common.h
   include/mpc-walkgen/walkgen-abstract-humanoid.h
   ${CMAKE_BINARY_DIR}/include/mpc-walkgen/solvers.h
 )
 
 SET(mpc-walkgen_SRC
- src/sharedpgtypes.cpp
  src/sharedpgtypes-humanoid.cpp
- src/walkgen-abstract.cpp
  src/walkgen-abstract-humanoid.cpp
-
+ src/sharedpgtypes-common.cpp
  src/humanoid/orientations-preview.cpp
 
  src/common/qp-solver.h

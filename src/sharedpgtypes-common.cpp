@@ -1,4 +1,4 @@
-#include <mpc-walkgen/sharedpgtypes.h>
+#include <mpc-walkgen/sharedpgtypes-common.h>
 
 namespace MPCWalkgen
 {

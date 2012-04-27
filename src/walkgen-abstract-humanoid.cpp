@@ -3,9 +3,7 @@
 namespace MPCWalkgen
 {
 
-  WalkgenAbstractHumanoid::WalkgenAbstractHumanoid()
-    :WalkgenAbstract()
-  {}
+  WalkgenAbstractHumanoid::WalkgenAbstractHumanoid(){}
 
   WalkgenAbstractHumanoid::~WalkgenAbstractHumanoid(){}
 

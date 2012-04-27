@@ -25,9 +25,7 @@ set(solver_SRC
   ../src/common/qp-matrix.cpp
   ../src/common/qp-vector.cpp
   ../src/humanoid/types.cpp
-  ../src/sharedpgtypes.cpp
   ../src/sharedpgtypes-humanoid.cpp
-  ../src/walkgen-abstract.cpp
   ../src/walkgen-abstract-humanoid.cpp
 )
 
@@ -37,9 +35,7 @@ set(test-qpsolver_SRC
 	../src/common/qp-solver.cpp
 	../src/common/qp-matrix.cpp
 	../src/humanoid/types.cpp
- 	../src/sharedpgtypes.cpp
         ../src/sharedpgtypes-humanoid.cpp
-        ../src/walkgen-abstract.cpp
         ../src/walkgen-abstract-humanoid.cpp
 )
 
@@ -51,9 +47,7 @@ set(test-all-solvers_SRC
         ../src/common/qp-solvers/qpoases-solver.cpp
         ../src/common/qp-matrix.cpp
         ../src/humanoid/types.cpp
-        ../src/sharedpgtypes.cpp
         ../src/sharedpgtypes-humanoid.cpp
-        ../src/walkgen-abstract.cpp
         ../src/walkgen-abstract-humanoid.cpp
 )
 
@@ -63,9 +57,7 @@ set(bench-qpsolver_SRC
   ../src/common/qp-solver.cpp
   ../src/common/qp-matrix.cpp
   ../src/humanoid/types.cpp
-  ../src/sharedpgtypes.cpp
   ../src/sharedpgtypes-humanoid.cpp
-  ../src/walkgen-abstract.cpp
   ../src/walkgen-abstract-humanoid.cpp
 
 )
@@ -91,7 +83,6 @@ set(test-all-solvers_SRC
         test-all-solvers.cpp
         ../src/common/qp-solvers/qpoases-solver.cpp
         ../src/common/qp-solvers/lssol-solver.cpp
-        ../src/sharedpgtypes.cpp
         ../src/sharedpgtypes-humanoid.cpp
         ../src/humanoid/types.cpp        )
 
