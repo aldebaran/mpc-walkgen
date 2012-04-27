@@ -149,8 +149,8 @@ int main() {
 	std::cout << "100%" << std::endl;
 
 	std::cout << "Walkgen test :" << std::endl;
-	std::cout << "Mean iteration duration with LSSOL   : " << debug.computeInterval(1) << " us" << std::endl;
-	std::cout << "Mean iteration duration with QPOASES : " << debug.computeInterval(2) << " us" << std::endl;
+	std::cout << "Mean iteration duration with QPOASES   : " << debug.computeInterval(1) << " us" << std::endl;
+	std::cout << "Mean iteration duration with LSSOL : " << debug.computeInterval(2) << " us" << std::endl;
 
 	return 0;
 }
