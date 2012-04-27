@@ -1,4 +1,5 @@
 #include "qp-matrix.h"
+#include "tools.h"
 #include <Eigen/Cholesky>
 #include <cmath>
 
@@ -100,7 +101,6 @@ void QPMatrix::computeCholesky(const MatrixXd & partialCholesky){
 		Eigen::MatrixXd & chol = choleskyMatrix_[vectorElem_];
 		int imin=partialCholesky.rows();
 		if (imin>0){
-			chol.fill(0);
 			chol.block(0,0,imin,imin)=partialCholesky;
 			double tmp;
 			for(int j=0;j<nbCols_;++j){
@@ -110,27 +110,28 @@ void QPMatrix::computeCholesky(const MatrixXd & partialCholesky){
 					}
 					tmp = matrix_[vectorElem_](j,j);
 					for(int k=0;k<j;++k){
-						tmp -= chol(k,j)*chol(k,j);
+						tmp -= pow2(chol(k,j));
 					}
-					if (fabs(tmp)>EPSILON){
+					if (tmp>EPSILON){
 						chol(j,j) = sqrt(tmp);
 					}else{
 						chol(j,j) = 0;
 					}
 
-				}
-				for(int i=std::max(j+1,imin);i<nbRows_;++i){
-					tmp=matrix_[vectorElem_](j,i);
-					for(int k=0;k<j;++k){
-						tmp -= chol(k,j)*chol(k,i);
-					}
-					if (fabs(tmp)>EPSILON && fabs(chol(j,j))>EPSILON){
-						chol(j,i) = tmp / chol(j,j);
-					}else{
-						chol(j,i) = 0;
-					}
-				}
-			}
+                               }
+                               for(int i=std::max(j+1,imin);i<nbRows_;++i){
+                                       tmp=matrix_[vectorElem_](j,i);
+                                       for(int k=0;k<j;++k){
+                                               tmp -= chol(k,j)*chol(k,i);
+                                       }
+                                       if (fabs(tmp)>EPSILON && fabs(chol(j,j))>EPSILON){
+                                               chol(j,i) = tmp / chol(j,j);
+                                       }else{
+                                               chol(j,i) = 0;
+                                       }
+                               }
+                        }
+
 		}else{
 			chol=matrix_[vectorElem_].llt().matrixL().transpose();
 		}
