@@ -2,10 +2,11 @@
 # Requires at least CMake 2.6 to configure the package.
 cmake_minimum_required(VERSION 2.8)
 project(mpc-walkgen)
+
 # Define properties of the project
 SET(PROJECT_NAME mpc-walkgen)
 SET(PROJECT_DESCRIPTION "MPC Walking pattern generator for Humanoids")
-SET(PROJECT_URL "")
+SET(PROJECT_URL "https://gforge.inria.fr/projects/mpc-walkgen")
 
 find_package(qibuild) # it does not matter if qibuild is not found
 
