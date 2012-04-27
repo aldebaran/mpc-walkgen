@@ -13,7 +13,7 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <mpc-walkgen/solvers.h>
+#include <mpc-walkgen/qp-solver-type.h>
 #include <mpc-walkgen/api.h>
 
 #include <Eigen/Dense>

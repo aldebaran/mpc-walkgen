@@ -106,7 +106,7 @@ namespace MPCWalkgen
 	    /// \}
   };
   /*! Factory of Pattern generator interface. */
-  MPC_WALKGEN_API WalkgenAbstractHumanoid * mpcFactory(Solver solvertype);
+  MPC_WALKGEN_API WalkgenAbstractHumanoid * mpcFactory(QPSolverType solvertype);
 }
 
 

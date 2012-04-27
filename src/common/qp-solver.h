@@ -51,7 +51,7 @@ namespace MPCWalkgen{
 			void varOrder(const Eigen::VectorXi & order);
 			void ctrOrder(const Eigen::VectorXi & order);
 
-			virtual Solver getType() const =0;
+			virtual QPSolverType getType() const =0;
 
 			// can we / should we use the cholesly matrix
 			virtual bool useCholesky() const =0;

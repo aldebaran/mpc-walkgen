@@ -29,8 +29,8 @@ namespace MPCWalkgen{
 			virtual ~QPOasesSolver();
 
 			// accessors
-			inline Solver getType() const
-			{ return QPOASES; }
+			inline QPSolverType getType() const
+			{ return QPSOLVERTYPE_QPOASES; }
 			inline bool useCholesky() const
 			{ return false; }
 			inline void useCholesky(bool /*ch*/)

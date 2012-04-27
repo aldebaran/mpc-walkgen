@@ -69,9 +69,9 @@ endif()
 # solverList: the enum list
 macro(addSolver solver solverList)
   if(NOT ${solverList})
-    SET(${solverList} "\t\t${solver}")
+    SET(${solverList} "\t\tQPSOLVERTYPE_${solver}")
   else(NOT solverList)
-    SET(${solverList} "${${solverList}},\n\t\t${solver}")
+    SET(${solverList} "${${solverList}},\n\t\tQPSOLVERTYPE_${solver}")
   endif(NOT ${solverList})
 endmacro(addSolver)
 
@@ -83,14 +83,14 @@ endif(LSSOL_FOUND)
 if(QPOASES_FOUND)
   addSolver("QPOASES" _SOLVER_LIST_)
 endif(QPOASES_FOUND)
-CONFIG_FILES(include/mpc-walkgen/solvers.h)
+CONFIG_FILES(include/mpc-walkgen/qp-solver-type.h)
 # Define the set of headers to be installed
 SET(${PROJECT_NAME}_HEADERS
   include/mpc-walkgen/api.h
   include/mpc-walkgen/sharedpgtypes-humanoid.h
   include/mpc-walkgen/sharedpgtypes-common.h
   include/mpc-walkgen/walkgen-abstract-humanoid.h
-  ${CMAKE_BINARY_DIR}/include/mpc-walkgen/solvers.h
+  ${CMAKE_BINARY_DIR}/include/mpc-walkgen/qp-solver-type.h
 )
 
 SET(mpc-walkgen_SRC

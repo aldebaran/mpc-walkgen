@@ -22,7 +22,7 @@ using namespace MPCWalkgen;
 using namespace Eigen;
 
 
-WalkgenAbstractHumanoid* MPCWalkgen::mpcFactory(Solver solvertype) {
+WalkgenAbstractHumanoid* MPCWalkgen::mpcFactory(QPSolverType solvertype) {
 	WalkgenAbstractHumanoid* zmpVra = new WalkgenHumanoid(solvertype);
 	return zmpVra;
 }
@@ -31,7 +31,7 @@ WalkgenAbstractHumanoid* MPCWalkgen::mpcFactory(Solver solvertype) {
 
 
 // Implementation of the private interface
-WalkgenHumanoid::WalkgenHumanoid(Solver solvertype)
+WalkgenHumanoid::WalkgenHumanoid(QPSolverType solvertype)
 	: WalkgenAbstractHumanoid()
 	,generalData_()
 	,solver_(0x0)
@@ -49,12 +49,12 @@ WalkgenHumanoid::WalkgenHumanoid(Solver solvertype)
 {
 
 #ifdef USE_QPOASES
-    if (solvertype == QPOASES)
+    if (solvertype == QPSOLVERTYPE_QPOASES)
       solver_ = new QPOasesSolver(2*generalData_.nbSamplesQP, 0, 2*generalData_.nbSamplesQP+10, 25);
 #endif //USE_QPOASES
 
 #ifdef USE_LSSOL
-    if (solvertype == LSSOL)
+    if (solvertype == QPSOLVERTYPE_LSSOL)
       solver_ = new LSSOLSolver(2*generalData_.nbSamplesQP, 0, 2*generalData_.nbSamplesQP+10, 25);
 #endif //USE_LSSOL
 
