@@ -51,9 +51,7 @@ addUnitTest(bench-qpsolver   "solver;timer" "${solverAvailable}")
 addUnitTest(test-qpsolver    "solver" "${solverAvailable}")
 
 ## Compare LSSOL and QPOASES.
-if(LSSOL_FOUND AND QPOASES_FOUND)
-  addUnitTest(test-all-solvers "solver" "${solverAvailable}")
-endif(LSSOL_FOUND AND QPOASES_FOUND)
+addUnitTest(test-all-solvers "solver" "${solverAvailable}")
 
 if(QPOASES_FOUND)
   addUnitTest(test-walkgen  "mpc-walkgen" "")

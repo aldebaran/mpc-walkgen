@@ -29,38 +29,6 @@ set(solver_SRC
   ../src/walkgen-abstract-humanoid.cpp
 )
 
-## Testing all the solvers
-set(test-qpsolver_SRC 
-	test-qpsolver.cpp
-	../src/common/qp-solver.cpp
-	../src/common/qp-matrix.cpp
-	../src/humanoid/types.cpp
-        ../src/sharedpgtypes-humanoid.cpp
-        ../src/walkgen-abstract-humanoid.cpp
-)
-
-# 
-set(test-all-solvers_SRC 
-        test-all-solvers.cpp
-        ../src/common/qp-solver.cpp
-        ../src/common/qp-solvers/lssol-solver.cpp
-        ../src/common/qp-solvers/qpoases-solver.cpp
-        ../src/common/qp-matrix.cpp
-        ../src/humanoid/types.cpp
-        ../src/sharedpgtypes-humanoid.cpp
-        ../src/walkgen-abstract-humanoid.cpp
-)
-
-# 
-set(bench-qpsolver_SRC 
-  bench-qpsolver.cpp
-  ../src/common/qp-solver.cpp
-  ../src/common/qp-matrix.cpp
-  ../src/humanoid/types.cpp
-  ../src/sharedpgtypes-humanoid.cpp
-  ../src/walkgen-abstract-humanoid.cpp
-
-)
 if(LSSOL_FOUND)
   list(APPEND solver_SRC ../src/common/qp-solvers/lssol-solver.cpp)
 endif(LSSOL_FOUND)
@@ -69,25 +37,26 @@ if(QPOASES_FOUND)
   list(APPEND solver_SRC ../src/common/qp-solvers/qpoases-solver.cpp)
 endif(QPOASES_FOUND)
 
+## Testing all the solvers
+set(test-qpsolver_SRC 
+  test-qpsolver.cpp
+)
+
+# 
+set(test-all-solvers_SRC 
+  test-all-solvers.cpp
+)
+
+# 
+set(bench-qpsolver_SRC 
+  bench-qpsolver.cpp
+)
+
 # for the timer
 set(timer_SRC
   ../src/common/mpc-debug.cpp
   ../src/common/gettimeofday.cpp
 )
-
-## Testing all the solvers
-set(test-qpsolver_SRC test-qpsolver.cpp)
-
-#
-set(test-all-solvers_SRC
-        test-all-solvers.cpp
-        ../src/common/qp-solvers/qpoases-solver.cpp
-        ../src/common/qp-solvers/lssol-solver.cpp
-        ../src/sharedpgtypes-humanoid.cpp
-        ../src/humanoid/types.cpp        )
-
-#
-set(bench-qpsolver_SRC bench-qpsolver.cpp)
 
 # tests of the walkgen
 set(test-walkgen_SRC  test-walkgen.cpp ../src/common/mpc-debug.cpp)
