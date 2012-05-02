@@ -54,7 +54,11 @@ addUnitTest(test-qpsolver    "solver" "${solverAvailable}")
 addUnitTest(test-all-solvers "solver" "${solverAvailable}")
 
 if(QPOASES_FOUND)
-  addUnitTest(test-walkgen  "mpc-walkgen" "")
+  addUnitTest(test-humanoid  "mpc-walkgen" "")
+endif(QPOASES_FOUND)
+
+if(QPOASES_FOUND)
+  addUnitTest(test-zebulon  "mpc-walkgen" "")
 endif(QPOASES_FOUND)
 
 # a simple execution of the walkgen.
