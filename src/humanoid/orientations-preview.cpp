@@ -34,6 +34,7 @@
 #include <vector>
 
 using namespace MPCWalkgen;
+using namespace Humanoid;
 using namespace std;
 
 const double OrientationsPreview::EPS_ = 0.00000001;

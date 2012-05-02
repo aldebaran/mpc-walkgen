@@ -22,45 +22,47 @@
 
 
 namespace MPCWalkgen{
+  namespace Humanoid{
+    class QPPreview{
+    private:
+      static const double EPS_;
 
-	class QPPreview{
-		private:
-			static const double EPS_;
+    public:
+      QPPreview(VelReference * velRef, RigidBodySystem * robot, const MPCData * generalData);
 
-		public:
-			QPPreview(VelReference * velRef, RigidBodySystem * robot, const MPCData * generalData);
+      ~QPPreview();
 
-			~QPPreview();
+      void previewSamplingTimes(double firstSamplingPeriod, MPCSolution &solution);
 
-			void previewSamplingTimes(double firstSamplingPeriod, MPCSolution &solution);
+      void previewSupportStates(const double currentTime,
+                                const double FirstIterationDynamicsDuration, MPCSolution &result);
 
-			void previewSupportStates(const double currentTime,
-					const double FirstIterationDynamicsDuration, MPCSolution &result);
+      void computeRotationMatrix(MPCSolution &result);
 
-			void computeRotationMatrix(MPCSolution &result);
+      inline SelectionMatrices &selectionMatrices(){return selectionMatrices_;}
 
-			inline SelectionMatrices &selectionMatrices(){return selectionMatrices_;}
+      inline const Eigen::MatrixXd &rotationMatrix() const{return rotationMatrix_;}
 
-			inline const Eigen::MatrixXd &rotationMatrix() const{return rotationMatrix_;}
+      inline const Eigen::MatrixXd &rotationMatrix2() const{return rotationMatrix2_;}
 
-			inline const Eigen::MatrixXd &rotationMatrix2() const{return rotationMatrix2_;}
+    private:
 
-		private:
-
-			void buildSelectionMatrices(MPCSolution & result);
+      void buildSelectionMatrices(MPCSolution & result);
 
 
 
-		private:
-			RigidBodySystem * robot_;
-			const MPCData * generalData_;
-			StateSolver * statesolver_;	//TODO: Name statesolver is bad
+    private:
+      RigidBodySystem * robot_;
+      const MPCData * generalData_;
+      StateSolver * statesolver_;	//TODO: Name statesolver is bad
 
-			SelectionMatrices selectionMatrices_;
-			Eigen::MatrixXd rotationMatrix_;
-			Eigen::MatrixXd rotationMatrix2_;
+      SelectionMatrices selectionMatrices_;
+      Eigen::MatrixXd rotationMatrix_;
+      Eigen::MatrixXd rotationMatrix2_;
 
-	};
+    };
+
+  }
 }
 
 /*! \fn MPCWalkgen::QPPreview::QPPreview(VelReference * velRef, RigidBodySystem * robot, const MPCData * generalData)
@@ -68,7 +70,7 @@ namespace MPCWalkgen{
 */
 
 /*! \fn void MPCWalkgen::QPPreview::previewSupportStates(const double currentTime,
-					const double FirstIterationDynamicsDuration,  MPCSolution & result)
+                                        const double FirstIterationDynamicsDuration,  MPCSolution & result)
 * \brief Preview support states for the defined horizon
 * \param [in] currentTime current time (synchronized with QP sampling time)
 * \param [in] FirstIterationDynamicsDuration Duration of the first iteration

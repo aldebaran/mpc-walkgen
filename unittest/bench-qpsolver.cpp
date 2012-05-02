@@ -18,7 +18,7 @@
 
 using namespace Eigen;
 using namespace MPCWalkgen;
-
+using namespace Humanoid;
 /*
   Test whole body problem
 */
@@ -217,9 +217,9 @@ bool testBenchmarkQP (QPSolver &qp, unsigned fDofWb, unsigned fNconstraints)
 
   bool isSuccess = true;
 
-  MPCWalkgen::MPCDebug debug(true);
+  MPCDebug debug(true);
 
-  MPCWalkgen::MPCSolution result;
+  MPCSolution result;
   result.initialSolution.resize(6+fDofWb);
   result.initialConstraints.resize(fNconstraints+6+fDofWb);
 

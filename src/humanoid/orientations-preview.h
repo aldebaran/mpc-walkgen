@@ -18,7 +18,7 @@
 
 namespace MPCWalkgen
 {
-
+namespace Humanoid{
 
 struct  COMState_s2
 {
@@ -206,5 +206,6 @@ typedef struct COMState_s2 COMState2;
 
 
   };
+}
 }
 #endif /* ORIENTATIONSPREVIEW_H_ */

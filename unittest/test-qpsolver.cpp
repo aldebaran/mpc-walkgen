@@ -24,6 +24,7 @@
 
 using namespace Eigen;
 using namespace MPCWalkgen;
+using namespace Humanoid;
 
 /* Solve a simple quadratic programming problem: find values of x that minimize
 f(x) = 1/2 x1^2 + x2^2 -x1.x2 - 2x1 - 6x2

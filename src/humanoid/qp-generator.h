@@ -24,64 +24,65 @@
 #include <vector>
 
 namespace MPCWalkgen{
+  namespace Humanoid{
+    class QPGenerator{
 
-	class QPGenerator{
+    public:
+      QPGenerator(QPPreview * preview, QPSolver * solver,
+                  VelReference * velRef, QPPonderation * ponderation,
+                  RigidBodySystem * robot, const MPCData * generalData);
+      ~QPGenerator();
 
-		public:
-			QPGenerator(QPPreview * preview, QPSolver * solver,
-					VelReference * velRef, QPPonderation * ponderation,
-					RigidBodySystem * robot, const MPCData * generalData);
-			~QPGenerator();
+      void precomputeObjective();
 
-			void precomputeObjective();
+      void buildObjective(const MPCSolution & result);
 
-			void buildObjective(const MPCSolution & result);
+      void buildConstraints(const MPCSolution & result);
 
-			void buildConstraints(const MPCSolution & result);
+      void computeWarmStart(MPCSolution & result);
 
-			void computeWarmStart(MPCSolution & result);
+      void convertCopToJerk(MPCSolution & result);
 
-			void convertCopToJerk(MPCSolution & result);
+      void computeReferenceVector(const MPCSolution & result);
 
-			void computeReferenceVector(const MPCSolution & result);
+      void display(const MPCSolution & result, const std::string & filename) const;
 
-			void display(const MPCSolution & result, const std::string & filename) const;
+    private:
 
-		private:
+      void buildInequalitiesFeet(const MPCSolution & result);
 
-			void buildInequalitiesFeet(const MPCSolution & result);
+      void buildConstraintsFeet(const MPCSolution & result);
 
-			void buildConstraintsFeet(const MPCSolution & result);
+      void buildConstraintsCOP(const MPCSolution & result);
 
-			void buildConstraintsCOP(const MPCSolution & result);
+    private:
 
-		private:
+      QPPreview * preview_;
+      QPSolver * solver_;
+      RigidBodySystem * robot_;
+      VelReference * velRef_;
+      QPPonderation * ponderation_;
+      const MPCData * generalData_;
 
-		    QPPreview * preview_;
-		    QPSolver * solver_;
-		    RigidBodySystem * robot_;
-		    VelReference * velRef_;
-		    QPPonderation * ponderation_;
-		    const MPCData * generalData_;
+      Eigen::VectorXd tmpVec_;
+      Eigen::VectorXd tmpVec2_;
+      Eigen::MatrixXd tmpMat_;
+      Eigen::MatrixXd tmpMat2_;
 
-		    Eigen::VectorXd tmpVec_;
-		    Eigen::VectorXd tmpVec2_;
-		    Eigen::MatrixXd tmpMat_;
-		    Eigen::MatrixXd tmpMat2_;
+      RelativeInequalities feetInequalities_;//TODO: Maybe should be instantiated in robot_
 
-		    RelativeInequalities feetInequalities_;//TODO: Maybe should be instantiated in robot_
+      std::vector<Eigen::MatrixXd> Qconst_;
+      std::vector<Eigen::MatrixXd> QconstN_;
+      std::vector<Eigen::MatrixXd> choleskyConst_;
+      std::vector<Eigen::MatrixXd> pconstCoM_;
+      std::vector<Eigen::MatrixXd> pconstVc_;
+      std::vector<Eigen::MatrixXd> pconstRef_;
 
-		    std::vector<Eigen::MatrixXd> Qconst_;
-		    std::vector<Eigen::MatrixXd> QconstN_;
-		    std::vector<Eigen::MatrixXd> choleskyConst_;
-		    std::vector<Eigen::MatrixXd> pconstCoM_;
-		    std::vector<Eigen::MatrixXd> pconstVc_;
-		    std::vector<Eigen::MatrixXd> pconstRef_;
-
-		    ConvexHull FootFeasibilityEdges;
-		    ConvexHull COPFeasibilityEdges;
-		    ConvexHull hull;
-	};
+      ConvexHull FootFeasibilityEdges;
+      ConvexHull COPFeasibilityEdges;
+      ConvexHull hull;
+    };
+  }
 }
 
 /*! \fn MPCWalkgen::QPGenerator::QPGenerator(QPPreview * preview, QPSolver * solver,

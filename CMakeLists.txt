@@ -137,8 +137,8 @@ SET(mpc-walkgen_SRC
   src/humanoid/state-solver.h
   src/humanoid/types.cpp
   src/humanoid/types.h
-  src/humanoid/walkgen-humanoid.cpp
-  src/humanoid/walkgen-humanoid.h
+  src/humanoid/walkgen.cpp
+  src/humanoid/walkgen.h
   src/sharedpgtypes-humanoid.cpp
   src/walkgen-abstract-humanoid.cpp
 

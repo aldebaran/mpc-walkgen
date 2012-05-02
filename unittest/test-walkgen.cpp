@@ -15,6 +15,7 @@
 
 using namespace Eigen;
 using namespace MPCWalkgen;
+using namespace Humanoid;
 
 void makeScilabFile(std::string type, double time);
 void dumpTrajectory(MPCSolution & result, std::vector<std::ofstream*> & data_vec);

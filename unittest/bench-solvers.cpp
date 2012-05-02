@@ -19,7 +19,7 @@
 
 using namespace Eigen;
 using namespace MPCWalkgen;
-
+using namespace Humanoid;
 int main() {
 
 	std::cout << "0%" << std::endl;
@@ -88,8 +88,8 @@ int main() {
 	// Creat and initialize generator:
 	// -------------------------------
 
-	WalkgenAbstractHumanoid * walk1 = mpcFactory(LSSOL);
-	WalkgenAbstractHumanoid * walk2 = mpcFactory(QPOASES);
+	WalkgenAbstractHumanoid * walk1 = mpcFactory(QPSOLVERTYPE_LSSOL);
+	WalkgenAbstractHumanoid * walk2 = mpcFactory(QPSOLVERTYPE_QPOASES);
 	walk2->init(robotData, mpcData);
 	walk1->init(robotData, mpcData);
 

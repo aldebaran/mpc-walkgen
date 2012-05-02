@@ -1,11 +1,8 @@
 #include <mpc-walkgen/walkgen-abstract-humanoid.h>
 
-namespace MPCWalkgen
-{
+using namespace MPCWalkgen::Humanoid;
 
-  WalkgenAbstractHumanoid::WalkgenAbstractHumanoid(){}
+WalkgenAbstractHumanoid::WalkgenAbstractHumanoid(){}
 
-  WalkgenAbstractHumanoid::~WalkgenAbstractHumanoid(){}
+WalkgenAbstractHumanoid::~WalkgenAbstractHumanoid(){}
 
-
-}

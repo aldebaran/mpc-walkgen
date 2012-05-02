@@ -21,65 +21,65 @@
 #include <vector>
 
 namespace MPCWalkgen{
+  namespace Humanoid{
+    class RigidBodySystem{
 
-	class RigidBodySystem{
+    public:
+      RigidBodySystem(const MPCData *generalData
+                      , const Interpolation *interpolation);
+      ~RigidBodySystem();
 
-		public:
-			RigidBodySystem(const MPCData *generalData
-					, const Interpolation *interpolation);
-			~RigidBodySystem();
+      void init(const RobotData &robotData);
 
-			void init(const RobotData &robotData);
+      void computeDynamics();
 
-			void computeDynamics();
+      void interpolateBodies(MPCSolution &solution, double currentTime, const VelReference &velRef);
 
-			void interpolateBodies(MPCSolution &solution, double currentTime, const VelReference &velRef);
+      void updateBodyState(const MPCSolution &solution);
 
-			void updateBodyState(const MPCSolution &solution);
+      void firstSamplingPeriod(double firstSamplingPeriod);
 
-			void firstSamplingPeriod(double firstSamplingPeriod);
+      inline ConvexHull convexHull(HullType type, const SupportState &prwSupport, bool computeLinearSystem=true, bool rotateHull=true) const
+      {
+        ConvexHull hull;
+        convexHull(hull, type, prwSupport, computeLinearSystem, rotateHull);
+        return hull;
+      }
+      void convexHull(ConvexHull &hull, HullType type, const SupportState &prwSupport, bool computeLinearSystem=true, bool rotateHull=true) const;
 
-			inline ConvexHull convexHull(HullType type, const SupportState &prwSupport, bool computeLinearSystem=true, bool rotateHull=true) const
-			{
-				ConvexHull hull;
-				convexHull(hull, type, prwSupport, computeLinearSystem, rotateHull);
-				return hull;
-			}
-			void convexHull(ConvexHull &hull, HullType type, const SupportState &prwSupport, bool computeLinearSystem=true, bool rotateHull=true) const;
+      RigidBody *body(BodyType type);
+      const RigidBody *body(BodyType type) const;
 
-			RigidBody *body(BodyType type);
-			const RigidBody *body(BodyType type) const;
+      inline SupportState &currentSupport() {
+        return currentSupport_;
+      };
+      inline const SupportState &currentSupport() const {
+        return currentSupport_;
+      };
+      inline void currentSupport(const SupportState &currentSupport) {
+        currentSupport_ = currentSupport;
+      };
+      inline RobotData &robotData() {
+        return robotData_;
+      };
 
-			inline SupportState &currentSupport() {
-				return currentSupport_;
-			};
-			inline const SupportState &currentSupport() const {
-				return currentSupport_;
-			};
-			inline void currentSupport(const SupportState &currentSupport) {
-				currentSupport_ = currentSupport;
-			};
-			inline RobotData &robotData() {
-				return robotData_;
-			};
+    private:
+      const MPCData *generalData_;
+      RobotData robotData_;
 
-		private:
-			const MPCData *generalData_;
-			RobotData robotData_;
+      RigidBody *CoM_;
+      RigidBody *leftFoot_;
+      RigidBody *rightFoot_;
 
-			RigidBody *CoM_;
-			RigidBody *leftFoot_;
-			RigidBody *rightFoot_;
+      SupportState currentSupport_;
 
-			SupportState currentSupport_;
+    };
 
-	};
-
-
+  }
 }
 
 /*! \fn MPCWalkgen::RigidBodySystem::RigidBodySystem(const MPCData *generalData
-					, const Interpolation *interpolation)
+                                        , const Interpolation *interpolation)
 * \brief Constructor
 */
 

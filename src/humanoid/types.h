@@ -20,35 +20,35 @@
 #include "../common/common-types.h"
 
 namespace MPCWalkgen{
+  namespace Humanoid{
+
+    enum HullType{
+      FootHull,
+      CoPHull
+    };
+
+    struct SelectionMatrices{
+      Eigen::MatrixXd V;
+      Eigen::MatrixXd VT;
+      Eigen::VectorXd VcX;
+      Eigen::VectorXd VcY;
+      Eigen::MatrixXd Vf;
+      Eigen::VectorXd VcfX;
+      Eigen::VectorXd VcfY;
+
+      SelectionMatrices(const MPCData & generalData);
+    };
 
 
-	enum HullType{
-		FootHull,
-		CoPHull
-	};
+    struct RelativeInequalities{
+      Eigen::MatrixXd DX;
+      Eigen::MatrixXd DY;
+      Eigen::VectorXd Dc;
 
-	struct SelectionMatrices{
-		Eigen::MatrixXd V;
-		Eigen::MatrixXd VT;
-		Eigen::VectorXd VcX;
-		Eigen::VectorXd VcY;
-		Eigen::MatrixXd Vf;
-		Eigen::VectorXd VcfX;
-		Eigen::VectorXd VcfY;
+      void resize(int rows, int cols);
+    };
 
-		SelectionMatrices(const MPCData & generalData);
-	};
-
-
-	struct RelativeInequalities{
-		Eigen::MatrixXd DX;
-		Eigen::MatrixXd DY;
-		Eigen::VectorXd Dc;
-
-		void resize(int rows, int cols);
-	};
-
-
+  }
 }
 
 /** @defgroup private MPCWalkgen private interface

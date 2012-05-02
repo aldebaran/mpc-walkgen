@@ -18,27 +18,27 @@
 #include <Eigen/Dense>
 
 namespace MPCWalkgen{
+  namespace Humanoid{
+    class CoMBody:public RigidBody{
+    public:
+      CoMBody(const MPCData * generalData,
+              const RobotData * robotData,
+              const Interpolation * interpolation);
+      virtual ~CoMBody();
 
-	class CoMBody:public RigidBody{
-		public:
-			CoMBody(const MPCData * generalData,
-					const RobotData * robotData,
-					const Interpolation * interpolation);
-			virtual ~CoMBody();
+      virtual void interpolate(MPCSolution & result, double currentTime, const VelReference & velRef);
 
-			virtual void interpolate(MPCSolution & result, double currentTime, const VelReference & velRef);
+    protected:
+      virtual void computeDynamicsMatrices(LinearDynamics & dyn,
+                                           double S, double T, int N, DynamicMatrixType type);
 
-		protected:
-			virtual void computeDynamicsMatrices(LinearDynamics & dyn,
-					double S, double T, int N, DynamicMatrixType type);
-
-		private:
-			void interpolateTrunkOrientation(MPCSolution & result,
-					double /*currentTime*/, const VelReference & velRef);
+    private:
+      void interpolateTrunkOrientation(MPCSolution & result,
+                                       double /*currentTime*/, const VelReference & velRef);
 
 
-	};
-
+    };
+  }
 }
 
 

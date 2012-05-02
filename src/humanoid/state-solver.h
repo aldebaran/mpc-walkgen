@@ -14,20 +14,20 @@
 #include "types.h"
 
 namespace MPCWalkgen{
+  namespace Humanoid{
+    class StateSolver{
+    public:
+      StateSolver(VelReference * velRef, const MPCData * generalData);
+      ~StateSolver();
 
-	class StateSolver{
-		public:
-			StateSolver(VelReference * velRef, const MPCData * generalData);
-			~StateSolver();
+      void setSupportState(double time, int pi, const std::vector<double> &samplingTimes_vec, SupportState & Support);
 
-			void setSupportState(double time, int pi, const std::vector<double> &samplingTimes_vec, SupportState & Support);
+    protected:
+      VelReference * velRef_;
+      const MPCData * generalData_;
 
-		protected:
-			VelReference * velRef_;
-			const MPCData * generalData_;
-
-	};
-
+    };
+  }
 }
 
 #endif //STATE_SOLVER
