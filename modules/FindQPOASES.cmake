@@ -5,13 +5,49 @@ macro(find_qpoases_2)
   find_path(${uprefix}_INCLUDE_DIRS QProblem.hpp
       PATH_SUFFIXES qpoases)
   find_library(${uprefix}_LIBRARIES qpoases)
-  set(${uprefix}_VERSION 2.0) # todo: find the version in the headers
 endmacro()
 
 macro(find_qpoases_3)
   find_path(${uprefix}_INCLUDE_DIRS qpOASES.hpp)
   find_library(${uprefix}_LIBRARIES qpOASES)
-  set(${uprefix}_VERSION 3.0) # todo: find the version  in the headers
+endmacro()
+
+macro(find_version)
+  # find QProblem.hpp in ${uprefix}_INCLUDE_DIRS and extract the qpOASES
+  # from its doxygen version
+  if(NOT "${uprefix}_VERSION")
+    # Only extract the version if it is not already set, either because we
+    # extracted it already.
+    set("${uprefix}_VERSION" "${uprefix}_VERSION-NOTFOUND")
+    if(${uprefix}_INCLUDE_DIRS)
+      find_file(_${uprefix}_QProblem_hpp
+          "QProblem.hpp"
+          PATHS "${${uprefix}_INCLUDE_DIRS}"
+          PATH_SUFFIXES "qpOASES"
+          NO_DEFAULT_PATH
+          NO_CMAKE_ENVIRONMENT_PATH
+          NO_CMAKE_PATH
+          NO_SYSTEM_ENVIRONMENT_PATH
+          NO_CMAKE_SYSTEM_PATH
+          NO_CMAKE_FIND_ROOT_PATH)
+      set_property(CACHE _${uprefix}_QProblem_hpp
+          PROPERTY TYPE INTERNAL)
+      file(STRINGS ${_${uprefix}_QProblem_hpp} _version_lines
+          REGEX "[\\]version")
+      if(NOT _${uprefix}_QProblem_hpp)
+          message(FATAL_ERROR
+              "FindQPOASES: could not find QProblem.hpp header")
+      endif()
+      list(GET _version_lines 0 _version_line)
+      string(REGEX MATCH
+          "[\\]version ([0123456789.]+)"
+          _version_match "${_version_line}")
+      if(CMAKE_MATCH_1)
+        set("${uprefix}_VERSION" "${CMAKE_MATCH_1}")
+      endif()
+    endif()
+  endif()
+  set("${uprefix}_VERSION" "${${uprefix}_VERSION}" CACHE INTERNAL "" FORCE)
 endmacro()
 
 if(DEFINED ${prefix}_FIND_VERSION)
@@ -26,6 +62,7 @@ else()
     find_qpoases_3()
   endif()
 endif()
+find_version()
 
 find_package_handle_standard_args(${prefix}
     REQUIRED_VARS ${uprefix}_INCLUDE_DIRS ${uprefix}_LIBRARIES
@@ -34,12 +71,10 @@ find_package_handle_standard_args(${prefix}
 # publish
 if(${uprefix}_FOUND)
   set("${uprefix}_FOUND" TRUE CACHE INTERNAL "" FORCE)
-  set("${uprefix}_INCLUDE_DIRS" "${${uprefix}_INCLUDE_DIRS}" CACHE PATH "")
-  set("${uprefix}_LIBRARIES" "${${uprefix}_LIBRARIES}" CACHE PATH "")
-  set("${uprefix}_VERSION" "${${uprefix}_VERSION}" CACHE STRING "")
 
   # Fill the information required by the macro PKG_CONFIG_USE_DEPENDENCY
-  set("${uprefix}_CFLAGS"  "-I${${uprefix}_INCLUDE_DIRS}" CACHE INTERNAL "" FORCE)
-  set("${uprefix}_LDFLAGS" "${${uprefix}_LIBRARIES}" CACHE INTERNAL "" FORCE)
+  set("${uprefix}_CFLAGS"  "-I${${uprefix}_INCLUDE_DIRS}"
+      CACHE INTERNAL "" FORCE)
+  set("${uprefix}_LDFLAGS" "${${uprefix}_LIBRARIES}"
+      CACHE INTERNAL "" FORCE)
 endif()
-
