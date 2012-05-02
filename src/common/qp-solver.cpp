@@ -1,5 +1,6 @@
 #include "qp-solver.h"
 
+#include <iostream>
 
 using namespace MPCWalkgen;
 using namespace Eigen;
@@ -38,15 +39,13 @@ QPMatrix & QPSolver::matrix(const QPMatrixType type){
 	switch(type){
 		case matrixA:
 			return matrixA_;
-		case matrixQ:
-			return matrixQ_;
 		default:
-			throw ("Call of QPSolver::matrix with a wrong type attribute " + type);
+			return matrixQ_;
 	}
 }
 
 
-QPVector & QPSolver::vector(const QPMatrixType type){
+QPVector & QPSolver::vector(const QPVectorType type){
 	switch(type){
 		case vectorP:
 			return vectorP_;
@@ -56,10 +55,8 @@ QPVector & QPSolver::vector(const QPMatrixType type){
 			return vectorBL_;
 		case vectorXU:
 			return vectorXU_;
-		case vectorXL:
-			return vectorXL_;
 		default:
-			throw ("Call of QPSolver::vector with a wrong type attribute " + type);
+			return vectorXL_;
 	}
 }
 

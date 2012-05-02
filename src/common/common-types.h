@@ -26,7 +26,10 @@ namespace MPCWalkgen{
 
 	enum QPMatrixType{
 		matrixQ,
-		matrixA,
+		matrixA
+	};
+
+	enum QPVectorType{
 		vectorP,
 		vectorBU,
 		vectorBL,

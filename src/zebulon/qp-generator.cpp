@@ -121,28 +121,28 @@ void QPGenerator::buildObjective() {
   solver_->matrix(matrixQ).addTerm(Qconst_[nb]);
 
   tmpVec_ = pconstCoMX_[nb] * CoM.x;
-  solver_->matrix(vectorP).addTerm(tmpVec_,0,0);
+  solver_->vector(vectorP).addTerm(tmpVec_,0);
   tmpVec_ = pconstCoMX_[nb] * CoM.y;
-  solver_->matrix(vectorP).addTerm(tmpVec_,N,0);
+  solver_->vector(vectorP).addTerm(tmpVec_,N);
 
   tmpVec_ = pconstCoMB_[nb] * CoM.x;
-  solver_->matrix(vectorP).addTerm(tmpVec_,2*N,0);
+  solver_->vector(vectorP).addTerm(tmpVec_,2*N);
   tmpVec_ = pconstCoMB_[nb] * CoM.y;
-  solver_->matrix(vectorP).addTerm(tmpVec_,3*N,0);
+  solver_->vector(vectorP).addTerm(tmpVec_,3*N);
 
   tmpVec_ = pconstBaseX_[nb] * base.x;
-  solver_->matrix(vectorP).addTerm(tmpVec_,0,0);
+  solver_->vector(vectorP).addTerm(tmpVec_,0);
   tmpVec_ = pconstBaseX_[nb] * base.y;
-  solver_->matrix(vectorP).addTerm(tmpVec_,N,0);
+  solver_->vector(vectorP).addTerm(tmpVec_,N);
 
   tmpVec_ = pconstBaseB_[nb] * base.x;
-  solver_->matrix(vectorP).addTerm(tmpVec_,2*N,0);
+  solver_->vector(vectorP).addTerm(tmpVec_,2*N);
   tmpVec_ = pconstBaseB_[nb] * base.y;
-  solver_->matrix(vectorP).addTerm(tmpVec_,3*N,0);
+  solver_->vector(vectorP).addTerm(tmpVec_,3*N);
   tmpVec_ = pconstRef_[nb] * velRef_->global.x;
-  solver_->matrix(vectorP).addTerm(tmpVec_,2*N,0);
+  solver_->vector(vectorP).addTerm(tmpVec_,2*N);
   tmpVec_ = pconstRef_[nb] * velRef_->global.y;
-  solver_->matrix(vectorP).addTerm(tmpVec_,3*N,0);
+  solver_->vector(vectorP).addTerm(tmpVec_,3*N);
 
 }
 
@@ -269,7 +269,7 @@ void QPGenerator::buildConstraints(){
   tmpVec_.segment(5*N,N) -= baseAccDynamics.S*base.x;
   tmpVec_.segment(6*N,N) -= baseAccDynamics.S*base.y;
 
-  solver_->matrix(vectorBL).addTerm(tmpVec_, nbCtr);
+  solver_->vector(vectorBL).addTerm(tmpVec_, nbCtr);
 
 
 
@@ -293,15 +293,15 @@ void QPGenerator::buildConstraints(){
   tmpVec_.segment(5*N,N) -= baseAccDynamics.S*base.x;
   tmpVec_.segment(6*N,N) -= baseAccDynamics.S*base.y;
 
-  solver_->matrix(vectorBU).addTerm(tmpVec_, nbCtr);
+  solver_->vector(vectorBU).addTerm(tmpVec_, nbCtr);
 
 
 
   tmpVec_.resize(4*N);
   tmpVec_.fill(-10e11);
-  solver_->matrix(vectorXL).addTerm(tmpVec_, nbCtr);
+  solver_->vector(vectorXL).addTerm(tmpVec_, nbCtr);
   tmpVec_.fill(10e11);
-  solver_->matrix(vectorXU).addTerm(tmpVec_, nbCtr);
+  solver_->vector(vectorXU).addTerm(tmpVec_, nbCtr);
 }
 
 void QPGenerator::computeWarmStart(MPCSolution & result){
@@ -358,14 +358,13 @@ void QPGenerator::buildObjectiveOrientation() {
 
   solverOrientation_->nbVar(N);
   solverOrientation_->nbCtr(0);
-
   solverOrientation_->matrix(matrixQ).addTerm(QconstOr_[nb]);
 
   tmpVec_ = pconstOrCoMYaw_[nb] * CoM.yaw;
-  solverOrientation_->matrix(vectorP).addTerm(tmpVec_);
+  solverOrientation_->vector(vectorP).addTerm(tmpVec_);
 
   tmpVec_ = pconstOrRef_[nb] * velRef_->global.yaw;
-  solverOrientation_->matrix(vectorP).addTerm(tmpVec_);
+  solverOrientation_->vector(vectorP).addTerm(tmpVec_);
 }
 
 void QPGenerator::buildConstraintsOrientation(){
@@ -396,7 +395,7 @@ void QPGenerator::buildConstraintsOrientation(){
   tmpVec_.segment(N,N) -= CoMAccDynamics.S*CoM.yaw;
 
 
-  solverOrientation_->matrix(vectorBL).addTerm(tmpVec_, nbCtr);
+  solverOrientation_->vector(vectorBL).addTerm(tmpVec_, nbCtr);
 
 
   tmpVec_.segment(0,N).fill(robotData.orientationLimit[0]);
@@ -407,14 +406,14 @@ void QPGenerator::buildConstraintsOrientation(){
 
   tmpVec_.segment(N,N) -= CoMAccDynamics.S*CoM.yaw;
 
-  solverOrientation_->matrix(vectorBU).addTerm(tmpVec_, nbCtr);
+  solverOrientation_->vector(vectorBU).addTerm(tmpVec_, nbCtr);
 
 
   tmpVec_.resize(N);
   tmpVec_.fill(-10e11);
-  solverOrientation_->matrix(vectorXL).addTerm(tmpVec_, nbCtr);
+  solverOrientation_->vector(vectorXL).addTerm(tmpVec_, nbCtr);
   tmpVec_.fill(10e11);
-  solverOrientation_->matrix(vectorXU).addTerm(tmpVec_, nbCtr);
+  solverOrientation_->vector(vectorXU).addTerm(tmpVec_, nbCtr);
 }
 
 void QPGenerator::computeWarmStartOrientation(MPCSolution & result){
