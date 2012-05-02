@@ -61,4 +61,6 @@ set(timer_SRC
 # tests of the walkgen
 set(test-humanoid_SRC  test-humanoid.cpp ../src/common/mpc-debug.cpp)
 set(test-zebulon_SRC  test-zebulon.cpp ../src/common/mpc-debug.cpp)
-set(bench-solvers_SRC  bench-solvers.cpp ../src/common/mpc-debug.cpp)
+
+set(bench-solvers-humanoid_SRC  bench-solvers-humanoid.cpp ../src/common/mpc-debug.cpp)
+set(bench-solvers-zebulon_SRC  bench-solvers-zebulon.cpp ../src/common/mpc-debug.cpp)

@@ -55,13 +55,12 @@ addUnitTest(test-all-solvers "solver" "${solverAvailable}")
 
 if(QPOASES_FOUND)
   addUnitTest(test-humanoid  "mpc-walkgen" "")
-endif(QPOASES_FOUND)
-
-if(QPOASES_FOUND)
   addUnitTest(test-zebulon  "mpc-walkgen" "")
 endif(QPOASES_FOUND)
 
+
 # a simple execution of the walkgen.
 if(LSSOL_FOUND AND QPOASES_FOUND)
-  addUnitTest(bench-solvers "mpc-walkgen;timer" "")
+  addUnitTest(bench-solvers-humanoid "mpc-walkgen;timer" "")
+  addUnitTest(bench-solvers-zebulon "mpc-walkgen;timer" "")
 endif(LSSOL_FOUND AND QPOASES_FOUND)
