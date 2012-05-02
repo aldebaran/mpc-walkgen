@@ -24,6 +24,16 @@ void Interpolation::computeInterpolationByJerk(VectorXd &solutionX, VectorXd &so
 	solutionY = dyn.S*state.y + dyn.U*UY;
 }
 
+void Interpolation::computeInterpolationByJerk(VectorXd &solution, const VectorXd &state,
+		 const LinearDynamics &dyn, double jerk) const{
+
+	int nbSamples = dyn.U.cols();
+	VectorXd U = VectorXd::Constant(nbSamples, jerk);
+
+	solution = dyn.S*state + dyn.U*U;
+}
+
+
 
 void Interpolation::computePolynomialNormalisedFactors( Eigen::Matrix<double,6,1> &factor,
 		const Vector3d &initialstate, const Vector3d &finalState, double T) const

@@ -87,10 +87,14 @@ CONFIG_FILES(include/mpc-walkgen/qp-solver-type.h)
 # Define the set of headers to be installed
 SET(${PROJECT_NAME}_HEADERS
   include/mpc-walkgen/api.h
-  include/mpc-walkgen/sharedpgtypes-humanoid.h
-  include/mpc-walkgen/sharedpgtypes-common.h
-  include/mpc-walkgen/walkgen-abstract-humanoid.h
   ${CMAKE_BINARY_DIR}/include/mpc-walkgen/qp-solver-type.h
+  include/mpc-walkgen/sharedpgtypes-common.h
+
+  include/mpc-walkgen/walkgen-abstract-humanoid.h
+  include/mpc-walkgen/sharedpgtypes-humanoid.h
+
+  include/mpc-walkgen/walkgen-abstract-zebulon.h
+  include/mpc-walkgen/sharedpgtypes-zebulon.h
 )
 
 SET(mpc-walkgen_SRC
@@ -113,6 +117,8 @@ SET(mpc-walkgen_SRC
   src/common/tools.cpp
   src/common/tools.h
   src/common/tools-inl.h
+  src/sharedpgtypes-common.cpp
+
   src/humanoid/orientations-preview.cpp
   src/humanoid/orientations-preview.h
   src/humanoid/qp-generator.cpp
@@ -133,9 +139,24 @@ SET(mpc-walkgen_SRC
   src/humanoid/types.h
   src/humanoid/walkgen-humanoid.cpp
   src/humanoid/walkgen-humanoid.h
-  src/sharedpgtypes-common.cpp
   src/sharedpgtypes-humanoid.cpp
   src/walkgen-abstract-humanoid.cpp
+
+  src/zebulon/qp-generator.cpp
+  src/zebulon/qp-generator.h
+  src/zebulon/rigid-bodies/com-body.cpp
+  src/zebulon/rigid-bodies/com-body.h
+  src/zebulon/rigid-bodies/base-body.cpp
+  src/zebulon/rigid-bodies/base-body.h
+  src/zebulon/rigid-body.cpp
+  src/zebulon/rigid-body.h
+  src/zebulon/rigid-body-system.cpp
+  src/zebulon/rigid-body-system.h
+  src/zebulon/types.h
+  src/zebulon/walkgen.cpp
+  src/zebulon/walkgen.h
+  src/sharedpgtypes-zebulon.cpp
+  src/walkgen-abstract-zebulon.cpp
 )
 
 if(LSSOL_FOUND)
@@ -152,6 +173,7 @@ endif(QPOASES_FOUND)
 
 # Add Boost path to include directories.
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/include)
 
 ADD_LIBRARY(mpc-walkgen SHARED ${mpc-walkgen_SRC} ${${PROJECT_NAME}_HEADERS})
 SET_TARGET_PROPERTIES(mpc-walkgen PROPERTIES SOVERSION ${PROJECT_VERSION})

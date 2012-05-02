@@ -44,6 +44,7 @@ namespace MPCWalkgen{
 			QPVector & vector(const QPMatrixType type);
 
 			void nbVar(const int nbVar);
+			inline int nbVar() const {return nbVar_;}
 			void nbCtr(const int nbCtr);
 			inline int nbCtr() const {return nbCtr_;}
 			void addNbCtr(const int addCtr);
