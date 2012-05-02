@@ -32,26 +32,6 @@ int MPCData::nbSamplesControl() const{
 }
 
 
-
-RobotData::RobotData(double mass, double CoMHeightp, double bp, double hp)
-  :CoMHeight(CoMHeightp)
-  ,robotMass(mass)
-  ,basePos(2)
-  ,b(bp)
-  ,h(hp)
-  ,baseLimit(3)
-  ,orientationLimit(3)
-{
-  basePos[0]=0;
-  basePos[1]=0;
-  baseLimit[0]=0.83;
-  baseLimit[1]=1;
-  baseLimit[2]=1.5;
-  orientationLimit[0]=6;
-  orientationLimit[1]=3;
-  orientationLimit[2]=3;
-}
-
 RobotData::RobotData()
   :CoMHeight(0.45)
   ,robotMass(15)

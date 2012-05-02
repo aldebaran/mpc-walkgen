@@ -91,7 +91,6 @@ namespace MPCWalkgen{
       std::vector<double> baseLimit;
       std::vector<double> orientationLimit;
 
-      RobotData(double mass, double CoMHeightp, double bp, double hp);
       RobotData();
     };
 
