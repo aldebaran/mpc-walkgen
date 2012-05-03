@@ -38,6 +38,8 @@ namespace MPCWalkgen{
 
       virtual void init(const RobotData &robotData, const MPCData &mpcData);
 
+      virtual void init();
+
       virtual const MPCSolution &online(double time, bool previewBodiesNextState=true);
 
       /// \name Accessors and mutators
@@ -60,6 +62,7 @@ namespace MPCWalkgen{
 
     private:
       MPCData generalData_;
+      RobotData robotData_;
 
       ::MPCWalkgen::QPSolver * solver_;
       QPGenerator * generator_;

@@ -86,9 +86,15 @@ Walkgen::~Walkgen(){
 
 }
 
-void Walkgen::init(const RobotData &robotData, const MPCData &mpcData) {
+void Walkgen::init(const RobotData &robotData, const MPCData &mpcData){
   generalData_ = mpcData;
-  robot_->init(robotData);
+  robotData_ = robotData;
+  init();
+}
+
+void Walkgen::init() {
+
+  robot_->init(robotData_);
 
   //Check if sampling periods are defined correctly
   assert(generalData_.actuationSamplingPeriod > 0);
@@ -102,13 +108,13 @@ void Walkgen::init(const RobotData &robotData, const MPCData &mpcData) {
 
   BodyState state;
 
-  state.x[0] = robotData.basePos[0];
-  state.y[0] = robotData.basePos[1];
+  state.x[0] = robotData_.basePos[0];
+  state.y[0] = robotData_.basePos[1];
   robot_->body(BASE)->state(state);
 
   state.x[0] = 0;
   state.y[0] = 0;
-  state.z[0] = robotData.CoMHeight;
+  state.z[0] = robotData_.CoMHeight;
   robot_->body(COM)->state(state);
 
   upperTimeLimitToUpdate_ = 0.0;

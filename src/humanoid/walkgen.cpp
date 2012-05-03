@@ -95,7 +95,15 @@ Walkgen::~Walkgen(){
 
 void Walkgen::init(const RobotData &robotData, const MPCData &mpcData) {
 
-  robot_->init(robotData);
+  generalData_ = mpcData;
+  robotData_ = robotData;
+
+  init();
+
+}
+
+void Walkgen::init() {
+  robot_->init(robotData_);
 
   //Check if sampling periods are defined correctly
   assert(generalData_.actuationSamplingPeriod > 0);
@@ -114,24 +122,24 @@ void Walkgen::init(const RobotData &robotData, const MPCData &mpcData) {
     }
   solver_->varOrder(order);
 
-  orientPrw_->init(mpcData, robotData);
+  orientPrw_->init(generalData_, robotData_);
 
   robot_->computeDynamics();
 
   generator_->precomputeObjective();
 
   BodyState state;
-  state.x[0] = robotData.leftFootPos[0];
-  state.y[0] = robotData.leftFootPos[1];
+  state.x[0] = robotData_.leftFootPos[0];
+  state.y[0] = robotData_.leftFootPos[1];
   robot_->body(LEFT_FOOT)->state(state);
 
-  state.x[0] = robotData.rightFootPos[0];
-  state.y[0] = robotData.rightFootPos[1];
+  state.x[0] = robotData_.rightFootPos[0];
+  state.y[0] = robotData_.rightFootPos[1];
   robot_->body(RIGHT_FOOT)->state(state);
 
   state.x[0] = 0;
   state.y[0] = 0;
-  state.z[0] = robotData.CoMHeight;
+  state.z[0] = robotData_.CoMHeight;
   robot_->body(COM)->state(state);
 
   upperTimeLimitToUpdate_ = 0.0;
