@@ -81,7 +81,11 @@ if(${uprefix}_FOUND)
   set("${uprefix}_FOUND" TRUE CACHE INTERNAL "" FORCE)
 
   # Fill the information required by the macro PKG_CONFIG_USE_DEPENDENCY
-  set("${uprefix}_CFLAGS"  "-I${${uprefix}_INCLUDE_DIRS}"
+  foreach(_dir ${uprefix}_INCLUDE_DIRS})
+    set("_incldir"  "${_incldir} -I${_dir}"
+        CACHE INTERNAL "" FORCE)
+  endforeach()
+  set("${uprefix}_CFLAGS"  "${_incldir}"
       CACHE INTERNAL "" FORCE)
   set("${uprefix}_LDFLAGS" "${${uprefix}_LIBRARIES}"
       CACHE INTERNAL "" FORCE)
