@@ -32,15 +32,17 @@ QPVector::~QPVector(){}
 void QPVector::addTerm(const VectorXd & vec, const int row)
 {
   int nbRows = vec.rows();
+  Eigen::VectorXd & out = matrix_[vectorElem_];
   for (int i=0;i<nbRows;++i){
-    matrix_[vectorElem_](rowOrder_(row+i))+=vec(i);
+    out(rowOrder_(row+i))+=vec(i);
   }
 }
 
 void QPVector::setConstantPart(const VectorXd & mat){
   int nbRows = mat.rows();
+  Eigen::VectorXd & out = constantPart_[vectorElem_];
   for (int i=0;i<=nbRows;++i){
-    constantPart_[vectorElem_](rowOrder_(i))=mat(i);
+    out(rowOrder_(i))=mat(i);
   }
 }
 

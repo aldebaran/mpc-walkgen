@@ -48,9 +48,10 @@ void QPMatrix::addTerm(const MatrixXd & mat,
 {
 	int nbRows = mat.rows();
 	int nbCols = mat.cols();
+	Eigen::MatrixXd & out = matrix_[vectorElem_];
 	for (int i=0;i<nbRows;++i){
 		for (int j=0;j<nbCols;++j){
-			matrix_[vectorElem_](rowOrder_(row+i),colOrder_(col+j))+=mat(i,j);
+			out(rowOrder_(row+i),colOrder_(col+j))+=mat(i,j);
 		}
 	}
 	choleskyMatrixOutdated_=true;
@@ -60,9 +61,10 @@ void QPMatrix::addTerm(const MatrixXd & mat,
 void QPMatrix::setConstantPart(const MatrixXd & mat){
 	int nbRows = mat.rows();
 	int nbCols = mat.cols();
+	Eigen::MatrixXd & out = constantPart_[vectorElem_];
 	for (int i=0;i<=nbRows;++i){
 		for (int j=0;j<nbCols;++j){
-			constantPart_[vectorElem_](rowOrder_(i),colOrder_(j))=mat(i,j);
+			out(rowOrder_(i),colOrder_(j))=mat(i,j);
 		}
 	}
 }
@@ -99,6 +101,7 @@ void QPMatrix::rowOrder(const Eigen::VectorXi & order){
 void QPMatrix::computeCholesky(const MatrixXd & partialCholesky){
 	if (choleskyMatrixOutdated_){
 		Eigen::MatrixXd & chol = choleskyMatrix_[vectorElem_];
+		Eigen::MatrixXd & out = matrix_[vectorElem_];
 		int imin=partialCholesky.rows();
 		if (imin>0){
 			chol.block(0,0,imin,imin)=partialCholesky;
@@ -108,7 +111,7 @@ void QPMatrix::computeCholesky(const MatrixXd & partialCholesky){
 					for(int i=0;i<j;++i){
 						chol(j,i)=0;
 					}
-					tmp = matrix_[vectorElem_](j,j);
+					tmp = out(j,j);
 					for(int k=0;k<j;++k){
 						tmp -= pow2(chol(k,j));
 					}
@@ -120,7 +123,7 @@ void QPMatrix::computeCholesky(const MatrixXd & partialCholesky){
 
                                }
                                for(int i=std::max(j+1,imin);i<nbRows_;++i){
-                                       tmp=matrix_[vectorElem_](j,i);
+                                       tmp=out(j,i);
                                        for(int k=0;k<j;++k){
                                                tmp -= chol(k,j)*chol(k,i);
                                        }
@@ -133,7 +136,7 @@ void QPMatrix::computeCholesky(const MatrixXd & partialCholesky){
                         }
 
 		}else{
-			chol=matrix_[vectorElem_].llt().matrixL().transpose();
+			chol=out.llt().matrixL().transpose();
 		}
 		choleskyMatrixOutdated_=false;
 	}
