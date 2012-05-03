@@ -50,6 +50,7 @@ namespace MPCWalkgen{
       /// \return The associated solution
       ///   If solution.newTraj is true, the method has succeeded.
       virtual const MPCSolution & online(double time, bool previewBodiesNextState = true) = 0;
+      virtual const MPCSolution & online(bool previewBodiesNextState=true) = 0;
 
       /// \name Accessors and mutators
       /// \{

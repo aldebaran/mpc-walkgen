@@ -117,6 +117,8 @@ void Walkgen::init() {
   state.z[0] = robotData_.CoMHeight;
   robot_->body(COM)->state(state);
 
+  currentRealTime_ = 0.0;
+  currentTime_ = 0.0;
   upperTimeLimitToUpdate_ = 0.0;
   upperTimeLimitToFeedback_ = 0.0;
 
@@ -126,7 +128,13 @@ void Walkgen::init() {
   newVelRef_.resize(generalData_.nbSamplesQP);
 }
 
+const MPCSolution & Walkgen::online(bool previewBodiesNextState){
+  currentRealTime_ += generalData_.MPCSamplingPeriod;
+  online(currentRealTime_, previewBodiesNextState);
+}
+
 const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
+  currentRealTime_ = time;
   solution_.newTraj = false;
   if(time  > upperTimeLimitToUpdate_+EPSILON){
       upperTimeLimitToUpdate_ += generalData_.QPSamplingPeriod;

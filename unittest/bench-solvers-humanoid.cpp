@@ -100,9 +100,9 @@ int main() {
 	// ----
 	double velocity = 0.25;
 	walk2->reference(0, 0, 0);
-	walk2->online(0);
+	walk2->online(0.0);
 	walk1->reference(0, 0, 0);
-	walk1->online(0);
+	walk1->online(0.0);
 	double t = 0;
 	for (; t < 5; t += 0.005){
 		debug.getTime(1,true);

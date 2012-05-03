@@ -152,7 +152,13 @@ void Walkgen::init() {
 
 }
 
+const MPCSolution & Walkgen::online(bool previewBodiesNextState){
+  currentRealTime_ += generalData_.MPCSamplingPeriod;
+  online(currentRealTime_, previewBodiesNextState);
+}
+
 const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
+  currentRealTime_ = time;
   solution_.newTraj = false;
   if(time  > upperTimeLimitToUpdate_+EPSILON){
       upperTimeLimitToUpdate_ += generalData_.QPSamplingPeriod;

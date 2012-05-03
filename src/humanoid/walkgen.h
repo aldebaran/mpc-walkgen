@@ -42,6 +42,8 @@ namespace MPCWalkgen{
 
       virtual const MPCSolution &online(double time, bool previewBodiesNextState=true);
 
+      virtual const MPCSolution &online(bool previewBodiesNextState=true);
+
       /// \name Accessors and mutators
       /// \{
       void reference(double dx, double dy, double dyaw);
@@ -88,6 +90,7 @@ namespace MPCWalkgen{
 
       /// \brief Synchronised time with QP sampling
       double currentTime_;
+      double currentRealTime_;
 
     };
   }

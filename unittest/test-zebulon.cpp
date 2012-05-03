@@ -61,7 +61,7 @@ int main() {
 	std::cout << "10%" << std::endl;
 	double velocity = 0.25;
 	walk->reference(0, 0, 0);
-	walk->online(0);
+	walk->online(0.0);
 	double t = 0;
 	for (; t < 5; t += 0.005){
 		MPCSolution result = walk->online(t);
