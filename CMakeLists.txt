@@ -8,7 +8,7 @@ SET(PROJECT_NAME mpc-walkgen)
 SET(PROJECT_DESCRIPTION "MPC Walking pattern generator for Humanoids")
 SET(PROJECT_URL "https://gforge.inria.fr/projects/mpc-walkgen")
 
-find_package(qibuild) # it does not matter if qibuild is not found
+find_package(qibuild QUIET)
 
 # Includes from jrl-cmaketools
 INCLUDE(cmake/base.cmake)
