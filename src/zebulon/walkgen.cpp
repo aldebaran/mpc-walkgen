@@ -179,21 +179,6 @@ void Walkgen::reference(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd 
   newVelRef_.local.yaw=dyaw;
 }
 
-void Walkgen::QPSamplingPeriod(double)
-{
-  std::cerr << " The method Walkgen::QPSamplingPeriod(d) is not implemented yet. " << std::endl;
-}
-
-void Walkgen::mpcSamplingPeriod(double)
-{
-  std::cerr << " The method Walkgen::mpcSamplingPeriod(d) is not implemented yet. " << std::endl;
-}
-
-void Walkgen::QPNbSamplings(int)
-{
-  std::cerr << " The method Walkgen::QPNbSamplings(d) is not implemented yet. " << std::endl;
-}
-
 const BodyState & Walkgen::bodyState(BodyType body)const{
   return robot_->body(body)->state();
 }

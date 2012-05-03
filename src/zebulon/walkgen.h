@@ -47,27 +47,6 @@ namespace MPCWalkgen{
       /// \}
 
 
-    public:
-      /// \name accessors relative to the solver
-      /// \{
-      virtual inline double QPSamplingPeriod()const
-      {return generalData_.QPSamplingPeriod;}
-      virtual void QPSamplingPeriod(double d);
-
-      virtual inline double mpcSamplingPeriod()const
-      {return generalData_.MPCSamplingPeriod;}
-      virtual void mpcSamplingPeriod(double d);
-
-      virtual inline double actuationSamplingPeriod()const
-      {return generalData_.actuationSamplingPeriod;}
-      virtual void actuationSamplingPeriod(double period)
-      {generalData_.actuationSamplingPeriod = period;}
-
-      virtual inline int QPNbSamplings()const
-      {return generalData_.nbSamplesQP;}
-      virtual void QPNbSamplings(int d);
-      /// \}
-
     private:
       MPCData generalData_;
 

@@ -47,17 +47,6 @@ namespace MPCWalkgen{
       /// \}
 
     public:
-      /// \name accessors relative to the state of the robot.
-      /// \{
-      inline const RigidBodySystem *robot() const
-      {return robot_;}
-
-      virtual double comHeight() const;
-      virtual void comHeight (double d);
-
-      virtual double freeFlyingFootMaxHeight() const;
-      virtual void freeFlyingFootMaxHeight(double d);
-
       virtual const SupportState &currentSupportState() const;
       virtual inline void currentSupportState(const SupportState &newSupportState){
         newCurrentSupport_=newSupportState;
@@ -68,51 +57,6 @@ namespace MPCWalkgen{
       virtual void bodyState(BodyType body, const BodyState & state);
       /// \}
 
-
-      /// \name Accessors relative to the support logic
-      /// \{
-    public:
-      virtual inline double stepPeriod()const
-      { return generalData_.stepPeriod; }
-      virtual inline void stepPeriod(double d)
-      { generalData_.stepPeriod = d; }
-
-      virtual inline double DSPeriod()const
-      { return generalData_.DSPeriod; }
-      virtual inline void DSPeriod(double d)
-      { generalData_.DSPeriod = d; }
-
-      virtual inline double DSSSPeriod()const
-      { return generalData_.DSSSPeriod; }
-      virtual inline void DSSSPeriod(double d)
-      { generalData_.DSSSPeriod = d; }
-
-      virtual inline int nbStepSSDS()const
-      { return generalData_.nbStepSSDS; }
-      virtual inline void nbStepSSDS(int d)
-      { generalData_.nbStepSSDS = d; }
-      /// \}
-
-    public:
-      /// \name accessors relative to the solver
-      /// \{
-      virtual inline double QPSamplingPeriod()const
-      {return generalData_.QPSamplingPeriod;}
-      virtual void QPSamplingPeriod(double d);
-
-      virtual inline double mpcSamplingPeriod()const
-      {return generalData_.MPCSamplingPeriod;}
-      virtual void mpcSamplingPeriod(double d);
-
-      virtual inline double actuationSamplingPeriod()const
-      {return generalData_.actuationSamplingPeriod;}
-      virtual void actuationSamplingPeriod(double period)
-      {generalData_.actuationSamplingPeriod = period;}
-
-      virtual inline int QPNbSamplings()const
-      {return generalData_.nbSamplesQP;}
-      virtual void QPNbSamplings(int d);
-      /// \}
 
     private:
       MPCData generalData_;

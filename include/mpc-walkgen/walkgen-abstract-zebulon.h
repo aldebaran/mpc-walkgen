@@ -64,22 +64,6 @@ namespace MPCWalkgen{
       virtual void bodyState(BodyType body, const BodyState & state)=0;
       /// \}
 
-    public:
-      /// \name accessors relative to the solver, costly when modified on line
-      /// \{
-      virtual double QPSamplingPeriod()const=0;
-      virtual void QPSamplingPeriod(double d)=0;
-
-      virtual double mpcSamplingPeriod()const=0;
-      virtual void mpcSamplingPeriod(double d)=0;
-
-      virtual double actuationSamplingPeriod()const=0;
-      virtual void actuationSamplingPeriod(double d)=0;
-
-      virtual int QPNbSamplings()const=0;
-      virtual void QPNbSamplings(int d)=0;
-
-      /// \}
     };
     /*! Factory of Pattern generator interface. */
     MPC_WALKGEN_API WalkgenAbstractZebulon * mpcFactory(QPSolverType solvertype);

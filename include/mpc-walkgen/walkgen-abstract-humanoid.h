@@ -59,12 +59,6 @@ namespace MPCWalkgen{
 
       /// \name accessors relative to the state of the robot.
       /// \{
-      virtual double comHeight()const=0;
-      virtual void comHeight(double d)=0;
-
-      virtual double freeFlyingFootMaxHeight() const = 0;
-      virtual void freeFlyingFootMaxHeight(double d)=0;
-
       virtual const SupportState & currentSupportState() const = 0;
       virtual void currentSupportState(const SupportState & newSupportState)=0;
 
@@ -72,38 +66,6 @@ namespace MPCWalkgen{
       virtual void bodyState(BodyType body, const BodyState & state)=0;
       /// \}
 
-    public:
-      /// \name accessors relative to the solver, modifiable on line
-      /// \{
-      virtual double stepPeriod()const=0;
-      virtual void stepPeriod(double d)=0;
-
-      virtual double DSPeriod()const=0;
-      virtual void DSPeriod(double d)=0;
-
-      virtual double DSSSPeriod()const=0;
-      virtual void DSSSPeriod(double d)=0;
-
-      virtual int nbStepSSDS()const=0;
-      virtual void nbStepSSDS(int d)=0;
-      /// \}
-
-    public:
-      /// \name accessors relative to the solver, costly when modified on line
-      /// \{
-      virtual double QPSamplingPeriod()const=0;
-      virtual void QPSamplingPeriod(double d)=0;
-
-      virtual double mpcSamplingPeriod()const=0;
-      virtual void mpcSamplingPeriod(double d)=0;
-
-      virtual double actuationSamplingPeriod()const=0;
-      virtual void actuationSamplingPeriod(double d)=0;
-
-      virtual int QPNbSamplings()const=0;
-      virtual void QPNbSamplings(int d)=0;
-
-      /// \}
     };
     /*! Factory of Pattern generator interface. */
     MPC_WALKGEN_API WalkgenAbstractHumanoid * mpcFactory(QPSolverType solvertype);
