@@ -4,7 +4,7 @@ string(TOUPPER ${prefix} uprefix)
 macro(find_qpoases_2)
   find_path(${uprefix}_INCLUDE_DIRS QProblem.hpp
       PATH_SUFFIXES qpoases)
-  find_library(${uprefix}_LIBRARIES qpoases)
+  find_library(${uprefix}_LIBRARIES qpOASES)
 endmacro()
 
 macro(find_qpoases_3)
