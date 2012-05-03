@@ -47,7 +47,7 @@ if __name__ == '__main__':
 
     header1 = ['Position', 'Velocity', 'Acceleration', 'Jerk']
     header2 = ['Position']
-    src = '../../motionLog/'
+    src = './'
     testName = ''
 
     CoM_X = readFile(src+testName+"CoM_X.data",header1);
