@@ -43,19 +43,19 @@ Walkgen::Walkgen(::MPCWalkgen::QPSolverType solvertype)
 
 #ifdef USE_QPOASES
   if (solvertype == QPSOLVERTYPE_QPOASES){
-      solver_ = new QPOasesSolver(4*generalData_.nbSamplesQP, 9*generalData_.nbSamplesQP,
-                                  4*generalData_.nbSamplesQP, 9*generalData_.nbSamplesQP);
-      solverOrientation_ = new QPOasesSolver(generalData_.nbSamplesQP, 3*generalData_.nbSamplesQP,
-                                             generalData_.nbSamplesQP, 3*generalData_.nbSamplesQP);
+      solver_ = new QPOasesSolver(4*generalData_.nbSamplesQP, 7*generalData_.nbSamplesQP,
+                                  4*generalData_.nbSamplesQP, 7*generalData_.nbSamplesQP);
+      solverOrientation_ = new QPOasesSolver(generalData_.nbSamplesQP, 2*generalData_.nbSamplesQP,
+                                             generalData_.nbSamplesQP, 2*generalData_.nbSamplesQP);
     }
 #endif //USE_QPOASES
 
 #ifdef USE_LSSOL
   if (solvertype == QPSOLVERTYPE_LSSOL){
-      solver_ = new LSSOLSolver(4*generalData_.nbSamplesQP, 9*generalData_.nbSamplesQP,
-                                4*generalData_.nbSamplesQP, 9*generalData_.nbSamplesQP);
-      solverOrientation_ = new LSSOLSolver(generalData_.nbSamplesQP, 3*generalData_.nbSamplesQP,
-                                           generalData_.nbSamplesQP, 3*generalData_.nbSamplesQP);
+      solver_ = new LSSOLSolver(4*generalData_.nbSamplesQP, 7*generalData_.nbSamplesQP,
+                                4*generalData_.nbSamplesQP, 7*generalData_.nbSamplesQP);
+      solverOrientation_ = new LSSOLSolver(generalData_.nbSamplesQP, 2*generalData_.nbSamplesQP,
+                                           generalData_.nbSamplesQP, 2*generalData_.nbSamplesQP);
     }
 #endif //USE_LSSOL
 
