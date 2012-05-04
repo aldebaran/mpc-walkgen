@@ -16,7 +16,6 @@ find_package(jrl-cmake REQUIRED
 # Includes from jrl-cmaketools
 INCLUDE(${jrl-cmake_DIR}/base.cmake)
 INCLUDE(${jrl-cmake_DIR}/boost.cmake)
-INCLUDE(${jrl-cmake_DIR}/eigen.cmake)
 INCLUDE(${jrl-cmake_DIR}/cpack.cmake)
 
 # custom cmake modules
@@ -28,7 +27,8 @@ SET(CXX_DISABLE_WERROR True)
 # Initialize generic properties of the project
 SETUP_PROJECT()
 SEARCH_FOR_BOOST()
-SEARCH_FOR_EIGEN()
+find_package(Eigen3 REQUIRED)
+include_directories(${EIGEN3_INCLUDE_DIR})
 
 # Handle OS specificities
 INCLUDE(CheckIncludeFiles)
@@ -195,7 +195,6 @@ ADD_SUBDIRECTORY(unittest)
 
 # Generate dependency to jrl-walkgen in pc file
 PKG_CONFIG_APPEND_LIBS("mpc-walkgen")
-PKG_CONFIG_APPEND_CFLAGS(${_Eigen_CFLAGS})
 
 # Ask to generate the final steps.
 SETUP_PROJECT_FINALIZE()
