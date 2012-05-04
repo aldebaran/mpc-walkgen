@@ -80,12 +80,20 @@ adapted from:
 
     set(QPOASES_INCLUDE_DIRS "/home/seb/src/qpOASES-2.0/INCLUDE"
         CACHE PATH "")
-    set(QPOASES_LIBRARIES "/home/seb/src/qpOASES-2.0/SRC/libqpOASES.a"
+    set(QPOASES_LIBRARIES   /home/seb/src/qpOASES-2.0/SRC/libqpOASES.a  -lblas -llapack
         CACHE PATH "")
     set(QPOASES_VERSION "2.0" CACHE INTERNAL "" FORCE)
-    set(QPOASES_FOUND "TRUE" CACHE INTERNAL "" FORCE)
 
-and put somewhere cmake will find it such as in /usr/local/lib/cmake/QPOASES.
+and put somewhere cmake will find it such as in /usr/local/lib/cmake/QPOASES
+or indicate its path using 
+    cmake -DQPOASES_DIR=/home/seb/src/qpOASES-2.0 ..
+
+/!\ PLEASE note that they are no quotes "" for the variables QPOASES_INCLUDE_DIRS 
+and QPOASES_LIBRARIES (they are list). The following formulation is equivalent: 
+    set(QPOASES_LIBRARIES   "/home/seb/src/qpOASES-2.0/SRC/libqpOASES.a;-lblas;-llapack"
+        CACHE PATH "")
+
+Some examples can be found in mpc-walkgen/share/qpoases/
 
 ### Installation of lssol.
 
