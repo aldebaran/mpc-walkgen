@@ -73,7 +73,7 @@ if(NOT ${uprefix}_FOUND)
 endif()
 
 find_package_handle_standard_args(${prefix}
-    REQUIRED_VARS ${uprefix}_INCLUDE_DIRS ${uprefix}_LIBRARIES
+    REQUIRED_VARS ${uprefix}_INCLUDE_DIRS ${uprefix}_LIBRARIES ${uprefix}_VERSION
     VERSION_VAR ${uprefix}_VERSION)
 
 # publish
@@ -81,7 +81,7 @@ if(${uprefix}_FOUND)
   set("${uprefix}_FOUND" TRUE CACHE INTERNAL "" FORCE)
 
   # Fill the information required by the macro PKG_CONFIG_USE_DEPENDENCY
-  foreach(_dir ${uprefix}_INCLUDE_DIRS})
+  foreach(_dir ${${uprefix}_INCLUDE_DIRS})
     set("_incldir"  "${_incldir} -I${_dir}"
         CACHE INTERNAL "" FORCE)
   endforeach()
