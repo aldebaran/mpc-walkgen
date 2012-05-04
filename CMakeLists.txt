@@ -1,30 +1,27 @@
 # Copyright 2012, Olivier Stasse, JRL, CNRS/AIST
 # Requires at least CMake 2.6 to configure the package.
 cmake_minimum_required(VERSION 2.8)
-project(mpc-walkgen)
+
 
 # Define properties of the project
 SET(PROJECT_NAME mpc-walkgen)
 SET(PROJECT_DESCRIPTION "MPC Walking pattern generator for Humanoids")
 SET(PROJECT_URL "https://gforge.inria.fr/projects/mpc-walkgen")
-
-find_package(qibuild QUIET)
-
-find_package(jrl-cmake REQUIRED
-    HINTS cmake)
-
-# Includes from jrl-cmaketools
-INCLUDE(${jrl-cmake_DIR}/base.cmake)
-INCLUDE(${jrl-cmake_DIR}/cpack.cmake)
-
-# custom cmake modules
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/modules")
-
 SET(CUSTOM_HEADER_DIR "${PROJECT_NAME}")
 SET(CXX_DISABLE_WERROR True)
 
+find_package(jrl-cmake REQUIRED
+    HINTS cmake)
+INCLUDE(${jrl-cmake_DIR}/base.cmake)
+INCLUDE(${jrl-cmake_DIR}/cpack.cmake)
+
 # Initialize generic properties of the project
 SETUP_PROJECT()
+
+# custom cmake modules to find dependencies
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/modules")
+
+find_package(qibuild QUIET)
 
 find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
@@ -41,11 +38,11 @@ IF(SYS_TIME_H)
  ADD_DEFINITIONS("-DHAVE_SYS_TIME_H")
 ENDIF(SYS_TIME_H)
 
-# Optional dependencies: use a external qp solver library.
+# Optional dependencies: use an external QP solver library.
 ADD_OPTIONAL_DEPENDENCY("lssol >= 0.1.0")
 FIND_PACKAGE(QPOASES)
-# Crash if no dependency was found.
 if(NOT LSSOL_FOUND AND NOT QPOASES_FOUND)
+  # Crash if no QP solver was found.
   message(FATAL_ERROR
     "No QP solver found.  Possible solvers: LSSOL and qpOASES")
 endif(NOT LSSOL_FOUND AND NOT QPOASES_FOUND)
