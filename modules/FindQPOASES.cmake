@@ -16,13 +16,12 @@ macro(find_version)
   # find QProblem.hpp in ${uprefix}_INCLUDE_DIRS and extract the qpOASES
   # from its doxygen version
   if(NOT "${uprefix}_VERSION")
-    # Only extract the version if it is not already set, either because we
-    # extracted it already.
+    # Only extract the version if it is not already set
     set("${uprefix}_VERSION" "${uprefix}_VERSION-NOTFOUND")
     if(${uprefix}_INCLUDE_DIRS)
       find_file(_${uprefix}_QProblem_hpp
           "QProblem.hpp"
-          PATHS "${${uprefix}_INCLUDE_DIRS}"
+          PATHS  ${${uprefix}_INCLUDE_DIRS}
           PATH_SUFFIXES "qpOASES"
           NO_DEFAULT_PATH
           NO_CMAKE_ENVIRONMENT_PATH
@@ -69,9 +68,12 @@ if(NOT ${uprefix}_FOUND)
       find_qpoases_3()
     endif()
   endif()
-  find_version()
 endif()
 
+find_version()
+
+# Knowing the version of qpOASES is mandatory.
+# If not found, the compilation flags and the #include<> may be wrong.
 find_package_handle_standard_args(${prefix}
     REQUIRED_VARS ${uprefix}_INCLUDE_DIRS ${uprefix}_LIBRARIES ${uprefix}_VERSION
     VERSION_VAR ${uprefix}_VERSION)
