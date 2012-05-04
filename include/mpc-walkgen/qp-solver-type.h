@@ -3,9 +3,14 @@
 
 namespace MPCWalkgen
 {
-        enum QPSolverType {
-@_SOLVER_LIST_@
-        };
+  enum QPSolverType {
+#ifdef USE_LSSOL
+    QPSOLVERTYPE_LSSOL = 0,
+#endif
+#ifdef USE_QPOASES
+    QPSOLVERTYPE_QPOASES = 1,
+#endif
+  };
 }
 
 #endif // _MPC_WALKGEN_QP_SOLVER_TYPE_H_
