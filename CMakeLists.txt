@@ -15,7 +15,6 @@ find_package(jrl-cmake REQUIRED
 
 # Includes from jrl-cmaketools
 INCLUDE(${jrl-cmake_DIR}/base.cmake)
-INCLUDE(${jrl-cmake_DIR}/boost.cmake)
 INCLUDE(${jrl-cmake_DIR}/cpack.cmake)
 
 # custom cmake modules
@@ -26,9 +25,14 @@ SET(CXX_DISABLE_WERROR True)
 
 # Initialize generic properties of the project
 SETUP_PROJECT()
-SEARCH_FOR_BOOST()
+
 find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
+
+find_package(Boost 1.40
+    COMPONENTS filesystem system thread program_options unit_test_framework
+    REQUIRED)
+INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 
 # Handle OS specificities
 INCLUDE(CheckIncludeFiles)
@@ -174,8 +178,6 @@ if(QPOASES_FOUND)
   )
 endif(QPOASES_FOUND)
 
-# Add Boost path to include directories.
-INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/include)
 
 ADD_LIBRARY(mpc-walkgen SHARED ${mpc-walkgen_SRC} ${${PROJECT_NAME}_HEADERS})
