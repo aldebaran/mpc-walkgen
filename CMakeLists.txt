@@ -10,11 +10,14 @@ SET(PROJECT_URL "https://gforge.inria.fr/projects/mpc-walkgen")
 
 find_package(qibuild QUIET)
 
+find_package(jrl-cmake REQUIRED
+    HINTS cmake)
+
 # Includes from jrl-cmaketools
-INCLUDE(cmake/base.cmake)
-INCLUDE(cmake/boost.cmake)
-INCLUDE(cmake/eigen.cmake)
-INCLUDE(cmake/cpack.cmake)
+INCLUDE(${jrl-cmake_DIR}/base.cmake)
+INCLUDE(${jrl-cmake_DIR}/boost.cmake)
+INCLUDE(${jrl-cmake_DIR}/eigen.cmake)
+INCLUDE(${jrl-cmake_DIR}/cpack.cmake)
 
 # custom cmake modules
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/modules")
