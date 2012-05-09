@@ -4,15 +4,9 @@
 #include <iostream>
 #include <cstring>
 
-#include <../src/humanoid/types.h>
-
-#ifdef USE_QPOASES
-#include "../src/common/qp-solvers/qpoases-solver.h"
-#endif //USE_QPOASES
-
-#ifdef USE_LSSOL
-#include "../src/common/qp-solvers/lssol-solver.h"
-#endif //USE_LSSOL
+#include "../src/humanoid/types.h"
+#include "../src/common/qp-solver.h"
+#include <mpc-walkgen/qp-solver-type.h>
 
 using namespace Eigen;
 using namespace MPCWalkgen;
@@ -80,19 +74,25 @@ int main()
 
 #ifdef USE_QPOASES
   std::cout << "bench-qpsolver test qpOASES " << std::endl;
-  QPOasesSolver qp1(nbVar,nbCtr);
-  Eigen::VectorXd qp1Solution = test_all_solvers(qp1,nbVar,nbCtr);
+  QPSolver * qp1 = createQPSolver(QPSOLVERTYPE_QPOASES, nbVar, nbCtr);
+  Eigen::VectorXd qp1Solution = test_all_solvers(*qp1, nbVar, nbCtr);
   bool success1 = ((qp1Solution - solution).norm() < 1e-5);
   std::cout << "Solution QPOASES ("<< success1 <<"): " << qp1Solution.transpose() << std::endl;
+  if (qp1) {
+    delete qp1;
+  }
   success = success1 && success;
 #endif //USE_QPOASES
 
 #ifdef USE_LSSOL
   std::cout << "bench-qpsolver test LSSOL " << std::endl;
-  LSSOLSolver qp2(nbVar,nbCtr);
-  Eigen::VectorXd qp2Solution = test_all_solvers(qp2,nbVar,nbCtr);
+  QPSolver * qp2 = createQPSolver(QPSOLVERTYPE_LSSOL, nbVar, nbCtr);
+  Eigen::VectorXd qp2Solution = test_all_solvers(*qp2, nbVar, nbCtr);
   bool success2 = ((qp2Solution - solution).norm() < 1e-5);
   std::cout << "Solution LSSOL ("<< success2 <<") : " << qp2Solution.transpose() << std::endl;
+  if (qp2) {
+    delete qp2;
+  }
   success = success2 && success;
 #endif //USE_LSSOL
 

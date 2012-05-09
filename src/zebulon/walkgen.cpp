@@ -1,13 +1,6 @@
 #include "walkgen.h"
 
-#ifdef USE_QPOASES
-# include "../common/qp-solvers/qpoases-solver.h"
-#endif //USE_QPOASES
-
-#ifdef USE_LSSOL
-# include "../common/qp-solvers/lssol-solver.h"
-#endif //USE_LSSOL
-
+#include "../common/qp-solver.h"
 #include "qp-generator.h"
 #include "rigid-body-system.h"
 #include "../common/interpolation.h"
@@ -41,30 +34,15 @@ Walkgen::Walkgen(::MPCWalkgen::QPSolverType solvertype)
   ,upperTimeLimitToFeedback_(0)
 {
 
-#ifdef USE_QPOASES
-  if (solvertype == QPSOLVERTYPE_QPOASES){
-      solver_ = new QPOasesSolver(4*generalData_.nbSamplesQP, 7*generalData_.nbSamplesQP,
-                                  4*generalData_.nbSamplesQP, 7*generalData_.nbSamplesQP);
-      solverOrientation_ = new QPOasesSolver(generalData_.nbSamplesQP, 2*generalData_.nbSamplesQP,
-                                             generalData_.nbSamplesQP, 2*generalData_.nbSamplesQP);
-    }
-#endif //USE_QPOASES
-
-#ifdef USE_LSSOL
-  if (solvertype == QPSOLVERTYPE_LSSOL){
-      solver_ = new LSSOLSolver(4*generalData_.nbSamplesQP, 7*generalData_.nbSamplesQP,
-                                4*generalData_.nbSamplesQP, 7*generalData_.nbSamplesQP);
-      solverOrientation_ = new LSSOLSolver(generalData_.nbSamplesQP, 2*generalData_.nbSamplesQP,
-                                           generalData_.nbSamplesQP, 2*generalData_.nbSamplesQP);
-    }
-#endif //USE_LSSOL
-
+  solver_ = createQPSolver(solvertype,
+          4*generalData_.nbSamplesQP, 7*generalData_.nbSamplesQP,
+          4*generalData_.nbSamplesQP, 7*generalData_.nbSamplesQP);
+  solverOrientation_ = createQPSolver(solvertype,
+          generalData_.nbSamplesQP, 2*generalData_.nbSamplesQP,
+          generalData_.nbSamplesQP, 2*generalData_.nbSamplesQP);
   interpolation_ = new Interpolation();
-
   robot_ = new RigidBodySystem(&generalData_, interpolation_);
-
   generator_= new QPGenerator(solver_, solverOrientation_, &velRef_, &ponderation_, robot_, &generalData_);
-
 }
 
 

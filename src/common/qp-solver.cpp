@@ -1,7 +1,12 @@
 #include "qp-solver.h"
 
 #include <iostream>
-
+#ifdef USE_QPOASES
+# include "qp-solvers/qpoases-solver.h"
+#endif
+#ifdef USE_LSSOL
+# include "qp-solvers/lssol-solver.h"
+#endif
 using namespace MPCWalkgen;
 using namespace Eigen;
 
@@ -189,4 +194,27 @@ void QPSolver::dump(){
 	std::cout << "Xl / Xu :" << std::endl;
 	std::cout << vectorXL_() << std::endl;
 	std::cout << vectorXU_() << std::endl;
+}
+
+QPSolver * MPCWalkgen::createQPSolver(QPSolverType solvertype,
+                         int nbVarMin,
+                         int nbCtrMin,
+                         int nbVarMax,
+                         int nbCtrMax){
+  QPSolver * solver = NULL;
+#ifdef USE_LSSOL
+  if (solvertype == QPSOLVERTYPE_LSSOL) {
+    solver = new LSSOLSolver(nbVarMin, nbCtrMin, nbVarMax, nbCtrMax);
+  }
+#endif //USE_LSSOL
+
+#ifdef USE_QPOASES
+  if (solvertype == QPSOLVERTYPE_QPOASES) {
+    solver = new QPOasesSolver(nbVarMin, nbCtrMin, nbVarMax, nbCtrMax);
+  }
+#endif //USE_QPOASES
+
+// the user could not ask for an unsupported QPSolverType, as the enum is
+// generated
+return solver;
 }

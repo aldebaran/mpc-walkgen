@@ -8,13 +8,8 @@
 
 #include <fstream>
 
-#ifdef USE_QPOASES
-#include "../src/common/qp-solvers/qpoases-solver.h"
-#endif //USE_QPOASES
-
-#ifdef USE_LSSOL
-#include "../src/common/qp-solvers/lssol-solver.h"
-#endif //USE_LSSOL
+#include "../src/common/qp-solver.h"
+#include <mpc-walkgen/qp-solver-type.h>
 
 using namespace Eigen;
 using namespace MPCWalkgen;
@@ -292,17 +287,25 @@ int main()
 
 	unsigned int fDofWb = 23;
 	unsigned int fNconstraints = 18;
+	QPSolver * solver = NULL;
 
 #ifdef USE_QPOASES
 	std::cout << "bench-qpsolver test qpOASES " << std::endl;
-	QPOasesSolver qpoSolver(6+fDofWb, fNconstraints);
-	success = testBenchmarkQP(qpoSolver, fDofWb, fNconstraints) && success;
+	solver = createQPSolver(QPSOLVERTYPE_QPOASES, 6+fDofWb, fNconstraints);
+	success = testBenchmarkQP(*solver, fDofWb, fNconstraints) && success;
+	if (solver) {
+		delete solver;
+	}
 #endif //USE_QPOASES
 
 #ifdef USE_LSSOL
 	std::cout << "bench-qpsolver test LSSOL " << std::endl;
-	LSSOLSolver lssolSolver(6+fDofWb, fNconstraints);
-	success = testBenchmarkQP(lssolSolver, fDofWb, fNconstraints) && success;
+	solver = createQPSolver(QPSOLVERTYPE_LSSOL, 6+fDofWb, fNconstraints);
+	success = testBenchmarkQP(*solver, fDofWb, fNconstraints) && success;
+	if (solver) {
+		delete solver;
+	}
 #endif //USE_LSSOL
+
 	return (success ? 0 : 1);
 }

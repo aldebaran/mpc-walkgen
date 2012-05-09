@@ -17,7 +17,7 @@
 #include "qp-matrix.h"
 #include "qp-vector.h"
 #include "common-types.h"
-
+#include <mpc-walkgen/qp-solver-type.h>
 
 namespace MPCWalkgen{
 
@@ -84,6 +84,11 @@ namespace MPCWalkgen{
 			Eigen::VectorXi varOrder_;
 			Eigen::VectorXi ctrOrder_;
 	};
+	QPSolver* createQPSolver(QPSolverType solvertype,
+			int nbVarMin=0,
+			int nbCtrMin=0,
+			int nbVarMax=QPSolver::DefaultNbVarMax_,
+			int nbCtrMax=QPSolver::DefaultNbCtrMax_);
 }
 
 

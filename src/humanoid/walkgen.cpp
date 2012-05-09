@@ -1,15 +1,7 @@
 #include "walkgen.h"
 
 #include "orientations-preview.h"
-
-#ifdef USE_QPOASES
-# include "../common/qp-solvers/qpoases-solver.h"
-#endif //USE_QPOASES
-
-#ifdef USE_LSSOL
-# include "../common/qp-solvers/lssol-solver.h"
-#endif //USE_LSSOL
-
+#include "../common/qp-solver.h"
 #include "qp-generator.h"
 #include "qp-preview.h"
 #include "rigid-body-system.h"
@@ -48,16 +40,8 @@ Walkgen::Walkgen(::MPCWalkgen::QPSolverType solvertype)
   ,upperTimeLimitToUpdate_(0)
   ,upperTimeLimitToFeedback_(0)
 {
-
-#ifdef USE_QPOASES
-  if (solvertype == QPSOLVERTYPE_QPOASES)
-    solver_ = new QPOasesSolver(2*generalData_.nbSamplesQP, 0, 2*generalData_.nbSamplesQP+10, 25);
-#endif //USE_QPOASES
-
-#ifdef USE_LSSOL
-  if (solvertype == QPSOLVERTYPE_LSSOL)
-    solver_ = new LSSOLSolver(2*generalData_.nbSamplesQP, 0, 2*generalData_.nbSamplesQP+10, 25);
-#endif //USE_LSSOL
+  solver_ = createQPSolver(solvertype,
+          2*generalData_.nbSamplesQP, 0, 2*generalData_.nbSamplesQP+10, 25);
 
   orientPrw_ = new OrientationsPreview();
 
