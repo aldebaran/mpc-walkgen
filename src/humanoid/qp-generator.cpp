@@ -122,9 +122,6 @@ void QPGenerator::buildObjective(const MPCSolution & result) {
   // (the computation of the hessian is hence useless)
   //So if one uses LSSOL, some computation can be avoided.
   bool onlyCholesky = (solver_->useCholesky() == true);
-#ifdef USE_LSSOL
-  onlyCholesky = onlyCholesky && (solver_->getType() == QPSOLVERTYPE_LSSOL);
-#endif //USE_LSSOL
 
   if (onlyCholesky == false){
       Q.addTerm(QconstN_[precomputedMatrixNumber], 0, 0);
