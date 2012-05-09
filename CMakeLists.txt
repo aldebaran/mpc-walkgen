@@ -26,11 +26,6 @@ find_package(qibuild QUIET)
 find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
 
-find_package(Boost 1.40
-    COMPONENTS filesystem system thread program_options unit_test_framework
-    REQUIRED)
-INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
-
 # Handle OS specificities
 INCLUDE(CheckIncludeFiles)
 CHECK_INCLUDE_FILES("sys/time.h" SYS_TIME_H)
