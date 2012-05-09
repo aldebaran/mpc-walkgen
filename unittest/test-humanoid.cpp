@@ -113,7 +113,7 @@ int main() {
 	// Create and initialize generator:
 	// -------------------------------
 	std::cout << "10%" << std::endl;
-	WalkgenAbstractHumanoid * walk = mpcFactory(QPSOLVERTYPE_QPOASES);
+	WalkgenAbstractHumanoid * walk = createWalkgen(QPSOLVERTYPE_QPOASES);
 
 	walk->init(robotData, mpcData);
 //	const RigidBodySystem *robot = walk->robot();// Not used yet

@@ -15,7 +15,7 @@ using namespace Humanoid;
 using namespace Eigen;
 
 
-MPCWalkgen::Humanoid::WalkgenAbstractHumanoid* MPCWalkgen::Humanoid::mpcFactory(MPCWalkgen::QPSolverType solvertype) {
+MPCWalkgen::Humanoid::WalkgenAbstractHumanoid* MPCWalkgen::Humanoid::createWalkgen(MPCWalkgen::QPSolverType solvertype) {
   MPCWalkgen::Humanoid::WalkgenAbstractHumanoid* zmpVra = new MPCWalkgen::Humanoid::Walkgen(solvertype);
   return zmpVra;
 }

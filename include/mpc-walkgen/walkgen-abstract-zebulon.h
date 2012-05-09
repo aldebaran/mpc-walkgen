@@ -67,7 +67,7 @@ namespace MPCWalkgen{
 
     };
     /*! Factory of Pattern generator interface. */
-    MPC_WALKGEN_API WalkgenAbstractZebulon * mpcFactory(QPSolverType solvertype);
+    MPC_WALKGEN_API WalkgenAbstractZebulon * createWalkgen(QPSolverType solvertype);
 
   }
 }

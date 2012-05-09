@@ -88,8 +88,8 @@ int main() {
 	// Creat and initialize generator:
 	// -------------------------------
 
-	WalkgenAbstractHumanoid * walk1 = mpcFactory(QPSOLVERTYPE_LSSOL);
-	WalkgenAbstractHumanoid * walk2 = mpcFactory(QPSOLVERTYPE_QPOASES);
+	WalkgenAbstractHumanoid * walk1 = createWalkgen(QPSOLVERTYPE_LSSOL);
+	WalkgenAbstractHumanoid * walk2 = createWalkgen(QPSOLVERTYPE_QPOASES);
 	walk2->init(robotData, mpcData);
 	walk1->init(robotData, mpcData);
 

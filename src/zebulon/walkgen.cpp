@@ -13,7 +13,7 @@ using namespace Zebulon;
 using namespace Eigen;
 
 
-MPCWalkgen::Zebulon::WalkgenAbstractZebulon* MPCWalkgen::Zebulon::mpcFactory(MPCWalkgen::QPSolverType solvertype) {
+MPCWalkgen::Zebulon::WalkgenAbstractZebulon* MPCWalkgen::Zebulon::createWalkgen(MPCWalkgen::QPSolverType solvertype) {
   MPCWalkgen::Zebulon::WalkgenAbstractZebulon* zmpVra = new MPCWalkgen::Zebulon::Walkgen(solvertype);
   return zmpVra;
 }

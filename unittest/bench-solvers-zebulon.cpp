@@ -31,8 +31,8 @@ int main() {
 	// Creat and initialize generator:
 	// -------------------------------
 
-	WalkgenAbstractZebulon * walk1 = mpcFactory(QPSOLVERTYPE_LSSOL);
-	WalkgenAbstractZebulon * walk2 = mpcFactory(QPSOLVERTYPE_QPOASES);
+	WalkgenAbstractZebulon * walk1 = createWalkgen(QPSOLVERTYPE_LSSOL);
+	WalkgenAbstractZebulon * walk2 = createWalkgen(QPSOLVERTYPE_QPOASES);
 	walk2->init(robotData, mpcData);
 	walk1->init(robotData, mpcData);
 
