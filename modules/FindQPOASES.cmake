@@ -50,7 +50,7 @@ macro(find_version)
 endmacro()
 
 if(NOT ${uprefix}_FOUND)
-  # check whether a qpoases-config file is available
+  # check whether a foo-config.cmake or FooConfig.cmake file is available
   find_package(${prefix} ${${prefix}_FIND_VERSION} QUIET NO_MODULE)
 endif()
 
