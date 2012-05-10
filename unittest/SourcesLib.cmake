@@ -29,13 +29,13 @@ set(solver_SRC
   ../src/walkgen-abstract-humanoid.cpp
 )
 
-if(LSSOL_FOUND)
+if(WITH_LSSOL)
   list(APPEND solver_SRC ../src/common/qp-solvers/lssol-solver.cpp)
-endif(LSSOL_FOUND)
+endif()
 
-if(QPOASES_FOUND)
+if(WITH_QPOASES)
   list(APPEND solver_SRC ../src/common/qp-solvers/qpoases-solver.cpp)
-endif(QPOASES_FOUND)
+endif()
 
 ## Testing all the solvers
 set(test-qpsolver_SRC 

@@ -33,17 +33,17 @@ addUnitTest(test-rotation "timer" "")
 set(solverAvailable "")
 
 # test the lssol solver
-if(LSSOL_FOUND)
+if(WITH_LSSOL)
   list(APPEND solverAvailable "lssol")
   addUnitTest(test-lssol "" "lssol")
-endif(LSSOL_FOUND)
+endif()
 
 
 # test the qpoases solver
-if(QPOASES_FOUND)
+if(WITH_QPOASES)
   list(APPEND solverAvailable "QPOASES")
   addUnitTest(test-qpoases "" "QPOASES")
-endif(QPOASES_FOUND)
+endif()
 
 
 ## Testing all the solvers
@@ -53,14 +53,14 @@ addUnitTest(test-qpsolver    "solver" "${solverAvailable}")
 ## Compare LSSOL and QPOASES.
 addUnitTest(test-all-solvers "solver" "${solverAvailable}")
 
-if(QPOASES_FOUND)
+if(WITH_QPOASES)
   addUnitTest(test-humanoid  "mpc-walkgen" "")
   addUnitTest(test-zebulon  "mpc-walkgen" "")
-endif(QPOASES_FOUND)
+endif()
 
 
 # a simple execution of the walkgen.
-if(LSSOL_FOUND AND QPOASES_FOUND)
+if(WITH_LSSOL AND WITH_QPOASES)
   addUnitTest(bench-solvers-humanoid "mpc-walkgen;timer" "")
   addUnitTest(bench-solvers-zebulon "mpc-walkgen;timer" "")
-endif(LSSOL_FOUND AND QPOASES_FOUND)
+endif()

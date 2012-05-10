@@ -26,34 +26,58 @@ find_package(qibuild QUIET)
 find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
 
+
+function(find_optional_package name)
+# Set a WITH_FOO option if FOO_PACKAGE is found.
+# if the foo package is found, WITH_FOO will automatically be set to true.
+# however, there are a few cases where you would like to NOT use the
+# features of the FOO library even if it is found, in this case, we let
+# the user set -DWITH_FOO=OFF from the command line.
+  set(_desc "${ARGN}")
+  string(TOUPPER "${name}" _U_name)
+  # if already set by user to OFF, do nothing:
+  if(NOT DEFINED "WITH_${_U_name}" OR WITH_${_U_name})
+    # else, set the value of the option using the
+    # result of find_package
+    find_package("${name}" QUIET)
+    if(${_U_name}_FOUND)
+      set("WITH_${_U_name}" ON CACHE BOOL "${_desc}" FORCE)
+    else()
+      set("WITH_${_U_name}" OFF CACHE BOOL "${_desc}" FORCE)
+    endif()
+  endif()
+endfunction()
+
 # Handle OS specificities
 INCLUDE(CheckIncludeFiles)
 CHECK_INCLUDE_FILES("sys/time.h" SYS_TIME_H)
 IF(SYS_TIME_H)
- ADD_DEFINITIONS("-DHAVE_SYS_TIME_H")
+  ADD_DEFINITIONS("-DHAVE_SYS_TIME_H")
 ENDIF(SYS_TIME_H)
 
 # Optional dependencies: use an external QP solver library.
-FIND_PACKAGE(LSSOL)
-FIND_PACKAGE(QPOASES)
-if(NOT LSSOL_FOUND AND NOT QPOASES_FOUND)
-  # Crash if no QP solver was found.
+find_optional_package(
+  LSSOL "build mpc-walkgen with support for LSSOL QP solver ")
+find_optional_package(
+  QPOASES "build mpc-walkgen with support for qpOASES QP solver")
+
+if(NOT WITH_LSSOL AND NOT WITH_QPOASES)
   message(FATAL_ERROR
     "No QP solver found.  Possible solvers: LSSOL and qpOASES")
-endif(NOT LSSOL_FOUND AND NOT QPOASES_FOUND)
+endif()
 
-if(LSSOL_FOUND)
+if(WITH_LSSOL)
   ADD_DEFINITIONS("-DUSE_LSSOL")
-endif(LSSOL_FOUND)
+endif()
 
-if(QPOASES_FOUND)
+if(WITH_QPOASES)
   ADD_DEFINITIONS("-DUSE_QPOASES")
   # There are two versions of qpOASES, that change the way the inclusion
   # has to be done.
   if(NOT QPOASES_VERSION VERSION_LESS 3.0)
     ADD_DEFINITIONS("-DUSE_QPOASES_3_0")
   endif()
-endif(QPOASES_FOUND)
+endif()
 
 
 # make all symbols hidden with gcc.
@@ -74,14 +98,15 @@ macro(addSolver solver solverList)
 endmacro(addSolver)
 
 set (_SOLVER_LIST_ "")
-if(LSSOL_FOUND)
+if(WITH_LSSOL)
   addSolver("LSSOL" _SOLVER_LIST_)
-endif(LSSOL_FOUND)
+endif()
 
-if(QPOASES_FOUND)
+if(WITH_LSSOL)
   addSolver("QPOASES" _SOLVER_LIST_)
-endif(QPOASES_FOUND)
+endif()
 CONFIG_FILES(include/mpc-walkgen/qp-solver-type.h)
+
 # Define the set of headers to be installed
 SET(${PROJECT_NAME}_HEADERS
   include/mpc-walkgen/api.h
@@ -157,17 +182,17 @@ SET(mpc-walkgen_SRC
   src/walkgen-abstract-zebulon.cpp
 )
 
-if(LSSOL_FOUND)
+if(WITH_LSSOL)
   list(APPEND mpc-walkgen_SRC
     src/common/qp-solvers/lssol-solver.cpp
   )
-endif(LSSOL_FOUND)
+endif()
 
-if(QPOASES_FOUND)
+if(WITH_QPOASES)
   list(APPEND mpc-walkgen_SRC
     src/common/qp-solvers/qpoases-solver.cpp
   )
-endif(QPOASES_FOUND)
+endif()
 
 INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/include)
 
@@ -175,13 +200,13 @@ ADD_LIBRARY(mpc-walkgen SHARED ${mpc-walkgen_SRC} ${${PROJECT_NAME}_HEADERS})
 SET_TARGET_PROPERTIES(mpc-walkgen PROPERTIES SOVERSION ${PROJECT_VERSION})
 INSTALL(TARGETS mpc-walkgen DESTINATION lib)
 
-if(LSSOL_FOUND)
+if(WITH_LSSOL)
   PKG_CONFIG_USE_DEPENDENCY(mpc-walkgen lssol)
-endif(LSSOL_FOUND)
+endif()
 
-if(QPOASES_FOUND)
+if(WITH_QPOASES)
   PKG_CONFIG_USE_DEPENDENCY(mpc-walkgen qpoases)
-endif(QPOASES_FOUND)
+endif()
 
 # Define subdirectories to explore for cmake
 ADD_SUBDIRECTORY(unittest)
