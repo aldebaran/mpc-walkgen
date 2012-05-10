@@ -34,7 +34,7 @@ IF(SYS_TIME_H)
 ENDIF(SYS_TIME_H)
 
 # Optional dependencies: use an external QP solver library.
-ADD_OPTIONAL_DEPENDENCY("lssol >= 0.1.0")
+FIND_PACKAGE(LSSOL)
 FIND_PACKAGE(QPOASES)
 if(NOT LSSOL_FOUND AND NOT QPOASES_FOUND)
   # Crash if no QP solver was found.
