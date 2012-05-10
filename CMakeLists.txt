@@ -53,23 +53,44 @@ endif(LSSOL_FOUND)
 
 if(QPOASES_FOUND)
   ADD_DEFINITIONS("-DUSE_QPOASES")
-  #There are two versions of qpOASES, that change the way the inclusion
+  # There are two versions of qpOASES, that change the way the inclusion
   # has to be done.
   if(NOT QPOASES_VERSION VERSION_LESS 3.0)
     ADD_DEFINITIONS("-DUSE_QPOASES_3_0")
   endif()
 endif(QPOASES_FOUND)
 
+
 # make all symbols hidden with gcc.
 if(UNIX)
   ADD_DEFINITIONS("-fvisibility=hidden")
 endif()
 
+# addSolver:  create the list of solvers available that will be used
+#             to create a enum list in C++
+# solver:     the name of the enum.
+# solverList: the enum list
+macro(addSolver solver solverList)
+  if(NOT ${solverList})
+    SET(${solverList} "\t\tQPSOLVERTYPE_${solver}")
+  else(NOT solverList)
+    SET(${solverList} "${${solverList}},\n\t\tQPSOLVERTYPE_${solver}")
+  endif(NOT ${solverList})
+endmacro(addSolver)
 
+set (_SOLVER_LIST_ "")
+if(LSSOL_FOUND)
+  addSolver("LSSOL" _SOLVER_LIST_)
+endif(LSSOL_FOUND)
+
+if(QPOASES_FOUND)
+  addSolver("QPOASES" _SOLVER_LIST_)
+endif(QPOASES_FOUND)
+CONFIG_FILES(include/mpc-walkgen/qp-solver-type.h)
 # Define the set of headers to be installed
 SET(${PROJECT_NAME}_HEADERS
   include/mpc-walkgen/api.h
-  include/mpc-walkgen/qp-solver-type.h
+  ${CMAKE_BINARY_DIR}/include/mpc-walkgen/qp-solver-type.h
   include/mpc-walkgen/sharedpgtypes-common.h
 
   include/mpc-walkgen/walkgen-abstract-humanoid.h
@@ -152,6 +173,8 @@ if(QPOASES_FOUND)
     src/common/qp-solvers/qpoases-solver.cpp
   )
 endif(QPOASES_FOUND)
+
+INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/include)
 
 ADD_LIBRARY(mpc-walkgen SHARED ${mpc-walkgen_SRC} ${${PROJECT_NAME}_HEADERS})
 SET_TARGET_PROPERTIES(mpc-walkgen PROPERTIES SOVERSION ${PROJECT_VERSION})
