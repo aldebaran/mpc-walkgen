@@ -102,7 +102,7 @@ if(WITH_LSSOL)
   addSolver("LSSOL" _SOLVER_LIST_)
 endif()
 
-if(WITH_LSSOL)
+if(WITH_QPOASES)
   addSolver("QPOASES" _SOLVER_LIST_)
 endif()
 CONFIG_FILES(include/mpc-walkgen/qp-solver-type.h)
