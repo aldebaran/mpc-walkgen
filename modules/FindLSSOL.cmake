@@ -9,10 +9,10 @@ endif()
 if(NOT ${uprefix}_FOUND)
   # if not found yet, look at standard places
   find_path(${uprefix}_INCLUDE_DIRS "lssol/lssol.h")
-  find_library(${uprefix}_LSSOL_LIBRARY "lssol")
-  find_library(${uprefix}_LSSOL_C_LIBRARY "lssol_c")
-  find_library(${uprefix}_F2C_LIBRARY "f2c")
-  find_library(${uprefix}_BLAS_LIBRARY "blas")
+  find_library(lssol_LIB "lssol")
+  find_library(lssol_c_LIB "lssol_c")
+  find_library(f2c_LIB "f2c")
+  find_library(blas_LIB "blas" NAMES "blas_c")
   #find_library(${uprefix}_GFORTRAN_LIBRARY "gfortran" PATH_SUFFIXES
   #    "gcc/i686-linux-gnu/4.6" "gcc/x86_64-linux-gnu/4.6")
 endif()
@@ -21,15 +21,17 @@ endif()
 # If not found, the compilation flags and the #include<> may be wrong.
 find_package_handle_standard_args(${prefix}
     REQUIRED_VARS ${uprefix}_INCLUDE_DIRS
-    ${uprefix}_LSSOL_LIBRARY ${uprefix}_LSSOL_C_LIBRARY ${uprefix}_F2C_LIBRARY
+    lssol_LIB lssol_c_LIB f2c_LIB blas_LIB
     VERSION_VAR ${uprefix}_VERSION)
 
 # publish
 if(${uprefix}_FOUND)
   set("${uprefix}_FOUND" TRUE CACHE INTERNAL "" FORCE)
+  # gfortran cannot be found by find_library as is lies in
+  # /usr/lib/gcc/<arch>/<gcc_version>/
+  # So we let the linker find it.
   set("${uprefix}_LIBRARIES"
-      ${${uprefix}_LSSOL_LIBRARY} ${${uprefix}_LSSOL_C_LIBRARY}
-      ${${uprefix}_F2C_LIBRARY} ${${uprefix}_BLAS_LIBRARY}
+      ${lssol_LIB} ${lssol_c_LIB} ${f2c_LIB} ${blas_LIB}
       gfortran
       CACHE INTERNAL "" FORCE)
 
