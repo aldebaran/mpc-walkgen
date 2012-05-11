@@ -42,6 +42,6 @@ if(${uprefix}_FOUND)
   endforeach()
   set("${uprefix}_CFLAGS"  "${_incldir}"
       CACHE INTERNAL "" FORCE)
-  set("${uprefix}_LDFLAGS" "${${uprefix}_LIBRARIES}"
-      CACHE INTERNAL "" FORCE)
+  #set("${uprefix}_LDFLAGS" "${${uprefix}_LIBRARIES}"
+  #    CACHE INTERNAL "" FORCE)
 endif()
