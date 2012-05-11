@@ -39,7 +39,7 @@ function(find_optional_package name)
   if(NOT DEFINED "WITH_${_U_name}" OR WITH_${_U_name})
     # else, set the value of the option using the
     # result of find_package
-    find_package("${name}" QUIET)
+    find_package("${name}")
     if(${_U_name}_FOUND)
       set("WITH_${_U_name}" ON CACHE BOOL "${_desc}" FORCE)
     else()
