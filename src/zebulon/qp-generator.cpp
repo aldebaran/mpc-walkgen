@@ -418,7 +418,7 @@ void QPGenerator::computeReferenceVector(const MPCSolution & result){
   for (int i=0;i<generalData_->nbSamplesQP;++i){
 
       velRef_->global.x(i) = velRef_->local.x(i)*cosYaw_(i)-velRef_->local.y(i)*sinYaw_(i);
-      velRef_->global.y(i) =velRef_->local.x(i)*sinYaw_(i)+velRef_->local.y(i)*cosYaw_(i);
+      velRef_->global.y(i) = velRef_->local.x(i)*sinYaw_(i)+velRef_->local.y(i)*cosYaw_(i);
     }
 }
 
