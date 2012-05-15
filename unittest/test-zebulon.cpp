@@ -2,7 +2,7 @@
  */
 
 
-#include <mpc-walkgen/walkgen-abstract-zebulon.h>
+#include <mpc-walkgen/zebulon/walkgen-abstract.h>
 
 #include <cmath>
 #include <cstdio>
@@ -52,7 +52,7 @@ int main() {
 	// Create and initialize generator:
 	// -------------------------------
 
-	WalkgenAbstractZebulon * walk = createWalkgen(QPSOLVERTYPE_QPOASES);
+	WalkgenAbstract * walk = createWalkgen(QPSOLVERTYPE_QPOASES);
 
 	walk->init(robotData, mpcData);
 

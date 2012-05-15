@@ -14,7 +14,7 @@
 
 #include <vector>
 #include <Eigen/Dense>
-#include "common-types.h"
+#include "types.h"
 
 namespace MPCWalkgen{
 

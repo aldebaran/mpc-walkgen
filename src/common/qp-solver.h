@@ -16,8 +16,7 @@
 #include <Eigen/Dense>
 #include "qp-matrix.h"
 #include "qp-vector.h"
-#include "common-types.h"
-#include <mpc-walkgen/qp-solver-type.h>
+#include "types.h"
 
 namespace MPCWalkgen{
 

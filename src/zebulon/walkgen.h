@@ -11,7 +11,7 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <mpc-walkgen/walkgen-abstract-zebulon.h>
+#include <mpc-walkgen/zebulon/walkgen-abstract.h>
 #include "types.h"
 
 namespace MPCWalkgen{
@@ -25,7 +25,7 @@ namespace MPCWalkgen{
     class RigidBodySystem;
 
     class Walkgen :
-        public WalkgenAbstractZebulon
+        public WalkgenAbstract
     {
 
     public:

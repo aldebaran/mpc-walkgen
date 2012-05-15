@@ -105,24 +105,24 @@ endif()
 if(WITH_QPOASES)
   addSolver("QPOASES" _SOLVER_LIST_)
 endif()
-CONFIG_FILES(include/mpc-walkgen/qp-solver-type.h)
+CONFIG_FILES(include/mpc-walkgen/common/qp-solver-type.h)
 
 # Define the set of headers to be installed
 SET(${PROJECT_NAME}_HEADERS
-  include/mpc-walkgen/api.h
-  ${CMAKE_BINARY_DIR}/include/mpc-walkgen/qp-solver-type.h
-  include/mpc-walkgen/sharedpgtypes-common.h
+  include/mpc-walkgen/common/api.h
+  ${CMAKE_BINARY_DIR}/include/mpc-walkgen/common/qp-solver-type.h
+  include/mpc-walkgen/common/sharedpgtypes.h
 
-  include/mpc-walkgen/walkgen-abstract-humanoid.h
-  include/mpc-walkgen/sharedpgtypes-humanoid.h
+  include/mpc-walkgen/humanoid/walkgen-abstract.h
+  include/mpc-walkgen/humanoid/sharedpgtypes.h
 
-  include/mpc-walkgen/walkgen-abstract-zebulon.h
-  include/mpc-walkgen/sharedpgtypes-zebulon.h
+  include/mpc-walkgen/zebulon/walkgen-abstract.h
+  include/mpc-walkgen/zebulon/sharedpgtypes.h
 )
 
 SET(mpc-walkgen_SRC
-  src/common/common-types.cpp
-  src/common/common-types.h
+  src/common/types.cpp
+  src/common/types.h
   src/common/gettimeofday.cpp
   src/common/gettimeofday.h
   src/common/interpolation.cpp
@@ -140,7 +140,7 @@ SET(mpc-walkgen_SRC
   src/common/tools.cpp
   src/common/tools.h
   src/common/tools-inl.h
-  src/sharedpgtypes-common.cpp
+  src/common/sharedpgtypes.cpp
 
   src/humanoid/orientations-preview.cpp
   src/humanoid/orientations-preview.h
@@ -162,8 +162,8 @@ SET(mpc-walkgen_SRC
   src/humanoid/types.h
   src/humanoid/walkgen.cpp
   src/humanoid/walkgen.h
-  src/sharedpgtypes-humanoid.cpp
-  src/walkgen-abstract-humanoid.cpp
+  src/humanoid/sharedpgtypes.cpp
+  src/humanoid/walkgen-abstract.cpp
 
   src/zebulon/qp-generator.cpp
   src/zebulon/qp-generator.h
@@ -178,8 +178,8 @@ SET(mpc-walkgen_SRC
   src/zebulon/types.h
   src/zebulon/walkgen.cpp
   src/zebulon/walkgen.h
-  src/sharedpgtypes-zebulon.cpp
-  src/walkgen-abstract-zebulon.cpp
+  src/zebulon/sharedpgtypes.cpp
+  src/zebulon/walkgen-abstract.cpp
 )
 
 if(WITH_LSSOL)

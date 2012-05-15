@@ -4,8 +4,8 @@
 
 
 
-#include <mpc-walkgen/sharedpgtypes-zebulon.h>
-#include <mpc-walkgen/walkgen-abstract-zebulon.h>
+#include <mpc-walkgen/zebulon/sharedpgtypes.h>
+#include <mpc-walkgen/zebulon/walkgen-abstract.h>
 #include <../src/common/mpc-debug.h>
 
 #include <cmath>
@@ -31,8 +31,8 @@ int main() {
 	// Creat and initialize generator:
 	// -------------------------------
 
-	WalkgenAbstractZebulon * walk1 = createWalkgen(QPSOLVERTYPE_LSSOL);
-	WalkgenAbstractZebulon * walk2 = createWalkgen(QPSOLVERTYPE_QPOASES);
+	WalkgenAbstract * walk1 = createWalkgen(QPSOLVERTYPE_LSSOL);
+	WalkgenAbstract * walk2 = createWalkgen(QPSOLVERTYPE_QPOASES);
 	walk2->init(robotData, mpcData);
 	walk1->init(robotData, mpcData);
 

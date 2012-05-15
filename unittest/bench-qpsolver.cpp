@@ -1,6 +1,6 @@
 
 #include "../src/common/mpc-debug.h"
-#include <mpc-walkgen/sharedpgtypes-humanoid.h>
+#include <mpc-walkgen/humanoid/sharedpgtypes.h>
 #include <cmath>
 #include <cstdio>
 #include <iostream>
@@ -9,7 +9,7 @@
 #include <fstream>
 
 #include "../src/common/qp-solver.h"
-#include <mpc-walkgen/qp-solver-type.h>
+#include <mpc-walkgen/common/qp-solver-type.h>
 
 using namespace Eigen;
 using namespace MPCWalkgen;

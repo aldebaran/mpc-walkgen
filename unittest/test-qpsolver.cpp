@@ -14,7 +14,7 @@
 
 #include "../src/common/qp-solver.h"
 #include "../src/humanoid/types.h"
-#include <mpc-walkgen/qp-solver-type.h>
+#include <mpc-walkgen/common/qp-solver-type.h>
 
 using namespace Eigen;
 using namespace MPCWalkgen;

@@ -14,7 +14,7 @@
 
 
 
-#include "common-types.h"
+#include "types.h"
 #include "tools.h"
 #include <Eigen/Dense>
 

@@ -13,7 +13,7 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <mpc-walkgen/walkgen-abstract-humanoid.h>
+#include <mpc-walkgen/humanoid/walkgen-abstract.h>
 #include "types.h"
 
 namespace MPCWalkgen{
@@ -29,7 +29,7 @@ namespace MPCWalkgen{
     class OrientationsPreview;
 
     class Walkgen :
-        public WalkgenAbstractHumanoid
+        public WalkgenAbstract
     {
 
     public:

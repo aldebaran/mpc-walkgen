@@ -15,8 +15,8 @@ using namespace Humanoid;
 using namespace Eigen;
 
 
-MPCWalkgen::Humanoid::WalkgenAbstractHumanoid* MPCWalkgen::Humanoid::createWalkgen(MPCWalkgen::QPSolverType solvertype) {
-  MPCWalkgen::Humanoid::WalkgenAbstractHumanoid* zmpVra = new MPCWalkgen::Humanoid::Walkgen(solvertype);
+MPCWalkgen::Humanoid::WalkgenAbstract* MPCWalkgen::Humanoid::createWalkgen(MPCWalkgen::QPSolverType solvertype) {
+  MPCWalkgen::Humanoid::WalkgenAbstract* zmpVra = new MPCWalkgen::Humanoid::Walkgen(solvertype);
   return zmpVra;
 }
 
@@ -25,7 +25,7 @@ MPCWalkgen::Humanoid::WalkgenAbstractHumanoid* MPCWalkgen::Humanoid::createWalkg
 
 // Implementation of the private interface
 Walkgen::Walkgen(::MPCWalkgen::QPSolverType solvertype)
-  : WalkgenAbstractHumanoid()
+  : WalkgenAbstract()
   ,generalData_()
   ,solver_(0x0)
   ,generator_(0x0)

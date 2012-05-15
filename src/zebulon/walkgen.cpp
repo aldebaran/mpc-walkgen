@@ -13,15 +13,15 @@ using namespace Zebulon;
 using namespace Eigen;
 
 
-MPCWalkgen::Zebulon::WalkgenAbstractZebulon* MPCWalkgen::Zebulon::createWalkgen(MPCWalkgen::QPSolverType solvertype) {
-  MPCWalkgen::Zebulon::WalkgenAbstractZebulon* zmpVra = new MPCWalkgen::Zebulon::Walkgen(solvertype);
+MPCWalkgen::Zebulon::WalkgenAbstract* MPCWalkgen::Zebulon::createWalkgen(MPCWalkgen::QPSolverType solvertype) {
+  MPCWalkgen::Zebulon::WalkgenAbstract* zmpVra = new MPCWalkgen::Zebulon::Walkgen(solvertype);
   return zmpVra;
 }
 
 
 // Implementation of the private interface
 Walkgen::Walkgen(::MPCWalkgen::QPSolverType solvertype)
-  : WalkgenAbstractZebulon()
+  : WalkgenAbstract()
   ,generalData_()
   ,solver_(0x0)
   ,solverOrientation_(0x0)

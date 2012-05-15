@@ -2,7 +2,7 @@
  */
 
 
-#include <mpc-walkgen/walkgen-abstract-humanoid.h>
+#include <mpc-walkgen/humanoid/walkgen-abstract.h>
 
 #include <cmath>
 #include <cstdio>
@@ -113,7 +113,7 @@ int main() {
 	// Create and initialize generator:
 	// -------------------------------
 	std::cout << "10%" << std::endl;
-	WalkgenAbstractHumanoid * walk = createWalkgen(QPSOLVERTYPE_QPOASES);
+	WalkgenAbstract * walk = createWalkgen(QPSOLVERTYPE_QPOASES);
 
 	walk->init(robotData, mpcData);
 //	const RigidBodySystem *robot = walk->robot();// Not used yet

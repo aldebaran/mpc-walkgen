@@ -12,8 +12,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 
-#include <mpc-walkgen/sharedpgtypes-zebulon.h>
-#include "../common/common-types.h"
+#include <mpc-walkgen/zebulon/sharedpgtypes.h>
+#include "../common/types.h"
 
 
 #endif //PGTYPEZEBULON

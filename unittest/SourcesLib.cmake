@@ -25,8 +25,8 @@ set(solver_SRC
   ../src/common/qp-matrix.cpp
   ../src/common/qp-vector.cpp
   ../src/humanoid/types.cpp
-  ../src/sharedpgtypes-humanoid.cpp
-  ../src/walkgen-abstract-humanoid.cpp
+  ../src/humanoid/sharedpgtypes.cpp
+  ../src/humanoid/walkgen-abstract.cpp
 )
 
 if(WITH_LSSOL)
