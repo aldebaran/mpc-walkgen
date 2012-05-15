@@ -49,6 +49,8 @@ RobotData::RobotData()
   orientationLimit[0]=2*3.14;
   orientationLimit[1]=3.14;
   orientationLimit[2]=3.14;
+  comLimitX=0.12;
+  comLimitY=0.035;
 }
 
 QPPonderation::QPPonderation(int nb)
