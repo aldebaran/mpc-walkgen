@@ -85,9 +85,6 @@ void Walkgen::init() {
   generator_->precomputeObjectiveAndConstraintsOrientation();
 
   BodyState state;
-
-  state.x[0] = robotData_.basePos[0];
-  state.y[0] = robotData_.basePos[1];
   robot_->body(BASE)->state(state);
 
   state.x[0] = 0;

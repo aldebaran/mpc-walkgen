@@ -84,8 +84,7 @@ namespace MPCWalkgen{
 
     struct MPC_WALKGEN_API RobotData {
       double CoMHeight;
-      double robotMass; //TODO: rename mass
-      std::vector<double> basePos;
+
       double b;
       double h;
       std::vector<double> baseLimit;

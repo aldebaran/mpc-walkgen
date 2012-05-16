@@ -33,23 +33,19 @@ int MPCData::nbSamplesControl() const{
 
 RobotData::RobotData()
   :CoMHeight(0.45)
-  ,robotMass(15)
-  ,basePos(2)
   ,b(0.31-0.06)
   ,h(0.26-0.06)
   ,baseLimit(3)
   ,orientationLimit(3)
 {
-  basePos[0]=0;
-  basePos[1]=0;
   baseLimit[0]=0.83;
   baseLimit[1]=1;
   baseLimit[2]=2;
   orientationLimit[0]=2*3.14;
   orientationLimit[1]=3.14;
   orientationLimit[2]=3.14;
-  comLimitX=0.12;
-  comLimitY=0.035;
+  comLimitX=0.12*0.8;
+  comLimitY=0.035*0.8;
 }
 
 QPPonderation::QPPonderation(int nb)
