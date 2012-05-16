@@ -138,7 +138,7 @@ void Walkgen::init() {
 
 const MPCSolution & Walkgen::online(bool previewBodiesNextState){
   currentRealTime_ += generalData_.MPCSamplingPeriod;
-  online(currentRealTime_, previewBodiesNextState);
+  return online(currentRealTime_, previewBodiesNextState);
 }
 
 const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
