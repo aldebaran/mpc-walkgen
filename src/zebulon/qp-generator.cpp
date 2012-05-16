@@ -168,6 +168,7 @@ void QPGenerator::buildConstraints(){
 
   tmpMat_.resize(N,N);
 
+  // CoP constraints
   tmpMat_ = -Rxx_*CoPDynamics.U;
   solver_->matrix(matrixA).addTerm(tmpMat_, nbCtr+0, 0);
   solver_->matrix(matrixA).addTerm(tmpMat_, nbCtr+N, 0);
@@ -210,11 +211,12 @@ void QPGenerator::buildConstraints(){
   solver_->matrix(matrixA).addTerm(-tmpMat_, nbCtr+N, 3*N);
 
 
-
+  // Velocity constraints
   tmpMat_ = baseVelDynamics.U;
   solver_->matrix(matrixA).addTerm(tmpMat_, nbCtr+3*N, 2*N);
   solver_->matrix(matrixA).addTerm(tmpMat_, nbCtr+4*N, 3*N);
 
+  // Acceleration constraints
   tmpMat_ = baseAccDynamics.U;
   solver_->matrix(matrixA).addTerm(tmpMat_, nbCtr+5*N, 2*N);
   solver_->matrix(matrixA).addTerm(tmpMat_, nbCtr+6*N, 3*N);
@@ -225,20 +227,23 @@ void QPGenerator::buildConstraints(){
 
   tmpVec_.resize(7*N);
 
+  // CoP constraints
   tmpVec_.segment(0,3*N).fill(-10e11);
   tmpVec_.segment(3*N,2*N).fill(-robotData.baseLimit[0]);
   tmpVec_.segment(5*N,2*N).fill(-robotData.baseLimit[1]);
 
+  // Velocity constraints
   tmpVec_.segment(3*N,N) -= baseVelDynamics.S*base.x;
   tmpVec_.segment(4*N,N) -= baseVelDynamics.S*base.y;
 
+  // Acceleration constraints
   tmpVec_.segment(5*N,N) -= baseAccDynamics.S*base.x;
   tmpVec_.segment(6*N,N) -= baseAccDynamics.S*base.y;
 
   solver_->vector(vectorBL).addTerm(tmpVec_, nbCtr);
 
 
-
+  // CoP constraints
   tmpVec_.segment(0,3*N).fill(robotData.h/2);
   tmpVec_.segment(0,N) += Rxx_*CoPDynamics.S * CoM.x - Ryy_*(2*robotData.h/robotData.b)*CoPDynamics.S* CoM.y - Rxx_*basePosDynamics.S*base.x + Ryy_*(2*robotData.h/robotData.b)* basePosDynamics.S*base.y;
   tmpVec_.segment(N,N) += Rxx_*CoPDynamics.S * CoM.x + Ryy_*(2*robotData.h/robotData.b)*CoPDynamics.S* CoM.y - Rxx_*basePosDynamics.S*base.x - Ryy_*(2*robotData.h/robotData.b)* basePosDynamics.S*base.y;
@@ -252,9 +257,11 @@ void QPGenerator::buildConstraints(){
   tmpVec_.segment(3*N,2*N).fill(robotData.baseLimit[0]);
   tmpVec_.segment(5*N,2*N).fill(robotData.baseLimit[1]);
 
+  // Velocity constraints
   tmpVec_.segment(3*N,N) -= baseVelDynamics.S*base.x;
   tmpVec_.segment(4*N,N) -= baseVelDynamics.S*base.y;
 
+  // Acceleration constraints
   tmpVec_.segment(5*N,N) -= baseAccDynamics.S*base.x;
   tmpVec_.segment(6*N,N) -= baseAccDynamics.S*base.y;
 
@@ -264,13 +271,13 @@ void QPGenerator::buildConstraints(){
 
   tmpVec_.resize(4*N);
 
-
+  // Jerk constraints
   tmpVec_.segment(0,2*N).fill(-10e11);
   tmpVec_.segment(2*N,2*N).fill(-robotData.baseLimit[2]);
 
   solver_->vector(vectorXL).addTerm(tmpVec_, nbCtr);
 
-
+  // Jerk constraints
   tmpVec_.segment(0,2*N).fill(10e11);
   tmpVec_.segment(2*N,2*N).fill(robotData.baseLimit[2]);
 
