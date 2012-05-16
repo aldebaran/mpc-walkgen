@@ -27,6 +27,9 @@ namespace MPCWalkgen{
 			void addTerm(const Eigen::MatrixXd & mat,
 					const int row = 0, const int col = 0);
 
+			void setTerm(const Eigen::MatrixXd & mat,
+					const int row = 0, const int col = 0);
+
 			void setConstantPart(const Eigen::MatrixXd & mat);
 
 			void reset();

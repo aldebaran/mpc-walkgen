@@ -24,6 +24,8 @@ namespace MPCWalkgen{
 
 			void addTerm(const Eigen::VectorXd & mat, const int row = 0);
 
+			void setTerm(const Eigen::VectorXd & mat, const int row = 0);
+
 			void setConstantPart(const Eigen::VectorXd & mat);
 
 			void reset();

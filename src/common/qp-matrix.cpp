@@ -58,6 +58,21 @@ void QPMatrix::addTerm(const MatrixXd & mat,
 
 }
 
+void QPMatrix::setTerm(const MatrixXd & mat,
+		const int row , const int col )
+{
+	int nbRows = mat.rows();
+	int nbCols = mat.cols();
+	Eigen::MatrixXd & out = matrix_[vectorElem_];
+	for (int i=0;i<nbRows;++i){
+		for (int j=0;j<nbCols;++j){
+			out(rowOrder_(row+i),colOrder_(col+j))=mat(i,j);
+		}
+	}
+	choleskyMatrixOutdated_=true;
+
+}
+
 void QPMatrix::setConstantPart(const MatrixXd & mat){
 	int nbRows = mat.rows();
 	int nbCols = mat.cols();
