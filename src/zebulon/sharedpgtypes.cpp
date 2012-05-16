@@ -1,6 +1,5 @@
 #include <mpc-walkgen/zebulon/sharedpgtypes.h>
-
-
+#include "../common/tools.h"
 
 using namespace MPCWalkgen::Zebulon;
 

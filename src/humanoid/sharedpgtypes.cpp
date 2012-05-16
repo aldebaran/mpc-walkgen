@@ -1,5 +1,5 @@
 #include <mpc-walkgen/humanoid/sharedpgtypes.h>
-
+#include "../common/tools.h"
 
 
 using namespace MPCWalkgen::Humanoid;

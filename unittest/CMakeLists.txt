@@ -54,8 +54,8 @@ addUnitTest(test-qpsolver    "solver" "${solverAvailable}")
 addUnitTest(test-all-solvers "solver" "${solverAvailable}")
 
 if(WITH_QPOASES)
-  addUnitTest(test-humanoid  "mpc-walkgen" "")
-  addUnitTest(test-zebulon  "mpc-walkgen" "")
+  addUnitTest(test-humanoid  "mpc-walkgen;timer" "")
+  addUnitTest(test-zebulon  "mpc-walkgen;timer" "")
 endif()
 
 
