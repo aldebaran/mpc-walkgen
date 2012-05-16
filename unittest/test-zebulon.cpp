@@ -45,16 +45,13 @@ int main() {
 	}
 
 
-	MPCData mpcData;
-	RobotData robotData;
-
 
 	// Create and initialize generator:
 	// -------------------------------
 
 	WalkgenAbstract * walk = createWalkgen(QPSOLVERTYPE_QPOASES);
 
-	walk->init(robotData, mpcData);
+	walk->init();
 
 	// Run:
 	// ----
