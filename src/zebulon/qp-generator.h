@@ -38,12 +38,20 @@ namespace MPCWalkgen{
       void buildObjective();
 
       void buildConstraints();
+      void buildConstraintsCoP();
+      void buildConstraintsCoM();
+      void buildConstraintsBaseVelocity();
+      void buildConstraintsBaseAcceleration();
+      void buildConstraintsBaseJerk();
 
       void computeWarmStart(MPCSolution & result);
 
       void buildObjectiveOrientation();
 
       void buildConstraintsOrientation();
+      void buildConstraintsBaseVelocityOrientation();
+      void buildConstraintsBaseAccelerationOrientation();
+      void buildConstraintsBaseJerkOrientation();
 
       void computeWarmStartOrientation(MPCSolution & result);
 
@@ -80,7 +88,6 @@ namespace MPCWalkgen{
       std::vector<Eigen::MatrixXd> QconstOr_;
       std::vector<Eigen::MatrixXd> pconstOrCoMYaw_;
       std::vector<Eigen::MatrixXd> pconstOrRef_;
-      std::vector<Eigen::MatrixXd> AconstOr_;
 
       Eigen::VectorXd yaw_;
       Eigen::VectorXd cosYaw_;
