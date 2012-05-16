@@ -180,7 +180,7 @@ void QPSolver::dump(){
 	std::cout << std::endl;
 	std::cout << std::endl;
 	std::cout << "P :" << std::endl;
-	std::cout << vectorP_() << std::endl;
+	std::cout << vectorP_().transpose() << std::endl;
 	std::cout << std::endl;
 	std::cout << std::endl;
 	std::cout << "A :" << std::endl;
@@ -188,12 +188,12 @@ void QPSolver::dump(){
 	std::cout << std::endl;
 	std::cout << std::endl;
 	std::cout << "Bl / Bu :" << std::endl;
-	std::cout << vectorBL_() << std::endl;
-	std::cout << vectorBU_() << std::endl;
+	std::cout << vectorBL_().transpose() << std::endl;
+	std::cout << vectorBU_().transpose() << std::endl;
 	std::cout << std::endl;
 	std::cout << "Xl / Xu :" << std::endl;
-	std::cout << vectorXL_() << std::endl;
-	std::cout << vectorXU_() << std::endl;
+	std::cout << vectorXL_().transpose() << std::endl;
+	std::cout << vectorXU_().transpose() << std::endl;
 }
 
 QPSolver * MPCWalkgen::createQPSolver(QPSolverType solvertype,
