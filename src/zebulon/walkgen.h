@@ -32,8 +32,9 @@ namespace MPCWalkgen{
       Walkgen(::MPCWalkgen::QPSolverType solvertype);
       ~Walkgen();
 
-      virtual void init(const RobotData &robotData, const MPCData &mpcData);
 
+      virtual void init(const RobotData &robotData, const MPCData &mpcData);
+      virtual void init(const RobotData &robotData);
       virtual void init();
 
       virtual const MPCSolution &online(double time, bool previewBodiesNextState=true);

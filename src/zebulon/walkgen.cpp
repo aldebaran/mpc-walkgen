@@ -70,6 +70,11 @@ void Walkgen::init(const RobotData &robotData, const MPCData &mpcData){
   init();
 }
 
+void Walkgen::init(const RobotData &robotData){
+  robotData_ = robotData;
+  init();
+}
+
 void Walkgen::init() {
 
   robot_->init(robotData_);
