@@ -32,11 +32,12 @@ Walkgen::Walkgen(::MPCWalkgen::QPSolverType solvertype)
   ,velRef_()
   ,upperTimeLimitToUpdate_(0)
   ,upperTimeLimitToFeedback_(0)
+  ,initAlreadyCalled_(false)
 {
 
   solver_ = createQPSolver(solvertype,
-          4*generalData_.nbSamplesQP, 7*generalData_.nbSamplesQP,
-          4*generalData_.nbSamplesQP, 7*generalData_.nbSamplesQP);
+          4*generalData_.nbSamplesQP, 9*generalData_.nbSamplesQP,
+          4*generalData_.nbSamplesQP, 9*generalData_.nbSamplesQP);
   solverOrientation_ = createQPSolver(solvertype,
           generalData_.nbSamplesQP, 2*generalData_.nbSamplesQP,
           generalData_.nbSamplesQP, 2*generalData_.nbSamplesQP);
@@ -62,6 +63,52 @@ Walkgen::~Walkgen(){
   if (interpolation_ != 0x0)
     delete interpolation_;
 
+}
+
+void Walkgen::robotData(const RobotData &robotData){
+  RobotData tmpRobotData = robotData_;
+  robotData_ = robotData;
+  if (!initAlreadyCalled_){
+    init();
+    return;
+  }
+
+  // Modify dynamic matrices wich are used everywhere in the problem.
+  // So, we must to recall init()
+  if (fabs(robotData.CoMHeight-tmpRobotData.CoMHeight)>EPSILON){
+    init();
+    return;
+  }
+
+  if (fabs(robotData.b-tmpRobotData.b)>EPSILON
+    ||fabs(robotData.h-tmpRobotData.h)>EPSILON){
+    generator_->buildConstraintsCoP();
+  }
+
+  if (fabs(robotData.baseLimit[0]-tmpRobotData.baseLimit[0])>EPSILON){
+    generator_->buildConstraintsBaseVelocity();
+  }
+  if (fabs(robotData.baseLimit[1]-tmpRobotData.baseLimit[1])>EPSILON){
+    generator_->buildConstraintsBaseAcceleration();
+  }
+  if (fabs(robotData.baseLimit[2]-tmpRobotData.baseLimit[2])>EPSILON){
+    generator_->buildConstraintsBaseJerk();
+  }
+
+  if (fabs(robotData.orientationLimit[0]-tmpRobotData.orientationLimit[0])>EPSILON){
+    generator_->buildConstraintsBaseVelocityOrientation();
+  }
+  if (fabs(robotData.orientationLimit[1]-tmpRobotData.orientationLimit[1])>EPSILON){
+    generator_->buildConstraintsBaseAccelerationOrientation();
+  }
+  if (fabs(robotData.orientationLimit[2]-tmpRobotData.orientationLimit[2])>EPSILON){
+    generator_->buildConstraintsBaseJerkOrientation();
+  }
+
+  if (fabs(robotData.comLimitX-tmpRobotData.comLimitX)>EPSILON
+    ||fabs(robotData.comLimitY-tmpRobotData.comLimitY)>EPSILON){
+    generator_->buildConstraintsCoM();
+  }
 }
 
 void Walkgen::init(const RobotData &robotData, const MPCData &mpcData){
@@ -106,6 +153,8 @@ void Walkgen::init() {
 
   velRef_.resize(generalData_.nbSamplesQP);
   newVelRef_.resize(generalData_.nbSamplesQP);
+
+  initAlreadyCalled_ = true;
 }
 
 const MPCSolution & Walkgen::online(bool previewBodiesNextState){
