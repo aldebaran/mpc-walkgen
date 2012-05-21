@@ -22,6 +22,7 @@ namespace MPCWalkgen{
   namespace Zebulon{
 
     class QPGenerator;
+    class QPGeneratorOrientation;
     class RigidBodySystem;
 
     class Walkgen :
@@ -59,6 +60,7 @@ namespace MPCWalkgen{
       ::MPCWalkgen::QPSolver * solver_;
       ::MPCWalkgen::QPSolver * solverOrientation_;
       QPGenerator * generator_;
+      QPGeneratorOrientation * generatorOrientation_;
       ::MPCWalkgen::Interpolation * interpolation_;
       RigidBodySystem * robot_;
 

@@ -1,10 +1,10 @@
-#ifndef QP_GENERATOR_ZEBULON
-#define QP_GENERATOR_ZEBULON
+#ifndef QP_GENERATOR_ORIENTATION_ZEBULON
+#define QP_GENERATOR_ORIENTATION_ZEBULON
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
 ///\file	qp-generator.h
-///\brief	A class to compute QP elements (objective, constraints, warmstart)
+///\brief	A class to compute QP elements for orientation problem (objective, constraints, warmstart)
 ///\author	Lafaye Jory
 ///\version	1.0
 ///\date	02/05/12
@@ -23,32 +23,26 @@
 
 namespace MPCWalkgen{
     namespace Zebulon{
-    class QPGenerator{
+    class QPGeneratorOrientation{
 
     public:
-      QPGenerator(QPSolver * solver,
+      QPGeneratorOrientation(QPSolver * solver,
                   VelReference * velRef, QPPonderation * ponderation,
                   RigidBodySystem * robot, const MPCData * generalData);
-      ~QPGenerator();
+      ~QPGeneratorOrientation();
 
       void precomputeObjective();
 
       void buildObjective();
 
       void buildConstraints();
-      void buildConstraintsCoP();
-      void buildConstraintsCoM();
       void buildConstraintsBaseVelocity();
       void buildConstraintsBaseAcceleration();
       void buildConstraintsBaseJerk();
 
       void computeWarmStart(MPCSolution & result);
 
-      void computeReferenceVector(const MPCSolution & result);
-
-    private:
-
-      void computeOrientationMatrices(const MPCSolution & result);
+      void computeReferenceVector();
 
     private:
 
@@ -59,27 +53,14 @@ namespace MPCWalkgen{
       const MPCData * generalData_;
 
       Eigen::VectorXd tmpVec_;
-      Eigen::VectorXd tmpVec2_;
-      Eigen::MatrixXd tmpMat_;
 
       std::vector<Eigen::MatrixXd> Qconst_;
-      std::vector<Eigen::MatrixXd> pconstCoMX_;
-      std::vector<Eigen::MatrixXd> pconstCoMB_;
-      std::vector<Eigen::MatrixXd> pconstBaseX_;
-      std::vector<Eigen::MatrixXd> pconstBaseB_;
+      std::vector<Eigen::MatrixXd> pconstCoMYaw_;
       std::vector<Eigen::MatrixXd> pconstRef_;
-
-      Eigen::VectorXd yaw_;
-      Eigen::VectorXd cosYaw_;
-      Eigen::VectorXd sinYaw_;
-      Eigen::MatrixXd Rxx_;
-      Eigen::MatrixXd Rxy_;
-      Eigen::MatrixXd Ryx_;
-      Eigen::MatrixXd Ryy_;
 
     };
   }
 }
 
 
-#endif //QP_GENERATOR_ZEBULON
+#endif //QP_GENERATOR_ORIENTATION_ZEBULON

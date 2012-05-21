@@ -167,6 +167,8 @@ SET(mpc-walkgen_SRC
 
   src/zebulon/qp-generator.cpp
   src/zebulon/qp-generator.h
+  src/zebulon/qp-generator-orientation.cpp
+  src/zebulon/qp-generator-orientation.h
   src/zebulon/rigid-bodies/com-body.cpp
   src/zebulon/rigid-bodies/com-body.h
   src/zebulon/rigid-bodies/base-body.cpp

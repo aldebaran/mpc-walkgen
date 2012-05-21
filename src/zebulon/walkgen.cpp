@@ -2,6 +2,7 @@
 
 #include "../common/qp-solver.h"
 #include "qp-generator.h"
+#include "qp-generator-orientation.h"
 #include "rigid-body-system.h"
 #include "../common/interpolation.h"
 
@@ -26,6 +27,7 @@ Walkgen::Walkgen(::MPCWalkgen::QPSolverType solvertype)
   ,solver_(0x0)
   ,solverOrientation_(0x0)
   ,generator_(0x0)
+  ,generatorOrientation_(0x0)
   ,interpolation_(0x0)
   ,robot_(0x0)
   ,solution_()
@@ -43,7 +45,8 @@ Walkgen::Walkgen(::MPCWalkgen::QPSolverType solvertype)
           generalData_.nbSamplesQP, 2*generalData_.nbSamplesQP);
   interpolation_ = new Interpolation();
   robot_ = new RigidBodySystem(&generalData_, interpolation_);
-  generator_= new QPGenerator(solver_, solverOrientation_, &velRef_, &ponderation_, robot_, &generalData_);
+  generator_= new QPGenerator(solver_, &velRef_, &ponderation_, robot_, &generalData_);
+  generatorOrientation_= new QPGeneratorOrientation(solverOrientation_, &velRef_, &ponderation_, robot_, &generalData_);
 }
 
 
@@ -56,6 +59,9 @@ Walkgen::~Walkgen(){
 
   if (generator_ != 0x0)
     delete generator_;
+
+  if (generatorOrientation_ != 0x0)
+    delete generatorOrientation_;
 
   if (robot_ != 0x0)
     delete robot_;
@@ -96,13 +102,13 @@ void Walkgen::robotData(const RobotData &robotData){
   }
 
   if (fabs(robotData.orientationLimit[0]-tmpRobotData.orientationLimit[0])>EPSILON){
-    generator_->buildConstraintsBaseVelocityOrientation();
+    generatorOrientation_->buildConstraintsBaseVelocity();
   }
   if (fabs(robotData.orientationLimit[1]-tmpRobotData.orientationLimit[1])>EPSILON){
-    generator_->buildConstraintsBaseAccelerationOrientation();
+    generatorOrientation_->buildConstraintsBaseAcceleration();
   }
   if (fabs(robotData.orientationLimit[2]-tmpRobotData.orientationLimit[2])>EPSILON){
-    generator_->buildConstraintsBaseJerkOrientation();
+    generatorOrientation_->buildConstraintsBaseJerk();
   }
 
   if (fabs(robotData.comLimitX-tmpRobotData.comLimitX)>EPSILON
@@ -134,7 +140,7 @@ void Walkgen::init() {
   robot_->computeDynamics();
 
   generator_->precomputeObjective();
-  generator_->precomputeObjectiveAndConstraintsOrientation();
+  generatorOrientation_->precomputeObjective();
 
   BodyState state;
   robot_->body(BASE)->state(state);
@@ -182,10 +188,10 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
 
       upperTimeLimitToFeedback_ += generalData_.MPCSamplingPeriod;
 
-      generator_->computeOrientationReferenceVector();
-      generator_->buildObjectiveOrientation();
-      generator_->buildConstraintsOrientation();
-      generator_->computeWarmStartOrientation(solution_);
+      generatorOrientation_->computeReferenceVector();
+      generatorOrientation_->buildObjective();
+      generatorOrientation_->buildConstraints();
+      generatorOrientation_->computeWarmStart(solution_);
 
       solverOrientation_->solve(solution_.qpSolutionOrientation,
                                 solution_.constraintsOrientation, solution_.initialSolutionOrientation,
