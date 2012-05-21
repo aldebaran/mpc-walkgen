@@ -4,12 +4,8 @@
 using namespace MPCWalkgen::Zebulon;
 
 MPCSolution::MPCSolution()
-:useWarmStart(true)
-,state_vec(3)
+:state_vec(3)
 {}
-
-void MPCSolution::reset(){
-}
 
 MPCData::MPCData()
 :QPSamplingPeriod(0.2)

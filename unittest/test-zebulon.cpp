@@ -125,13 +125,13 @@ int main() {
 
 void dumpTrajectory(MPCSolution &result, std::vector<std::ofstream*> &data_vec) {
 	for (int i = 0; i < result.state_vec[0].CoMTrajX_.rows(); ++i) {
-	  *data_vec[0] << result.state_vec[0].CoMTrajX_(i) << " " << result.state_vec[1].CoMTrajX_(i) << " " << result.state_vec[2].CoMTrajX_(i) << " " << result.qpSolution(0) << std::endl;
-	  *data_vec[1] << result.state_vec[0].CoMTrajY_(i) << " " << result.state_vec[1].CoMTrajY_(i) << " " << result.state_vec[2].CoMTrajY_(i) << " " << result.qpSolution(result.qpSolution.rows()/4) <<std::endl;
-	  *data_vec[2] << result.state_vec[0].CoMTrajYaw_(i) << " " << result.state_vec[1].CoMTrajYaw_(i) << " " << result.state_vec[2].CoMTrajYaw_(i) << " " << result.qpSolutionOrientation(0) << std::endl;
+	  *data_vec[0] << result.state_vec[0].CoMTrajX_(i) << " " << result.state_vec[1].CoMTrajX_(i) << " " << result.state_vec[2].CoMTrajX_(i) << std::endl;
+	  *data_vec[1] << result.state_vec[0].CoMTrajY_(i) << " " << result.state_vec[1].CoMTrajY_(i) << " " << result.state_vec[2].CoMTrajY_(i) << std::endl;
+	  *data_vec[2] << result.state_vec[0].CoMTrajYaw_(i) << " " << result.state_vec[1].CoMTrajYaw_(i) << " " << result.state_vec[2].CoMTrajYaw_(i) << std::endl;
 	  *data_vec[3] << result.CoPTrajX(i)  << std::endl;
 	  *data_vec[4] << result.CoPTrajY(i) << std::endl;
-	  *data_vec[5] << result.state_vec[0].baseTrajX_(i) << " " << result.state_vec[1].baseTrajX_(i) << " " << result.state_vec[2].baseTrajX_(i)<< " " << result.qpSolution(result.qpSolution.rows()/2) << std::endl;
-	  *data_vec[6] << result.state_vec[0].baseTrajY_(i) << " " << result.state_vec[1].baseTrajY_(i) << " " << result.state_vec[2].baseTrajY_(i) << " " << result.qpSolution(result.qpSolution.rows()*3/4)<< std::endl;
+	  *data_vec[5] << result.state_vec[0].baseTrajX_(i) << " " << result.state_vec[1].baseTrajX_(i) << " " << result.state_vec[2].baseTrajX_(i) << std::endl;
+	  *data_vec[6] << result.state_vec[0].baseTrajY_(i) << " " << result.state_vec[1].baseTrajY_(i) << " " << result.state_vec[2].baseTrajY_(i) << std::endl;
 	}
 }
 

@@ -170,7 +170,7 @@ const MPCSolution & Walkgen::online(bool previewBodiesNextState){
 
 const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
   currentRealTime_ = time;
-  solution_.newTraj = false;
+  solution_.mpcSolution.newTraj = false;
   if(time  > upperTimeLimitToUpdate_+EPSILON){
       upperTimeLimitToUpdate_ += generalData_.QPSamplingPeriod;
       currentTime_ = time;
@@ -182,8 +182,7 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
 
       solver_->reset();
       solverOrientation_->reset();
-      solution_.reset();
-      solution_.newTraj = true;
+      solution_.mpcSolution.newTraj = true;
       velRef_ = newVelRef_;
 
       upperTimeLimitToFeedback_ += generalData_.MPCSamplingPeriod;
@@ -213,7 +212,7 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
 
     }
 
-  return solution_;
+  return solution_.mpcSolution;
 }
 
 void Walkgen::reference(double dx, double dy, double dyaw){

@@ -99,22 +99,6 @@ namespace MPCWalkgen{
 
       MPCSolution();
 
-      void reset();
-
-      // attributes
-      Eigen::VectorXd qpSolution;
-      Eigen::VectorXd initialSolution;
-
-      Eigen::VectorXi constraints;
-      Eigen::VectorXi initialConstraints;
-
-      Eigen::VectorXd qpSolutionOrientation;
-      Eigen::VectorXd initialSolutionOrientation;
-
-      Eigen::VectorXi constraintsOrientation;
-      Eigen::VectorXi initialConstraintsOrientation;
-
-      bool useWarmStart;
       /// \brief True if a new trajectory is computed in online loop
       bool newTraj;
 

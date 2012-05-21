@@ -177,6 +177,7 @@ SET(mpc-walkgen_SRC
   src/zebulon/rigid-body.h
   src/zebulon/rigid-body-system.cpp
   src/zebulon/rigid-body-system.h
+  src/zebulon/types.cpp
   src/zebulon/types.h
   src/zebulon/walkgen.cpp
   src/zebulon/walkgen.h

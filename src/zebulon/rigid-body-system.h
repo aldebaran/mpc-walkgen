@@ -31,9 +31,9 @@ namespace MPCWalkgen{
 
       void computeDynamics();
 
-      void interpolateBodies(MPCSolution &solution, double currentTime, const VelReference &velRef);
+      void interpolateBodies(GlobalSolution &solution, double currentTime, const VelReference &velRef);
 
-      void updateBodyState(const MPCSolution &solution);
+      void updateBodyState(const GlobalSolution &solution);
 
       RigidBody *body(BodyType type);
       const RigidBody *body(BodyType type) const;

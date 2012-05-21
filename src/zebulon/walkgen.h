@@ -64,7 +64,7 @@ namespace MPCWalkgen{
       ::MPCWalkgen::Interpolation * interpolation_;
       RigidBodySystem * robot_;
 
-      MPCSolution solution_;
+      GlobalSolution solution_;
       VelReference velRef_;
       /// \brief The new value of reference velocity, updated with in online method
       VelReference newVelRef_;

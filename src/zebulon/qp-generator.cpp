@@ -367,7 +367,7 @@ void QPGenerator::buildConstraints(){
 
 }
 
-void QPGenerator::computeWarmStart(MPCSolution & result){
+void QPGenerator::computeWarmStart(GlobalSolution & result){
   if (result.constraints.rows()>=solver_->nbCtr()+solver_->nbVar()){
       result.initialConstraints= result.constraints;
       result.initialSolution= result.qpSolution;
@@ -377,7 +377,7 @@ void QPGenerator::computeWarmStart(MPCSolution & result){
     }
 }
 
-void QPGenerator::computeReferenceVector(const MPCSolution & result){
+void QPGenerator::computeReferenceVector(const GlobalSolution & result){
 
   computeOrientationMatrices(result);
 
@@ -394,7 +394,7 @@ void QPGenerator::computeReferenceVector(const MPCSolution & result){
     }
 }
 
-void QPGenerator::computeOrientationMatrices(const MPCSolution & result){
+void QPGenerator::computeOrientationMatrices(const GlobalSolution & result){
 
   int N = generalData_->nbSamplesQP;
 

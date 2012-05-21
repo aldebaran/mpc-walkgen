@@ -45,7 +45,7 @@ def plotDiffTrajectory(data0, data0r, data1, data1r, name, newFig=True, color=0)
 
 if __name__ == '__main__':
 
-    header1 = ['Position', 'Velocity', 'Acceleration', 'Jerk']
+    header1 = ['Position', 'Velocity', 'Acceleration']
     header2 = ['Position']
     src = './'
     testName = ''

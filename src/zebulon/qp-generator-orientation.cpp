@@ -137,7 +137,7 @@ void QPGeneratorOrientation::buildConstraints(){
 
 }
 
-void QPGeneratorOrientation::computeWarmStart(MPCSolution & result){
+void QPGeneratorOrientation::computeWarmStart(GlobalSolution & result){
   if (result.constraintsOrientation.rows()>=solver_->nbCtr()+solver_->nbVar()){
       result.initialConstraintsOrientation= result.constraintsOrientation;
       result.initialSolutionOrientation= result.qpSolutionOrientation;

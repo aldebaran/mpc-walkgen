@@ -40,7 +40,7 @@ namespace MPCWalkgen{
       void buildConstraintsBaseAcceleration();
       void buildConstraintsBaseJerk();
 
-      void computeWarmStart(MPCSolution & result);
+      void computeWarmStart(GlobalSolution & result);
 
       void computeReferenceVector();
 

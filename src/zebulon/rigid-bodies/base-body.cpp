@@ -13,16 +13,16 @@ BaseBody::BaseBody(const MPCData *generalData,
 
 BaseBody::~BaseBody(){}
 
-void BaseBody::interpolate(MPCSolution &solution, double currentTime, const VelReference &/*velRef*/) {
-  interpolation_->computeInterpolationByJerk(solution.state_vec[0].baseTrajX_, solution.state_vec[0].baseTrajY_, state_,
+void BaseBody::interpolate(GlobalSolution &solution, double /*currentTime*/, const VelReference &/*velRef*/) {
+  interpolation_->computeInterpolationByJerk(solution.mpcSolution.state_vec[0].baseTrajX_, solution.mpcSolution.state_vec[0].baseTrajY_, state_,
                                              dynamics(interpolationPos), solution.qpSolution(2*generalData_->nbSamplesQP),
                                              solution.qpSolution(3*generalData_->nbSamplesQP));
 
-  interpolation_->computeInterpolationByJerk(solution.state_vec[1].baseTrajX_, solution.state_vec[1].baseTrajY_, state_,
+  interpolation_->computeInterpolationByJerk(solution.mpcSolution.state_vec[1].baseTrajX_, solution.mpcSolution.state_vec[1].baseTrajY_, state_,
                                              dynamics(interpolationVel), solution.qpSolution(2*generalData_->nbSamplesQP),
                                              solution.qpSolution(3*generalData_->nbSamplesQP));
 
-  interpolation_->computeInterpolationByJerk(solution.state_vec[2].baseTrajX_, solution.state_vec[2].baseTrajY_, state_,
+  interpolation_->computeInterpolationByJerk(solution.mpcSolution.state_vec[2].baseTrajX_, solution.mpcSolution.state_vec[2].baseTrajY_, state_,
                                              dynamics(interpolationAcc), solution.qpSolution(2*generalData_->nbSamplesQP),
                                              solution.qpSolution(3*generalData_->nbSamplesQP));
 

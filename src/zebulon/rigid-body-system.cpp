@@ -31,18 +31,18 @@ void RigidBodySystem::computeDynamics() {
   base_->computeDynamics();
 }
 
-void RigidBodySystem::interpolateBodies(MPCSolution & solution, double currentTime, const VelReference & velRef){
+void RigidBodySystem::interpolateBodies(GlobalSolution & solution, double currentTime, const VelReference & velRef){
   CoM_->interpolate(solution, currentTime, velRef);
   base_->interpolate(solution, currentTime, velRef);
 }
 
-void RigidBodySystem::updateBodyState(const MPCSolution & solution){
+void RigidBodySystem::updateBodyState(const GlobalSolution & solution){
   int nextCurrentState = (int)round(generalData_->MPCSamplingPeriod / generalData_->actuationSamplingPeriod)-1;
 
   BodyState base, CoM;
 
   for (int i = 0; i < 3; ++i){
-      const MPCSolution::State & currentState = solution.state_vec[i];
+      const MPCSolution::State & currentState = solution.mpcSolution.state_vec[i];
       base.x(i) = currentState.baseTrajX_(nextCurrentState);
       base.y(i) = currentState.baseTrajY_(nextCurrentState);
       base.z(i) = 0;

@@ -14,27 +14,27 @@ CoMBody::CoMBody(const MPCData * generalData,
 
 CoMBody::~CoMBody(){}
 
-void CoMBody::interpolate(MPCSolution &solution, double /*currentTime*/, const VelReference & /*velRef*/){
-  interpolation_->computeInterpolationByJerk(solution.state_vec[0].CoMTrajX_, solution.state_vec[0].CoMTrajY_, state_,
+void CoMBody::interpolate(GlobalSolution &solution, double /*currentTime*/, const VelReference & /*velRef*/){
+  interpolation_->computeInterpolationByJerk(solution.mpcSolution.state_vec[0].CoMTrajX_, solution.mpcSolution.state_vec[0].CoMTrajY_, state_,
                                              dynamics(interpolationPos), solution.qpSolution(0),
                                              solution.qpSolution(generalData_->nbSamplesQP));
-  interpolation_->computeInterpolationByJerk(solution.state_vec[0].CoMTrajYaw_, state_.yaw,
+  interpolation_->computeInterpolationByJerk(solution.mpcSolution.state_vec[0].CoMTrajYaw_, state_.yaw,
                                              dynamics(interpolationPos), solution.qpSolutionOrientation(0));
 
 
-  interpolation_->computeInterpolationByJerk(solution.state_vec[1].CoMTrajX_, solution.state_vec[1].CoMTrajY_, state_,
+  interpolation_->computeInterpolationByJerk(solution.mpcSolution.state_vec[1].CoMTrajX_, solution.mpcSolution.state_vec[1].CoMTrajY_, state_,
                                              dynamics(interpolationVel), solution.qpSolution(0),
                                              solution.qpSolution(generalData_->nbSamplesQP));
-  interpolation_->computeInterpolationByJerk(solution.state_vec[1].CoMTrajYaw_, state_.yaw,
+  interpolation_->computeInterpolationByJerk(solution.mpcSolution.state_vec[1].CoMTrajYaw_, state_.yaw,
                                              dynamics(interpolationVel), solution.qpSolutionOrientation(0));
 
-  interpolation_->computeInterpolationByJerk(solution.state_vec[2].CoMTrajX_, solution.state_vec[2].CoMTrajY_, state_,
+  interpolation_->computeInterpolationByJerk(solution.mpcSolution.state_vec[2].CoMTrajX_, solution.mpcSolution.state_vec[2].CoMTrajY_, state_,
                                              dynamics(interpolationAcc), solution.qpSolution(0),
                                              solution.qpSolution(generalData_->nbSamplesQP));
-  interpolation_->computeInterpolationByJerk(solution.state_vec[2].CoMTrajYaw_, state_.yaw,
+  interpolation_->computeInterpolationByJerk(solution.mpcSolution.state_vec[2].CoMTrajYaw_, state_.yaw,
                                              dynamics(interpolationAcc), solution.qpSolutionOrientation(0));
 
-  interpolation_->computeInterpolationByJerk(solution.CoPTrajX, solution.CoPTrajY, state_,
+  interpolation_->computeInterpolationByJerk(solution.mpcSolution.CoPTrajX, solution.mpcSolution.CoPTrajY, state_,
                                              dynamics(interpolationCoP), solution.qpSolution(0),
                                              solution.qpSolution(generalData_->nbSamplesQP));
 

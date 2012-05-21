@@ -42,13 +42,13 @@ namespace MPCWalkgen{
       void buildConstraintsBaseAcceleration();
       void buildConstraintsBaseJerk();
 
-      void computeWarmStart(MPCSolution & result);
+      void computeWarmStart(GlobalSolution & result);
 
-      void computeReferenceVector(const MPCSolution & result);
+      void computeReferenceVector(const GlobalSolution & result);
 
     private:
 
-      void computeOrientationMatrices(const MPCSolution & result);
+      void computeOrientationMatrices(const GlobalSolution & result);
 
     private:
 

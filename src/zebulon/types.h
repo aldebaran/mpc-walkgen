@@ -14,6 +14,32 @@
 
 #include <mpc-walkgen/zebulon/sharedpgtypes.h>
 #include "../common/types.h"
+namespace MPCWalkgen{
+  namespace Zebulon{
 
+    struct GlobalSolution{
+
+      GlobalSolution();
+
+      MPCSolution mpcSolution;
+
+      // attributes
+      Eigen::VectorXd qpSolution;
+      Eigen::VectorXd initialSolution;
+
+      Eigen::VectorXi constraints;
+      Eigen::VectorXi initialConstraints;
+
+      Eigen::VectorXd qpSolutionOrientation;
+      Eigen::VectorXd initialSolutionOrientation;
+
+      Eigen::VectorXi constraintsOrientation;
+      Eigen::VectorXi initialConstraintsOrientation;
+
+      bool useWarmStart;
+
+    };
+  }
+}
 
 #endif //PGTYPEZEBULON
