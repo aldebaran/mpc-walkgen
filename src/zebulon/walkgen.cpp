@@ -177,8 +177,6 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
     }
 
   if (time  > upperTimeLimitToFeedback_ + EPSILON) {
-      // UPDATE INTERNAL DATA:
-      // ---------------------
 
       solver_->reset();
       solverOrientation_->reset();
