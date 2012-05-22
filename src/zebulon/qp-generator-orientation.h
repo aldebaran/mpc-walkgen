@@ -27,7 +27,7 @@ namespace MPCWalkgen{
 
     public:
       QPGeneratorOrientation(QPSolver * solver,
-                  VelReference * velRef, QPPonderation * ponderation,
+                  Reference * velRef, QPPonderation * ponderation,
                   RigidBodySystem * robot, const MPCData * generalData);
       ~QPGeneratorOrientation();
 
@@ -48,7 +48,7 @@ namespace MPCWalkgen{
 
       QPSolver * solver_;
       RigidBodySystem * robot_;
-      VelReference * velRef_;
+      Reference * velRef_;
       QPPonderation * ponderation_;
       const MPCData * generalData_;
 

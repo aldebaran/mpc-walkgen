@@ -28,7 +28,7 @@ namespace MPCWalkgen{
       static const double EPS_;
 
     public:
-      QPPreview(VelReference * velRef, RigidBodySystem * robot, const MPCData * generalData);
+      QPPreview(Reference * velRef, RigidBodySystem * robot, const MPCData * generalData);
 
       ~QPPreview();
 

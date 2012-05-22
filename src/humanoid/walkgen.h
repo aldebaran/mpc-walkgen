@@ -75,9 +75,9 @@ namespace MPCWalkgen{
       OrientationsPreview * orientPrw_;
 
       MPCSolution solution_;
-      VelReference velRef_;
+      Reference velRef_;
       /// \brief The new value of reference velocity, updated with in online method
-      VelReference newVelRef_;
+      Reference newVelRef_;
       QPPonderation ponderation_;
       /// \brief The new value of current support state, updated with in online method
       SupportState newCurrentSupport_;

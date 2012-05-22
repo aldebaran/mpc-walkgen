@@ -10,8 +10,8 @@ using namespace MPCWalkgen;
 using namespace Zebulon;
 using namespace Eigen;
 
-QPGenerator::QPGenerator(QPSolver * solver,
-			 VelReference * velRef, QPPonderation * ponderation,
+QPGenerator::QPGenerator(QPSolver * solver, Reference * velRef,
+			 QPPonderation * ponderation,
 			 RigidBodySystem * robot, const MPCData * generalData)
   :solver_(solver)
   ,robot_(robot)
@@ -36,7 +36,7 @@ void QPGenerator::precomputeObjective(){
   pconstBaseX_.resize(nbUsedPonderations);
   pconstCoMB_.resize(nbUsedPonderations);
   pconstBaseB_.resize(nbUsedPonderations);
-  pconstRef_.resize(nbUsedPonderations);
+  pconstVelRef_.resize(nbUsedPonderations);
 
   int N = generalData_->nbSamplesQP;
 
@@ -54,7 +54,8 @@ void QPGenerator::precomputeObjective(){
     pconstBaseX_[i].setZero(N,3);
     pconstCoMB_[i].setZero(N,3);
     pconstBaseB_[i].setZero(N,3);
-    pconstRef_[i].setZero(N,N);
+    pconstVelRef_[i].setZero(N,N);
+
 
 
     tmpMat_ = ponderation_->CopCentering[i]*CoPDynamics.UT*CoPDynamics.U
@@ -63,6 +64,8 @@ void QPGenerator::precomputeObjective(){
     Qconst_[i].block(0,0,N,N) = tmpMat_;
     Qconst_[i].block(N,N,N,N) = tmpMat_;
 
+
+
     tmpMat_ = -ponderation_->CopCentering[i]*CoPDynamics.UT*basePosDynamics.U
         - ponderation_->CoMCentering[i]*CoMPosDynamics.UT*basePosDynamics.U;
     Qconst_[i].block(0,2*N,N,N) = tmpMat_;
@@ -70,6 +73,8 @@ void QPGenerator::precomputeObjective(){
     tmpMat_.transposeInPlace();
     Qconst_[i].block(2*N,0,N,N) = tmpMat_;
     Qconst_[i].block(3*N,N,N,N) = tmpMat_;
+
+
 
     tmpMat_ = (ponderation_->CopCentering[i]+ponderation_->CoMCentering[i])*basePosDynamics.UT*basePosDynamics.U
         + ponderation_->baseInstantVelocity[i]*baseVelDynamics.UT*baseVelDynamics.U
@@ -99,7 +104,7 @@ void QPGenerator::precomputeObjective(){
 
 
     tmpMat_ = -ponderation_->baseInstantVelocity[i]*baseVelDynamics.UT;
-    pconstRef_[i].block(0,0,N,N) = tmpMat_;
+    pconstVelRef_[i].block(0,0,N,N) = tmpMat_;
 
   }
 }
@@ -136,9 +141,10 @@ void QPGenerator::buildObjective() {
   solver_->vector(vectorP).addTerm(tmpVec_,2*N);
   tmpVec_ = pconstBaseB_[nb] * base.y;
   solver_->vector(vectorP).addTerm(tmpVec_,3*N);
-  tmpVec_ = pconstRef_[nb] * velRef_->global.x;
+
+  tmpVec_ = pconstVelRef_[nb] * velRef_->global.x;
   solver_->vector(vectorP).addTerm(tmpVec_,2*N);
-  tmpVec_ = pconstRef_[nb] * velRef_->global.y;
+  tmpVec_ = pconstVelRef_[nb] * velRef_->global.y;
   solver_->vector(vectorP).addTerm(tmpVec_,3*N);
 
 }

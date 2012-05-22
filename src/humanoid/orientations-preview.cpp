@@ -86,7 +86,7 @@ void OrientationsPreview::init(const MPCData &data, const RobotData &robotData) 
 }
 
 void OrientationsPreview::preview_orientations(double Time,
-    const VelReference & Ref,
+    const Reference & Ref,
     double StepDuration,
     const BodyState & LeftFoot,
     const BodyState & RightFoot,
@@ -260,7 +260,7 @@ void OrientationsPreview::preview_orientations(double Time,
 
 
 void
-OrientationsPreview::verify_acceleration_hip_joint(const VelReference & Ref,
+OrientationsPreview::verify_acceleration_hip_joint(const Reference & Ref,
     const SupportState & CurrentSupport)
 {
   if(CurrentSupport.phase != DS)

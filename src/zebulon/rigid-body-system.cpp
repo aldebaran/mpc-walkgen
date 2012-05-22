@@ -31,7 +31,7 @@ void RigidBodySystem::computeDynamics() {
   base_->computeDynamics();
 }
 
-void RigidBodySystem::interpolateBodies(GlobalSolution & solution, double currentTime, const VelReference & velRef){
+void RigidBodySystem::interpolateBodies(GlobalSolution & solution, double currentTime, const Reference & velRef){
   CoM_->interpolate(solution, currentTime, velRef);
   base_->interpolate(solution, currentTime, velRef);
 }

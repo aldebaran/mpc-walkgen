@@ -17,13 +17,13 @@ namespace MPCWalkgen{
   namespace Humanoid{
     class StateSolver{
     public:
-      StateSolver(VelReference * velRef, const MPCData * generalData);
+      StateSolver(Reference * velRef, const MPCData * generalData);
       ~StateSolver();
 
       void setSupportState(double time, int pi, const std::vector<double> &samplingTimes_vec, SupportState & Support);
 
     protected:
-      VelReference * velRef_;
+      Reference * velRef_;
       const MPCData * generalData_;
 
     };

@@ -213,13 +213,13 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
   return solution_.mpcSolution;
 }
 
-void Walkgen::reference(double dx, double dy, double dyaw){
+void Walkgen::velReference(double dx, double dy, double dyaw){
   newVelRef_.local.x.fill(dx);
   newVelRef_.local.y.fill(dy);
   newVelRef_.local.yaw.fill(dyaw);
 }
 
-void Walkgen::reference(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw){
+void Walkgen::velReference(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw){
   newVelRef_.local.x=dx;
   newVelRef_.local.y=dy;
   newVelRef_.local.yaw=dyaw;

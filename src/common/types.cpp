@@ -4,7 +4,7 @@
 using namespace MPCWalkgen;
 
 
-VelReference::Frame::Frame()
+Reference::Frame::Frame()
         :x(1),y(1),yaw(1)
 {
   x.fill(0);
@@ -12,19 +12,19 @@ VelReference::Frame::Frame()
   yaw.fill(0);
 }
 
-void VelReference::Frame::resize(int size){
+void Reference::Frame::resize(int size){
   x.setZero(size);
   y.setZero(size);
   yaw.setZero(size);
 }
 
 
-VelReference::VelReference()
+Reference::Reference()
 	:global()
 	,local()
 {}
 
-void VelReference::resize(int size){
+void Reference::resize(int size){
   global.resize(size);
   local.resize(size);
 }

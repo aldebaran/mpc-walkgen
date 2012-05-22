@@ -44,7 +44,7 @@ void RigidBodySystem::computeDynamics() {
   rightFoot_->computeDynamics();
 }
 
-void RigidBodySystem::interpolateBodies(MPCSolution & solution, double currentTime, const VelReference & velRef){
+void RigidBodySystem::interpolateBodies(MPCSolution & solution, double currentTime, const Reference & velRef){
   CoM_->interpolate(solution, currentTime, velRef);
   leftFoot_->interpolate(solution, currentTime, velRef);
   rightFoot_->interpolate(solution, currentTime, velRef);

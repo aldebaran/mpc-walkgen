@@ -71,7 +71,7 @@ typedef struct COMState_s2 COMState2;
     /// \param[in] RightFoot
     /// \param[out] Solution Trunk and Foot orientations
     void preview_orientations(double Time,
-        const VelReference & Ref,
+        const Reference & Ref,
         double StepDuration,
         const BodyState & LeftFoot,
         const BodyState & RightFoot,
@@ -119,7 +119,7 @@ typedef struct COMState_s2 COMState2;
     ///
     /// \param[in] Ref
     /// \param[in] CurrentSupport
-    void verify_acceleration_hip_joint(const VelReference & Ref,
+    void verify_acceleration_hip_joint(const Reference & Ref,
         const SupportState & CurrentSupport);
 
     /// \brief Verify velocity of hip joint

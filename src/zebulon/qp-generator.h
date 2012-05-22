@@ -26,8 +26,8 @@ namespace MPCWalkgen{
     class QPGenerator{
 
     public:
-      QPGenerator(QPSolver * solver,
-                  VelReference * velRef, QPPonderation * ponderation,
+      QPGenerator(QPSolver * solver, Reference * velRef,
+                  QPPonderation * ponderation,
                   RigidBodySystem * robot, const MPCData * generalData);
       ~QPGenerator();
 
@@ -54,7 +54,7 @@ namespace MPCWalkgen{
 
       QPSolver * solver_;
       RigidBodySystem * robot_;
-      VelReference * velRef_;
+      Reference * velRef_;
       QPPonderation * ponderation_;
       const MPCData * generalData_;
 
@@ -67,7 +67,7 @@ namespace MPCWalkgen{
       std::vector<Eigen::MatrixXd> pconstCoMB_;
       std::vector<Eigen::MatrixXd> pconstBaseX_;
       std::vector<Eigen::MatrixXd> pconstBaseB_;
-      std::vector<Eigen::MatrixXd> pconstRef_;
+      std::vector<Eigen::MatrixXd> pconstVelRef_;
 
       Eigen::VectorXd yaw_;
       Eigen::VectorXd cosYaw_;

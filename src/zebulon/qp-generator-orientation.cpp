@@ -12,7 +12,7 @@ using namespace Zebulon;
 using namespace Eigen;
 
 QPGeneratorOrientation::QPGeneratorOrientation(QPSolver * solver,
-			 VelReference * velRef, QPPonderation * ponderation,
+			 Reference * velRef, QPPonderation * ponderation,
 			 RigidBodySystem * robot, const MPCData * generalData)
   :solver_(solver)
   ,robot_(robot)

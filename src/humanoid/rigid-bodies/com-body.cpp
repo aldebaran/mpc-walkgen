@@ -14,7 +14,7 @@ CoMBody::CoMBody(const MPCData * generalData,
 
 CoMBody::~CoMBody(){}
 
-void CoMBody::interpolate(MPCSolution &solution, double currentTime, const VelReference & velRef){
+void CoMBody::interpolate(MPCSolution &solution, double currentTime, const Reference & velRef){
   interpolation_->computeInterpolationByJerk(solution.state_vec[0].CoMTrajX_, solution.state_vec[0].CoMTrajY_, state_,
                                              dynamics(interpolationPos), solution.qpSolution(0),
                                              solution.qpSolution(generalData_->nbSamplesQP));
@@ -113,7 +113,7 @@ void CoMBody::computeDynamicsMatrices(LinearDynamics & dyn,
 }
 
 void CoMBody::interpolateTrunkOrientation(MPCSolution &result,
-                                          double /*currentTime*/, const VelReference &velRef){
+                                          double /*currentTime*/, const Reference &velRef){
 
   Eigen::Matrix<double,6,1> factor;
 

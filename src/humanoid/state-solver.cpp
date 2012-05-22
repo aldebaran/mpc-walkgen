@@ -3,7 +3,7 @@
 using namespace MPCWalkgen;
 using namespace Humanoid;
 
-StateSolver::StateSolver(VelReference * velRef, const MPCData * generalData)
+StateSolver::StateSolver(Reference * velRef, const MPCData * generalData)
   :velRef_(velRef)
   ,generalData_(generalData)
 {}

@@ -33,7 +33,7 @@ namespace MPCWalkgen{
 
       void computeDynamics();
 
-      void interpolateBodies(MPCSolution &solution, double currentTime, const VelReference &velRef);
+      void interpolateBodies(MPCSolution &solution, double currentTime, const Reference &velRef);
 
       void updateBodyState(const MPCSolution &solution);
 

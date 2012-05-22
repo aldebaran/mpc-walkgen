@@ -14,7 +14,7 @@ CoMBody::CoMBody(const MPCData * generalData,
 
 CoMBody::~CoMBody(){}
 
-void CoMBody::interpolate(GlobalSolution &solution, double /*currentTime*/, const VelReference & /*velRef*/){
+void CoMBody::interpolate(GlobalSolution &solution, double /*currentTime*/, const Reference & /*velRef*/){
   interpolation_->computeInterpolationByJerk(solution.mpcSolution.state_vec[0].CoMTrajX_, solution.mpcSolution.state_vec[0].CoMTrajY_, state_,
                                              dynamics(interpolationPos), solution.qpSolution(0),
                                              solution.qpSolution(generalData_->nbSamplesQP));

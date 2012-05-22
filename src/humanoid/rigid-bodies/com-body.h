@@ -26,7 +26,7 @@ namespace MPCWalkgen{
               const Interpolation * interpolation);
       virtual ~CoMBody();
 
-      virtual void interpolate(MPCSolution & result, double currentTime, const VelReference & velRef);
+      virtual void interpolate(MPCSolution & result, double currentTime, const Reference & velRef);
 
     protected:
       virtual void computeDynamicsMatrices(LinearDynamics & dyn,
@@ -34,7 +34,7 @@ namespace MPCWalkgen{
 
     private:
       void interpolateTrunkOrientation(MPCSolution & result,
-                                       double /*currentTime*/, const VelReference & velRef);
+                                       double /*currentTime*/, const Reference & velRef);
 
 
     };

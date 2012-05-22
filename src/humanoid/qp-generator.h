@@ -29,7 +29,7 @@ namespace MPCWalkgen{
 
     public:
       QPGenerator(QPPreview * preview, QPSolver * solver,
-                  VelReference * velRef, QPPonderation * ponderation,
+                  Reference * velRef, QPPonderation * ponderation,
                   RigidBodySystem * robot, const MPCData * generalData);
       ~QPGenerator();
 
@@ -60,7 +60,7 @@ namespace MPCWalkgen{
       QPPreview * preview_;
       QPSolver * solver_;
       RigidBodySystem * robot_;
-      VelReference * velRef_;
+      Reference * velRef_;
       QPPonderation * ponderation_;
       const MPCData * generalData_;
 

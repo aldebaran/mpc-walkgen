@@ -31,7 +31,7 @@ namespace MPCWalkgen{
 
     public:
       Walkgen(::MPCWalkgen::QPSolverType solvertype);
-      ~Walkgen();
+      virtual ~Walkgen();
 
       virtual void robotData(const RobotData &robotData);
 
@@ -45,12 +45,13 @@ namespace MPCWalkgen{
 
       /// \name Accessors and mutators
       /// \{
-      void reference(double dx, double dy, double dyaw);
-      void reference(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw);
+      virtual void velReference(double dx, double dy, double dyaw);
+      virtual void velReference(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw);
 
 
-      const BodyState & bodyState(BodyType body)const;
-      void bodyState(BodyType body, const BodyState & state);
+
+      virtual const BodyState & bodyState(BodyType body)const;
+      virtual void bodyState(BodyType body, const BodyState & state);
       /// \}
 
 
@@ -65,9 +66,9 @@ namespace MPCWalkgen{
       RigidBodySystem * robot_;
 
       GlobalSolution solution_;
-      VelReference velRef_;
+      Reference velRef_;
       /// \brief The new value of reference velocity, updated with in online method
-      VelReference newVelRef_;
+      Reference newVelRef_;
       QPPonderation ponderation_;
 
 

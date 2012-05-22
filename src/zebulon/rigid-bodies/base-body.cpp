@@ -13,7 +13,7 @@ BaseBody::BaseBody(const MPCData *generalData,
 
 BaseBody::~BaseBody(){}
 
-void BaseBody::interpolate(GlobalSolution &solution, double /*currentTime*/, const VelReference &/*velRef*/) {
+void BaseBody::interpolate(GlobalSolution &solution, double /*currentTime*/, const Reference &/*velRef*/) {
   interpolation_->computeInterpolationByJerk(solution.mpcSolution.state_vec[0].baseTrajX_, solution.mpcSolution.state_vec[0].baseTrajY_, state_,
                                              dynamics(interpolationPos), solution.qpSolution(2*generalData_->nbSamplesQP),
                                              solution.qpSolution(3*generalData_->nbSamplesQP));

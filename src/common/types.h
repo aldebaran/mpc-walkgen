@@ -57,7 +57,7 @@ namespace MPCWalkgen{
 		Eigen::MatrixXd UInvT;
 	};
 
-	struct VelReference{
+	struct Reference{
 		struct Frame{
 			Eigen::VectorXd x;
 			Eigen::VectorXd y;
@@ -71,7 +71,7 @@ namespace MPCWalkgen{
 		Frame global;
 		Frame local;
 
-		VelReference();
+		Reference();
 
 		void resize(int size);
 	};

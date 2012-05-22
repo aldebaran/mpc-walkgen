@@ -15,7 +15,7 @@ FootBody::FootBody(const MPCData *generalData,
 
 FootBody::~FootBody(){}
 
-void FootBody::interpolate(MPCSolution &result, double currentTime, const VelReference &/*velRef*/) {
+void FootBody::interpolate(MPCSolution &result, double currentTime, const Reference &/*velRef*/) {
 
   BodyState nextFootState;
   SupportState curSupport = result.supportStates_vec.front();

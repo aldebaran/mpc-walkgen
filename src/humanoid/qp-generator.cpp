@@ -13,7 +13,7 @@ using namespace Humanoid;
 using namespace Eigen;
 
 QPGenerator::QPGenerator(QPPreview * preview, QPSolver * solver,
-			 VelReference * velRef, QPPonderation * ponderation,
+			 Reference * velRef, QPPonderation * ponderation,
 			 RigidBodySystem * robot, const MPCData * generalData)
   :preview_(preview)
   ,solver_(solver)
