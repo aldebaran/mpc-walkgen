@@ -9,7 +9,25 @@ INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/src)
 #  external_dep lists the external dependencies (such as the solver)
 macro(addUnitTest name internal_dep external_dep)
   ADD_EXECUTABLE(${name}  ${${name}_SRC})
-  ADD_TEST(${name} ${name})
+  # avoid the Debug/Release subdirs in VS, so that we can find the executable
+  SET(_output_directory "${CMAKE_CURRENT_BINARY_DIR}")
+  SET_TARGET_PROPERTIES("${name}" PROPERTIES
+      RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${_output_directory}"
+      RUNTIME_OUTPUT_DIRECTORY_RELEASE "${_output_directory}"
+      RUNTIME_OUTPUT_DIRECTORY         "${_output_directory}"
+  )
+  # Now that all configs end up in the same directory, we need to avoid name
+  # clashes
+  if(MSVC)
+    # always postfix debug lib/bin with _d ...
+    SET_TARGET_PROPERTIES("${name}" PROPERTIES DEBUG_POSTFIX "_d")
+  endif()
+
+  set(_exec_path ${_output_directory}/${name})
+  if(MSVC AND "${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+    set(_exec_path ${_exec_path}_d)
+  endif()
+  ADD_TEST(${name} "${_exec_path}")
 
   foreach(dep ${internal_dep})
     ADD_DEPENDENCIES(${name} ${dep})
