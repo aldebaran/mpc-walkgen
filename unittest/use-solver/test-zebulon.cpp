@@ -49,7 +49,7 @@ int main() {
 	// Create and initialize generator:
 	// -------------------------------
 
-	WalkgenAbstract * walk = createWalkgen(QPSOLVERTYPE_QPOASES);
+	WalkgenAbstract * walk = createWalkgen(CURRENT_QPSOLVERTYPE);
 
 	walk->init();
 

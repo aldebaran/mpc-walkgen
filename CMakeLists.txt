@@ -14,6 +14,7 @@ find_package(jrl-cmake REQUIRED
     HINTS cmake)
 INCLUDE(${jrl-cmake_DIR}/base.cmake)
 INCLUDE(${jrl-cmake_DIR}/cpack.cmake)
+INCLUDE(cmakeutils.cmake)
 # custom cmake modules to find dependencies
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/modules")
 
