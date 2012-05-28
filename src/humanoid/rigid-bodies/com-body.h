@@ -1,5 +1,6 @@
-#ifndef COM_BODY
-#define COM_BODY
+#pragma once
+#ifndef MPC_WALKGEN_HUMANOID_COM_BODY_H
+#define MPC_WALKGEN_HUMANOID_COM_BODY_H
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -42,4 +43,4 @@ namespace MPCWalkgen{
 }
 
 
-#endif //COM_BODY
+#endif // MPC_WALKGEN_HUMANOID_COM_BODY_H

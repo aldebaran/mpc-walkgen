@@ -1,5 +1,6 @@
-#ifndef _MPC_WALKGEN_QP_SOLVER_TYPE_H_
-#define _MPC_WALKGEN_QP_SOLVER_TYPE_H_
+#pragma once
+#ifndef MPC_WALKGEN_QP_SOLVER_TYPE_H
+#define MPC_WALKGEN_QP_SOLVER_TYPE_H
 
 #cmakedefine MPC_WALKGEN_WITH_LSSOL
 #cmakedefine MPC_WALKGEN_WITH_QPOASES
@@ -10,5 +11,5 @@ namespace MPCWalkgen
 	};
 }
 
-#endif // _MPC_WALKGEN_QP_SOLVER_TYPE_H_
+#endif // MPC_WALKGEN_QP_SOLVER_TYPE_H
 

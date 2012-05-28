@@ -1,5 +1,5 @@
-#ifndef RIGID_BODY_SYSTEM_ZEBULON
-#define RIGID_BODY_SYSTEM_ZEBULON
+#ifndef MPC_WALKGEN_ZEBULON_RIGID_BODY_SYSTEM_H
+#define MPC_WALKGEN_ZEBULON_RIGID_BODY_SYSTEM_H
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -88,4 +88,4 @@ namespace MPCWalkgen{
 * \param computeLinearSystem if false, linear inequalities will not be computed
 */
 
-#endif //RIGID_BODY_SYSTEM_ZEBULON
+#endif // MPC_WALKGEN_ZEBULON_RIGID_BODY_SYSTEM_H

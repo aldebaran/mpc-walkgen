@@ -1,5 +1,6 @@
-#ifndef _SHARED_PG_TYPE_ZEBULON
-#define  _SHARED_PG_TYPE_ZEBULON
+#pragma once
+#ifndef MPC_WALKGEN_ZEBULON_SHAREDPGTYPE_H
+#define  MPC_WALKGEN_ZEBULON_SHAREDPGTYPE_H
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -119,4 +120,4 @@ namespace MPCWalkgen{
   }
 }
 
-#endif /* _SHARED_PG_TYPE_HUMANOID */
+#endif // MPC_WALKGEN_ZEBULON_SHAREDPGTYPE_H

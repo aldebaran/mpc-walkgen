@@ -1,5 +1,6 @@
-#ifndef WALKGENHUMANOID
-#define WALKGENHUMANOID
+#pragma once
+#ifndef MPC_WALKGEN_HUMANOID_WALKGEN
+#define MPC_WALKGEN_HUMANOID_WALKGEN
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -98,4 +99,4 @@ namespace MPCWalkgen{
 
 
 
-#endif //WALKGENHUMANOID
+#endif // MPC_WALKGEN_HUMANOID_WALKGEN

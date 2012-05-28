@@ -1,5 +1,6 @@
-#ifndef LSSOL_SOLVER
-#define LSSOL_SOLVER
+#pragma once
+#ifndef MPC_WALKGEN_LSSOL_SOLVER_H
+#define MPC_WALKGEN_LSSOL_SOLVER_H
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -70,4 +71,4 @@ namespace MPCWalkgen{
 * \brief QPSolver based on the lssol library developed by Standford
 */
 
-#endif //LSSOL_SOLVER
+#endif // MPC_WALKGEN_LSSOL_SOLVER_H

@@ -1,5 +1,6 @@
-#ifndef FOOT_BODY
-#define FOOT_BODY
+#pragma once
+#ifndef MPC_WALKGEN_HUMANOID_FOOT_BODY_H
+#define MPC_WALKGEN_HUMANOID_FOOT_BODY_H
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -46,4 +47,4 @@ namespace MPCWalkgen{
   }
 }
 
-#endif //FOOT_BODY
+#endif // MPC_WALKGEN_HUMANOID_FOOT_BODY_H

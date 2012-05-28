@@ -1,5 +1,6 @@
-#ifndef BASE_BODY_ZEBULON
-#define BASE_BODY_ZEBULON
+#pragma once
+#ifndef MPC_WALKGEN_ZEBULON_BASE_BODY_H
+#define MPC_WALKGEN_ZEBULON_BASE_BODY_H
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -35,4 +36,4 @@ namespace MPCWalkgen{
   }
 }
 
-#endif //BASE_BODY_ZEBULON
+#endif //MPC_WALKGEN_ZEBULON_BASE_BODY_H

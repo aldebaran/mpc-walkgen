@@ -1,6 +1,6 @@
 #pragma once
-#ifndef _MPC_WALKGEN_API_HPP_
-#define _MPC_WALKGEN_API_HPP_
+#ifndef MPC_WALKGEN_API_H
+#define MPC_WALKGEN_API_H
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -37,4 +37,4 @@
 # define MPC_WALKGEN_API QI_IMPORT_API
 #endif
 
-#endif  // _MPC_WALKGEN_API_HPP_
+#endif  // MPC_WALKGEN_API_H

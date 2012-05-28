@@ -1,5 +1,6 @@
-#ifndef PGTYPEZEBULON
-#define PGTYPEZEBULON
+#pragma once
+#ifndef MPC_WALKGEN_ZEBULON_TYPES_H
+#define MPC_WALKGEN_ZEBULON_TYPES_H
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -42,4 +43,4 @@ namespace MPCWalkgen{
   }
 }
 
-#endif //PGTYPEZEBULON
+#endif // MPC_WALKGEN_ZEBULON_TYPES_H

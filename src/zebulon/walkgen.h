@@ -1,5 +1,6 @@
-#ifndef WALKGENZEBULON
-#define WALKGENZEBULON
+#pragma once
+#ifndef MPC_WALKGEN_ZEBULON_WAKGEN_H
+#define MPC_WALKGEN_ZEBULON_WAKGEN_H
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -86,4 +87,4 @@ namespace MPCWalkgen{
   }
 }
 
-#endif //WALKGENZEBULON
+#endif // MPC_WALKGEN_ZEBULON_WAKGEN_H

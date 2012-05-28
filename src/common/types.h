@@ -1,5 +1,6 @@
-#ifndef PGTYPECOMMON
-#define PGTYPECOMMON
+#pragma once
+#ifndef MPC_WALKGEN_COMMON_TYPE_H
+#define MPC_WALKGEN_COMMON_TYPE_H
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -79,4 +80,4 @@ namespace MPCWalkgen{
 }
 
 
-#endif //PGTYPECOMMON
+#endif // MPC_WALKGEN_COMMON_TYPE_H

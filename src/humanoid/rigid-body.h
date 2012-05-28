@@ -1,5 +1,6 @@
-#ifndef RIGID_BODY
-#define RIGID_BODY
+#pragma once
+#ifndef MPC_WALKGEN_HUMANOID_RIGID_BODY_H
+#define MPC_WALKGEN_HUMANOID_RIGID_BODY_H
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -68,4 +69,4 @@ namespace MPCWalkgen{
   }
 }
 
-#endif //RIGID_BODY
+#endif // MPC_WALKGEN_HUMANOID_RIGID_BODY_H

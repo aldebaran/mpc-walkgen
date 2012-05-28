@@ -1,5 +1,6 @@
-#ifndef _SHARED_PG_TYPE_HUMANOID
-#define  _SHARED_PG_TYPE_HUMANOID
+#pragma once
+#ifndef MPC_WALKGEN_HUMANOID_SHAREDPGTYPE_H
+#define  MPC_WALKGEN_HUMANOID_SHAREDPGTYPE_H
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -250,4 +251,4 @@ namespace MPCWalkgen{
   }
 }
 
-#endif /* _SHARED_PG_TYPE_HUMANOID */
+#endif // MPC_WALKGEN_HUMANOID_SHAREDPGTYPE_H

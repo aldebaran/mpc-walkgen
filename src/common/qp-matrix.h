@@ -1,5 +1,6 @@
-#ifndef QP_MATRIX
-#define QP_MATRIX
+#pragma once
+#ifndef MPC_WALKGEN_QP_MATRIX_H
+#define MPC_WALKGEN_QP_MATRIX_H
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -146,4 +147,4 @@ namespace MPCWalkgen{
 * \brief return the storage matrix number of cols
 */
 
-#endif //QP_MATRIX
+#endif // MPC_WALKGEN_QP_MATRIX_H

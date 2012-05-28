@@ -1,5 +1,6 @@
-#ifndef STATE_SOLVER
-#define STATE_SOLVER
+#pragma once
+#ifndef MPC_WALKGEN_HUMANOID_STATE_SOLVER_H
+#define MPC_WALKGEN_HUMANOID_STATE_SOLVER_H
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -30,4 +31,4 @@ namespace MPCWalkgen{
   }
 }
 
-#endif //STATE_SOLVER
+#endif // MPC_WALKGEN_HUMANOID_STATE_SOLVER_H

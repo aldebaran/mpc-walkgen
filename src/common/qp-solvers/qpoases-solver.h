@@ -1,5 +1,6 @@
-#ifndef QPOASES_SOLVER
-#define QPOASES_SOLVER
+#pragma once
+#ifndef MPC_WALKGEN_QPOASES_SOLVER_H
+#define MPC_WALKGEN_QPOASES_SOLVER_H
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -61,4 +62,4 @@ namespace MPCWalkgen{
 * \brief QPSolver based on the qpoases library
 */
 
-#endif //QPOASES_SOLVER
+#endif // MPC_WALKGEN_QPOASES_SOLVER_H

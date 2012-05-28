@@ -1,5 +1,6 @@
-#ifndef PORTABILITY_GETTIMEOFDAY_HH
-# define PORTABILITY_GETTIMEOFDAY_HH
+#pragma once
+#ifndef MPC_WALKGEN_GETTIMEOFDAY_H
+# define MPC_WALKGEN_GETTIMEOFDAY_H
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -30,4 +31,4 @@ int gettimeofday(struct timeval *tv, struct timezone *tz);
 #   error "gettimeof day does not seem to be supported on your platform."
 #  endif // WIN32
 # endif //! HAVE_SYS_TIME_H
-#endif //! PORTABILITY_GETTIMEOFDAY_HH
+#endif // MPC_WALKGEN_GETTIMEOFDAY_H

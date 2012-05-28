@@ -1,5 +1,6 @@
-#ifndef PGTYPE
-#define PGTYPE
+#pragma once
+#ifndef MPC_WALKGEN_HUMANOID_TYPES_H
+#define MPC_WALKGEN_HUMANOID_TYPES_H
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -56,4 +57,4 @@ namespace MPCWalkgen{
  */
 
 
-#endif //PGTYPE
+#endif // MPC_WALKGEN_HUMANOID_TYPES_H

@@ -1,5 +1,6 @@
-#ifndef QP_GENERATOR
-#define QP_GENERATOR
+#pragma once
+#ifndef MPC_WALKGEN_HUMANOID_QP_GENERATOR_H
+#define MPC_WALKGEN_HUMANOID_QP_GENERATOR_H
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -117,4 +118,4 @@ namespace MPCWalkgen{
 * \param filename the file to display solution
 */
 
-#endif //QP_GENERATOR
+#endif // MPC_WALKGEN_HUMANOID_QP_GENERATOR_H

@@ -11,9 +11,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 
-
-#ifndef WALKGEN_ABSTRACT_HUMANOID_H
-#define WALKGEN_ABSTRACT_HUMANOID_H
+#pragma once
+#ifndef MPC_WALKGEN_HUMANOID_WALKGEN_ABSTRACT_H
+#define MPC_WALKGEN_HUMANOID_WALKGEN_ABSTRACT_H
 
 
 
@@ -74,4 +74,4 @@ namespace MPCWalkgen{
 }
 
 
-#endif // WALKGEN_ABSTRACT_HUMANOID_H
+#endif // MPC_WALKGEN_HUMANOID_WALKGEN_ABSTRACT_H

@@ -1,5 +1,6 @@
-#ifndef RIGID_BODY_SYSTEM
-#define RIGID_BODY_SYSTEM
+#pragma once
+#ifndef MPC_WALKGEN_HUMANOID_RIGID_BODY_SYSTEM_H
+#define MPC_WALKGEN_HUMANOID_RIGID_BODY_SYSTEM_H
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -111,4 +112,4 @@ namespace MPCWalkgen{
 * \param computeLinearSystem if false, linear inequalities will not be computed
 */
 
-#endif //RIGID_BODY_SYSTEM
+#endif // MPC_WALKGEN_HUMANOID_RIGID_BODY_SYSTEM_H

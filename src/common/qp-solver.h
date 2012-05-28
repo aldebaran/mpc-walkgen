@@ -1,5 +1,6 @@
-#ifndef QP_SOLVER
-#define QP_SOLVER
+#pragma once
+#ifndef MPC_WALKGEN_QP_SOLVER_H
+#define MPC_WALKGEN_QP_SOLVER_H
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -159,4 +160,4 @@ namespace MPCWalkgen{
 * \right.
 * \f$
 */
-#endif //QP_SOLVER
+#endif // MPC_WALKGEN_QP_SOLVER_H

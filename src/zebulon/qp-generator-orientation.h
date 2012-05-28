@@ -1,5 +1,6 @@
-#ifndef QP_GENERATOR_ORIENTATION_ZEBULON
-#define QP_GENERATOR_ORIENTATION_ZEBULON
+#pragma once
+#ifndef MPC_WALKGEN_ZEBULON_QP_GENERATOR_ORIENTATION_H
+#define MPC_WALKGEN_ZEBULON_QP_GENERATOR_ORIENTATION_H
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -63,4 +64,4 @@ namespace MPCWalkgen{
 }
 
 
-#endif //QP_GENERATOR_ORIENTATION_ZEBULON
+#endif // MPC_WALKGEN_ZEBULON_QP_GENERATOR_ORIENTATION_H

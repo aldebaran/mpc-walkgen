@@ -1,5 +1,6 @@
-#ifndef QP_GENERATOR_ZEBULON
-#define QP_GENERATOR_ZEBULON
+#pragma once
+#ifndef MPC_WALKGEN_ZEBULON_QP_GENERATOR_H
+#define MPC_WALKGEN_ZEBULON_QP_GENERATOR_H
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -82,4 +83,4 @@ namespace MPCWalkgen{
 }
 
 
-#endif //QP_GENERATOR_ZEBULON
+#endif // MPC_WALKGEN_ZEBULON_QP_GENERATOR_H

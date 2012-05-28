@@ -1,5 +1,6 @@
-#ifndef MPC_DEBUG
-#define MPC_DEBUG
+#pragma once
+#ifndef MPC_WALKGEN_MPC_DEBUG_H
+#define MPC_WALKGEN_MPC_DEBUG_H
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -46,4 +47,4 @@ namespace MPCWalkgen{
 
 
 
-#endif //MPC_DEBUG
+#endif // MPC_WALKGEN_MPC_DEBUG_H

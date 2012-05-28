@@ -3,9 +3,9 @@
  * OrientationsPreview.h
  * Temporary class
  */
-
-#ifndef ORIENTATIONSPREVIEW_H_2
-#define ORIENTATIONSPREVIEW_H_2
+#pragma once
+#ifndef MPC_WALKGEN_HUMANOID_ORIENTATIONS_PREVIEW_H
+#define MPC_WALKGEN_HUMANOID_ORIENTATIONS_PREVIEW_H
 
 
 
@@ -208,4 +208,4 @@ typedef struct COMState_s2 COMState2;
   };
 }
 }
-#endif /* ORIENTATIONSPREVIEW_H_ */
+#endif // MPC_WALKGEN_HUMANOID_ORIENTATIONS_PREVIEW_H

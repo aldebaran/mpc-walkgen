@@ -1,5 +1,6 @@
-#ifndef INTERPOLATION
-#define INTERPOLATION
+#pragma once
+#ifndef MPC_WALKGEN_INTERPOLATION_H
+#define MPC_WALKGEN_INTERPOLATION_H
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -50,4 +51,4 @@ namespace MPCWalkgen{
 */
 
 
-#endif //INTERPOLATION
+#endif // MPC_WALKGEN_INTERPOLATION_H

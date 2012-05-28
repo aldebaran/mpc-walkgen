@@ -1,5 +1,6 @@
-#ifndef SHAREDPGTYPESCOMMON_H
-#define SHAREDPGTYPESCOMMON_H
+#pragma once
+#ifndef MPC_WALKGEN_COMMON_SHAREDPGTYPES_H
+#define MPC_WALKGEN_COMMON_SHAREDPGTYPES_H
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -41,4 +42,4 @@ namespace MPCWalkgen
     void reset();
   };
 }
-#endif // SHAREDPGTYPESCOMMON_H
+#endif // MPC_WALKGEN_COMMON_SHAREDPGTYPES_H

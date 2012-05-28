@@ -1,5 +1,6 @@
-#ifndef TOOLS
-#define TOOLS
+#pragma once
+#ifndef MPC_WALKGEN_TOOLS_H
+#define MPC_WALKGEN_TOOLS_H
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -112,4 +113,4 @@ namespace MPCWalkgen{
 * \brief Return v^5
 */
 
-#endif //TOOLS
+#endif // MPC_WALKGEN_TOOLS_H

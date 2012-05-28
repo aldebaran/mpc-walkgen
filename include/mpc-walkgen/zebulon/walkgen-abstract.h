@@ -11,9 +11,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 
-
-#ifndef WALKGEN_ABSTRACT_ZEBULON_H
-#define WALKGEN_ABSTRACT_ZEBULON_H
+#pragma once
+#ifndef MPC_WALKGEN_ZEBULON_WALKGEN_ABSTRACT_H
+#define MPC_WALKGEN_ZEBULON_WALKGEN_ABSTRACT_H
 
 
 
@@ -76,4 +76,4 @@ namespace MPCWalkgen{
 }
 
 
-#endif // WALKGEN_ABSTRACT_ZEBULON_H
+#endif // MPC_WALKGEN_ZEBULON_WALKGEN_ABSTRACT_H

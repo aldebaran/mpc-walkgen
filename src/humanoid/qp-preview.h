@@ -1,5 +1,6 @@
-#ifndef QP_PREVIEW
-#define QP_PREVIEW
+#pragma once
+#ifndef MPC_WALKGEN_HUMANOID_QP_PREVIEW_H
+#define MPC_WALKGEN_HUMANOID_QP_PREVIEW_H
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
@@ -81,4 +82,4 @@ namespace MPCWalkgen{
 * \brief Return computed selection matrices
 */
 
-#endif //QP_PREVIEW
+#endif // MPC_WALKGEN_HUMANOID_QP_PREVIEW_H
