@@ -67,12 +67,7 @@ if(NOT WITH_LSSOL AND NOT WITH_QPOASES)
     "No QP solver found.  Possible solvers: LSSOL and qpOASES")
 endif()
 
-if(WITH_LSSOL)
-  ADD_DEFINITIONS("-DUSE_LSSOL")
-endif()
-
 if(WITH_QPOASES)
-  ADD_DEFINITIONS("-DUSE_QPOASES")
   # There are two versions of qpOASES, that change the way the inclusion
   # has to be done.
   if(NOT QPOASES_VERSION VERSION_LESS 3.0)
@@ -80,27 +75,29 @@ if(WITH_QPOASES)
   endif()
 endif()
 
-
-# addSolver:  create the list of solvers available that will be used
-#             to create a enum list in C++
-# solver:     the name of the enum.
-# solverList: the enum list
-macro(addSolver solver solverList)
-  if(NOT ${solverList})
-    SET(${solverList} "\t\tQPSOLVERTYPE_${solver}")
-  else(NOT solverList)
-    SET(${solverList} "${${solverList}},\n\t\tQPSOLVERTYPE_${solver}")
-  endif(NOT ${solverList})
-endmacro(addSolver)
-
-set (_SOLVER_LIST_ "")
-if(WITH_LSSOL)
-  addSolver("LSSOL" _SOLVER_LIST_)
-endif()
-
-if(WITH_QPOASES)
-  addSolver("QPOASES" _SOLVER_LIST_)
-endif()
+# addSolverToHeader. If the solver support is enabled, add it to the variables
+# used for header generation:
+#  - set the MPC_WALKGEN_WITH_${solver} variable
+#  - add an enum entry to the _QPSOLVERTYPE_ENUM variable
+#
+# arguments:
+#  - solver:     name of the solver
+#  - value:      value associated to the enum entry
+macro(addSolverToEnum solver value)
+  if(WITH_${solver})
+      # Let mpc-walkgen and its users know that the solver support is built-in.
+      set(MPC_WALKGEN_WITH_${solver} ON)
+    if(_QPSOLVERTYPE_ENUM)
+      # add a line to the enum, except for the very first line
+      SET(_QPSOLVERTYPE_ENUM "${_QPSOLVERTYPE_ENUM},\n")
+    endif()
+    # add the enum entry
+    SET(_QPSOLVERTYPE_ENUM "${_QPSOLVERTYPE_ENUM}\t\tQPSOLVERTYPE_${solver}")
+    SET(_QPSOLVERTYPE_ENUM "${_QPSOLVERTYPE_ENUM} = ${value}")
+  endif()
+endmacro()
+addSolverToEnum("LSSOL" "0")
+addSolverToEnum("QPOASES" "1")
 CONFIG_FILES(include/mpc-walkgen/common/qp-solver-type.h)
 
 # Define the set of headers to be installed

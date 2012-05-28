@@ -289,23 +289,23 @@ int main()
 	unsigned int fNconstraints = 18;
 	QPSolver * solver = NULL;
 
-#ifdef USE_QPOASES
+#ifdef MPC_WALKGEN_WITH_QPOASES
 	std::cout << "bench-qpsolver test qpOASES " << std::endl;
 	solver = createQPSolver(QPSOLVERTYPE_QPOASES, 6+fDofWb, fNconstraints);
 	success = testBenchmarkQP(*solver, fDofWb, fNconstraints) && success;
 	if (solver) {
 		delete solver;
 	}
-#endif //USE_QPOASES
+#endif //MPC_WALKGEN_WITH_QPOASES
 
-#ifdef USE_LSSOL
+#ifdef MPC_WALKGEN_WITH_LSSOL
 	std::cout << "bench-qpsolver test LSSOL " << std::endl;
 	solver = createQPSolver(QPSOLVERTYPE_LSSOL, 6+fDofWb, fNconstraints);
 	success = testBenchmarkQP(*solver, fDofWb, fNconstraints) && success;
 	if (solver) {
 		delete solver;
 	}
-#endif //USE_LSSOL
+#endif //MPC_WALKGEN_WITH_LSSOL
 
 	return (success ? 0 : 1);
 }

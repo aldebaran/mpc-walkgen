@@ -1,10 +1,10 @@
 #include "qp-solver.h"
 
 #include <iostream>
-#ifdef USE_QPOASES
+#ifdef MPC_WALKGEN_WITH_QPOASES
 # include "qp-solvers/qpoases-solver.h"
 #endif
-#ifdef USE_LSSOL
+#ifdef MPC_WALKGEN_WITH_LSSOL
 # include "qp-solvers/lssol-solver.h"
 #endif
 using namespace MPCWalkgen;
@@ -202,17 +202,17 @@ QPSolver * MPCWalkgen::createQPSolver(QPSolverType solvertype,
                          int nbVarMax,
                          int nbCtrMax){
   QPSolver * solver = NULL;
-#ifdef USE_LSSOL
+#ifdef MPC_WALKGEN_WITH_LSSOL
   if (solvertype == QPSOLVERTYPE_LSSOL) {
     solver = new LSSOLSolver(nbVarMin, nbCtrMin, nbVarMax, nbCtrMax);
   }
-#endif //USE_LSSOL
+#endif //MPC_WALKGEN_WITH_LSSOL
 
-#ifdef USE_QPOASES
+#ifdef MPC_WALKGEN_WITH_QPOASES
   if (solvertype == QPSOLVERTYPE_QPOASES) {
     solver = new QPOasesSolver(nbVarMin, nbCtrMin, nbVarMax, nbCtrMax);
   }
-#endif //USE_QPOASES
+#endif //MPC_WALKGEN_WITH_QPOASES
 
 // the user could not ask for an unsupported QPSolverType, as the enum is
 // generated

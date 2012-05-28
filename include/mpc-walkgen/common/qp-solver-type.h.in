@@ -1,11 +1,13 @@
 #ifndef _MPC_WALKGEN_QP_SOLVER_TYPE_H_
 #define _MPC_WALKGEN_QP_SOLVER_TYPE_H_
 
+#cmakedefine MPC_WALKGEN_WITH_LSSOL
+#cmakedefine MPC_WALKGEN_WITH_QPOASES
 namespace MPCWalkgen
 {
-        enum QPSolverType {
-@_SOLVER_LIST_@
-        };
+	enum QPSolverType {
+@_QPSOLVERTYPE_ENUM@
+	};
 }
 
 #endif // _MPC_WALKGEN_QP_SOLVER_TYPE_H_

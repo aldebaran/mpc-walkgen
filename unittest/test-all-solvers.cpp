@@ -72,7 +72,7 @@ int main()
   Eigen::VectorXd solution(nbVar);
   solution << 0.404315842674, -1.40431584267,       -2, 0.524701647986, 0.791078367425;
 
-#ifdef USE_QPOASES
+#ifdef MPC_WALKGEN_WITH_QPOASES
   std::cout << "bench-qpsolver test qpOASES " << std::endl;
   QPSolver * qp1 = createQPSolver(QPSOLVERTYPE_QPOASES, nbVar, nbCtr);
   Eigen::VectorXd qp1Solution = test_all_solvers(*qp1, nbVar, nbCtr);
@@ -82,9 +82,9 @@ int main()
     delete qp1;
   }
   success = success1 && success;
-#endif //USE_QPOASES
+#endif //MPC_WALKGEN_WITH_QPOASES
 
-#ifdef USE_LSSOL
+#ifdef MPC_WALKGEN_WITH_LSSOL
   std::cout << "bench-qpsolver test LSSOL " << std::endl;
   QPSolver * qp2 = createQPSolver(QPSOLVERTYPE_LSSOL, nbVar, nbCtr);
   Eigen::VectorXd qp2Solution = test_all_solvers(*qp2, nbVar, nbCtr);
@@ -94,7 +94,7 @@ int main()
     delete qp2;
   }
   success = success2 && success;
-#endif //USE_LSSOL
+#endif //MPC_WALKGEN_WITH_LSSOL
 
   return (success ? 0 : 1);
 }

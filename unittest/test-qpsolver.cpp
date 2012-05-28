@@ -96,22 +96,22 @@ int main()
 {
 	bool success = true;
 	QPSolver * solver = NULL;
-#ifdef USE_QPOASES
+#ifdef MPC_WALKGEN_WITH_QPOASES
 	std::cout << "Testing qpOASES " << std::endl;
 	solver = createQPSolver(QPSOLVERTYPE_QPOASES, 2 , 3);
 	success = testQP(*solver) && success;
 	if (solver) {
 		delete solver;
 	}
-#endif //USE_QPOASES
+#endif //MPC_WALKGEN_WITH_QPOASES
 
-#ifdef USE_LSSOL
+#ifdef MPC_WALKGEN_WITH_LSSOL
 	std::cout << "Testing LSSOL " << std::endl;
 	solver = createQPSolver(QPSOLVERTYPE_LSSOL, 2 , 3);
 	success = testQP(*solver) && success;
 	if (solver) {
 		delete solver;
 	}
-#endif //USE_LSSOL
+#endif //MPC_WALKGEN_WITH_LSSOL
 	return (success ? 0 : 1);
 }
