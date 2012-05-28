@@ -8,10 +8,10 @@ MPCSolution::MPCSolution()
 {}
 
 MPCData::MPCData()
-:QPSamplingPeriod(0.2)
+:QPSamplingPeriod(0.16)
 ,MPCSamplingPeriod(0.02)
 ,actuationSamplingPeriod(0.02)
-,nbSamplesQP(8)
+,nbSamplesQP(10)
 {}
 
 int MPCData::nbFeedbackSamplesLeft(double firstIterationduration) const{
