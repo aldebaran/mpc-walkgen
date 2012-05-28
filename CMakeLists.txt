@@ -14,19 +14,28 @@ find_package(jrl-cmake REQUIRED
     HINTS cmake)
 INCLUDE(${jrl-cmake_DIR}/base.cmake)
 INCLUDE(${jrl-cmake_DIR}/cpack.cmake)
+# custom cmake modules to find dependencies
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/modules")
 
 # Initialize generic properties of the project
 SETUP_PROJECT()
 
-# custom cmake modules to find dependencies
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/modules")
+# Handle OS specificities
+INCLUDE(CheckIncludeFiles)
+CHECK_INCLUDE_FILES("sys/time.h" SYS_TIME_H)
+IF(SYS_TIME_H)
+  ADD_DEFINITIONS("-DHAVE_SYS_TIME_H")
+ENDIF(SYS_TIME_H)
+# make all symbols hidden with gcc.
+if(UNIX)
+  ADD_DEFINITIONS("-fvisibility=hidden")
+endif()
 
 find_package(qibuild QUIET)
-
 find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
 
-
+# Optional dependencies: use an external QP solver library.
 function(find_optional_package name)
 # Set a WITH_FOO option if FOO_PACKAGE is found.
 # if the foo package is found, WITH_FOO will automatically be set to true.
@@ -48,14 +57,6 @@ function(find_optional_package name)
   endif()
 endfunction()
 
-# Handle OS specificities
-INCLUDE(CheckIncludeFiles)
-CHECK_INCLUDE_FILES("sys/time.h" SYS_TIME_H)
-IF(SYS_TIME_H)
-  ADD_DEFINITIONS("-DHAVE_SYS_TIME_H")
-ENDIF(SYS_TIME_H)
-
-# Optional dependencies: use an external QP solver library.
 find_optional_package(
   LSSOL "build mpc-walkgen with support for LSSOL QP solver ")
 find_optional_package(
@@ -79,11 +80,6 @@ if(WITH_QPOASES)
   endif()
 endif()
 
-
-# make all symbols hidden with gcc.
-if(UNIX)
-  ADD_DEFINITIONS("-fvisibility=hidden")
-endif()
 
 # addSolver:  create the list of solvers available that will be used
 #             to create a enum list in C++
