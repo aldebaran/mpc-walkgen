@@ -37,27 +37,6 @@ find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
 
 # Optional dependencies: use an external QP solver library.
-function(find_optional_package name)
-# Set a WITH_FOO option if FOO_PACKAGE is found.
-# if the foo package is found, WITH_FOO will automatically be set to true.
-# however, there are a few cases where you would like to NOT use the
-# features of the FOO library even if it is found, in this case, we let
-# the user set -DWITH_FOO=OFF from the command line.
-  set(_desc "${ARGN}")
-  string(TOUPPER "${name}" _U_name)
-  # if already set by user to OFF, do nothing:
-  if(NOT DEFINED "WITH_${_U_name}" OR WITH_${_U_name})
-    # else, set the value of the option using the
-    # result of find_package
-    find_package("${name}")
-    if(${_U_name}_FOUND)
-      set("WITH_${_U_name}" ON CACHE BOOL "${_desc}" FORCE)
-    else()
-      set("WITH_${_U_name}" OFF CACHE BOOL "${_desc}" FORCE)
-    endif()
-  endif()
-endfunction()
-
 find_optional_package(
   LSSOL "build mpc-walkgen with support for LSSOL QP solver ")
 find_optional_package(
