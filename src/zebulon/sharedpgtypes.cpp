@@ -60,7 +60,7 @@ QPPonderation::QPPonderation(int nb)
   baseInstantVelocity[0] = 1;
 
   OrientationInstantVelocity[0] = 1;
-  OrientationJerkMin[0]         = 0.01;
+  OrientationJerkMin[0]         = 0.00001;
 
   activePonderation = 0;
 }
