@@ -37,6 +37,7 @@ namespace MPCWalkgen{
       virtual void robotData(const RobotData &robotData);
 
       virtual void init(const RobotData &robotData, const MPCData &mpcData);
+      virtual void init(const MPCData &mpcData);
       virtual void init(const RobotData &robotData);
       virtual void init();
 
@@ -50,6 +51,8 @@ namespace MPCWalkgen{
       virtual void velReferenceInLocalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw);
       virtual void velReferenceInGlobalFrame(double dx, double dy, double dyaw);
       virtual void velReferenceInGlobalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw);
+      virtual void posReferenceInGlobalFrame(double dx, double dy, double dyaw);
+      virtual void posReferenceInGlobalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw);
 
 
       virtual const BodyState & bodyState(BodyType body)const;
@@ -69,9 +72,10 @@ namespace MPCWalkgen{
 
       GlobalSolution solution_;
       Reference velRef_;
-      /// \brief The new value of reference velocity, updated with in online method
+      Reference posRef_;
+      /// \brief The new value of references, updated with in online method
       Reference newVelRef_;
-      QPPonderation ponderation_;
+      Reference newPosRef_;
 
 
       /// \brief Time at which the problem should be updated

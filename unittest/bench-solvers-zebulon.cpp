@@ -25,7 +25,8 @@ int main() {
 	std::cout << "0%" << std::endl;
 
 	MPCData mpcData;
-	RobotData robotData;
+	mpcData.ponderation.basePosition[0]=0;
+	mpcData.ponderation.OrientationPosition[0]=0;
 
 
 	// Creat and initialize generator:
@@ -33,8 +34,8 @@ int main() {
 
 	WalkgenAbstract * walk1 = createWalkgen(QPSOLVERTYPE_LSSOL);
 	WalkgenAbstract * walk2 = createWalkgen(QPSOLVERTYPE_QPOASES);
-	walk2->init(robotData, mpcData);
-	walk1->init(robotData, mpcData);
+	walk2->init(mpcData);
+	walk1->init(mpcData);
 
 
 	MPCDebug debug(true);

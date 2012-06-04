@@ -46,11 +46,13 @@ RobotData::RobotData()
 
 QPPonderation::QPPonderation(int nb)
   :baseInstantVelocity(nb)
+  ,basePosition(nb)
   ,CopCentering(nb)
   ,CoMCentering(nb)
   ,CoMJerkMin(nb)
   ,baseJerkMin(nb)
   ,OrientationInstantVelocity(nb)
+  ,OrientationPosition(nb)
   ,OrientationJerkMin(nb)
 {
   CopCentering[0]        = 0.01;
@@ -58,8 +60,10 @@ QPPonderation::QPPonderation(int nb)
   CoMJerkMin[0]          = 0.00001;
   baseJerkMin[0]         = 0.000001;
   baseInstantVelocity[0] = 1;
+  basePosition[0]        = 1;
 
   OrientationInstantVelocity[0] = 1;
+  OrientationPosition[0]        = 1;
   OrientationJerkMin[0]         = 0.00001;
 
   activePonderation = 0;

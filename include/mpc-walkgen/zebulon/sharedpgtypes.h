@@ -48,11 +48,13 @@ namespace MPCWalkgen{
 
     struct MPC_WALKGEN_API QPPonderation{
       std::vector<double> baseInstantVelocity;
+      std::vector<double> basePosition;
       std::vector<double> CopCentering;
       std::vector<double> CoMCentering;
       std::vector<double> CoMJerkMin;
       std::vector<double> baseJerkMin;
       std::vector<double> OrientationInstantVelocity;
+      std::vector<double> OrientationPosition;
       std::vector<double> OrientationJerkMin;
 
       /// \brief Define the element of ponderation std::vector used in this iteration

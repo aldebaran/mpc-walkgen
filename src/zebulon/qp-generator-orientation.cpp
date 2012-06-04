@@ -11,13 +11,13 @@ using namespace MPCWalkgen;
 using namespace Zebulon;
 using namespace Eigen;
 
-QPGeneratorOrientation::QPGeneratorOrientation(QPSolver * solver,
-			 Reference * velRef, QPPonderation * ponderation,
-			 RigidBodySystem * robot, const MPCData * generalData)
+QPGeneratorOrientation::QPGeneratorOrientation(QPSolver * solver, Reference * velRef,
+			 Reference * posRef, RigidBodySystem * robot,
+			 const MPCData * generalData)
   :solver_(solver)
   ,robot_(robot)
   ,velRef_(velRef)
-  ,ponderation_(ponderation)
+  ,posRef_(posRef)
   ,generalData_(generalData)
   ,tmpVec_(1)
 {}
@@ -27,36 +27,40 @@ QPGeneratorOrientation::~QPGeneratorOrientation(){}
 
 void QPGeneratorOrientation::precomputeObjective(){
 
-  int nbUsedPonderations = ponderation_->baseJerkMin.size();
+  int nbUsedPonderations = generalData_->ponderation.baseJerkMin.size();
 
   Qconst_.resize(nbUsedPonderations);
   pconstCoMYaw_.resize(nbUsedPonderations);
-  pconstRef_.resize(nbUsedPonderations);
+  pconstVelRef_.resize(nbUsedPonderations);
+  pconstPosRef_.resize(nbUsedPonderations);
 
   int N = generalData_->nbSamplesQP;
 
   MatrixXd idN = MatrixXd::Identity(N,N);
 
+  const LinearDynamics & CoMPosDynamics = robot_->body(COM)->dynamics(posDynamic);
   const LinearDynamics & CoMVelDynamics = robot_->body(COM)->dynamics(velDynamic);
 
   for (int i = 0; i < nbUsedPonderations; ++i) {
       Qconst_[i].resize(N,N);
       pconstCoMYaw_[i].resize(N,3);
-      pconstRef_[i].resize(N,N);
+      pconstVelRef_[i].resize(N,N);
+      pconstPosRef_[i].resize(N,N);
 
+      Qconst_[i] = generalData_->ponderation.OrientationJerkMin[i] * idN
+          + generalData_->ponderation.OrientationInstantVelocity[i] * CoMVelDynamics.UT*CoMVelDynamics.U
+          + generalData_->ponderation.OrientationPosition[i] * CoMPosDynamics.UT*CoMPosDynamics.U;
 
-      Qconst_[i] = ponderation_->OrientationJerkMin[i] * idN
-          + ponderation_->OrientationInstantVelocity[i] * CoMVelDynamics.UT*CoMVelDynamics.U;
-
-      pconstRef_[i] = -ponderation_->OrientationInstantVelocity[i] * CoMVelDynamics.UT;
-      pconstCoMYaw_[i] = -pconstRef_[i] * CoMVelDynamics.S;
+      pconstVelRef_[i] = -generalData_->ponderation.OrientationInstantVelocity[i] * CoMVelDynamics.UT;
+      pconstPosRef_[i] = -generalData_->ponderation.OrientationPosition[i] * CoMPosDynamics.UT;
+      pconstCoMYaw_[i] = -pconstVelRef_[i] * CoMVelDynamics.S - pconstPosRef_[i] * CoMPosDynamics.S;
 
     }
 }
 
 void QPGeneratorOrientation::buildObjective() {
 
-  int nb = ponderation_->activePonderation;
+  int nb = generalData_->ponderation.activePonderation;
   int N = generalData_->nbSamplesQP;
 
   const BodyState & CoM = robot_->body(COM)->state();
@@ -68,9 +72,11 @@ void QPGeneratorOrientation::buildObjective() {
   tmpVec_ = pconstCoMYaw_[nb] * CoM.yaw;
   solver_->vector(vectorP).setTerm(tmpVec_);
 
-  tmpVec_ = pconstRef_[nb] * velRef_->global.yaw;
+  tmpVec_ = pconstVelRef_[nb] * velRef_->global.yaw;
   solver_->vector(vectorP).addTerm(tmpVec_);
 
+  tmpVec_ = pconstPosRef_[nb] * posRef_->global.yaw;
+  solver_->vector(vectorP).addTerm(tmpVec_);
 }
 
 void QPGeneratorOrientation::buildConstraintsBaseVelocity(){

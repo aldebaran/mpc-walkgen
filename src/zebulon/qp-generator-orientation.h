@@ -27,9 +27,9 @@ namespace MPCWalkgen{
     class QPGeneratorOrientation{
 
     public:
-      QPGeneratorOrientation(QPSolver * solver,
-                  Reference * velRef, QPPonderation * ponderation,
-                  RigidBodySystem * robot, const MPCData * generalData);
+      QPGeneratorOrientation(QPSolver * solver, Reference * velRef,
+                  Reference * posRef, RigidBodySystem * robot,
+                  const MPCData * generalData);
       ~QPGeneratorOrientation();
 
       void precomputeObjective();
@@ -50,14 +50,15 @@ namespace MPCWalkgen{
       QPSolver * solver_;
       RigidBodySystem * robot_;
       Reference * velRef_;
-      QPPonderation * ponderation_;
+      Reference * posRef_;
       const MPCData * generalData_;
 
       Eigen::VectorXd tmpVec_;
 
       std::vector<Eigen::MatrixXd> Qconst_;
       std::vector<Eigen::MatrixXd> pconstCoMYaw_;
-      std::vector<Eigen::MatrixXd> pconstRef_;
+      std::vector<Eigen::MatrixXd> pconstVelRef_;
+      std::vector<Eigen::MatrixXd> pconstPosRef_;
 
     };
   }

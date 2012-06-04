@@ -45,8 +45,8 @@ Walkgen::Walkgen(::MPCWalkgen::QPSolverType solvertype)
           generalData_.nbSamplesQP, 2*generalData_.nbSamplesQP);
   interpolation_ = new Interpolation();
   robot_ = new RigidBodySystem(&generalData_, interpolation_);
-  generator_= new QPGenerator(solver_, &velRef_, &ponderation_, robot_, &generalData_);
-  generatorOrientation_= new QPGeneratorOrientation(solverOrientation_, &velRef_, &ponderation_, robot_, &generalData_);
+  generator_= new QPGenerator(solver_, &velRef_, &posRef_, robot_, &generalData_);
+  generatorOrientation_= new QPGeneratorOrientation(solverOrientation_, &velRef_, &posRef_, robot_, &generalData_);
 }
 
 
@@ -123,6 +123,11 @@ void Walkgen::init(const RobotData &robotData, const MPCData &mpcData){
   init();
 }
 
+void Walkgen::init(const MPCData &mpcData){
+  generalData_ = mpcData;
+  init();
+}
+
 void Walkgen::init(const RobotData &robotData){
   robotData_ = robotData;
   init();
@@ -155,10 +160,13 @@ void Walkgen::init() {
   upperTimeLimitToUpdate_ = 0.0;
   upperTimeLimitToFeedback_ = 0.0;
 
-  ponderation_.activePonderation = 0;
+  generalData_.ponderation.activePonderation = 0;
 
   velRef_.resize(generalData_.nbSamplesQP);
   newVelRef_.resize(generalData_.nbSamplesQP);
+
+  posRef_.resize(generalData_.nbSamplesQP);
+  newPosRef_.resize(generalData_.nbSamplesQP);
 
   initAlreadyCalled_ = true;
 }
@@ -182,6 +190,7 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
       solverOrientation_->reset();
       solution_.mpcSolution.newTraj = true;
       velRef_ = newVelRef_;
+      posRef_ = newPosRef_;
 
       upperTimeLimitToFeedback_ += generalData_.MPCSamplingPeriod;
 
@@ -235,6 +244,18 @@ void Walkgen::velReferenceInGlobalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, 
   newVelRef_.global.x=dx;
   newVelRef_.global.y=dy;
   newVelRef_.global.yaw=dyaw;
+}
+
+void Walkgen::posReferenceInGlobalFrame(double dx, double dy, double dyaw){
+  newPosRef_.global.x.fill(dx);
+  newPosRef_.global.y.fill(dy);
+  newPosRef_.global.yaw.fill(dyaw);
+}
+
+void Walkgen::posReferenceInGlobalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw){
+  newPosRef_.global.x=dx;
+  newPosRef_.global.y=dy;
+  newPosRef_.global.yaw=dyaw;
 }
 
 const BodyState & Walkgen::bodyState(BodyType body)const{

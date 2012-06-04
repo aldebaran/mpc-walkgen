@@ -43,6 +43,7 @@ namespace MPCWalkgen{
       /// \param[in] robotData: data relative to the robot
       /// \param[in] mpcData: data relative to the qp solver
       virtual void init(const RobotData &robotData, const MPCData &mpcData) = 0;
+      virtual void init(const MPCData &mpcData) = 0;
       virtual void init(const RobotData &robotData) = 0;
       virtual void init() = 0;
 
@@ -57,11 +58,13 @@ namespace MPCWalkgen{
 
       /// \name Accessors and mutators
       /// \{
-      /// \brief Set the reference (velocity only as for now)
+      /// \brief Set references
       virtual void velReferenceInLocalFrame(double dx, double dy, double dyaw) = 0;
       virtual void velReferenceInLocalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw) = 0;
       virtual void velReferenceInGlobalFrame(double dx, double dy, double dyaw) = 0;
       virtual void velReferenceInGlobalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw) = 0;
+      virtual void posReferenceInGlobalFrame(double dx, double dy, double dyaw) = 0;
+      virtual void posReferenceInGlobalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw) = 0;
 
       /// \}
 
