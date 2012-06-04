@@ -56,8 +56,8 @@ int main() {
 	// Run:
 	// ----
 	std::cout << "10%" << std::endl;
-	double velocity = 0.5;
-	walk->velReference(0, 0, 0);
+	double velocity = 0.4;
+	walk->velReferenceInLocalFrame(0, 0, 0);
 	walk->online(0.0);
 	double t = 0;
 	for (; t < 5; t += 0.005){
@@ -65,20 +65,28 @@ int main() {
 		dumpTrajectory(result, data_vec);
 	}
 	std::cout << "30%" << std::endl;
-	walk->velReference(velocity, 0, 0);
-	for (; t < 10; t += 0.005){
+	walk->velReferenceInLocalFrame(0, 0, 0);
+	for (; t < 8; t += 0.005){
 		MPCSolution result = walk->online(t);
 		dumpTrajectory(result, data_vec);
 	}
 	std::cout << "55%" << std::endl;
-	walk->velReference(0, velocity, 0);
+	walk->velReferenceInLocalFrame(0, velocity, 0);
+	for (; t < 12; t += 0.005){
+		MPCSolution result = walk->online(t);
+		dumpTrajectory(result, data_vec);
+	}
+	BodyState baseState = walk->bodyState(BASE);
+	baseState.x(2) -= 1;
+	walk->bodyState(BASE, baseState);
+
 	for (; t < 20; t += 0.005){
 		MPCSolution result = walk->online(t);
 		dumpTrajectory(result, data_vec);
 	}
 	std::cout << "80%" << std::endl;
-	walk->velReference(velocity, 0, velocity);
-	for (; t < 30; t += 0.005){
+	walk->velReferenceInLocalFrame(velocity, 0, 0);
+	for (; t < 20; t += 0.005){
 		MPCSolution result = walk->online(t);
 		dumpTrajectory(result, data_vec);
 	}

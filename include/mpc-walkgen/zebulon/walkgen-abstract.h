@@ -58,8 +58,11 @@ namespace MPCWalkgen{
       /// \name Accessors and mutators
       /// \{
       /// \brief Set the reference (velocity only as for now)
-      virtual void velReference(double dx, double dy, double dyaw) = 0;
-      virtual void velReference(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw) = 0;
+      virtual void velReferenceInLocalFrame(double dx, double dy, double dyaw) = 0;
+      virtual void velReferenceInLocalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw) = 0;
+      virtual void velReferenceInGlobalFrame(double dx, double dy, double dyaw) = 0;
+      virtual void velReferenceInGlobalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw) = 0;
+
       /// \}
 
       /// \name accessors relative to the state of the robot.

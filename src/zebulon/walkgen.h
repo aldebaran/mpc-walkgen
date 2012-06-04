@@ -46,9 +46,8 @@ namespace MPCWalkgen{
 
       /// \name Accessors and mutators
       /// \{
-      virtual void velReference(double dx, double dy, double dyaw);
-      virtual void velReference(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw);
-
+      virtual void velReferenceInLocalFrame(double dx, double dy, double dyaw);
+      virtual void velReferenceInLocalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw);
 
 
       virtual const BodyState & bodyState(BodyType body)const;

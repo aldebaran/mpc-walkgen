@@ -42,9 +42,9 @@ int main() {
 	// Run:
 	// ----
 	double velocity = 0.25;
-	walk2->velReference(0, 0, 0);
+	walk2->velReferenceInLocalFrame(0, 0, 0);
 	walk2->online(0.0);
-	walk1->velReference(0, 0, 0);
+	walk1->velReferenceInLocalFrame(0, 0, 0);
 	walk1->online(0.0);
 	double t = 0;
 	for (; t < 5; t += 0.005){
@@ -56,8 +56,8 @@ int main() {
 		debug.getTime(2,false);
 	}
 	std::cout << "25%" << std::endl;
-	walk2->velReference(velocity, 0, 0);
-	walk1->velReference(velocity, 0, 0);
+	walk2->velReferenceInLocalFrame(velocity, 0, 0);
+	walk1->velReferenceInLocalFrame(velocity, 0, 0);
 	for (; t < 10; t += 0.005){
 		debug.getTime(1,true);
 		walk2->online(t);
@@ -67,8 +67,8 @@ int main() {
 		debug.getTime(2,false);
 	}
 	std::cout << "50%" << std::endl;
-	walk2->velReference(0, velocity, 0);
-	walk1->velReference(0, velocity, 0);
+	walk2->velReferenceInLocalFrame(0, velocity, 0);
+	walk1->velReferenceInLocalFrame(0, velocity, 0);
 	for (; t < 20; t += 0.005){
 		debug.getTime(1,true);
 		walk2->online(t);
@@ -78,8 +78,8 @@ int main() {
 		debug.getTime(2,false);
 	}
 	std::cout << "75%" << std::endl;
-	walk2->velReference(velocity, 0, velocity);
-	walk1->velReference(velocity, 0, velocity);
+	walk2->velReferenceInLocalFrame(velocity, 0, velocity);
+	walk1->velReferenceInLocalFrame(velocity, 0, velocity);
 	for (; t < 30; t += 0.005){
 		debug.getTime(1,true);
 		walk2->online(t);
