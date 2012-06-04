@@ -150,11 +150,11 @@ void QPGeneratorOrientation::computeWarmStart(GlobalSolution & result){
 void QPGeneratorOrientation::computeReferenceVector(){
 
   if (velRef_->global.yaw.rows()!=generalData_->nbSamplesQP){
-    velRef_->global.yaw.resize(generalData_->nbSamplesQP);
+    velRef_->global.yaw.setZero(generalData_->nbSamplesQP);
   }
 
   for (int i=0;i<generalData_->nbSamplesQP;++i){
-     velRef_->global.yaw(i) = velRef_->local.yaw(i);
+     velRef_->global.yaw(i) += velRef_->local.yaw(i);
   }
 }
 

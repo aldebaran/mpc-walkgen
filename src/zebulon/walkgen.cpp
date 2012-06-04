@@ -225,6 +225,18 @@ void Walkgen::velReferenceInLocalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, E
   newVelRef_.local.yaw=dyaw;
 }
 
+void Walkgen::velReferenceInGlobalFrame(double dx, double dy, double dyaw){
+  newVelRef_.global.x.fill(dx);
+  newVelRef_.global.y.fill(dy);
+  newVelRef_.global.yaw.fill(dyaw);
+}
+
+void Walkgen::velReferenceInGlobalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw){
+  newVelRef_.global.x=dx;
+  newVelRef_.global.y=dy;
+  newVelRef_.global.yaw=dyaw;
+}
+
 const BodyState & Walkgen::bodyState(BodyType body)const{
   return robot_->body(body)->state();
 }

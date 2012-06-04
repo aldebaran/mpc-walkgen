@@ -388,15 +388,15 @@ void QPGenerator::computeReferenceVector(const GlobalSolution & result){
   computeOrientationMatrices(result);
 
   if (velRef_->global.x.rows()!=generalData_->nbSamplesQP){
-      velRef_->global.x.resize(generalData_->nbSamplesQP);
-      velRef_->global.y.resize(generalData_->nbSamplesQP);
+      velRef_->global.x.setZero(generalData_->nbSamplesQP);
+      velRef_->global.y.setZero(generalData_->nbSamplesQP);
     }
 
 
   for (int i=0;i<generalData_->nbSamplesQP;++i){
 
-      velRef_->global.x(i) = velRef_->local.x(i)*cosYaw_(i)-velRef_->local.y(i)*sinYaw_(i);
-      velRef_->global.y(i) = velRef_->local.x(i)*sinYaw_(i)+velRef_->local.y(i)*cosYaw_(i);
+      velRef_->global.x(i) += velRef_->local.x(i)*cosYaw_(i)-velRef_->local.y(i)*sinYaw_(i);
+      velRef_->global.y(i) += velRef_->local.x(i)*sinYaw_(i)+velRef_->local.y(i)*cosYaw_(i);
     }
 }
 

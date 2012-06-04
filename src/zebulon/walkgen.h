@@ -48,6 +48,8 @@ namespace MPCWalkgen{
       /// \{
       virtual void velReferenceInLocalFrame(double dx, double dy, double dyaw);
       virtual void velReferenceInLocalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw);
+      virtual void velReferenceInGlobalFrame(double dx, double dy, double dyaw);
+      virtual void velReferenceInGlobalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw);
 
 
       virtual const BodyState & bodyState(BodyType body)const;
