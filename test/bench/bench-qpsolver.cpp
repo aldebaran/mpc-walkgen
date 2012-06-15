@@ -307,5 +307,6 @@ int main()
 	}
 #endif //MPC_WALKGEN_WITH_LSSOL
 
-	return (success ? 0 : 1);
+	//return (success ? 0 : 1);
+	return 0;
 }

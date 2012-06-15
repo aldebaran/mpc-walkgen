@@ -25,7 +25,7 @@ add_library(timer STATIC
   ../src/common/mpc-debug.cpp
   ../src/common/gettimeofday.cpp)
 
-set(solverAvailable "")
+
 if(WITH_LSSOL)
   list(APPEND solverAvailable "LSSOL")
 endif()
