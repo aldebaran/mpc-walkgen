@@ -186,7 +186,7 @@ if(WITH_QPOASES)
 endif()
 
 # Define subdirectories to explore for cmake
-ADD_SUBDIRECTORY(unittest)
+ADD_SUBDIRECTORY(test)
 
 # Generate dependency to jrl-walkgen in pc file
 PKG_CONFIG_APPEND_LIBS("mpc-walkgen")
