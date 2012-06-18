@@ -42,13 +42,11 @@ function(create_test name)
   add_executable(${name} ${ARG_SRC} ${ARG_UNPARSED_ARGUMENTS})
 
   #handle dependencies
-  foreach(dep ${ARG_INTDEPS})
-    add_dependencies(${name} ${ARG_INTDEPS})
-    target_link_libraries(${name} ${ARG_INTDEPS})
-  endforeach()
+  add_dependencies(${name} ${ARG_INTDEPS})
+  target_link_libraries(${name} ${ARG_INTDEPS})
   foreach(dep ${ARG_EXTDEPS})
     PKG_CONFIG_USE_DEPENDENCY(${name} ${dep})
-  endforeach(dep)
+  endforeach()
 
   # avoid the Debug/Release subdirs in VS, so that we can find the executable
   SET(_output_directory "${CMAKE_CURRENT_BINARY_DIR}")
