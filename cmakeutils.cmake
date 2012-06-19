@@ -42,7 +42,9 @@ function(create_test name)
   add_executable(${name} ${ARG_SRC} ${ARG_UNPARSED_ARGUMENTS})
 
   #handle dependencies
-  add_dependencies(${name} ${ARG_INTDEPS})
+  foreach(dep ${ARG_INTDEPS})
+    add_dependencies(${name} ${dep})
+  endforeach()
   target_link_libraries(${name} ${ARG_INTDEPS})
   foreach(dep ${ARG_EXTDEPS})
     PKG_CONFIG_USE_DEPENDENCY(${name} ${dep})
