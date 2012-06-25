@@ -84,6 +84,9 @@ void LSSOLSolver::solve(VectorXd & qpSolution,
 			matrixQ_.cholesky().data(), bb_.data(), &inform_, &iter_, &obj_, lambda_.data(),
 			iwar_.data(), &leniw_, war_.data(), &lenw_);
 
+	if (inform_==3){
+	  std::cout << "LSSOL : No feasible point was found" << std::endl;
+	}
 
 	reorderSolution(qpSolution, constraints, initialConstraints);
 }
