@@ -89,7 +89,7 @@ void Walkgen::mpcData(const MPCData &mpcData){
 
   // Modify dynamic matrices wich are used everywhere in the problem.
   // So, we must to recall init()
-  if (fabs(mpcData.nbSamplesQP-tmpMpcData.nbSamplesQP)>EPSILON){
+  if (mpcData.nbSamplesQP!=tmpMpcData.nbSamplesQP){
     if (solver_ != 0x0){
       delete solver_;
     }
