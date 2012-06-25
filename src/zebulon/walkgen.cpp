@@ -23,7 +23,7 @@ MPCWalkgen::Zebulon::WalkgenAbstract* MPCWalkgen::Zebulon::createWalkgen(MPCWalk
 // Implementation of the private interface
 Walkgen::Walkgen(::MPCWalkgen::QPSolverType solvertype)
   : WalkgenAbstract()
-  ,generalData_()
+  ,mpcData_()
   ,solver_(0x0)
   ,solverOrientation_(0x0)
   ,generator_(0x0)
@@ -37,16 +37,17 @@ Walkgen::Walkgen(::MPCWalkgen::QPSolverType solvertype)
   ,initAlreadyCalled_(false)
 {
 
-  solver_ = createQPSolver(solvertype,
-          4*generalData_.nbSamplesQP, 9*generalData_.nbSamplesQP,
-          4*generalData_.nbSamplesQP, 9*generalData_.nbSamplesQP);
-  solverOrientation_ = createQPSolver(solvertype,
-          generalData_.nbSamplesQP, 2*generalData_.nbSamplesQP,
-          generalData_.nbSamplesQP, 2*generalData_.nbSamplesQP);
+  solver_ = createQPSolver(qpSolverType_,
+          4*mpcData_.nbSamplesQP, 9*mpcData_.nbSamplesQP,
+          4*mpcData_.nbSamplesQP, 9*mpcData_.nbSamplesQP);
+  solverOrientation_ = createQPSolver(qpSolverType_,
+          mpcData_.nbSamplesQP, 2*mpcData_.nbSamplesQP,
+          mpcData_.nbSamplesQP, 2*mpcData_.nbSamplesQP);
   interpolation_ = new Interpolation();
-  robot_ = new RigidBodySystem(&generalData_, interpolation_);
-  generator_= new QPGenerator(solver_, &velRef_, &posRef_, robot_, &generalData_);
-  generatorOrientation_= new QPGeneratorOrientation(solverOrientation_, &velRef_, &posRef_, robot_, &generalData_);
+  robot_ = new RigidBodySystem(&mpcData_, interpolation_);
+  generator_= new QPGenerator(solver_, &velRef_, &posRef_, robot_, &mpcData_);
+  generatorOrientation_= new QPGeneratorOrientation(solverOrientation_, &velRef_, &posRef_, robot_, &mpcData_);
+
 }
 
 
@@ -118,13 +119,13 @@ void Walkgen::robotData(const RobotData &robotData){
 }
 
 void Walkgen::init(const RobotData &robotData, const MPCData &mpcData){
-  generalData_ = mpcData;
+  mpcData_ = mpcData;
   robotData_ = robotData;
   init();
 }
 
 void Walkgen::init(const MPCData &mpcData){
-  generalData_ = mpcData;
+  mpcData_ = mpcData;
   init();
 }
 
@@ -138,9 +139,9 @@ void Walkgen::init() {
   robot_->init(robotData_);
 
   //Check if sampling periods are defined correctly
-  assert(generalData_.actuationSamplingPeriod > 0);
-  assert(generalData_.MPCSamplingPeriod >= generalData_.actuationSamplingPeriod);
-  assert(generalData_.QPSamplingPeriod >= generalData_.MPCSamplingPeriod);
+  assert(mpcData_.actuationSamplingPeriod > 0);
+  assert(mpcData_.MPCSamplingPeriod >= mpcData_.actuationSamplingPeriod);
+  assert(mpcData_.QPSamplingPeriod >= mpcData_.MPCSamplingPeriod);
 
   robot_->computeDynamics();
 
@@ -160,19 +161,19 @@ void Walkgen::init() {
   upperTimeLimitToUpdate_ = 0.0;
   upperTimeLimitToFeedback_ = 0.0;
 
-  generalData_.ponderation.activePonderation = 0;
+  mpcData_.ponderation.activePonderation = 0;
 
-  velRef_.resize(generalData_.nbSamplesQP);
-  newVelRef_.resize(generalData_.nbSamplesQP);
+  velRef_.resize(mpcData_.nbSamplesQP);
+  newVelRef_.resize(mpcData_.nbSamplesQP);
 
-  posRef_.resize(generalData_.nbSamplesQP);
-  newPosRef_.resize(generalData_.nbSamplesQP);
+  posRef_.resize(mpcData_.nbSamplesQP);
+  newPosRef_.resize(mpcData_.nbSamplesQP);
 
   initAlreadyCalled_ = true;
 }
 
 const MPCSolution & Walkgen::online(bool previewBodiesNextState){
-  currentRealTime_ += generalData_.MPCSamplingPeriod;
+  currentRealTime_ += mpcData_.MPCSamplingPeriod;
   return online(currentRealTime_, previewBodiesNextState);
 }
 
@@ -180,7 +181,7 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
   currentRealTime_ = time;
   solution_.mpcSolution.newTraj = false;
   if(time  > upperTimeLimitToUpdate_+EPSILON){
-      upperTimeLimitToUpdate_ += generalData_.QPSamplingPeriod;
+      upperTimeLimitToUpdate_ += mpcData_.QPSamplingPeriod;
       currentTime_ = time;
     }
 
@@ -192,7 +193,7 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
       velRef_ = newVelRef_;
       posRef_ = newPosRef_;
 
-      upperTimeLimitToFeedback_ += generalData_.MPCSamplingPeriod;
+      upperTimeLimitToFeedback_ += mpcData_.MPCSamplingPeriod;
 
       generatorOrientation_->computeReferenceVector();
       generatorOrientation_->buildObjective();

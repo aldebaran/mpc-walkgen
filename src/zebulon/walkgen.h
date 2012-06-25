@@ -61,7 +61,8 @@ namespace MPCWalkgen{
 
 
     private:
-      MPCData generalData_;
+      ::MPCWalkgen::QPSolverType qpSolverType_;
+      MPCData mpcData_;
       RobotData robotData_;
       ::MPCWalkgen::QPSolver * solver_;
       ::MPCWalkgen::QPSolver * solverOrientation_;
