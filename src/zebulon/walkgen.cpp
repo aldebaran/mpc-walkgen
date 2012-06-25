@@ -72,6 +72,23 @@ Walkgen::~Walkgen(){
 
 }
 
+  if (!initAlreadyCalled_){
+    init();
+    return;
+  }
+
+  // Modify dynamic matrices wich are used everywhere in the problem.
+  // So, we must to recall init()
+    init();
+    return;
+  }
+
+  }
+
+  }
+
+  }
+  }
 void Walkgen::robotData(const RobotData &robotData){
   RobotData tmpRobotData = robotData_;
   robotData_ = robotData;
@@ -85,36 +102,6 @@ void Walkgen::robotData(const RobotData &robotData){
   if (fabs(robotData.CoMHeight-tmpRobotData.CoMHeight)>EPSILON){
     init();
     return;
-  }
-
-  if (fabs(robotData.b-tmpRobotData.b)>EPSILON
-    ||fabs(robotData.h-tmpRobotData.h)>EPSILON){
-    generator_->buildConstraintsCoP();
-  }
-
-  if (fabs(robotData.baseLimit[0]-tmpRobotData.baseLimit[0])>EPSILON){
-    generator_->buildConstraintsBaseVelocity();
-  }
-  if (fabs(robotData.baseLimit[1]-tmpRobotData.baseLimit[1])>EPSILON){
-    generator_->buildConstraintsBaseAcceleration();
-  }
-  if (fabs(robotData.baseLimit[2]-tmpRobotData.baseLimit[2])>EPSILON){
-    generator_->buildConstraintsBaseJerk();
-  }
-
-  if (fabs(robotData.orientationLimit[0]-tmpRobotData.orientationLimit[0])>EPSILON){
-    generatorOrientation_->buildConstraintsBaseVelocity();
-  }
-  if (fabs(robotData.orientationLimit[1]-tmpRobotData.orientationLimit[1])>EPSILON){
-    generatorOrientation_->buildConstraintsBaseAcceleration();
-  }
-  if (fabs(robotData.orientationLimit[2]-tmpRobotData.orientationLimit[2])>EPSILON){
-    generatorOrientation_->buildConstraintsBaseJerk();
-  }
-
-  if (fabs(robotData.comLimitX-tmpRobotData.comLimitX)>EPSILON
-    ||fabs(robotData.comLimitY-tmpRobotData.comLimitY)>EPSILON){
-    generator_->buildConstraintsCoM();
   }
 }
 
