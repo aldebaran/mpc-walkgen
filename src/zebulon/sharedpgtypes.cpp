@@ -21,8 +21,8 @@ int MPCData::nbSamplesControl() const{
 
 RobotData::RobotData()
   :CoMHeight(0.45)
-  ,b(0.31-0.06)
-  ,h(0.26-0.06)
+  ,b(0.31-0.02)
+  ,h(0.26-0.02)
   ,baseLimit(3)
   ,orientationLimit(3)
 {
@@ -47,16 +47,16 @@ QPPonderation::QPPonderation(int nb)
   ,OrientationPosition(nb)
   ,OrientationJerkMin(nb)
 {
-  CopCentering[0]        = 0.01;
-  CoMCentering[0]        = 0.001;
-  CoMJerkMin[0]          = 0.00001;
-  baseJerkMin[0]         = 0.000001;
+  CopCentering[0]        = 0.1;
+  CoMCentering[0]        = 0.01;
+  CoMJerkMin[0]          = 0.0001;
+  baseJerkMin[0]         = 0.00001;
   baseInstantVelocity[0] = 1;
   basePosition[0]        = 10;
 
   OrientationInstantVelocity[0] = 1;
   OrientationPosition[0]        = 10;
-  OrientationJerkMin[0]         = 0.00001;
+  OrientationJerkMin[0]         = 0.0001;
 
   activePonderation = 0;
 }

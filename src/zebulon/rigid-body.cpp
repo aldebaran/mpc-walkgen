@@ -36,7 +36,7 @@ const LinearDynamics & RigidBody::dynamics(DynamicMatrixType type) const{
     }
 }
 
-void RigidBody::computeDynamics(){
+void RigidBody::computeQPDynamics(){
 
   computeDynamicsMatrices(pos_vec_, generalData_->QPSamplingPeriod,
                           generalData_->QPSamplingPeriod, generalData_->nbSamplesQP, posDynamic);
@@ -48,6 +48,9 @@ void RigidBody::computeDynamics(){
                           generalData_->QPSamplingPeriod, generalData_->nbSamplesQP, jerkDynamic);
   computeDynamicsMatrices(cop_vec_, generalData_->QPSamplingPeriod,
                           generalData_->QPSamplingPeriod, generalData_->nbSamplesQP, copDynamic);
+}
+
+void RigidBody::computeInterpolationDynamics(){
 
   int nbSamplingSim = generalData_->nbSamplesControl();
   computeDynamicsMatrices(posInterpol_, generalData_->actuationSamplingPeriod,
@@ -62,4 +65,3 @@ void RigidBody::computeDynamics(){
   computeDynamicsMatrices(copInterpol_, generalData_->actuationSamplingPeriod,
                           generalData_->actuationSamplingPeriod, nbSamplingSim, copDynamic);
 }
-

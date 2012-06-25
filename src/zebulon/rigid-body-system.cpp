@@ -27,8 +27,18 @@ void RigidBodySystem::init(const RobotData &robotData) {
 }
 
 void RigidBodySystem::computeDynamics() {
-  CoM_->computeDynamics();
-  base_->computeDynamics();
+  computeQPDynamics();
+  computeInterpolationDynamics();
+}
+
+void RigidBodySystem::computeQPDynamics() {
+  CoM_->computeQPDynamics();
+  base_->computeQPDynamics();
+}
+
+void RigidBodySystem::computeInterpolationDynamics() {
+  CoM_->computeInterpolationDynamics();
+  base_->computeInterpolationDynamics();
 }
 
 void RigidBodySystem::interpolateBodies(GlobalSolution & solution, double currentTime, const Reference & velRef){

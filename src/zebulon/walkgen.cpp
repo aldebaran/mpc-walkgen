@@ -23,6 +23,7 @@ MPCWalkgen::Zebulon::WalkgenAbstract* MPCWalkgen::Zebulon::createWalkgen(MPCWalk
 // Implementation of the private interface
 Walkgen::Walkgen(::MPCWalkgen::QPSolverType solvertype)
   : WalkgenAbstract()
+  ,qpSolverType_(solvertype)
   ,mpcData_()
   ,solver_(0x0)
   ,solverOrientation_(0x0)
@@ -52,26 +53,35 @@ Walkgen::Walkgen(::MPCWalkgen::QPSolverType solvertype)
 
 
 Walkgen::~Walkgen(){
-  if (solverOrientation_ != 0x0)
-    delete solverOrientation_;
-
-  if (solver_ != 0x0)
-    delete solver_;
-
-  if (generator_ != 0x0)
+  if (generator_ != 0x0){
     delete generator_;
+  }
 
-  if (generatorOrientation_ != 0x0)
+  if (generatorOrientation_ != 0x0){
     delete generatorOrientation_;
+  }
 
-  if (robot_ != 0x0)
+  if (robot_ != 0x0){
     delete robot_;
+  }
 
-  if (interpolation_ != 0x0)
+  if (interpolation_ != 0x0){
     delete interpolation_;
+  }
+
+  if (solver_ != 0x0){
+    delete solver_;
+  }
+
+  if (solverOrientation_ != 0x0){
+    delete solverOrientation_;
+  }
 
 }
 
+void Walkgen::mpcData(const MPCData &mpcData){
+  MPCData tmpMpcData = mpcData_;
+  mpcData_ = mpcData;
   if (!initAlreadyCalled_){
     init();
     return;
@@ -79,16 +89,63 @@ Walkgen::~Walkgen(){
 
   // Modify dynamic matrices wich are used everywhere in the problem.
   // So, we must to recall init()
+  if (fabs(mpcData.nbSamplesQP-tmpMpcData.nbSamplesQP)>EPSILON){
+    if (solver_ != 0x0){
+      delete solver_;
+    }
+    solver_ = createQPSolver(qpSolverType_,
+            4*mpcData_.nbSamplesQP, 9*mpcData_.nbSamplesQP,
+            4*mpcData_.nbSamplesQP, 9*mpcData_.nbSamplesQP);
+    generator_->solver(solver_);
+
+    if (solverOrientation_ != 0x0){
+      delete solverOrientation_;
+    }
+    solverOrientation_ = createQPSolver(qpSolverType_,
+            mpcData_.nbSamplesQP, 2*mpcData_.nbSamplesQP,
+            mpcData_.nbSamplesQP, 2*mpcData_.nbSamplesQP);
+    generatorOrientation_->solver(solverOrientation_);
+
     init();
     return;
   }
 
+  // Modify dynamic matrices wich are used everywhere in the problem.
+  // So, we must to recall init()
+  if (fabs(mpcData.QPSamplingPeriod-tmpMpcData.QPSamplingPeriod)>EPSILON){
+    init();
+    return;
   }
 
+  if (fabs(mpcData.actuationSamplingPeriod-tmpMpcData.actuationSamplingPeriod)>EPSILON
+  || fabs(mpcData.MPCSamplingPeriod-tmpMpcData.MPCSamplingPeriod)>EPSILON){
+    robot_->computeInterpolationDynamics();
   }
 
+  int size = mpcData.ponderation.baseInstantVelocity.size();
+  for(int i=0; i<size; ++i){
+    if (fabs(mpcData.ponderation.baseInstantVelocity[i]-tmpMpcData.ponderation.baseInstantVelocity[i])>EPSILON
+    || fabs(mpcData.ponderation.baseJerkMin[i]-tmpMpcData.ponderation.baseJerkMin[i])>EPSILON
+    || fabs(mpcData.ponderation.basePosition[i]-tmpMpcData.ponderation.basePosition[i])>EPSILON
+    || fabs(mpcData.ponderation.CoMCentering[i]-tmpMpcData.ponderation.CoMCentering[i])>EPSILON
+    || fabs(mpcData.ponderation.CoMJerkMin[i]-tmpMpcData.ponderation.CoMJerkMin[i])>EPSILON
+    || fabs(mpcData.ponderation.CopCentering[i]-tmpMpcData.ponderation.CopCentering[i])>EPSILON){
+      generator_->precomputeObjective();
+      break;
+    }
   }
+
+  size = mpcData.ponderation.OrientationInstantVelocity.size();
+  for(int i=0; i<size; ++i){
+    if (fabs(mpcData.ponderation.OrientationInstantVelocity[i]-tmpMpcData.ponderation.OrientationInstantVelocity[i])>EPSILON
+    || fabs(mpcData.ponderation.OrientationJerkMin[i]-tmpMpcData.ponderation.OrientationJerkMin[i])>EPSILON
+    || fabs(mpcData.ponderation.OrientationPosition[i]-tmpMpcData.ponderation.OrientationPosition[i])>EPSILON){
+      generatorOrientation_->precomputeObjective();
+      break;
+    }
   }
+}
+
 void Walkgen::robotData(const RobotData &robotData){
   RobotData tmpRobotData = robotData_;
   robotData_ = robotData;

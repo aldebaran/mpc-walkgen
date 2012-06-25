@@ -45,6 +45,10 @@ namespace MPCWalkgen{
 
       void computeReferenceVector();
 
+      inline void solver(QPSolver * solver){
+        solver_ = solver;
+      }
+
     private:
 
       QPSolver * solver_;

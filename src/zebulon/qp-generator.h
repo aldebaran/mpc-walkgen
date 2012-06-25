@@ -46,6 +46,10 @@ namespace MPCWalkgen{
 
       void computeReferenceVector(const GlobalSolution & result);
 
+      inline void solver(QPSolver * solver){
+        solver_ = solver;
+      }
+
     private:
 
       void computeOrientationMatrices(const GlobalSolution & result);

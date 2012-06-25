@@ -30,6 +30,8 @@ namespace MPCWalkgen{
       void init(const RobotData &robotData);
 
       void computeDynamics();
+      void computeQPDynamics();
+      void computeInterpolationDynamics();
 
       void interpolateBodies(GlobalSolution &solution, double currentTime, const Reference &velRef);
 

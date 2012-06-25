@@ -34,7 +34,9 @@ namespace MPCWalkgen{
 
       const LinearDynamics & dynamics(DynamicMatrixType type) const;
 
-      void computeDynamics();
+      void computeQPDynamics();
+
+      void computeInterpolationDynamics();
 
       virtual void interpolate(GlobalSolution & result, double currentTime, const Reference & velRef)=0;
 
