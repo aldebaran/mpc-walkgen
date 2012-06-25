@@ -73,12 +73,8 @@ namespace MPCWalkgen{
       /// \brief Nb. samplings inside preview window
       int nbSamplesQP;  //blocked - precomputeObjective
 
-      /// \brief Compute the number of recomputations left until next sample
-      int nbFeedbackSamplesLeft(double firstSamplingPeriod) const;
       /// \brief number of simulation iterations between two feedback call
       int nbSamplesControl() const;
-      /// \brief number of feedback iterations between two QP instants
-      int nbFeedbackSamplesStandard() const;
 
       QPPonderation ponderation;
 

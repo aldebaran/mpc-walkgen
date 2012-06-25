@@ -14,14 +14,6 @@ MPCData::MPCData()
 ,nbSamplesQP(10)
 {}
 
-int MPCData::nbFeedbackSamplesLeft(double firstIterationduration) const{
-  return static_cast<int> (round(firstIterationduration / MPCSamplingPeriod)-1 );
-}
-
-int MPCData::nbFeedbackSamplesStandard() const{
-  return static_cast<int> (round(QPSamplingPeriod / MPCSamplingPeriod) );
-}
-
 int MPCData::nbSamplesControl() const{
   return static_cast<int> (round(MPCSamplingPeriod / actuationSamplingPeriod) );
 }
