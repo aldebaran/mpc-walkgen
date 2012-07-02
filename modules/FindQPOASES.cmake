@@ -31,16 +31,16 @@ macro(find_version)
           NO_CMAKE_FIND_ROOT_PATH)
       set_property(CACHE _${uprefix}_QProblem_hpp
           PROPERTY TYPE INTERNAL)
-      file(STRINGS ${_${uprefix}_QProblem_hpp} _version_lines
-          REGEX "[\\]version")
       if(NOT _${uprefix}_QProblem_hpp)
           message(FATAL_ERROR
               "FindQPOASES: could not find QProblem.hpp header")
       endif()
+      file(STRINGS ${_${uprefix}_QProblem_hpp} _version_lines
+          REGEX "version")
       list(GET _version_lines 0 _version_line)
       string(REGEX MATCH
           "[\\]version ([0123456789.]+)"
-          _version_match "${_version_line}")
+          _version_match "${_version_lines}")
       if(CMAKE_MATCH_1)
         set("${uprefix}_VERSION" "${CMAKE_MATCH_1}")
       endif()

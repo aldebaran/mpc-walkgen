@@ -17,8 +17,6 @@ if(NOT ${uprefix}_FOUND)
   #    "gcc/i686-linux-gnu/4.6" "gcc/x86_64-linux-gnu/4.6")
 endif()
 
-# Knowing the version of qpOASES is mandatory.
-# If not found, the compilation flags and the #include<> may be wrong.
 find_package_handle_standard_args(${prefix}
     REQUIRED_VARS ${uprefix}_INCLUDE_DIRS
     lssol_LIB lssol_c_LIB f2c_LIB blas_LIB
