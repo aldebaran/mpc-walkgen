@@ -1,6 +1,6 @@
 # Copyright 2012, Olivier Stasse, JRL, CNRS/AIST
 # Requires at least CMake 2.6 to configure the package.
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.3)
 
 
 # Define properties of the project
