@@ -185,6 +185,10 @@ if(WITH_QPOASES)
   PKG_CONFIG_USE_DEPENDENCY(mpc-walkgen qpoases)
 endif()
 
+IF(DEFINED QI_SDK_DIR)
+  QIBUILDIZE(mpc-walkgen)
+ENDIF()
+
 # Define subdirectories to explore for cmake
 ADD_SUBDIRECTORY(test)
 
@@ -195,3 +199,6 @@ PKG_CONFIG_APPEND_LIBS("mpc-walkgen")
 SETUP_PROJECT_FINALIZE()
 SETUP_PROJECT_CPACK()
 
+IF(DEFINED QI_SDK_DIR)
+  GEN_MPC_CONFIG()
+ENDIF()
