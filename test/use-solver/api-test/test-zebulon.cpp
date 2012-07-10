@@ -58,8 +58,8 @@ int main() {
 	// Run:
 	// ----
 
-	double velocity = 0.4;
-	walk->velReferenceInGlobalFrame(velocity, velocity, velocity);
+    double velocity = 0.2;
+    walk->velReferenceInGlobalFrame(velocity, 0, 0);
 	walk->online(0.0);
 	double t = 0;
 	MPCSolution result;
@@ -78,8 +78,8 @@ int main() {
 	}
 
 	bool success = ((fabs(result.state_vec[1].baseTrajX_(0)-velocity)<1e-4)
-		      &&(fabs(result.state_vec[1].baseTrajY_(0)-velocity)<1e-4)
-		      &&(fabs(result.state_vec[1].CoMTrajYaw_(0)-velocity)<1e-4));
+              &&(fabs(result.state_vec[1].baseTrajY_(0)-0)<1e-4)
+              &&(fabs(result.state_vec[1].CoMTrajYaw_(0)-0)<1e-4));
 	for(unsigned i = 0; i < check_vec.size();++i){
 		// if the reference file exists, compare with the previous version.
 		if (*ref_vec[i]){

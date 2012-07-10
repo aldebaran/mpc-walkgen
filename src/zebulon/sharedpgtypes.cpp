@@ -27,11 +27,11 @@ RobotData::RobotData()
   ,orientationLimit(3)
 {
   baseLimit[0]=0.83;
-  baseLimit[1]=1;
-  baseLimit[2]=2;
+  baseLimit[1]=3;
+  baseLimit[2]=6;
   orientationLimit[0]=2*3.14;
-  orientationLimit[1]=3.14;
-  orientationLimit[2]=3.14;
+  orientationLimit[1]=3*3.14;
+  orientationLimit[2]=6*3.14;
   comLimitX=0.12*0.8;
   comLimitY=0.035*0.8;
 }
@@ -48,11 +48,11 @@ QPPonderation::QPPonderation(int nb)
   ,OrientationJerkMin(nb)
 {
   CopCentering[0]        = 0.1;
-  CoMCentering[0]        = 0.01;
-  CoMJerkMin[0]          = 0.001;
+  CoMCentering[0]        = 0.1;
+  CoMJerkMin[0]          = 0.000001;
   baseJerkMin[0]         = 0.0001;
   baseInstantVelocity[0] = 1.0;
-  basePosition[0]        = 0.1;
+  basePosition[0]        = 1.0;
 
   OrientationInstantVelocity[0] = 1;
   OrientationPosition[0]        = 0.1;
