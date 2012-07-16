@@ -75,7 +75,7 @@ namespace MPCWalkgen{
 
       /// \brief number of simulation iterations between two feedback call
       int nbSamplesControl() const;
-
+      int nbSamplesMPC() const;
       QPPonderation ponderation;
 
       MPCData();

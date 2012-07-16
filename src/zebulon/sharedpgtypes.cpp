@@ -18,6 +18,10 @@ int MPCData::nbSamplesControl() const{
   return static_cast<int> (round(MPCSamplingPeriod / actuationSamplingPeriod) );
 }
 
+int MPCData::nbSamplesMPC() const{
+  return static_cast<int> (round(QPSamplingPeriod / MPCSamplingPeriod) );
+}
+
 
 RobotData::RobotData()
   :CoMHeight(0.45)
