@@ -18,9 +18,8 @@ if(NOT ${uprefix}_FOUND)
 endif()
 
 find_package_handle_standard_args(${prefix}
-    REQUIRED_VARS ${uprefix}_INCLUDE_DIRS
-    lssol_LIB lssol_c_LIB f2c_LIB blas_LIB
-    VERSION_VAR ${uprefix}_VERSION)
+    DEFAULT_MESSAGE ${uprefix}_INCLUDE_DIRS
+    lssol_LIB lssol_c_LIB f2c_LIB blas_LIB)
 
 # publish
 if(${uprefix}_FOUND)

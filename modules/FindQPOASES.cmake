@@ -75,8 +75,8 @@ find_version()
 # Knowing the version of qpOASES is mandatory.
 # If not found, the compilation flags and the #include<> may be wrong.
 find_package_handle_standard_args(${prefix}
-    REQUIRED_VARS ${uprefix}_INCLUDE_DIRS ${uprefix}_LIBRARIES ${uprefix}_VERSION
-    VERSION_VAR ${uprefix}_VERSION)
+    DEFAULT_MESSAGE ${uprefix}_INCLUDE_DIRS ${uprefix}_LIBRARIES
+    ${uprefix}_VERSION)
 
 # publish
 if(${uprefix}_FOUND)
