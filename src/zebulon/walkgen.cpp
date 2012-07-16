@@ -310,3 +310,7 @@ void Walkgen::bodyState(BodyType body, const BodyState & state){
   robot_->body(body)->state(state);
 }
 
+const MPCData& Walkgen::mpcData(){
+  return mpcData_;
+}
+
