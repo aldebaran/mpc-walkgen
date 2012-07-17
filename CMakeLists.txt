@@ -174,7 +174,12 @@ INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/include)
 
 ADD_LIBRARY(mpc-walkgen SHARED ${mpc-walkgen_SRC} ${${PROJECT_NAME}_HEADERS})
 SET_TARGET_PROPERTIES(mpc-walkgen PROPERTIES SOVERSION ${PROJECT_VERSION})
-INSTALL(TARGETS mpc-walkgen DESTINATION lib)
+IF(NOT DEFINED QI_SDK_DIR)
+    INSTALL(TARGETS mpc-walkgen DESTINATION lib)
+ELSE()
+    # install rules are handled by qibuildize
+    QIBUILDIZE(mpc-walkgen)
+ENDIF()
 
 PKG_CONFIG_APPEND_CFLAGS("-I${EIGEN3_INCLUDE_DIR}")
 if(WITH_LSSOL)
@@ -184,10 +189,6 @@ endif()
 if(WITH_QPOASES)
   PKG_CONFIG_USE_DEPENDENCY(mpc-walkgen qpoases)
 endif()
-
-IF(DEFINED QI_SDK_DIR)
-  QIBUILDIZE(mpc-walkgen)
-ENDIF()
 
 # Define subdirectories to explore for cmake
 ADD_SUBDIRECTORY(test)

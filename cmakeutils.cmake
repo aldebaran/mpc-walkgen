@@ -96,6 +96,8 @@ function(qibuildize name)
     # always postfix debug lib/bin with _d ...
     set_target_properties("${name}" PROPERTIES DEBUG_POSTFIX "_d")
   endif()
+
+  qi_install_target(${name})
 endfunction()
 
 function(gen_mpc_config)
