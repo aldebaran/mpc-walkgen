@@ -81,7 +81,9 @@ addSolverToEnum("QPOASES" "1")
 CONFIG_FILES(include/mpc-walkgen/common/qp-solver-type.h)
 
 # Define the set of headers to be installed
-SET(${PROJECT_NAME}_HEADERS
+# Do *not* name it ${PROJECT_NAME}_HEADERS to prevent jrlcmake to try
+# installing them automatically (it would mix up the subdirectories)
+SET(${PROJECT_NAME}_HEADERS_NOJRL
   include/mpc-walkgen/common/api.h
   ${CMAKE_BINARY_DIR}/include/mpc-walkgen/common/qp-solver-type.h
   include/mpc-walkgen/common/sharedpgtypes.h
@@ -92,7 +94,7 @@ SET(${PROJECT_NAME}_HEADERS
   include/mpc-walkgen/zebulon/walkgen-abstract.h
   include/mpc-walkgen/zebulon/sharedpgtypes.h
 )
-
+HEADER_INSTALL("${${PROJECT_NAME}_HEADERS_NOJRL}")
 SET(mpc-walkgen_SRC
   src/common/types.cpp
   src/common/types.h
@@ -172,7 +174,7 @@ endif()
 
 INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/include)
 
-ADD_LIBRARY(mpc-walkgen SHARED ${mpc-walkgen_SRC} ${${PROJECT_NAME}_HEADERS})
+ADD_LIBRARY(mpc-walkgen SHARED ${mpc-walkgen_SRC} ${${PROJECT_NAME}_HEADERS_NOJRL})
 SET_TARGET_PROPERTIES(mpc-walkgen PROPERTIES SOVERSION ${PROJECT_VERSION})
 IF(NOT DEFINED QI_SDK_DIR)
     INSTALL(TARGETS mpc-walkgen DESTINATION lib)
