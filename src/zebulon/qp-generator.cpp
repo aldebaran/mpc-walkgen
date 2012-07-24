@@ -19,6 +19,7 @@ QPGenerator::QPGenerator(QPSolver * solver, Reference * velRef, Reference * posR
   ,generalData_(generalData)
   ,tmpVec_(1)
   ,tmpVec2_(1)
+  ,tmpVec3_(1)
   ,tmpMat_(1,1)
 {
 }
@@ -168,44 +169,46 @@ void QPGenerator::buildConstraintsCoP(){
   const BodyState & base = robot_->body(BASE)->state();
   RobotData robotData = robot_->robotData();
 
-  tmpMat_ = -Rxx_*CoPDynamics.U;
+  double factor = 2*robotData.h/robotData.b;
+
+  tmpMat_ = -(Rxx_.asDiagonal()*CoPDynamics.U);
   solver_->matrix(matrixA).setTerm(tmpMat_, 0, 0);
   solver_->matrix(matrixA).setTerm(tmpMat_, N, 0);
   solver_->matrix(matrixA).setTerm(-tmpMat_, 2*N, 0);
 
-  tmpMat_ = -Rxy_*CoPDynamics.U;
+  tmpMat_ = -(Rxy_.asDiagonal()*CoPDynamics.U);
   solver_->matrix(matrixA).setTerm(tmpMat_, 0, N);
   solver_->matrix(matrixA).setTerm(tmpMat_, N, N);
   solver_->matrix(matrixA).setTerm(-tmpMat_, 2*N, N);
 
 
-  tmpMat_ = Ryx_*(2*robotData.h/robotData.b)*CoPDynamics.U;
+  tmpMat_ = factor*(Ryx_.asDiagonal()*CoPDynamics.U);
   solver_->matrix(matrixA).addTerm(tmpMat_, 0, 0);
   solver_->matrix(matrixA).addTerm(-tmpMat_, N, 0);
 
-  tmpMat_ = Ryy_*(2*robotData.h/robotData.b)*CoPDynamics.U;
+  tmpMat_ = factor*(Ryy_.asDiagonal()*CoPDynamics.U);
   solver_->matrix(matrixA).addTerm(tmpMat_, 0, N);
   solver_->matrix(matrixA).addTerm(-tmpMat_, N, N);
 
 
 
-  tmpMat_ = Rxx_*basePosDynamics.U;
+  tmpMat_ = Rxx_.asDiagonal()*basePosDynamics.U;
   solver_->matrix(matrixA).setTerm(tmpMat_, 0, 2*N);
   solver_->matrix(matrixA).setTerm(tmpMat_, N, 2*N);
   solver_->matrix(matrixA).setTerm(-tmpMat_, 2*N, 2*N);
 
-  tmpMat_ = Rxy_*basePosDynamics.U;
+  tmpMat_ = Rxy_.asDiagonal()*basePosDynamics.U;
   solver_->matrix(matrixA).setTerm(tmpMat_, 0, 3*N);
   solver_->matrix(matrixA).setTerm(tmpMat_, N, 3*N);
   solver_->matrix(matrixA).setTerm(-tmpMat_, 2*N, 3*N);
 
 
 
-  tmpMat_ = -Ryx_*(2*robotData.h/robotData.b)*basePosDynamics.U;
+  tmpMat_ = -factor*(Ryx_.asDiagonal()*basePosDynamics.U);
   solver_->matrix(matrixA).addTerm(tmpMat_, 0, 2*N);
   solver_->matrix(matrixA).addTerm(-tmpMat_, N, 2*N);
 
-  tmpMat_ = -Ryy_*(2*robotData.h/robotData.b)*basePosDynamics.U;
+  tmpMat_ = -factor*(Ryy_.asDiagonal()*basePosDynamics.U);
   solver_->matrix(matrixA).addTerm(tmpMat_, 0, 3*N);
   solver_->matrix(matrixA).addTerm(-tmpMat_, N, 3*N);
 
@@ -216,14 +219,19 @@ void QPGenerator::buildConstraintsCoP(){
 
 
 
-  tmpVec_.fill(robotData.h/2);
-  tmpVec_.segment(0,N) += Rxx_*CoPDynamics.S * CoM.x - Ryy_*(2*robotData.h/robotData.b)*CoPDynamics.S* CoM.y - Rxx_*basePosDynamics.S*base.x + Ryy_*(2*robotData.h/robotData.b)* basePosDynamics.S*base.y;
-  tmpVec_.segment(N,N) += Rxx_*CoPDynamics.S * CoM.x + Ryy_*(2*robotData.h/robotData.b)*CoPDynamics.S* CoM.y - Rxx_*basePosDynamics.S*base.x - Ryy_*(2*robotData.h/robotData.b)* basePosDynamics.S*base.y;
-  tmpVec_.segment(2*N,N) += -Rxx_*CoPDynamics.S*CoM.x + Rxx_*basePosDynamics.S*base.x;
 
-  tmpVec_.segment(0,N) += Rxy_*CoPDynamics.S * CoM.y - Ryx_*(2*robotData.h/robotData.b)*CoPDynamics.S* CoM.x - Rxy_*basePosDynamics.S*base.y + Ryx_*(2*robotData.h/robotData.b)* basePosDynamics.S*base.x;
-  tmpVec_.segment(N,N) += Rxy_*CoPDynamics.S * CoM.y + Ryx_*(2*robotData.h/robotData.b)*CoPDynamics.S* CoM.x - Rxy_*basePosDynamics.S*base.y - Ryx_*(2*robotData.h/robotData.b)* basePosDynamics.S*base.x;
-  tmpVec_.segment(2*N,N) += -Rxy_*CoPDynamics.S*CoM.y + Rxy_*basePosDynamics.S*base.y;
+  tmpVec_.fill(robotData.h/2);
+  tmpVec_.segment(0,N) += Rxx_.asDiagonal()*(CoPDynamics.S * CoM.x - basePosDynamics.S*base.x)
+                       + factor*(Ryy_.asDiagonal()*(-CoPDynamics.S* CoM.y + basePosDynamics.S*base.y));
+  tmpVec_.segment(N,N) += Rxx_.asDiagonal()*(CoPDynamics.S * CoM.x - basePosDynamics.S*base.x)
+                       + factor*(Ryy_.asDiagonal()*( CoPDynamics.S* CoM.y - basePosDynamics.S*base.y));
+  tmpVec_.segment(2*N,N) += Rxx_.asDiagonal()*(-CoPDynamics.S*CoM.x + basePosDynamics.S*base.x);
+
+  tmpVec_.segment(0,N) += Rxy_.asDiagonal()*(CoPDynamics.S * CoM.y - basePosDynamics.S*base.y)
+                       + factor*(Ryx_.asDiagonal()*(-CoPDynamics.S* CoM.x + basePosDynamics.S*base.x));
+  tmpVec_.segment(N,N) += Rxy_.asDiagonal()*(CoPDynamics.S * CoM.y - basePosDynamics.S*base.y)
+                       + factor*(Ryx_.asDiagonal()*( CoPDynamics.S* CoM.x - basePosDynamics.S*base.x));
+  tmpVec_.segment(2*N,N) += Rxy_.asDiagonal()*(-CoPDynamics.S*CoM.y + basePosDynamics.S*base.y);
 
 
   solver_->vector(vectorBU).setTerm(tmpVec_, 0);
@@ -239,59 +247,50 @@ void QPGenerator::buildConstraintsCoM(){
   const BodyState & base = robot_->body(BASE)->state();
   RobotData & robotData = robot_->robotData();
 
-  tmpMat_ = Rxx_*CoMPosDynamics.U;
+  tmpMat_ = Rxx_.asDiagonal()*CoMPosDynamics.U;
   solver_->matrix(matrixA).setTerm(tmpMat_, 3*N, 0);
-  tmpMat_ = Rxy_*CoMPosDynamics.U;
+  tmpMat_ = Rxy_.asDiagonal()*CoMPosDynamics.U;
   solver_->matrix(matrixA).setTerm(tmpMat_, 3*N, N);
 
 
-  tmpMat_ = Ryx_*CoMPosDynamics.U;
+  tmpMat_ = Ryx_.asDiagonal()*CoMPosDynamics.U;
   solver_->matrix(matrixA).setTerm(tmpMat_, 4*N, 0);
-  tmpMat_ = Ryy_*CoMPosDynamics.U;
+  tmpMat_ = Ryy_.asDiagonal()*CoMPosDynamics.U;
   solver_->matrix(matrixA).setTerm(tmpMat_, 4*N, N);
 
-  tmpMat_ = -Rxx_*basePosDynamics.U;
+  tmpMat_ = -(Rxx_.asDiagonal()*basePosDynamics.U);
   solver_->matrix(matrixA).setTerm(tmpMat_, 3*N, 2*N);
-  tmpMat_ = -Rxy_*basePosDynamics.U;
+  tmpMat_ = -(Rxy_.asDiagonal()*basePosDynamics.U);
   solver_->matrix(matrixA).setTerm(tmpMat_, 3*N, 3*N);
 
-  tmpMat_ = -Ryx_*basePosDynamics.U;
+  tmpMat_ = -(Ryx_.asDiagonal()*basePosDynamics.U);
   solver_->matrix(matrixA).setTerm(tmpMat_, 4*N, 2*N);
-  tmpMat_ = -Ryy_*basePosDynamics.U;
+  tmpMat_ = -(Ryy_.asDiagonal()*basePosDynamics.U);
   solver_->matrix(matrixA).setTerm(tmpMat_, 4*N, 3*N);
 
 
 
 
-  tmpVec_.resize(2*N);
-  tmpVec_.segment(0,N).fill(-robotData.comLimitX);
-  tmpVec_.segment(N,N).fill(-robotData.comLimitY);
+  tmpVec3_.resize(2*N);
 
   tmpVec2_ = -CoMPosDynamics.S*CoM.x + basePosDynamics.S*base.x;
-  tmpVec_.segment(0,N) += Rxx_*tmpVec2_;
-  tmpVec_.segment(N,N) += Ryx_*tmpVec2_;
+  tmpVec3_.segment(0,N) = Rxx_.asDiagonal()*tmpVec2_;
+  tmpVec3_.segment(N,N) = Ryx_.asDiagonal()*tmpVec2_;
 
   tmpVec2_ = -CoMPosDynamics.S*CoM.y + basePosDynamics.S*base.y;
-  tmpVec_.segment(0,N) += Rxy_*tmpVec2_;
-  tmpVec_.segment(N,N) += Ryy_*tmpVec2_;
+  tmpVec3_.segment(0,N) += Rxy_.asDiagonal()*tmpVec2_;
+  tmpVec3_.segment(N,N) += Ryy_.asDiagonal()*tmpVec2_;
 
-  solver_->vector(vectorBL).setTerm(tmpVec_, 3*N);
+  tmpVec_.resize(2*N);
 
-
+  tmpVec_.segment(0,N).fill(-robotData.comLimitX);
+  tmpVec_.segment(N,N).fill(-robotData.comLimitY);
+  solver_->vector(vectorBL).setTerm(tmpVec_+tmpVec3_, 3*N);
 
 
   tmpVec_.segment(0,N).fill(robotData.comLimitX);
   tmpVec_.segment(N,N).fill(robotData.comLimitY);
-
-  tmpVec2_ = -CoMPosDynamics.S*CoM.x + basePosDynamics.S*base.x;
-  tmpVec_.segment(0,N) += Rxx_*tmpVec2_;
-  tmpVec_.segment(N,N) += Ryx_*tmpVec2_;
-
-  tmpVec2_ = -CoMPosDynamics.S*CoM.y + basePosDynamics.S*base.y;
-  tmpVec_.segment(0,N) += Rxy_*tmpVec2_;
-  tmpVec_.segment(N,N) += Ryy_*tmpVec2_;
-
-  solver_->vector(vectorBU).setTerm(tmpVec_, 3*N);
+  solver_->vector(vectorBU).setTerm(tmpVec_+tmpVec3_, 3*N);
 
 }
 
@@ -302,20 +301,21 @@ void QPGenerator::buildConstraintsBaseVelocity(){
   const BodyState & base = robot_->body(BASE)->state();
   RobotData & robotData = robot_->robotData();
 
-  tmpMat_ = baseVelDynamics.U;
-  solver_->matrix(matrixA).setTerm(tmpMat_, 5*N, 2*N);
-  solver_->matrix(matrixA).setTerm(tmpMat_, 6*N, 3*N);
-  tmpVec_.resize(2*N);
-  tmpVec_.fill(-robotData.baseLimit[0]);
-  tmpVec_.segment(0,N) -= baseVelDynamics.S*base.x;
-  tmpVec_.segment(N,N) -= baseVelDynamics.S*base.y;
-  solver_->vector(vectorBL).setTerm(tmpVec_, 5*N);
+  solver_->matrix(matrixA).setTerm(baseVelDynamics.U, 5*N, 2*N);
+  solver_->matrix(matrixA).setTerm(baseVelDynamics.U, 6*N, 3*N);
 
+  tmpVec3_.resize(2*N);
+  tmpVec3_.segment(0,N) = -baseVelDynamics.S*base.x;
+  tmpVec3_.segment(N,N) = -baseVelDynamics.S*base.y;
+
+
+  tmpVec_.resize(2*N);
+
+  tmpVec_.fill(-robotData.baseLimit[0]);
+  solver_->vector(vectorBL).setTerm(tmpVec_+tmpVec3_, 5*N);
 
   tmpVec_.fill(robotData.baseLimit[0]);
-  tmpVec_.segment(0,N) -= baseVelDynamics.S*base.x;
-  tmpVec_.segment(N,N) -= baseVelDynamics.S*base.y;
-  solver_->vector(vectorBU).setTerm(tmpVec_, 5*N);
+  solver_->vector(vectorBU).setTerm(tmpVec_+tmpVec3_, 5*N);
 
 }
 
@@ -326,26 +326,20 @@ void QPGenerator::buildConstraintsBaseAcceleration(){
   const BodyState & base = robot_->body(BASE)->state();
   RobotData & robotData = robot_->robotData();
 
-  tmpMat_ = baseAccDynamics.U;
-  solver_->matrix(matrixA).setTerm(tmpMat_, 7*N, 2*N);
-  solver_->matrix(matrixA).setTerm(tmpMat_, 8*N, 3*N);
+  solver_->matrix(matrixA).setTerm(baseAccDynamics.U, 7*N, 2*N);
+  solver_->matrix(matrixA).setTerm(baseAccDynamics.U, 8*N, 3*N);
 
-
+  tmpVec3_.resize(2*N);
+  tmpVec3_.segment(0,N) = -baseAccDynamics.S*base.x;
+  tmpVec3_.segment(N,N) = -baseAccDynamics.S*base.y;
 
   tmpVec_.resize(2*N);
   tmpVec_.fill(-robotData.baseLimit[1]);
-  tmpVec_.segment(0,N) -= baseAccDynamics.S*base.x;
-  tmpVec_.segment(N,N) -= baseAccDynamics.S*base.y;
-
-  solver_->vector(vectorBL).setTerm(tmpVec_, 7*N);
-
+  solver_->vector(vectorBL).setTerm(tmpVec_+tmpVec3_, 7*N);
 
 
   tmpVec_.fill(robotData.baseLimit[1]);
-  tmpVec_.segment(0,N) -= baseAccDynamics.S*base.x;
-  tmpVec_.segment(N,N) -= baseAccDynamics.S*base.y;
-
-  solver_->vector(vectorBU).setTerm(tmpVec_, 7*N);
+  solver_->vector(vectorBU).setTerm(tmpVec_+tmpVec3_, 7*N);
 
 }
 
@@ -422,20 +416,20 @@ void QPGenerator::computeOrientationMatrices(const GlobalSolution & result){
   if (cosYaw_.rows()!=N){
     cosYaw_.resize(N);
     sinYaw_.resize(N);
-    Rxx_.setZero(N,N);
-    Rxy_.setZero(N,N);
-    Ryx_.setZero(N,N);
-    Ryy_.setZero(N,N);
+    Rxx_.resize(N);
+    Rxy_.resize(N);
+    Ryx_.resize(N);
+    Ryy_.resize(N);
   }
 
   for(int i=0;i<N;++i){
     cosYaw_(i)=cos(yaw_(i));
     sinYaw_(i)=sin(yaw_(i));
 
-    Rxx_(i,i)=cosYaw_(i);
-    Rxy_(i,i)=-sinYaw_(i);
-    Ryx_(i,i)=sinYaw_(i);
-    Ryy_(i,i)=cosYaw_(i);
+    Rxx_(i)=cosYaw_(i);
+    Rxy_(i)=-sinYaw_(i);
+    Ryx_(i)=sinYaw_(i);
+    Ryy_(i)=cosYaw_(i);
   }
 
 }

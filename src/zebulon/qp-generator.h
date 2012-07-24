@@ -20,6 +20,7 @@
 #include "rigid-body-system.h"
 
 #include <Eigen/Dense>
+
 #include <vector>
 
 namespace MPCWalkgen{
@@ -64,6 +65,7 @@ namespace MPCWalkgen{
 
       Eigen::VectorXd tmpVec_;
       Eigen::VectorXd tmpVec2_;
+      Eigen::VectorXd tmpVec3_;
       Eigen::MatrixXd tmpMat_;
 
       std::vector<Eigen::MatrixXd> Qconst_;
@@ -77,10 +79,10 @@ namespace MPCWalkgen{
       Eigen::VectorXd yaw_;
       Eigen::VectorXd cosYaw_;
       Eigen::VectorXd sinYaw_;
-      Eigen::MatrixXd Rxx_;
-      Eigen::MatrixXd Rxy_;
-      Eigen::MatrixXd Ryx_;
-      Eigen::MatrixXd Ryy_;
+      Eigen::VectorXd Rxx_;
+      Eigen::VectorXd Rxy_;
+      Eigen::VectorXd Ryx_;
+      Eigen::VectorXd Ryy_;
 
     };
   }

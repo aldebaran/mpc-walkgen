@@ -15,11 +15,16 @@
 
 #include <Eigen/Dense>
 #include "../qp-solver.h"
+#include <vector>
 
 
-namespace qpOASES{
-  class QProblem;
-}
+#ifdef USE_QPOASES_3_0
+# include <qpOASES/QProblem.hpp>
+#else //
+# include <QProblem.hpp>
+#endif //USE_QPOASES_3_0
+
+
 namespace MPCWalkgen{
 
 
@@ -47,7 +52,13 @@ namespace MPCWalkgen{
 			virtual bool resizeAll();
 
 		protected:
-			::qpOASES::QProblem* qp_;
+			std::vector< ::qpOASES::QProblem*> qp_;
+			std::vector< ::qpOASES::Constraints*> ctrInit_;
+			std::vector< ::qpOASES::Bounds*> boundsInit_;
+			int nbVarMin_;
+			int nbCtrMin_;
+			int sizeNbCtr_;
+			int sizeNbVar_;
 
 
 	};
