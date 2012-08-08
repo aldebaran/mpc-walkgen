@@ -39,11 +39,13 @@ namespace MPCWalkgen{
 	};
 
 	enum DynamicMatrixType{
+		posIntDynamic,
 		posDynamic,
 		velDynamic,
 		accDynamic,
 		jerkDynamic,
 		copDynamic,
+		interpolationPosInt,
 		interpolationPos,
 		interpolationVel,
 		interpolationAcc,

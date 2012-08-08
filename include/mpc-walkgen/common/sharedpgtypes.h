@@ -30,16 +30,16 @@ namespace MPCWalkgen
   };
 
   struct MPC_WALKGEN_API BodyState{
-    Eigen::Vector3d x;
-    Eigen::Vector3d y;
-    Eigen::Vector3d z;
-    Eigen::Vector3d yaw;
-    Eigen::Vector3d pitch;
-    Eigen::Vector3d roll;
+    Eigen::VectorXd x;
+    Eigen::VectorXd y;
+    Eigen::VectorXd z;
+    Eigen::VectorXd yaw;
+    Eigen::VectorXd pitch;
+    Eigen::VectorXd roll;
 
-    BodyState();
+    BodyState(int size=3);
 
-    void reset();
+    void reset(int size=3);
   };
 }
 #endif // MPC_WALKGEN_COMMON_SHAREDPGTYPES_H

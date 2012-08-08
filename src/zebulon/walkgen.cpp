@@ -46,8 +46,8 @@ Walkgen::Walkgen(::MPCWalkgen::QPSolverType solvertype)
           mpcData_.nbSamplesQP, 2*mpcData_.nbSamplesQP);
   interpolation_ = new Interpolation();
   robot_ = new RigidBodySystem(&mpcData_, interpolation_);
-  generator_= new QPGenerator(solver_, &velRef_, &posRef_, robot_, &mpcData_);
-  generatorOrientation_= new QPGeneratorOrientation(solverOrientation_, &velRef_, &posRef_, robot_, &mpcData_);
+  generator_= new QPGenerator(solver_, &velRef_, &posRef_, &posIntRef_, robot_, &mpcData_);
+  generatorOrientation_= new QPGeneratorOrientation(solverOrientation_, &velRef_, &posRef_, &posIntRef_, robot_, &mpcData_);
 
 }
 
@@ -192,12 +192,9 @@ void Walkgen::init() {
   generator_->precomputeObjective();
   generatorOrientation_->precomputeObjective();
 
-  BodyState state;
+  BodyState state(4);
   robot_->body(BASE)->state(state);
-
-  state.x[0] = 0;
-  state.y[0] = 0;
-  state.z[0] = robotData_.CoMHeight;
+  state.z[1] = robotData_.CoMHeight;
   robot_->body(COM)->state(state);
 
   currentRealTime_ = 0.0;
@@ -212,6 +209,9 @@ void Walkgen::init() {
 
   posRef_.resize(mpcData_.nbSamplesQP);
   newPosRef_.resize(mpcData_.nbSamplesQP);
+
+  posIntRef_.resize(mpcData_.nbSamplesQP);
+  newPosIntRef_.resize(mpcData_.nbSamplesQP);
 
   initAlreadyCalled_ = true;
 }
@@ -236,6 +236,7 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
       solution_.mpcSolution.newTraj = true;
       velRef_ = newVelRef_;
       posRef_ = newPosRef_;
+      posIntRef_ = newPosIntRef_;
 
       upperTimeLimitToFeedback_ += mpcData_.MPCSamplingPeriod;
 
@@ -302,6 +303,19 @@ void Walkgen::posReferenceInGlobalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, 
   newPosRef_.global.y=dy;
   newPosRef_.global.yaw=dyaw;
 }
+
+void Walkgen::posIntReferenceInGlobalFrame(double dx, double dy, double dyaw){
+  newPosIntRef_.global.x.fill(dx);
+  newPosIntRef_.global.y.fill(dy);
+  newPosIntRef_.global.yaw.fill(dyaw);
+}
+
+void Walkgen::posIntReferenceInGlobalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw){
+  newPosIntRef_.global.x=dx;
+  newPosIntRef_.global.y=dy;
+  newPosIntRef_.global.yaw=dyaw;
+}
+
 
 const BodyState & Walkgen::bodyState(BodyType body)const{
   return robot_->body(body)->state();

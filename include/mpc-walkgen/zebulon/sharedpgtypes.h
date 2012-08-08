@@ -49,6 +49,7 @@ namespace MPCWalkgen{
     struct MPC_WALKGEN_API QPPonderation{
       std::vector<double> baseInstantVelocity;
       std::vector<double> basePosition;
+      std::vector<double> basePositionInt;
       std::vector<double> CopCentering;
       std::vector<double> CoMCentering;
       std::vector<double> CoMJerkMin;

@@ -4,7 +4,7 @@
 using namespace MPCWalkgen::Zebulon;
 
 MPCSolution::MPCSolution()
-:state_vec(3)
+:state_vec(4)
 {}
 
 MPCData::MPCData()
@@ -43,6 +43,7 @@ RobotData::RobotData()
 QPPonderation::QPPonderation(int nb)
   :baseInstantVelocity(nb)
   ,basePosition(nb)
+  ,basePositionInt(nb)
   ,CopCentering(nb)
   ,CoMCentering(nb)
   ,CoMJerkMin(nb)
@@ -51,16 +52,17 @@ QPPonderation::QPPonderation(int nb)
   ,OrientationPosition(nb)
   ,OrientationJerkMin(nb)
 {
-  CopCentering[0]        = 0.1;
+  CopCentering[0]        = 1;
   CoMCentering[0]        = 0.1;
-  CoMJerkMin[0]          = 0.000001;
-  baseJerkMin[0]         = 0.0001;
-  baseInstantVelocity[0] = 1.0;
-  basePosition[0]        = 1.0;
+  CoMJerkMin[0]          = 0.00001;
+  baseJerkMin[0]         = 0;
+  baseInstantVelocity[0] = 2;
+  basePosition[0]        = 5;
+  basePositionInt[0]     = 0;
 
   OrientationInstantVelocity[0] = 1;
-  OrientationPosition[0]        = 0.1;
-  OrientationJerkMin[0]         = 0.0001;
+  OrientationPosition[0]        = 10;
+  OrientationJerkMin[0]         = 0.00001;
 
   activePonderation = 0;
 }

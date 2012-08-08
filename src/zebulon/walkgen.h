@@ -55,7 +55,8 @@ namespace MPCWalkgen{
       virtual void velReferenceInGlobalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw);
       virtual void posReferenceInGlobalFrame(double dx, double dy, double dyaw);
       virtual void posReferenceInGlobalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw);
-
+      virtual void posIntReferenceInGlobalFrame(double dx, double dy, double dyaw);
+      virtual void posIntReferenceInGlobalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw);
 
       virtual const BodyState & bodyState(BodyType body)const;
       virtual void bodyState(BodyType body, const BodyState & state);
@@ -76,10 +77,11 @@ namespace MPCWalkgen{
       GlobalSolution solution_;
       Reference velRef_;
       Reference posRef_;
+      Reference posIntRef_;
       /// \brief The new value of references, updated with in online method
       Reference newVelRef_;
       Reference newPosRef_;
-
+      Reference newPosIntRef_;
 
       /// \brief Time at which the problem should be updated
       double upperTimeLimitToUpdate_;

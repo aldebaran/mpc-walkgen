@@ -28,8 +28,8 @@ namespace MPCWalkgen{
 
     public:
       QPGeneratorOrientation(QPSolver * solver, Reference * velRef,
-                  Reference * posRef, RigidBodySystem * robot,
-                  const MPCData * generalData);
+                  Reference * posRef, Reference * posIntRef,
+                  RigidBodySystem * robot, const MPCData * generalData);
       ~QPGeneratorOrientation();
 
       void precomputeObjective();
@@ -55,6 +55,7 @@ namespace MPCWalkgen{
       RigidBodySystem * robot_;
       Reference * velRef_;
       Reference * posRef_;
+      Reference * posIntRef_;
       const MPCData * generalData_;
 
       Eigen::VectorXd tmpVec_;

@@ -66,6 +66,9 @@ namespace MPCWalkgen{
       virtual void velReferenceInGlobalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw) = 0;
       virtual void posReferenceInGlobalFrame(double dx, double dy, double dyaw) = 0;
       virtual void posReferenceInGlobalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw) = 0;
+      virtual void posIntReferenceInGlobalFrame(double dx, double dy, double dyaw) = 0;
+      virtual void posIntReferenceInGlobalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw) = 0;
+
 
       /// \}
 

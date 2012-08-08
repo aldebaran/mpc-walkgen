@@ -12,12 +12,13 @@ using namespace Zebulon;
 using namespace Eigen;
 
 QPGeneratorOrientation::QPGeneratorOrientation(QPSolver * solver, Reference * velRef,
-			 Reference * posRef, RigidBodySystem * robot,
-			 const MPCData * generalData)
+                                Reference * posRef, Reference * posIntRef,
+                                RigidBodySystem * robot, const MPCData * generalData)
   :solver_(solver)
   ,robot_(robot)
   ,velRef_(velRef)
   ,posRef_(posRef)
+  ,posIntRef_(posIntRef)
   ,generalData_(generalData)
   ,tmpVec_(1)
 {}
@@ -43,7 +44,7 @@ void QPGeneratorOrientation::precomputeObjective(){
 
   for (int i = 0; i < nbUsedPonderations; ++i) {
       Qconst_[i].resize(N,N);
-      pconstCoMYaw_[i].resize(N,3);
+      pconstCoMYaw_[i].resize(N,4);
       pconstVelRef_[i].resize(N,N);
       pconstPosRef_[i].resize(N,N);
 

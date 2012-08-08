@@ -49,9 +49,10 @@ void RigidBodySystem::interpolateBodies(GlobalSolution & solution, double curren
 void RigidBodySystem::updateBodyState(const GlobalSolution & solution){
   int nextCurrentState = (int)round(generalData_->MPCSamplingPeriod / generalData_->actuationSamplingPeriod)-1;
 
-  BodyState base, CoM;
+  BodyState base(4);
+  BodyState CoM(4);
 
-  for (int i = 0; i < 3; ++i){
+  for (int i = 0; i < 4; ++i){
       const MPCSolution::State & currentState = solution.mpcSolution.state_vec[i];
       base.x(i) = currentState.baseTrajX_(nextCurrentState);
       base.y(i) = currentState.baseTrajY_(nextCurrentState);
@@ -62,11 +63,13 @@ void RigidBodySystem::updateBodyState(const GlobalSolution & solution){
       CoM.y(i) = currentState.CoMTrajY_(nextCurrentState);
       CoM.yaw(i) = currentState.CoMTrajYaw_(nextCurrentState);
     }
-  CoM.z(0) = robotData_.CoMHeight;
-  CoM.z(1) = 0;
+  CoM.z(0) = 0;
+  CoM.z(1) = robotData_.CoMHeight;
   CoM.z(2) = 0;
-  base.yaw(0) = fmod(base.yaw(0),2*PI);
-  CoM.yaw(0) = fmod(CoM.yaw(0),2*PI);
+  CoM.z(3) = 0;
+
+  base.yaw(1) = fmod(base.yaw(1),2*PI);
+  CoM.yaw(1) = fmod(CoM.yaw(1),2*PI);
   CoM_->state(CoM);
   base_->state(base);
 

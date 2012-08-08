@@ -52,6 +52,7 @@ int main() {
 
 	MPCData mpcData;
 	mpcData.ponderation.basePosition[0]=0;
+	mpcData.ponderation.basePositionInt[0]=0;
 	mpcData.ponderation.OrientationPosition[0]=0;
 	walk->init(mpcData);
 
@@ -67,8 +68,11 @@ int main() {
 		result = walk->online(t);
 		dumpTrajectory(result, data_vec);
 	}
-
-
+	walk->velReferenceInGlobalFrame(-velocity, 0, 0);
+	for (; t < 20; t += 0.005){
+		result = walk->online(t);
+		dumpTrajectory(result, data_vec);
+	}
 
 	// Reopen the files:
 	// -----------------
@@ -77,9 +81,9 @@ int main() {
 		check_vec[i] = new std::ifstream((name_vec[i]+".data").c_str());
 	}
 
-	bool success = ((fabs(result.state_vec[1].baseTrajX_(0)-velocity)<1e-4)
-              &&(fabs(result.state_vec[1].baseTrajY_(0)-0)<1e-4)
-              &&(fabs(result.state_vec[1].CoMTrajYaw_(0)-0)<1e-4));
+        bool success = ((fabs(result.state_vec[2].baseTrajX_(0)+velocity)<1e-4)
+              &&(fabs(result.state_vec[2].baseTrajY_(0)-0)<1e-4)
+              &&(fabs(result.state_vec[2].CoMTrajYaw_(0)-0)<1e-4));
 	for(unsigned i = 0; i < check_vec.size();++i){
 		// if the reference file exists, compare with the previous version.
 		if (*ref_vec[i]){
@@ -107,14 +111,14 @@ int main() {
 }
 
 void dumpTrajectory(MPCSolution &result, std::vector<std::ofstream*> &data_vec) {
-	for (int i = 0; i < result.state_vec[0].CoMTrajX_.rows(); ++i) {
-	  *data_vec[0] << result.state_vec[0].CoMTrajX_(i) << " " << result.state_vec[1].CoMTrajX_(i) << " " << result.state_vec[2].CoMTrajX_(i) << std::endl;
-	  *data_vec[1] << result.state_vec[0].CoMTrajY_(i) << " " << result.state_vec[1].CoMTrajY_(i) << " " << result.state_vec[2].CoMTrajY_(i) << std::endl;
-	  *data_vec[2] << result.state_vec[0].CoMTrajYaw_(i) << " " << result.state_vec[1].CoMTrajYaw_(i) << " " << result.state_vec[2].CoMTrajYaw_(i) << std::endl;
+	for (int i = 0; i < result.state_vec[1].CoMTrajX_.rows(); ++i) {
+	  *data_vec[0] << result.state_vec[0].CoMTrajX_(i) << " " << result.state_vec[1].CoMTrajX_(i) << " " << result.state_vec[2].CoMTrajX_(i) << " " << result.state_vec[3].CoMTrajX_(i) << std::endl;
+	  *data_vec[1] << result.state_vec[0].CoMTrajY_(i) << " " << result.state_vec[1].CoMTrajY_(i) << " " << result.state_vec[2].CoMTrajY_(i) << " " << result.state_vec[3].CoMTrajY_(i) << std::endl;
+	  *data_vec[2] << result.state_vec[0].CoMTrajYaw_(i) << " " << result.state_vec[1].CoMTrajYaw_(i) << " " << result.state_vec[2].CoMTrajYaw_(i) << " " << result.state_vec[3].CoMTrajYaw_(i) << std::endl;
 	  *data_vec[3] << result.CoPTrajX(i)  << std::endl;
 	  *data_vec[4] << result.CoPTrajY(i) << std::endl;
-	  *data_vec[5] << result.state_vec[0].baseTrajX_(i) << " " << result.state_vec[1].baseTrajX_(i) << " " << result.state_vec[2].baseTrajX_(i) << std::endl;
-	  *data_vec[6] << result.state_vec[0].baseTrajY_(i) << " " << result.state_vec[1].baseTrajY_(i) << " " << result.state_vec[2].baseTrajY_(i) << std::endl;
+	  *data_vec[5] << result.state_vec[0].baseTrajX_(i) << " " << result.state_vec[1].baseTrajX_(i) << " " << result.state_vec[2].baseTrajX_(i) << " " << result.state_vec[3].baseTrajX_(i) << std::endl;
+	  *data_vec[6] << result.state_vec[0].baseTrajY_(i) << " " << result.state_vec[1].baseTrajY_(i) << " " << result.state_vec[2].baseTrajY_(i) << " " << result.state_vec[3].baseTrajY_(i) << std::endl;
 	}
 }
 

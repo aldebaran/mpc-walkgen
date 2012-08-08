@@ -2,18 +2,17 @@
 
 namespace MPCWalkgen
 {
-
-  BodyState::BodyState(){
-          reset();
+  BodyState::BodyState(int size){
+          reset(size);
   }
 
-  void BodyState::reset(){
-          x.fill(0);
-          y.fill(0);
-          z.fill(0);
-          yaw.fill(0);
-          pitch.fill(0);
-          roll.fill(0);
+  void BodyState::reset(int size){
+          x.setZero(size);
+          y.setZero(size);
+          z.setZero(size);
+          yaw.setZero(size);
+          pitch.setZero(size);
+          roll.setZero(size);
   }
 
 }

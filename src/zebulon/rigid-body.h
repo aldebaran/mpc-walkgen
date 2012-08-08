@@ -51,12 +51,14 @@ namespace MPCWalkgen{
       const Interpolation *interpolation_;
 
       BodyState state_;
+      LinearDynamics posInt_vec_;
       LinearDynamics pos_vec_;
       LinearDynamics vel_vec_;
       LinearDynamics acc_vec_;
       LinearDynamics jerk_vec_;
       LinearDynamics cop_vec_;
 
+      LinearDynamics posIntInterpol_;
       LinearDynamics posInterpol_;
       LinearDynamics velInterpol_;
       LinearDynamics accInterpol_;
