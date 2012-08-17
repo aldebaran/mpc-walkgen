@@ -18,18 +18,16 @@ endif()
 if(WITH_QPOASES)
   list(APPEND qpsolverhumanoid_SRC ../src/common/qp-solvers/qpoases-solver.cpp)
 endif()
-add_library(qpsolverhumanoid STATIC ${qpsolverhumanoid_SRC})
+qi_create_lib(qpsolverhumanoid STATIC ${qpsolverhumanoid_SRC})
+qi_stage_lib(qpsolverhumanoid INTERNAL)
 
 # the timer library holds some timing and benchmark tools.
-add_library(timer STATIC
-  ../src/common/mpc-debug.cpp
-  ../src/common/gettimeofday.cpp)
-
-
+qi_create_lib(timer STATIC ../src/common/mpc-debug.cpp
+                           ../src/common/gettimeofday.cpp)
+qi_stage_lib(timer INTERNAL)
 if(WITH_LSSOL)
   list(APPEND solverAvailable "LSSOL")
 endif()
-
 if(WITH_QPOASES)
   list(APPEND solverAvailable "QPOASES")
 endif()
@@ -38,19 +36,18 @@ endif()
 #Benchs
 ############
 # Testing all the available qp solvers, using the QPSolver API
-create_test(bench-qpsolver
+qi_create_test(bench-qpsolver
   SRC bench/bench-qpsolver.cpp
-  INTDEPS qpsolverhumanoid timer
-  EXTDEPS ${solverAvailable})
+  DEPENDS qpsolverhumanoid timer ${solverAvailable})
 
 # a simple execution of the walkgen.
 if(WITH_LSSOL AND WITH_QPOASES)
-  create_test(bench-solvers-humanoid
+  qi_create_test(bench-solvers-humanoid
     SRC bench/bench-solvers-humanoid.cpp ../src/common/mpc-debug.cpp
-    INTDEPS mpc-walkgen timer)
-  create_test(bench-solvers-zebulon
+    DEPENDS mpc-walkgen timer)
+  qi_create_test(bench-solvers-zebulon
     SRC bench/bench-solvers-zebulon.cpp ../src/common/mpc-debug.cpp
-    INTDEPS mpc-walkgen timer)
+    DEPENDS mpc-walkgen timer)
 endif()
 
 
@@ -60,36 +57,30 @@ endif()
 ############
 if(WITH_LSSOL)
   # test the lssol solver, using its native API
-  create_test(test-lssol
+  qi_create_test(test-lssol
     SRC unit-test/test-lssol.cpp
-    EXTDEPS lssol)
+    DEPENDS lssol)
 endif()
 
 if(WITH_QPOASES)
   # test the qpOASES solver, using its native API
-  create_test(test-qpoases
+  qi_create_test(test-qpoases
     SRC unit-test/test-qpoases.cpp
-    EXTDEPS QPOASES)
+    DEPENDS QPOASES)
 endif()
 
-create_test(test-qpsolver
+qi_create_test(test-qpsolver
   SRC unit-test/test-qpsolver.cpp
-  INTDEPS qpsolverhumanoid
-  EXTDEPS ${solverAvailable})
+  DEPENDS qpsolverhumanoid ${solverAvailable})
 
 # Compare LSSOL and qpOASES.
-create_test(test-all-solvers
+qi_create_test(test-all-solvers
   SRC unit-test/test-all-solvers.cpp
-  INTDEPS qpsolverhumanoid
-  EXTDEPS ${solverAvailable})
+  DEPENDS qpsolverhumanoid ${solverAvailable})
 
 ############
 #API tests
 ############
-
-
-
-
 
 # the "with-solver" subfolder is included once per supported solver. The tests
 # defined within it should use the "CURRENT_QPSOLVERTYPE" macro to use the

@@ -1,57 +1,33 @@
 # Copyright 2012, Olivier Stasse, JRL, CNRS/AIST
 # Requires at least CMake 2.6 to configure the package.
 cmake_minimum_required(VERSION 2.8)
+project(mpc-walkgen)
 
-
-# Define properties of the project
-SET(PROJECT_NAME mpc-walkgen)
-SET(PROJECT_DESCRIPTION "MPC Walking pattern generator for Humanoids")
-SET(PROJECT_URL "https://gforge.inria.fr/projects/mpc-walkgen")
-SET(CUSTOM_HEADER_DIR "${PROJECT_NAME}")
-SET(CXX_DISABLE_WERROR True)
-
-find_package(jrl-cmake REQUIRED
-    HINTS cmake)
-INCLUDE(${jrl-cmake_DIR}/base.cmake)
-INCLUDE(${jrl-cmake_DIR}/cpack.cmake)
-INCLUDE(cmakeutils.cmake)
-# custom cmake modules to find dependencies
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/modules")
-
-# Initialize generic properties of the project
-SETUP_PROJECT()
-
+find_package(qibuild)
 # Handle OS specificities
-INCLUDE(CheckIncludeFiles)
-CHECK_INCLUDE_FILES("sys/time.h" SYS_TIME_H)
-IF(SYS_TIME_H)
-  ADD_DEFINITIONS("-DHAVE_SYS_TIME_H")
-ENDIF(SYS_TIME_H)
-# make all symbols hidden with gcc.
-if(UNIX)
-  ADD_DEFINITIONS("-fvisibility=hidden")
+include(CheckIncludeFiles)
+check_include_files("sys/time.h" SYS_TIME_H)
+if(SYS_TIME_H)
+  add_definitions("-DHAVE_SYS_TIME_H")
 endif()
 
-find_package(qibuild QUIET)
-find_package(Eigen3 REQUIRED)
-include_directories(${EIGEN3_INCLUDE_DIR})
+# make all symbols hidden with gcc.
+if(UNIX)
+  add_definitions("-fvisibility=hidden")
+endif()
 
-# Optional dependencies: use an external QP solver library.
-find_optional_package(
-  LSSOL "build mpc-walkgen with support for LSSOL QP solver ")
-find_optional_package(
-  QPOASES "build mpc-walkgen with support for qpOASES QP solver")
+qi_add_optional_package(LSSOL)
+qi_add_optional_package(QPOASES)
 
 if(NOT WITH_LSSOL AND NOT WITH_QPOASES)
-  message(FATAL_ERROR
-    "No QP solver found.  Possible solvers: LSSOL and qpOASES")
+  message(FATAL_ERROR "No QP solver found.  Possible solvers: LSSOL and qpOASES")
 endif()
 
 if(WITH_QPOASES)
   # There are two versions of qpOASES, that change the way the inclusion
   # has to be done.
   if(NOT QPOASES_VERSION VERSION_LESS 3.0)
-    ADD_DEFINITIONS("-DUSE_QPOASES_3_0")
+    add_definitions("-DUSE_QPOASES_3_0")
   endif()
 endif()
 
@@ -69,23 +45,28 @@ macro(addSolverToEnum solver value)
       set(MPC_WALKGEN_WITH_${solver} ON)
     if(_QPSOLVERTYPE_ENUM)
       # add a line to the enum, except for the very first line
-      SET(_QPSOLVERTYPE_ENUM "${_QPSOLVERTYPE_ENUM},\n")
+      set(_QPSOLVERTYPE_ENUM "${_QPSOLVERTYPE_ENUM},\n")
     endif()
     # add the enum entry
-    SET(_QPSOLVERTYPE_ENUM "${_QPSOLVERTYPE_ENUM}\t\tQPSOLVERTYPE_${solver}")
-    SET(_QPSOLVERTYPE_ENUM "${_QPSOLVERTYPE_ENUM} = ${value}")
+    set(_QPSOLVERTYPE_ENUM "${_QPSOLVERTYPE_ENUM}\t\tQPSOLVERTYPE_${solver}")
+    set(_QPSOLVERTYPE_ENUM "${_QPSOLVERTYPE_ENUM} = ${value}")
   endif()
 endmacro()
 addSolverToEnum("LSSOL" "0")
 addSolverToEnum("QPOASES" "1")
-CONFIG_FILES(include/mpc-walkgen/common/qp-solver-type.h)
+set(_inc include/mpc-walkgen/common/qp-solver-type.h)
+
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/${_inc}.in" "${CMAKE_CURRENT_BINARY_DIR}/${_inc}" @ONLY)
+qi_install_header("${CMAKE_CURRENT_BINARY_DIR}/${_inc}" SUBFOLDER mpc-walkgen/common)
+
+add_subdirectory("include")
 
 # Define the set of headers to be installed
 # Do *not* name it ${PROJECT_NAME}_HEADERS to prevent jrlcmake to try
 # installing them automatically (it would mix up the subdirectories)
-SET(${PROJECT_NAME}_HEADERS_NOJRL
+set(_HEADERS_NOJRL
   include/mpc-walkgen/common/api.h
-  ${CMAKE_BINARY_DIR}/include/mpc-walkgen/common/qp-solver-type.h
+  ${CMAKE_CURRENT_BINARY_DIR}/include/mpc-walkgen/common/qp-solver-type.h
   include/mpc-walkgen/common/sharedpgtypes.h
 
   include/mpc-walkgen/humanoid/walkgen-abstract.h
@@ -94,7 +75,7 @@ SET(${PROJECT_NAME}_HEADERS_NOJRL
   include/mpc-walkgen/zebulon/walkgen-abstract.h
   include/mpc-walkgen/zebulon/sharedpgtypes.h
 )
-HEADER_INSTALL("${${PROJECT_NAME}_HEADERS_NOJRL}")
+
 SET(mpc-walkgen_SRC
   src/common/types.cpp
   src/common/types.h
@@ -161,47 +142,25 @@ SET(mpc-walkgen_SRC
 )
 
 if(WITH_LSSOL)
-  list(APPEND mpc-walkgen_SRC
-    src/common/qp-solvers/lssol-solver.cpp
-  )
+  list(APPEND mpc-walkgen_SRC src/common/qp-solvers/lssol-solver.cpp)
 endif()
 
 if(WITH_QPOASES)
-  list(APPEND mpc-walkgen_SRC
-    src/common/qp-solvers/qpoases-solver.cpp
-  )
+  list(APPEND mpc-walkgen_SRC src/common/qp-solvers/qpoases-solver.cpp)
 endif()
 
-INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/include)
+include_directories("${CMAKE_CURRENT_BINARY_DIR}/include")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
 
-ADD_LIBRARY(mpc-walkgen SHARED ${mpc-walkgen_SRC} ${${PROJECT_NAME}_HEADERS_NOJRL})
-SET_TARGET_PROPERTIES(mpc-walkgen PROPERTIES SOVERSION ${PROJECT_VERSION})
-IF(NOT DEFINED QI_SDK_DIR)
-    INSTALL(TARGETS mpc-walkgen DESTINATION lib)
-ELSE()
-    # install rules are handled by qibuildize
-    QIBUILDIZE(mpc-walkgen)
-ENDIF()
-
-PKG_CONFIG_APPEND_CFLAGS("-I${EIGEN3_INCLUDE_DIR}")
+qi_create_lib(mpc-walkgen SHARED ${mpc-walkgen_SRC} ${_HEADERS})
+qi_use_lib(mpc-walkgen eigen3)
 if(WITH_LSSOL)
-  PKG_CONFIG_USE_DEPENDENCY(mpc-walkgen lssol)
+  qi_use_lib(mpc-walkgen LSSOL)
 endif()
 
 if(WITH_QPOASES)
-  PKG_CONFIG_USE_DEPENDENCY(mpc-walkgen qpoases)
+  qi_use_lib(mpc-walkgen QPOASES)
 endif()
 
 # Define subdirectories to explore for cmake
-ADD_SUBDIRECTORY(test)
-
-# Generate dependency to jrl-walkgen in pc file
-PKG_CONFIG_APPEND_LIBS("mpc-walkgen")
-
-# Ask to generate the final steps.
-SETUP_PROJECT_FINALIZE()
-SETUP_PROJECT_CPACK()
-
-IF(DEFINED QI_SDK_DIR)
-  GEN_MPC_CONFIG()
-ENDIF()
+add_subdirectory(test)

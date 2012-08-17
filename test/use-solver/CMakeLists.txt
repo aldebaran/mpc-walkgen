@@ -12,10 +12,10 @@ add_definitions(" -DCURRENT_QPSOLVERTYPE=QPSOLVERTYPE_${CURRENT_QPSOLVER}")
 ############
 #API tests
 ############
-create_test(test-humanoid-${lsolver}
+qi_create_test(test-humanoid-${lsolver}
   SRC api-test/test-humanoid.cpp ../../src/common/mpc-debug.cpp
-  INTDEPS mpc-walkgen timer)
+  DEPENDS mpc-walkgen timer)
 
-create_test(test-zebulon-${lsolver}
+qi_create_test(test-zebulon-${lsolver}
   SRC api-test/test-zebulon.cpp ../../src/common/mpc-debug.cpp
-  INTDEPS mpc-walkgen timer)
+  DEPENDS mpc-walkgen timer)
