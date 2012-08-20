@@ -161,6 +161,7 @@ endif()
 if(WITH_QPOASES)
   qi_use_lib(mpc-walkgen QPOASES)
 endif()
+qi_stage_lib(mpc-walkgen)
 
 # Define subdirectories to explore for cmake
 add_subdirectory(test)
