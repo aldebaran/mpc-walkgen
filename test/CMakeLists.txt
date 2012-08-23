@@ -18,13 +18,13 @@ endif()
 if(WITH_QPOASES)
   list(APPEND qpsolverhumanoid_SRC ../src/common/qp-solvers/qpoases-solver.cpp)
 endif()
-qi_create_lib(qpsolverhumanoid STATIC ${qpsolverhumanoid_SRC})
-qi_stage_lib(qpsolverhumanoid INTERNAL)
+qi_create_lib(qpsolverhumanoid STATIC INTERNAL ${qpsolverhumanoid_SRC})
+qi_stage_lib(qpsolverhumanoid)
 
 # the timer library holds some timing and benchmark tools.
-qi_create_lib(timer STATIC ../src/common/mpc-debug.cpp
-                           ../src/common/gettimeofday.cpp)
-qi_stage_lib(timer INTERNAL)
+qi_create_lib(timer STATIC INTERNAL ../src/common/mpc-debug.cpp
+                                    ../src/common/gettimeofday.cpp)
+qi_stage_lib(timer)
 if(WITH_LSSOL)
   list(APPEND solverAvailable "LSSOL")
 endif()
