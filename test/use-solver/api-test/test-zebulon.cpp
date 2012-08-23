@@ -59,17 +59,19 @@ int main() {
 	// Run:
 	// ----
 
-    double velocity = 0.2;
-    walk->velReferenceInGlobalFrame(velocity, 0, 0);
+    BodyState state = walk->bodyState(COM);
+
+    state.x(1) += 0.02;
+    state.x(2) += 0;
+    walk->bodyState(COM, state);
+
+    double velocity = 0.0;
+    walk->velReferenceInGlobalFrame(0, 0, 0);
+    //walk->posReferenceInGlobalFrame(0, 0, 0);
 	walk->online(0.0);
 	double t = 0;
 	MPCSolution result;
 	for (; t < 10; t += 0.005){
-		result = walk->online(t);
-		dumpTrajectory(result, data_vec);
-	}
-	walk->velReferenceInGlobalFrame(-velocity, 0, 0);
-	for (; t < 20; t += 0.005){
 		result = walk->online(t);
 		dumpTrajectory(result, data_vec);
 	}
@@ -112,13 +114,13 @@ int main() {
 
 void dumpTrajectory(MPCSolution &result, std::vector<std::ofstream*> &data_vec) {
 	for (int i = 0; i < result.state_vec[1].CoMTrajX_.rows(); ++i) {
-	  *data_vec[0] << result.state_vec[0].CoMTrajX_(i) << " " << result.state_vec[1].CoMTrajX_(i) << " " << result.state_vec[2].CoMTrajX_(i) << " " << result.state_vec[3].CoMTrajX_(i) << std::endl;
-	  *data_vec[1] << result.state_vec[0].CoMTrajY_(i) << " " << result.state_vec[1].CoMTrajY_(i) << " " << result.state_vec[2].CoMTrajY_(i) << " " << result.state_vec[3].CoMTrajY_(i) << std::endl;
-	  *data_vec[2] << result.state_vec[0].CoMTrajYaw_(i) << " " << result.state_vec[1].CoMTrajYaw_(i) << " " << result.state_vec[2].CoMTrajYaw_(i) << " " << result.state_vec[3].CoMTrajYaw_(i) << std::endl;
+	  *data_vec[0] << result.state_vec[1].CoMTrajX_(i) << " " << result.state_vec[2].CoMTrajX_(i) << " " << result.state_vec[3].CoMTrajX_(i) << " " << result.state_vec[0].CoMTrajX_(i) << std::endl;
+	  *data_vec[1] << result.state_vec[1].CoMTrajY_(i) << " " << result.state_vec[2].CoMTrajY_(i) << " " << result.state_vec[3].CoMTrajY_(i) << " " << result.state_vec[0].CoMTrajY_(i) << std::endl;
+	  *data_vec[2] << result.state_vec[1].CoMTrajYaw_(i) << " " << result.state_vec[2].CoMTrajYaw_(i) << " " << result.state_vec[3].CoMTrajYaw_(i) << " " << result.state_vec[0].CoMTrajYaw_(i) << std::endl;
 	  *data_vec[3] << result.CoPTrajX(i)  << std::endl;
 	  *data_vec[4] << result.CoPTrajY(i) << std::endl;
-	  *data_vec[5] << result.state_vec[0].baseTrajX_(i) << " " << result.state_vec[1].baseTrajX_(i) << " " << result.state_vec[2].baseTrajX_(i) << " " << result.state_vec[3].baseTrajX_(i) << std::endl;
-	  *data_vec[6] << result.state_vec[0].baseTrajY_(i) << " " << result.state_vec[1].baseTrajY_(i) << " " << result.state_vec[2].baseTrajY_(i) << " " << result.state_vec[3].baseTrajY_(i) << std::endl;
+	  *data_vec[5] << result.state_vec[1].baseTrajX_(i) << " " << result.state_vec[2].baseTrajX_(i) << " " << result.state_vec[3].baseTrajX_(i) << " " << result.state_vec[0].baseTrajX_(i) << std::endl;
+	  *data_vec[6] << result.state_vec[1].baseTrajY_(i) << " " << result.state_vec[2].baseTrajY_(i) << " " << result.state_vec[3].baseTrajY_(i) << " " << result.state_vec[0].baseTrajY_(i) << std::endl;
 	}
 }
 

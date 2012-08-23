@@ -26,18 +26,18 @@ int MPCData::nbSamplesMPC() const{
 RobotData::RobotData()
   :CoMHeight(0.45)
   ,b(0.31*0.8)
-  ,h(0.26*0.8)
+  ,h(0.26*0.3)
   ,baseLimit(3)
   ,orientationLimit(3)
 {
-  baseLimit[0]=0.83;
-  baseLimit[1]=3;
-  baseLimit[2]=6;
+  baseLimit[0]=0.83*10;
+  baseLimit[1]=1*10;
+  baseLimit[2]=50*10;
   orientationLimit[0]=2*3.14;
   orientationLimit[1]=3*3.14;
   orientationLimit[2]=6*3.14;
-  comLimitX=0.12*0.8;
-  comLimitY=0.035*0.8;
+  comLimitX=0.12*0.6;
+  comLimitY=0.035*0.6;
 }
 
 QPPonderation::QPPonderation(int nb)
@@ -53,15 +53,15 @@ QPPonderation::QPPonderation(int nb)
   ,OrientationJerkMin(nb)
 {
   CopCentering[0]        = 1;
-  CoMCentering[0]        = 0.1;
-  CoMJerkMin[0]          = 0.00001;
+  CoMCentering[0]        = 0;
+  CoMJerkMin[0]          = 0;
   baseJerkMin[0]         = 0;
-  baseInstantVelocity[0] = 2;
-  basePosition[0]        = 5;
+  baseInstantVelocity[0] = 1;
+  basePosition[0]        = 1;
   basePositionInt[0]     = 0;
 
   OrientationInstantVelocity[0] = 1;
-  OrientationPosition[0]        = 10;
+  OrientationPosition[0]        = 0;
   OrientationJerkMin[0]         = 0.00001;
 
   activePonderation = 0;
