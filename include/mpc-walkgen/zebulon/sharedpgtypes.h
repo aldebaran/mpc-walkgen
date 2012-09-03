@@ -61,7 +61,7 @@ namespace MPCWalkgen{
       /// \brief Define the element of ponderation std::vector used in this iteration
       int activePonderation;
 
-      QPPonderation(int nb = 1);
+      QPPonderation(int nb = 2);
     };
 
     struct MPC_WALKGEN_API MPCData{

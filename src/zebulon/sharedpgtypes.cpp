@@ -52,7 +52,7 @@ QPPonderation::QPPonderation(int nb)
   ,OrientationPosition(nb)
   ,OrientationJerkMin(nb)
 {
-  CopCentering[0]        = 1;
+  CopCentering[0]        = 40;
   CoMCentering[0]        = 0;
   CoMJerkMin[0]          = 0;
   baseJerkMin[0]         = 0;
@@ -61,8 +61,20 @@ QPPonderation::QPPonderation(int nb)
   basePositionInt[0]     = 0;
 
   OrientationInstantVelocity[0] = 1;
-  OrientationPosition[0]        = 0;
-  OrientationJerkMin[0]         = 0.00001;
+  OrientationPosition[0]        = 1;
+  OrientationJerkMin[0]         = 0;
+
+  CopCentering[1]        = 40;
+  CoMCentering[1]        = 0;
+  CoMJerkMin[1]          = 0;
+  baseJerkMin[1]         = 0;
+  baseInstantVelocity[1] = 1;
+  basePosition[1]        = 0;
+  basePositionInt[1]     = 0;
+
+  OrientationInstantVelocity[1] = 1;
+  OrientationPosition[1]        = 0;
+  OrientationJerkMin[1]         = 0;
 
   activePonderation = 0;
 }
