@@ -107,7 +107,11 @@ void QPOasesSolver::solve(VectorXd & qpSolution,
 		  boundsInit_[varNumber], ctrInit_[ctrNumber]);
 
 
-        qp_[qpNumber]->getPrimalSolution(qpSolution.data());
+        ::qpOASES::returnValue ret = qp_[qpNumber]->getPrimalSolution(qpSolution.data());
+
+        if (ret!=::qpOASES::SUCCESSFUL_RETURN){
+          std::cout << "[ERROR] MPC-Walkgen infeasible" << std::endl;
+        }
 
         qpOASES::Constraints ctr;
         qpOASES::Bounds bounds;
