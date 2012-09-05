@@ -25,8 +25,9 @@ int MPCData::nbSamplesMPC() const{
 
 RobotData::RobotData()
   :CoMHeight(0.45)
-  ,b(0.31*0.8)
-  ,h(0.26*0.3)
+  ,b(0.264*0.8)
+  ,h(0.252*0.8)
+  ,deltaComX(0.042)
   ,baseLimit(3)
   ,orientationLimit(3)
 {
@@ -36,8 +37,8 @@ RobotData::RobotData()
   orientationLimit[0]=2*3.14;
   orientationLimit[1]=3*3.14;
   orientationLimit[2]=6*3.14;
-  comLimitX=0.12*0.6;
-  comLimitY=0.035*0.6;
+  comLimitX=0.071*0.8;
+  comLimitY=0.044*0.8;
 }
 
 QPPonderation::QPPonderation(int nb)
