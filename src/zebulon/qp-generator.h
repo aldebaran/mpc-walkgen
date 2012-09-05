@@ -78,6 +78,10 @@ namespace MPCWalkgen{
       std::vector<Eigen::MatrixXd> pconstVelRef_;
       std::vector<Eigen::MatrixXd> pconstPosRef_;
       std::vector<Eigen::MatrixXd> pconstPosIntRef_;
+      std::vector<Eigen::MatrixXd> pconstComCopRef_;
+      std::vector<Eigen::MatrixXd> pconstBaseCopRef_;
+      std::vector<Eigen::MatrixXd> pconstComComRef_;
+      std::vector<Eigen::MatrixXd> pconstBaseComRef_;
 
       Eigen::VectorXd yaw_;
       Eigen::VectorXd cosYaw_;

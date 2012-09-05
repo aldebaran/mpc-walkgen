@@ -67,7 +67,6 @@ void QPGeneratorOrientation::buildObjective() {
   const BodyState & CoM = robot_->body(COM)->state();
 
   solver_->nbVar(N);
-
   solver_->matrix(matrixQ).setTerm(Qconst_[nb]);
 
   tmpVec_ = pconstCoMYaw_[nb] * CoM.yaw;
