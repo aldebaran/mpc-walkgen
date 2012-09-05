@@ -52,9 +52,11 @@ QPPonderation::QPPonderation(int nb)
   ,OrientationPosition(nb)
   ,OrientationJerkMin(nb)
 {
-  CopCentering[0]        = 40;
-  CoMCentering[0]        = 0;
-  CoMJerkMin[0]          = 0;
+
+  // Normal moveTo
+  CopCentering[0]        = 0;
+  CoMCentering[0]        = 10;
+  CoMJerkMin[0]          = 0.00001;
   baseJerkMin[0]         = 0;
   baseInstantVelocity[0] = 1;
   basePosition[0]        = 1;
@@ -64,17 +66,46 @@ QPPonderation::QPPonderation(int nb)
   OrientationPosition[0]        = 1;
   OrientationJerkMin[0]         = 0;
 
-  CopCentering[1]        = 40;
+  // More stable moveTo
+  CopCentering[1]        = 130;
   CoMCentering[1]        = 0;
-  CoMJerkMin[1]          = 0;
+  CoMJerkMin[1]          = 0.01;
   baseJerkMin[1]         = 0;
   baseInstantVelocity[1] = 1;
-  basePosition[1]        = 0;
+  basePosition[1]        = 1;
   basePositionInt[1]     = 0;
 
   OrientationInstantVelocity[1] = 1;
-  OrientationPosition[1]        = 0;
+  OrientationPosition[1]        = 1;
   OrientationJerkMin[1]         = 0;
+
+
+  // Normal move
+  CopCentering[2]        = 0;
+  CoMCentering[2]        = 10;
+  CoMJerkMin[2]          = 0.00001;
+  baseJerkMin[2]         = 0;
+  baseInstantVelocity[2] = 1;
+  basePosition[2]        = 0;
+  basePositionInt[2]     = 0;
+
+  OrientationInstantVelocity[2] = 1;
+  OrientationPosition[2]        = 0;
+  OrientationJerkMin[2]         = 0;
+
+
+  // More stable move
+  CopCentering[3]        = 130;
+  CoMCentering[3]        = 0;
+  CoMJerkMin[3]          = 0.01;
+  baseJerkMin[3]         = 0;
+  baseInstantVelocity[3] = 1;
+  basePosition[3]        = 0;
+  basePositionInt[3]     = 0;
+
+  OrientationInstantVelocity[3] = 1;
+  OrientationPosition[3]        = 0;
+  OrientationJerkMin[3]         = 0;
 
   activePonderation = 0;
 }
