@@ -40,6 +40,8 @@ namespace MPCWalkgen{
       virtual void robotData(const RobotData &robotData) = 0;
       virtual void mpcData(const MPCData &mpcData) = 0;
       virtual const MPCData& mpcData() = 0;
+      virtual const RobotData& robotData() = 0;
+
       /// \brief Initialize the system
       /// \param[in] robotData: data relative to the robot
       /// \param[in] mpcData: data relative to the qp solver

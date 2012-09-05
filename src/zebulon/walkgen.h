@@ -37,6 +37,7 @@ namespace MPCWalkgen{
       virtual void robotData(const RobotData &robotData);
       virtual void mpcData(const MPCData &mpcData);
       virtual const MPCData& mpcData();
+      virtual const RobotData& robotData();
 
       virtual void init(const RobotData &robotData, const MPCData &mpcData);
       virtual void init(const MPCData &mpcData);

@@ -328,3 +328,7 @@ const MPCData& Walkgen::mpcData(){
   return mpcData_;
 }
 
+
+const RobotData& Walkgen::robotData(){
+  return robotData_;
+}
