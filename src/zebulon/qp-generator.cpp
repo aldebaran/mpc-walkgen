@@ -30,7 +30,61 @@ QPGenerator::QPGenerator(QPSolver * solver, Reference * velRef, Reference * posR
 QPGenerator::~QPGenerator(){}
 
 
+void QPGenerator::precomputeObjectiveCoP(){
+
+  int nbUsedPonderations = generalData_->ponderation.baseJerkMin.size();
+
+  QCoPconst_.resize(nbUsedPonderations);
+  pconstCoMXCoP_.resize(nbUsedPonderations);
+  pconstComCopRef_.resize(nbUsedPonderations);
+  pconstBaseXCoP_.resize(nbUsedPonderations);
+  pconstCoMBCoP_.resize(nbUsedPonderations);
+
+  int N = generalData_->nbSamplesQP;
+
+  const LinearDynamics & CoPDynamics = robot_->body(COM)->dynamics(copDynamic);
+  const LinearDynamics & basePosDynamics = robot_->body(BASE)->dynamics(posDynamic);
+
+  for (int i = 0; i < nbUsedPonderations; ++i){
+    QCoPconst_[i].setZero(4*N,4*N);
+    pconstCoMXCoP_[i].setZero(N,4);
+    pconstComCopRef_[i].setZero(N,N);
+    pconstBaseXCoP_[i].setZero(N,4);
+    pconstCoMBCoP_[i].setZero(N,4);
+
+
+    tmpMat_ = generalData_->ponderation.CopCentering[i]*CoPDynamics.UT*CoPDynamics.U;
+    QCoPconst_[i].block(0,0,N,N) = tmpMat_;
+    QCoPconst_[i].block(N,N,N,N) = tmpMat_;
+
+    tmpMat_ = -generalData_->ponderation.CopCentering[i]*CoPDynamics.UT*basePosDynamics.U;
+    QCoPconst_[i].block(0,2*N,N,N) = tmpMat_;
+    QCoPconst_[i].block(N,3*N,N,N) = tmpMat_;
+    tmpMat_.transposeInPlace();
+    QCoPconst_[i].block(2*N,0,N,N) = tmpMat_;
+    QCoPconst_[i].block(3*N,N,N,N) = tmpMat_;
+
+
+
+    tmpMat_ = generalData_->ponderation.CopCentering[i]*CoPDynamics.UT*CoPDynamics.S;
+    pconstCoMXCoP_[i].block(0,0,N,4) = tmpMat_;
+
+    tmpMat_ = -generalData_->ponderation.CopCentering[i]*basePosDynamics.UT*CoPDynamics.S;
+    pconstCoMBCoP_[i].block(0,0,N,4) = tmpMat_;
+
+    tmpMat_ = -generalData_->ponderation.CopCentering[i]*CoPDynamics.UT*basePosDynamics.S;
+    pconstBaseXCoP_[i].block(0,0,N,4) = tmpMat_;
+
+    tmpMat_ = -generalData_->ponderation.CopCentering[i]*CoPDynamics.UT;
+    pconstComCopRef_[i].block(0,0,N,N) = tmpMat_;
+
+  }
+
+}
+
 void QPGenerator::precomputeObjective(){
+
+  precomputeObjectiveCoP();
 
   int nbUsedPonderations = generalData_->ponderation.baseJerkMin.size();
 
@@ -42,7 +96,6 @@ void QPGenerator::precomputeObjective(){
   pconstVelRef_.resize(nbUsedPonderations);
   pconstPosRef_.resize(nbUsedPonderations);
   pconstPosIntRef_.resize(nbUsedPonderations);
-  pconstComCopRef_.resize(nbUsedPonderations);
   pconstBaseCopRef_.resize(nbUsedPonderations);
   pconstComComRef_.resize(nbUsedPonderations);
   pconstBaseComRef_.resize(nbUsedPonderations);
@@ -51,14 +104,13 @@ void QPGenerator::precomputeObjective(){
 
   MatrixXd idN = MatrixXd::Identity(N,N);
 
-  const LinearDynamics & CoPDynamics = robot_->body(COM)->dynamics(copDynamic);
   const LinearDynamics & CoMPosDynamics = robot_->body(COM)->dynamics(posDynamic);
   const LinearDynamics & basePosIntDynamics = robot_->body(BASE)->dynamics(posIntDynamic);
   const LinearDynamics & basePosDynamics = robot_->body(BASE)->dynamics(posDynamic);
   const LinearDynamics & baseVelDynamics = robot_->body(BASE)->dynamics(velDynamic);
 
 
-  for (int i = 0; i < nbUsedPonderations; ++i) {
+  for (int i = 0; i < nbUsedPonderations; ++i){
     Qconst_[i].setZero(4*N,4*N);
     pconstCoMX_[i].setZero(N,4);
     pconstBaseX_[i].setZero(N,4);
@@ -67,21 +119,18 @@ void QPGenerator::precomputeObjective(){
     pconstVelRef_[i].setZero(N,N);
     pconstPosRef_[i].setZero(N,N);
     pconstPosIntRef_[i].setZero(N,N);
-    pconstComCopRef_[i].setZero(N,N);
     pconstBaseCopRef_[i].setZero(N,N);
     pconstComComRef_[i].setZero(N,N);
     pconstBaseComRef_[i].setZero(N,N);
 
-    tmpMat_ = generalData_->ponderation.CopCentering[i]*CoPDynamics.UT*CoPDynamics.U
-        + generalData_->ponderation.CoMCentering[i]*CoMPosDynamics.UT*CoMPosDynamics.U
+    tmpMat_ = generalData_->ponderation.CoMCentering[i]*CoMPosDynamics.UT*CoMPosDynamics.U
         + generalData_->ponderation.CoMJerkMin[i]*idN;
     Qconst_[i].block(0,0,N,N) = tmpMat_;
     Qconst_[i].block(N,N,N,N) = tmpMat_;
 
 
 
-    tmpMat_ = -generalData_->ponderation.CopCentering[i]*CoPDynamics.UT*basePosDynamics.U
-        - generalData_->ponderation.CoMCentering[i]*CoMPosDynamics.UT*basePosDynamics.U;
+    tmpMat_ = -generalData_->ponderation.CoMCentering[i]*CoMPosDynamics.UT*basePosDynamics.U;
     Qconst_[i].block(0,2*N,N,N) = tmpMat_;
     Qconst_[i].block(N,3*N,N,N) = tmpMat_;
     tmpMat_.transposeInPlace();
@@ -99,18 +148,15 @@ void QPGenerator::precomputeObjective(){
 
 
 
-    tmpMat_ = generalData_->ponderation.CopCentering[i]*CoPDynamics.UT*CoPDynamics.S
-        + generalData_->ponderation.CoMCentering[i]*CoMPosDynamics.UT*CoMPosDynamics.S;
+    tmpMat_ = generalData_->ponderation.CoMCentering[i]*CoMPosDynamics.UT*CoMPosDynamics.S;
     pconstCoMX_[i].block(0,0,N,4) = tmpMat_;
 
-    tmpMat_ = -generalData_->ponderation.CopCentering[i]*basePosDynamics.UT*CoPDynamics.S
-        - generalData_->ponderation.CoMCentering[i]*basePosDynamics.UT*CoMPosDynamics.S;
+    tmpMat_ = -generalData_->ponderation.CoMCentering[i]*basePosDynamics.UT*CoMPosDynamics.S;
     pconstCoMB_[i].block(0,0,N,4) = tmpMat_;
 
 
 
-    tmpMat_ = -generalData_->ponderation.CopCentering[i]*CoPDynamics.UT*basePosDynamics.S
-        - generalData_->ponderation.CoMCentering[i]*CoMPosDynamics.UT*basePosDynamics.S;
+    tmpMat_ = -generalData_->ponderation.CoMCentering[i]*CoMPosDynamics.UT*basePosDynamics.S;
     pconstBaseX_[i].block(0,0,N,4) = tmpMat_;
 
     tmpMat_ = (generalData_->ponderation.CopCentering[i]+generalData_->ponderation.CoMCentering[i])*basePosDynamics.UT*basePosDynamics.S
@@ -129,9 +175,6 @@ void QPGenerator::precomputeObjective(){
     tmpMat_ = -generalData_->ponderation.basePositionInt[i]*basePosIntDynamics.UT;
     pconstPosIntRef_[i].block(0,0,N,N) = tmpMat_;
 
-
-    tmpMat_ = -generalData_->ponderation.CopCentering[i]*CoPDynamics.UT;
-    pconstComCopRef_[i].block(0,0,N,N) = tmpMat_;
 
     tmpMat_ = generalData_->ponderation.CopCentering[i]*basePosDynamics.UT;
     pconstBaseCopRef_[i].block(0,0,N,N) = tmpMat_;
@@ -158,20 +201,36 @@ void QPGenerator::buildObjective() {
   solver_->nbVar(4*N);
 
   solver_->matrix(matrixQ).setTerm(Qconst_[nb]);
+  solver_->matrix(matrixQ).addTerm(QCoPconst_[nb]);
 
   tmpVec_ = pconstCoMX_[nb] * CoM.x;
   solver_->vector(vectorP).setTerm(tmpVec_,0);
   tmpVec_ = pconstCoMX_[nb] * CoM.y;
   solver_->vector(vectorP).setTerm(tmpVec_,N);
 
+  tmpVec_ = pconstCoMXCoP_[nb] * CoM.x;
+  solver_->vector(vectorP).addTerm(tmpVec_,0);
+  tmpVec_ = pconstCoMXCoP_[nb] * CoM.y;
+  solver_->vector(vectorP).addTerm(tmpVec_,N);
+
   tmpVec_ = pconstCoMB_[nb] * CoM.x;
   solver_->vector(vectorP).setTerm(tmpVec_,2*N);
   tmpVec_ = pconstCoMB_[nb] * CoM.y;
   solver_->vector(vectorP).setTerm(tmpVec_,3*N);
 
+  tmpVec_ = pconstCoMBCoP_[nb] * CoM.x;
+  solver_->vector(vectorP).addTerm(tmpVec_,2*N);
+  tmpVec_ = pconstCoMBCoP_[nb] * CoM.y;
+  solver_->vector(vectorP).addTerm(tmpVec_,3*N);
+
   tmpVec_ = pconstBaseX_[nb] * base.x;
   solver_->vector(vectorP).addTerm(tmpVec_,0);
   tmpVec_ = pconstBaseX_[nb] * base.y;
+  solver_->vector(vectorP).addTerm(tmpVec_,N);
+
+  tmpVec_ = pconstBaseXCoP_[nb] * base.x;
+  solver_->vector(vectorP).addTerm(tmpVec_,0);
+  tmpVec_ = pconstBaseXCoP_[nb] * base.y;
   solver_->vector(vectorP).addTerm(tmpVec_,N);
 
   tmpVec_ = pconstBaseB_[nb] * base.x;

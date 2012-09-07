@@ -34,6 +34,7 @@ namespace MPCWalkgen{
       ~QPGenerator();
 
       void precomputeObjective();
+      void precomputeObjectiveCoP();
 
       void buildObjective();
 
@@ -72,9 +73,13 @@ namespace MPCWalkgen{
       Eigen::MatrixXd tmpMat_;
 
       std::vector<Eigen::MatrixXd> Qconst_;
+      std::vector<Eigen::MatrixXd> QCoPconst_;
       std::vector<Eigen::MatrixXd> pconstCoMX_;
+      std::vector<Eigen::MatrixXd> pconstCoMXCoP_;
       std::vector<Eigen::MatrixXd> pconstCoMB_;
+      std::vector<Eigen::MatrixXd> pconstCoMBCoP_;
       std::vector<Eigen::MatrixXd> pconstBaseX_;
+      std::vector<Eigen::MatrixXd> pconstBaseXCoP_;
       std::vector<Eigen::MatrixXd> pconstBaseB_;
       std::vector<Eigen::MatrixXd> pconstVelRef_;
       std::vector<Eigen::MatrixXd> pconstPosRef_;
