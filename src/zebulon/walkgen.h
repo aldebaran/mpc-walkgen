@@ -83,6 +83,7 @@ namespace MPCWalkgen{
       Reference newVelRef_;
       Reference newPosRef_;
       Reference newPosIntRef_;
+      Reference comRef_;
 
       /// \brief Time at which the problem should be updated
       double upperTimeLimitToUpdate_;

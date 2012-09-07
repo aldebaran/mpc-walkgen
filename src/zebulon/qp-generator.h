@@ -29,7 +29,7 @@ namespace MPCWalkgen{
 
     public:
       QPGenerator(QPSolver * solver, Reference * velRef, Reference * posRef,
-                  Reference * posIntRef, RigidBodySystem * robot,
+                  Reference * posIntRef, Reference * comRef, RigidBodySystem * robot,
                   const MPCData * generalData);
       ~QPGenerator();
 
@@ -63,6 +63,7 @@ namespace MPCWalkgen{
       Reference * velRef_;
       Reference * posRef_;
       Reference * posIntRef_;
+      Reference * comRef_;
       const MPCData * generalData_;
 
       Eigen::VectorXd tmpVec_;

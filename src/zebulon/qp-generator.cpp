@@ -11,13 +11,14 @@ using namespace Zebulon;
 using namespace Eigen;
 
 QPGenerator::QPGenerator(QPSolver * solver, Reference * velRef, Reference * posRef,
-			 Reference *posIntRef, RigidBodySystem *robot,
+			 Reference *posIntRef, Reference * comRef, RigidBodySystem *robot,
 			 const MPCData *generalData)
   :solver_(solver)
   ,robot_(robot)
   ,velRef_(velRef)
   ,posRef_(posRef)
   ,posIntRef_(posIntRef)
+  ,comRef_(comRef)
   ,generalData_(generalData)
   ,tmpVec_(1)
   ,tmpVec2_(1)
@@ -193,18 +194,25 @@ void QPGenerator::buildObjective() {
   tmpVec_ = pconstPosIntRef_[nb] * posIntRef_->global.y;
   solver_->vector(vectorP).addTerm(tmpVec_,3*N);
 
-  tmpVec2_.resize(N);
-  tmpVec2_.fill(-robot_->robotData().deltaComX/3);
-
-  tmpVec_ = pconstBaseCopRef_[nb] * tmpVec2_;
+  tmpVec_ = pconstBaseCopRef_[nb] * -comRef_->global.x;
   solver_->vector(vectorP).addTerm(tmpVec_,2*N);
-  tmpVec_ = pconstComCopRef_[nb] * tmpVec2_;
-  solver_->vector(vectorP).addTerm(tmpVec_,0);
+  tmpVec_ = pconstBaseCopRef_[nb] * -comRef_->global.y;
+  solver_->vector(vectorP).addTerm(tmpVec_,3*N);
 
-  tmpVec_ = pconstBaseComRef_[nb] * tmpVec2_;
-  solver_->vector(vectorP).addTerm(tmpVec_,2*N);
-  tmpVec_ = pconstComComRef_[nb] * tmpVec2_;
+  tmpVec_ = pconstComCopRef_[nb] * -comRef_->global.x;
   solver_->vector(vectorP).addTerm(tmpVec_,0);
+  tmpVec_ = pconstComCopRef_[nb] * -comRef_->global.y;
+  solver_->vector(vectorP).addTerm(tmpVec_,N);
+
+  tmpVec_ = pconstBaseComRef_[nb] * -comRef_->global.x;
+  solver_->vector(vectorP).addTerm(tmpVec_,2*N);
+  tmpVec_ = pconstBaseComRef_[nb] * -comRef_->global.y;
+  solver_->vector(vectorP).addTerm(tmpVec_,3*N);
+
+  tmpVec_ = pconstComComRef_[nb] * -comRef_->global.x;
+  solver_->vector(vectorP).addTerm(tmpVec_,0);
+  tmpVec_ = pconstComComRef_[nb] * -comRef_->global.y;
+  solver_->vector(vectorP).addTerm(tmpVec_,N);
 
 }
 
@@ -268,8 +276,8 @@ void QPGenerator::buildConstraintsCoP(){
 
 
 
-  tmpVec_.segment(0,2*N).fill(robotData.h/2+robotData.deltaComX);
-  tmpVec_.segment(2*N,N).fill(robotData.h/2-robotData.deltaComX);
+  tmpVec_.segment(0,2*N).fill(robotData.h/2+robotData.deltaComXLocal);
+  tmpVec_.segment(2*N,N).fill(robotData.h/2-robotData.deltaComXLocal);
 
   tmpVec_.segment(0,N) += Rxx_.asDiagonal()*(CoPDynamics.S * CoM.x - basePosDynamics.S*base.x)
                        + factor*(Ryy_.asDiagonal()*(-CoPDynamics.S* CoM.y + basePosDynamics.S*base.y));
@@ -442,16 +450,24 @@ void QPGenerator::computeReferenceVector(const GlobalSolution & result){
   computeOrientationMatrices(result);
 
   if (velRef_->global.x.rows()!=generalData_->nbSamplesQP){
-      velRef_->global.x.setZero(generalData_->nbSamplesQP);
-      velRef_->global.y.setZero(generalData_->nbSamplesQP);
-    }
+    velRef_->global.x.setZero(generalData_->nbSamplesQP);
+    velRef_->global.y.setZero(generalData_->nbSamplesQP);
+  }
 
+  if (comRef_->global.x.rows()!=generalData_->nbSamplesQP){
+    comRef_->global.x.setZero(generalData_->nbSamplesQP);
+    comRef_->global.y.setZero(generalData_->nbSamplesQP);
+  }
 
   for (int i=0;i<generalData_->nbSamplesQP;++i){
 
-      velRef_->global.x(i) += velRef_->local.x(i)*cosYaw_(i)-velRef_->local.y(i)*sinYaw_(i);
-      velRef_->global.y(i) += velRef_->local.x(i)*sinYaw_(i)+velRef_->local.y(i)*cosYaw_(i);
-    }
+    velRef_->global.x(i) += velRef_->local.x(i)*cosYaw_(i)-velRef_->local.y(i)*sinYaw_(i);
+    velRef_->global.y(i) += velRef_->local.x(i)*sinYaw_(i)+velRef_->local.y(i)*cosYaw_(i);
+
+    comRef_->global.x(i) = comRef_->local.x(i)*cosYaw_(i)-comRef_->local.y(i)*sinYaw_(i);
+    comRef_->global.y(i) = comRef_->local.x(i)*sinYaw_(i)+comRef_->local.y(i)*cosYaw_(i);
+
+  }
 }
 
 void QPGenerator::computeOrientationMatrices(const GlobalSolution & result){

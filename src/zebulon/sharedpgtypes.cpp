@@ -27,7 +27,7 @@ RobotData::RobotData()
   :CoMHeight(0.45)
   ,b(0.264*0.8)
   ,h(0.252*0.8)
-  ,deltaComX(0.042)
+  ,deltaComXLocal(0.015)
   ,baseLimit(3)
   ,orientationLimit(3)
 {

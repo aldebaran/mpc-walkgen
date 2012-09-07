@@ -46,7 +46,7 @@ Walkgen::Walkgen(::MPCWalkgen::QPSolverType solvertype)
           mpcData_.nbSamplesQP, 2*mpcData_.nbSamplesQP);
   interpolation_ = new Interpolation();
   robot_ = new RigidBodySystem(&mpcData_, interpolation_);
-  generator_= new QPGenerator(solver_, &velRef_, &posRef_, &posIntRef_, robot_, &mpcData_);
+  generator_= new QPGenerator(solver_, &velRef_, &posRef_, &posIntRef_, &comRef_, robot_, &mpcData_);
   generatorOrientation_= new QPGeneratorOrientation(solverOrientation_, &velRef_, &posRef_, &posIntRef_, robot_, &mpcData_);
 
 }
@@ -160,6 +160,10 @@ void Walkgen::robotData(const RobotData &robotData){
     init();
     return;
   }
+
+  if (fabs(robotData.deltaComXLocal-tmpRobotData.deltaComXLocal)>EPSILON){
+    comRef_.local.x.fill(robotData.deltaComXLocal);
+  }
 }
 
 void Walkgen::init(const RobotData &robotData, const MPCData &mpcData){
@@ -212,6 +216,9 @@ void Walkgen::init() {
 
   posIntRef_.resize(mpcData_.nbSamplesQP);
   newPosIntRef_.resize(mpcData_.nbSamplesQP);
+
+  comRef_.resize(mpcData_.nbSamplesQP);
+  comRef_.local.x.fill(robotData_.deltaComXLocal);
 
   initAlreadyCalled_ = true;
 }

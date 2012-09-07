@@ -87,7 +87,7 @@ namespace MPCWalkgen{
 
       double b;
       double h;
-      double deltaComX;
+      double deltaComXLocal;
       std::vector<double> baseLimit;
       std::vector<double> orientationLimit;
       double comLimitX;
