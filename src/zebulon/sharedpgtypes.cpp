@@ -55,9 +55,9 @@ QPPonderation::QPPonderation(int nb)
 {
 
   // Normal moveTo
-  CopCentering[0]        = 0;
-  CoMCentering[0]        = 10;
-  CoMJerkMin[0]          = 0.00001;
+  CopCentering[0]        = 1;
+  CoMCentering[0]        = 0;
+  CoMJerkMin[0]          = 0.0001;
   baseJerkMin[0]         = 0;
   baseInstantVelocity[0] = 1;
   basePosition[0]        = 1;
@@ -68,9 +68,9 @@ QPPonderation::QPPonderation(int nb)
   OrientationJerkMin[0]         = 0;
 
   // More stable moveTo
-  CopCentering[1]        = 130;
+  CopCentering[1]        = 100;
   CoMCentering[1]        = 0;
-  CoMJerkMin[1]          = 0.01;
+  CoMJerkMin[1]          = 0.0001;
   baseJerkMin[1]         = 0;
   baseInstantVelocity[1] = 1;
   basePosition[1]        = 1;
@@ -82,9 +82,9 @@ QPPonderation::QPPonderation(int nb)
 
 
   // Normal move
-  CopCentering[2]        = 0;
-  CoMCentering[2]        = 10;
-  CoMJerkMin[2]          = 0.00001;
+  CopCentering[2]        = 1;
+  CoMCentering[2]        = 0;
+  CoMJerkMin[2]          = 0.0001;
   baseJerkMin[2]         = 0;
   baseInstantVelocity[2] = 1;
   basePosition[2]        = 0;
@@ -96,9 +96,9 @@ QPPonderation::QPPonderation(int nb)
 
 
   // More stable move
-  CopCentering[3]        = 130;
+  CopCentering[3]        = 100;
   CoMCentering[3]        = 0;
-  CoMJerkMin[3]          = 0.01;
+  CoMJerkMin[3]          = 0.0001;
   baseJerkMin[3]         = 0;
   baseInstantVelocity[3] = 1;
   basePosition[3]        = 0;
