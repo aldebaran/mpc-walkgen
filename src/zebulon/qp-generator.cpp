@@ -12,7 +12,7 @@ using namespace Eigen;
 
 QPGenerator::QPGenerator(QPSolver * solver, Reference * velRef, Reference * posRef,
 			 Reference *posIntRef, Reference * comRef, RigidBodySystem *robot,
-			 const MPCData *generalData)
+			 const MPCData *generalData, const RobotData *robotData)
   :solver_(solver)
   ,robot_(robot)
   ,velRef_(velRef)
@@ -20,6 +20,7 @@ QPGenerator::QPGenerator(QPSolver * solver, Reference * velRef, Reference * posR
   ,posIntRef_(posIntRef)
   ,comRef_(comRef)
   ,generalData_(generalData)
+  ,robotData_(robotData)
   ,tmpVec_(1)
   ,tmpVec2_(1)
   ,tmpVec3_(1)
@@ -286,9 +287,8 @@ void QPGenerator::buildConstraintsCoP(){
   const LinearDynamics & basePosDynamics = robot_->body(BASE)->dynamics(posDynamic);
   const BodyState & CoM = robot_->body(COM)->state();
   const BodyState & base = robot_->body(BASE)->state();
-  RobotData robotData = robot_->robotData();
 
-  double factor = 2*robotData.h/robotData.b;
+  double factor = 2*robotData_->copLimitY/robotData_->copLimitX;
 
   tmpMat_ = -(Rxx_.asDiagonal()*CoPDynamics.U);
   solver_->matrix(matrixA).setTerm(tmpMat_, 0, 0);
@@ -366,7 +366,6 @@ void QPGenerator::buildConstraintsCoM(){
   const LinearDynamics & basePosDynamics = robot_->body(BASE)->dynamics(posDynamic);
   const BodyState & CoM = robot_->body(COM)->state();
   const BodyState & base = robot_->body(BASE)->state();
-  RobotData & robotData = robot_->robotData();
 
   tmpMat_ = Rxx_.asDiagonal()*CoMPosDynamics.U;
   solver_->matrix(matrixA).setTerm(tmpMat_, 3*N, 0);
@@ -404,13 +403,13 @@ void QPGenerator::buildConstraintsCoM(){
 
   tmpVec_.resize(2*N);
 
-  tmpVec_.segment(0,N).fill(-robotData.comLimitX);
-  tmpVec_.segment(N,N).fill(-robotData.comLimitY);
+  tmpVec_.segment(0,N).fill(-robotData_->comLimitX);
+  tmpVec_.segment(N,N).fill(-robotData_->comLimitY);
   solver_->vector(vectorBL).setTerm(tmpVec_+tmpVec3_, 3*N);
 
 
-  tmpVec_.segment(0,N).fill(robotData.comLimitX);
-  tmpVec_.segment(N,N).fill(robotData.comLimitY);
+  tmpVec_.segment(0,N).fill(robotData_->comLimitX);
+  tmpVec_.segment(N,N).fill(robotData_->comLimitY);
   solver_->vector(vectorBU).setTerm(tmpVec_+tmpVec3_, 3*N);
 
 }
@@ -420,7 +419,6 @@ void QPGenerator::buildConstraintsBaseVelocity(){
   int N = generalData_->nbSamplesQP;
   const LinearDynamics & baseVelDynamics = robot_->body(BASE)->dynamics(velDynamic);
   const BodyState & base = robot_->body(BASE)->state();
-  RobotData & robotData = robot_->robotData();
 
   solver_->matrix(matrixA).setTerm(baseVelDynamics.U, 5*N, 2*N);
   solver_->matrix(matrixA).setTerm(baseVelDynamics.U, 6*N, 3*N);
@@ -432,10 +430,10 @@ void QPGenerator::buildConstraintsBaseVelocity(){
 
   tmpVec_.resize(2*N);
 
-  tmpVec_.fill(-robotData.baseLimit[0]);
+  tmpVec_.fill(-robotData_->baseLimit[0]);
   solver_->vector(vectorBL).setTerm(tmpVec_+tmpVec3_, 5*N);
 
-  tmpVec_.fill(robotData.baseLimit[0]);
+  tmpVec_.fill(robotData_->baseLimit[0]);
   solver_->vector(vectorBU).setTerm(tmpVec_+tmpVec3_, 5*N);
 
 }
@@ -445,7 +443,6 @@ void QPGenerator::buildConstraintsBaseAcceleration(){
   int N = generalData_->nbSamplesQP;
   const LinearDynamics & baseAccDynamics = robot_->body(BASE)->dynamics(accDynamic);
   const BodyState & base = robot_->body(BASE)->state();
-  RobotData & robotData = robot_->robotData();
 
   solver_->matrix(matrixA).setTerm(baseAccDynamics.U, 7*N, 2*N);
   solver_->matrix(matrixA).setTerm(baseAccDynamics.U, 8*N, 3*N);
@@ -455,11 +452,11 @@ void QPGenerator::buildConstraintsBaseAcceleration(){
   tmpVec3_.segment(N,N) = -baseAccDynamics.S*base.y;
 
   tmpVec_.resize(2*N);
-  tmpVec_.fill(-robotData.baseLimit[1]);
+  tmpVec_.fill(-robotData_->baseLimit[1]);
   solver_->vector(vectorBL).setTerm(tmpVec_+tmpVec3_, 7*N);
 
 
-  tmpVec_.fill(robotData.baseLimit[1]);
+  tmpVec_.fill(robotData_->baseLimit[1]);
   solver_->vector(vectorBU).setTerm(tmpVec_+tmpVec3_, 7*N);
 
 }
@@ -467,19 +464,18 @@ void QPGenerator::buildConstraintsBaseAcceleration(){
 void QPGenerator::buildConstraintsBaseJerk(){
 
   int N = generalData_->nbSamplesQP;
-  RobotData robotData = robot_->robotData();
 
   tmpVec_.resize(4*N);
 
 
   tmpVec_.segment(0,2*N).fill(-10e11);
-  tmpVec_.segment(2*N,2*N).fill(-robotData.baseLimit[2]);
+  tmpVec_.segment(2*N,2*N).fill(-robotData_->baseLimit[2]);
 
   solver_->vector(vectorXL).setTerm(tmpVec_, 0);
 
 
   tmpVec_.segment(0,2*N).fill(10e11);
-  tmpVec_.segment(2*N,2*N).fill(robotData.baseLimit[2]);
+  tmpVec_.segment(2*N,2*N).fill(robotData_->baseLimit[2]);
 
   solver_->vector(vectorXU).setTerm(tmpVec_, 0);
 

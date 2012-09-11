@@ -13,13 +13,15 @@ using namespace Eigen;
 
 QPGeneratorOrientation::QPGeneratorOrientation(QPSolver * solver, Reference * velRef,
                                 Reference * posRef, Reference * posIntRef,
-                                RigidBodySystem * robot, const MPCData * generalData)
+                                RigidBodySystem * robot, const MPCData * generalData,
+                                const RobotData * robotData)
   :solver_(solver)
   ,robot_(robot)
   ,velRef_(velRef)
   ,posRef_(posRef)
   ,posIntRef_(posIntRef)
   ,generalData_(generalData)
+  ,robotData_(robotData)
   ,tmpVec_(1)
 {}
 
@@ -84,16 +86,15 @@ void QPGeneratorOrientation::buildConstraintsBaseVelocity(){
   int N = generalData_->nbSamplesQP;
   const LinearDynamics & CoMVelDynamics = robot_->body(COM)->dynamics(velDynamic);
   const BodyState & CoM = robot_->body(COM)->state();
-  RobotData robotData = robot_->robotData();
 
   solver_->matrix(matrixA).setTerm(CoMVelDynamics.U, 0, 0);
 
   tmpVec_.resize(N);
-  tmpVec_.fill(-robotData.orientationLimit[0]);
+  tmpVec_.fill(-robotData_->orientationLimit[0]);
   tmpVec_ -= CoMVelDynamics.S*CoM.yaw;
   solver_->vector(vectorBL).setTerm(tmpVec_, 0);
 
-  tmpVec_.fill(robotData.orientationLimit[0]);
+  tmpVec_.fill(robotData_->orientationLimit[0]);
   tmpVec_ -= CoMVelDynamics.S*CoM.yaw;
   solver_->vector(vectorBU).setTerm(tmpVec_, 0);
 
@@ -105,16 +106,15 @@ void QPGeneratorOrientation::buildConstraintsBaseAcceleration(){
   int N = generalData_->nbSamplesQP;
   const LinearDynamics & CoMAccDynamics = robot_->body(COM)->dynamics(accDynamic);
   const BodyState & CoM = robot_->body(COM)->state();
-  RobotData robotData = robot_->robotData();
 
   solver_->matrix(matrixA).setTerm(CoMAccDynamics.U, N, 0);
 
   tmpVec_.resize(N);
-  tmpVec_.fill(-robotData.orientationLimit[1]);
+  tmpVec_.fill(-robotData_->orientationLimit[1]);
   tmpVec_ -= CoMAccDynamics.S*CoM.yaw;
   solver_->vector(vectorBL).setTerm(tmpVec_, N);
 
-  tmpVec_.fill(robotData.orientationLimit[1]);
+  tmpVec_.fill(robotData_->orientationLimit[1]);
   tmpVec_ -= CoMAccDynamics.S*CoM.yaw;
   solver_->vector(vectorBU).setTerm(tmpVec_, N);
 }
@@ -122,12 +122,11 @@ void QPGeneratorOrientation::buildConstraintsBaseAcceleration(){
 void QPGeneratorOrientation::buildConstraintsBaseJerk(){
 
   int N = generalData_->nbSamplesQP;
-  RobotData robotData = robot_->robotData();
 
   tmpVec_.resize(N);
-  tmpVec_.fill(-robotData.orientationLimit[2]);
+  tmpVec_.fill(-robotData_->orientationLimit[2]);
   solver_->vector(vectorXL).setTerm(tmpVec_, 0);
-  tmpVec_.fill(robotData.orientationLimit[2]);
+  tmpVec_.fill(robotData_->orientationLimit[2]);
   solver_->vector(vectorXU).setTerm(tmpVec_, 0);
 
 }
