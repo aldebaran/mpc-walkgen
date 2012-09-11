@@ -47,10 +47,14 @@ void QPGenerator::precomputeObjectiveCoP(){
 
   for (int i = 0; i < nbUsedPonderations; ++i){
     QCoPconst_[i].setZero(4*N,4*N);
-    pconstCoMXCoP_[i].setZero(N,4);
-    pconstComCopRef_[i].setZero(N,N);
-    pconstBaseXCoP_[i].setZero(N,4);
-    pconstCoMBCoP_[i].setZero(N,4);
+    pconstCoMXCoPX_[i].setZero(N,5);
+    pconstCoMXCoPY_[i].setZero(N,5);
+    pconstComCopRefX_[i].setZero(N,N);
+    pconstComCopRefY_[i].setZero(N,N);
+    pconstBaseXCoPX_[i].setZero(N,5);
+    pconstBaseXCoPY_[i].setZero(N,5);
+    pconstCoMBCoPX_[i].setZero(N,5);
+    pconstCoMBCoPY_[i].setZero(N,5);
 
 
     tmpMat_ = generalData_->ponderation.CopCentering[i]*CoPDynamics.UT*CoPDynamics.U;
@@ -112,10 +116,10 @@ void QPGenerator::precomputeObjective(){
 
   for (int i = 0; i < nbUsedPonderations; ++i){
     Qconst_[i].setZero(4*N,4*N);
-    pconstCoMX_[i].setZero(N,4);
-    pconstBaseX_[i].setZero(N,4);
-    pconstCoMB_[i].setZero(N,4);
-    pconstBaseB_[i].setZero(N,4);
+    pconstCoMX_[i].setZero(N,5);
+    pconstBaseX_[i].setZero(N,5);
+    pconstCoMB_[i].setZero(N,5);
+    pconstBaseB_[i].setZero(N,5);
     pconstVelRef_[i].setZero(N,N);
     pconstPosRef_[i].setZero(N,N);
     pconstPosIntRef_[i].setZero(N,N);

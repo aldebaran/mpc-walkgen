@@ -194,7 +194,8 @@ void Walkgen::init() {
   generator_->precomputeObjective();
   generatorOrientation_->precomputeObjective();
 
-  BodyState state(4);
+  BodyState state(5);
+  state.x[4]=state.y[4]=state.z[4]=state.yaw[4]=1;
   robot_->body(BASE)->state(state);
   state.z[1] = robotData_.CoMHeight;
   robot_->body(COM)->state(state);

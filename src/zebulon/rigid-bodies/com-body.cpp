@@ -51,7 +51,14 @@ void CoMBody::interpolate(GlobalSolution &solution, double /*currentTime*/, cons
 
 void CoMBody::computeDynamicsMatrices(LinearDynamics & dyn,
                                       double S, double T, int N, DynamicMatrixType type){
-  dyn.S.setZero(N,4);
+  dyn.S.setZero(N,5);
+  // state(0) -> position integrated
+  // state(1) -> position
+  // state(2) -> velocity
+  // state(3) -> acceleration
+  // state(4) =  1
+
+
   dyn.U.setZero(N,N);
   dyn.UT.setZero(N,N);
   dyn.UInv.setZero(N,N);

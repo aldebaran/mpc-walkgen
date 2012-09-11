@@ -44,7 +44,7 @@ void QPGeneratorOrientation::precomputeObjective(){
 
   for (int i = 0; i < nbUsedPonderations; ++i) {
       Qconst_[i].resize(N,N);
-      pconstCoMYaw_[i].resize(N,4);
+      pconstCoMYaw_[i].resize(N,5);
       pconstVelRef_[i].resize(N,N);
       pconstPosRef_[i].resize(N,N);
 

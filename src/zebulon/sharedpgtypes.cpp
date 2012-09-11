@@ -4,7 +4,7 @@
 using namespace MPCWalkgen::Zebulon;
 
 MPCSolution::MPCSolution()
-:state_vec(4)
+:state_vec(5)
 {}
 
 MPCData::MPCData()

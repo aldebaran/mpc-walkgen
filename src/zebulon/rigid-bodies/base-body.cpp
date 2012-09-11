@@ -35,7 +35,7 @@ void BaseBody::interpolate(GlobalSolution &solution, double /*currentTime*/, con
 
 void BaseBody::computeDynamicsMatrices(LinearDynamics & dyn,
                                        double S, double T, int N, DynamicMatrixType type){
-  dyn.S.setZero(N,4);
+  dyn.S.setZero(N,5);
   dyn.U.setZero(N,N);
   dyn.UT.setZero(N,N);
   dyn.UInv.setZero(N,N);
