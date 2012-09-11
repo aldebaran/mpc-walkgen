@@ -10,20 +10,19 @@ using namespace MPCWalkgen;
 using namespace Zebulon;
 using namespace Eigen;
 
-RigidBodySystem::RigidBodySystem(const MPCData *generalData, const Interpolation *interpolation)
+RigidBodySystem::RigidBodySystem(const MPCData *generalData,
+                                 const RobotData * robotData,
+                                 const Interpolation *interpolation)
   :generalData_(generalData)
-  ,robotData_() {
-  CoM_ = new CoMBody(generalData_, &robotData_, interpolation);
-  base_ = new BaseBody(generalData_, &robotData_, interpolation);
+  ,robotData_(robotData)
+{
+  CoM_ = new CoMBody(generalData_, robotData_, interpolation);
+  base_ = new BaseBody(generalData_, robotData_, interpolation);
 }
 
 RigidBodySystem::~RigidBodySystem() {
   delete base_;
   delete CoM_;
-}
-
-void RigidBodySystem::init(const RobotData &robotData) {
-  robotData_ = robotData;
 }
 
 void RigidBodySystem::computeDynamics() {
@@ -64,7 +63,7 @@ void RigidBodySystem::updateBodyState(const GlobalSolution & solution){
       CoM.yaw(i) = currentState.CoMTrajYaw_(nextCurrentState);
     }
   CoM.z(0) = 0;
-  CoM.z(1) = robotData_.CoMHeight;
+  CoM.z(1) = robotData_->CoMHeight;
   CoM.z(2) = 0;
   CoM.z(3) = 0;
 

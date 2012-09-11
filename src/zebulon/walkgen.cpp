@@ -45,9 +45,9 @@ Walkgen::Walkgen(::MPCWalkgen::QPSolverType solvertype)
           mpcData_.nbSamplesQP, 2*mpcData_.nbSamplesQP,
           mpcData_.nbSamplesQP, 2*mpcData_.nbSamplesQP);
   interpolation_ = new Interpolation();
-  robot_ = new RigidBodySystem(&mpcData_, interpolation_);
-  generator_= new QPGenerator(solver_, &velRef_, &posRef_, &posIntRef_, &comRef_, robot_, &mpcData_);
-  generatorOrientation_= new QPGeneratorOrientation(solverOrientation_, &velRef_, &posRef_, &posIntRef_, robot_, &mpcData_);
+  robot_ = new RigidBodySystem(&mpcData_, &robotData_, interpolation_);
+  generator_= new QPGenerator(solver_, &velRef_, &posRef_, &posIntRef_, &comRef_, robot_, &mpcData_, &robotData_);
+  generatorOrientation_= new QPGeneratorOrientation(solverOrientation_, &velRef_, &posRef_, &posIntRef_, robot_, &mpcData_, &robotData_);
 
 }
 
@@ -183,8 +183,6 @@ void Walkgen::init(const RobotData &robotData){
 }
 
 void Walkgen::init() {
-
-  robot_->init(robotData_);
 
   //Check if sampling periods are defined correctly
   assert(mpcData_.actuationSamplingPeriod > 0);
