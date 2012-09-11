@@ -29,6 +29,8 @@ namespace MPCWalkgen{
       ~RigidBodySystem();
 
       void computeDynamics();
+      void computeDynamicsCoP();
+
       void computeQPDynamics();
       void computeInterpolationDynamics();
 

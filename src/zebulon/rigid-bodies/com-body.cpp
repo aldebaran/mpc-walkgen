@@ -41,10 +41,8 @@ void CoMBody::interpolate(GlobalSolution &solution, double /*currentTime*/, cons
   interpolation_->computeInterpolationByJerk(solution.mpcSolution.state_vec[3].CoMTrajYaw_, state_.yaw,
                                              dynamics(interpolationAcc), solution.qpSolutionOrientation(0));
 
-  interpolation_->computeInterpolationByJerk(solution.mpcSolution.CoPTrajX, solution.mpcSolution.CoPTrajY, state_,
-                                             dynamics(interpolationCoP), solution.qpSolution(0),
-                                             solution.qpSolution(generalData_->nbSamplesQP));
-
+  interpolation_->computeInterpolationByJerk(solution.mpcSolution.CoPTrajX, state_.x, dynamics(interpolationCoPX), solution.qpSolution(0));
+  interpolation_->computeInterpolationByJerk(solution.mpcSolution.CoPTrajY, state_.y, dynamics(interpolationCoPY), solution.qpSolution(generalData_->nbSamplesQP));
 
 
 }
@@ -123,16 +121,36 @@ void CoMBody::computeDynamicsMatrices(LinearDynamics & dyn,
         }
       break;
 
-    case copDynamic:
+    case copDynamicX:
       for (int i=0; i<N; i++) {
           dyn.S(i,1) = 1;
           dyn.S(i,2) = i*T + S;
-          dyn.S(i,3) = S*S/2 + i*T*S + i*i*T*T/2-robotData_->CoMHeight/9.81;
+          dyn.S(i,3) = S*S/2 + i*T*S + i*i*T*T/2-robotData_->CoMHeight/robotData_->gravity(2);
+          dyn.S(i,4) = -robotData_->CoMHeight*robotData_->gravity(0)/robotData_->gravity(2);
 
-          dyn.U(i,0) = dyn.UT(0,i) =S*S*S/6 + i*T*S*S/2 + S*(i*i*T*T/2 - robotData_->CoMHeight/9.81);
+          dyn.U(i,0) = dyn.UT(0,i) =S*S*S/6 + i*T*S*S/2 + S*(i*i*T*T/2 - robotData_->CoMHeight/robotData_->gravity(2));
           for(int j=1; j<N; j++){
               if (j <= i) {
-                  dyn.U(i,j) = dyn.UT(j,i) = T*T*T/6 + 3*(i-j)*T*T*T/6 + 3*(i-j)*(i-j)*T*T*T/6 - T*robotData_->CoMHeight/9.81;
+                  dyn.U(i,j) = dyn.UT(j,i) = T*T*T/6 + 3*(i-j)*T*T*T/6 + 3*(i-j)*(i-j)*T*T*T/6 - T*robotData_->CoMHeight/robotData_->gravity(2);
+                }
+            }
+
+        }
+      inverse(dyn.U,dyn.UInv);
+      dyn.UInvT=dyn.UInv.transpose();
+      break;
+
+    case copDynamicY:
+      for (int i=0; i<N; i++) {
+          dyn.S(i,1) = 1;
+          dyn.S(i,2) = i*T + S;
+          dyn.S(i,3) = S*S/2 + i*T*S + i*i*T*T/2-robotData_->CoMHeight/robotData_->gravity(2);
+          dyn.S(i,4) = -robotData_->CoMHeight*robotData_->gravity(1)/robotData_->gravity(2);
+
+          dyn.U(i,0) = dyn.UT(0,i) =S*S*S/6 + i*T*S*S/2 + S*(i*i*T*T/2 - robotData_->CoMHeight/robotData_->gravity(2));
+          for(int j=1; j<N; j++){
+              if (j <= i) {
+                  dyn.U(i,j) = dyn.UT(j,i) = T*T*T/6 + 3*(i-j)*T*T*T/6 + 3*(i-j)*(i-j)*T*T*T/6 - T*robotData_->CoMHeight/robotData_->gravity(2);
                 }
             }
 

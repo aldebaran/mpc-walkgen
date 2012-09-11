@@ -30,14 +30,25 @@ void RigidBodySystem::computeDynamics() {
   computeInterpolationDynamics();
 }
 
+void RigidBodySystem::computeDynamicsCoP(){
+  CoM_->computeQPDynamicsCoP();
+  base_->computeQPDynamicsCoP();
+  CoM_->computeInterpolationDynamicsCoP();
+  base_->computeInterpolationDynamicsCoP();
+}
+
 void RigidBodySystem::computeQPDynamics() {
   CoM_->computeQPDynamics();
   base_->computeQPDynamics();
+  CoM_->computeQPDynamicsCoP();
+  base_->computeQPDynamicsCoP();
 }
 
 void RigidBodySystem::computeInterpolationDynamics() {
   CoM_->computeInterpolationDynamics();
   base_->computeInterpolationDynamics();
+  CoM_->computeInterpolationDynamicsCoP();
+  base_->computeInterpolationDynamicsCoP();
 }
 
 void RigidBodySystem::interpolateBodies(GlobalSolution & solution, double currentTime, const Reference & velRef){

@@ -25,8 +25,10 @@ const LinearDynamics & RigidBody::dynamics(DynamicMatrixType type) const{
       return acc_vec_;
     case jerkDynamic:
       return jerk_vec_;
-    case copDynamic:
-      return cop_vec_;
+    case copDynamicX:
+      return copX_vec_;
+    case copDynamicY:
+      return copY_vec_;
     case interpolationPosInt:
       return posIntInterpol_;
     case interpolationPos:
@@ -35,8 +37,10 @@ const LinearDynamics & RigidBody::dynamics(DynamicMatrixType type) const{
       return velInterpol_;
     case interpolationAcc:
       return accInterpol_;
+    case interpolationCoPX:
+      return copXInterpol_;
     default:
-      return copInterpol_;
+      return copYInterpol_;
     }
 }
 
@@ -52,8 +56,7 @@ void RigidBody::computeQPDynamics(){
                           generalData_->QPSamplingPeriod, generalData_->nbSamplesQP, accDynamic);
   computeDynamicsMatrices(jerk_vec_, generalData_->QPSamplingPeriod,
                           generalData_->QPSamplingPeriod, generalData_->nbSamplesQP, jerkDynamic);
-  computeDynamicsMatrices(cop_vec_, generalData_->QPSamplingPeriod,
-                          generalData_->QPSamplingPeriod, generalData_->nbSamplesQP, copDynamic);
+
 }
 
 void RigidBody::computeInterpolationDynamics(){
@@ -72,6 +75,25 @@ void RigidBody::computeInterpolationDynamics(){
   computeDynamicsMatrices(accInterpol_, generalData_->actuationSamplingPeriod,
                           generalData_->actuationSamplingPeriod, nbSamplingSim, accDynamic);
 
-  computeDynamicsMatrices(copInterpol_, generalData_->actuationSamplingPeriod,
-                          generalData_->actuationSamplingPeriod, nbSamplingSim, copDynamic);
+}
+
+void RigidBody::computeQPDynamicsCoP(){
+
+  computeDynamicsMatrices(copX_vec_, generalData_->QPSamplingPeriod,
+                          generalData_->QPSamplingPeriod, generalData_->nbSamplesQP, copDynamicX);
+  computeDynamicsMatrices(copY_vec_, generalData_->QPSamplingPeriod,
+                          generalData_->QPSamplingPeriod, generalData_->nbSamplesQP, copDynamicY);
+
+}
+
+void RigidBody::computeInterpolationDynamicsCoP(){
+
+  int nbSamplingSim = generalData_->nbSamplesControl();
+
+  computeDynamicsMatrices(copXInterpol_, generalData_->actuationSamplingPeriod,
+                          generalData_->actuationSamplingPeriod, nbSamplingSim, copDynamicX);
+
+  computeDynamicsMatrices(copYInterpol_, generalData_->actuationSamplingPeriod,
+                          generalData_->actuationSamplingPeriod, nbSamplingSim, copDynamicY);
+
 }

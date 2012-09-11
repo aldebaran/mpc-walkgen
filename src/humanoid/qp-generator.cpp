@@ -64,7 +64,7 @@ void QPGenerator::precomputeObjective(){
           nb += i*size;
           robot_->firstSamplingPeriod(s);
 
-          const LinearDynamics & CoPDynamics = robot_->body(COM)->dynamics(copDynamic);
+          const LinearDynamics & CoPDynamics = robot_->body(COM)->dynamics(copDynamicX);
           const LinearDynamics & VelDynamics = robot_->body(COM)->dynamics(velDynamic);
 
           double firstIterationWeight = s / generalData_->QPSamplingPeriod;
@@ -376,7 +376,7 @@ void QPGenerator::convertCopToJerk(MPCSolution & result){
   const SelectionMatrices & State = preview_->selectionMatrices();
   const MatrixXd & rot = preview_->rotationMatrix();
   const BodyState & CoM = robot_->body(COM)->state();
-  const LinearDynamics & CoP = robot_->body(COM)->dynamics(copDynamic);
+  const LinearDynamics & CoP = robot_->body(COM)->dynamics(copDynamicX);
   // int nbSteps =  result.supportState_vec.back().stepNumber;
 
   VectorXd sx = result.qpSolution.segment(0, 2);
@@ -516,7 +516,7 @@ void QPGenerator::display(const MPCSolution & result, const std::string & filena
   const SelectionMatrices & State = preview_->selectionMatrices();
   const MatrixXd & rot = preview_->rotationMatrix();
   const BodyState & CoM = robot_->body(COM)->state();
-  const LinearDynamics & CoP = robot_->body(COM)->dynamics(copDynamic);
+  const LinearDynamics & CoP = robot_->body(COM)->dynamics(copDynamicX);
   int nbSteps =  result.supportStates_vec.back().stepNumber;
 
   const VectorXd & sx = result.qpSolution.segment(0, N);

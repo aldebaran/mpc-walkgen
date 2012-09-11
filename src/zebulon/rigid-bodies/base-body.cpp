@@ -101,10 +101,6 @@ void BaseBody::computeDynamicsMatrices(LinearDynamics & dyn,
         }
       break;
 
-    case copDynamic:
-
-      break;
-
     default:
       dyn.U.setIdentity();
       dyn.UT.setIdentity();

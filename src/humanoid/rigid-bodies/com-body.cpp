@@ -28,7 +28,7 @@ void CoMBody::interpolate(MPCSolution &solution, double currentTime, const Refer
                                              solution.qpSolution(generalData_->nbSamplesQP));
 
   interpolation_->computeInterpolationByJerk(solution.CoPTrajX, solution.CoPTrajY, state_,
-                                             dynamics(interpolationCoP), solution.qpSolution(0),
+                                             dynamics(interpolationCoPX), solution.qpSolution(0),
                                              solution.qpSolution(generalData_->nbSamplesQP));
 
   interpolateTrunkOrientation(solution, currentTime, velRef);
@@ -87,7 +87,7 @@ void CoMBody::computeDynamicsMatrices(LinearDynamics & dyn,
         }
       break;
 
-    case copDynamic:
+    case copDynamicX:
       for (int i=0; i<N; i++) {
           dyn.S(i,0) = 1;
           dyn.S(i,1) = i*T + S;

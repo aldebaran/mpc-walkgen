@@ -23,7 +23,7 @@ const LinearDynamics & RigidBody::dynamics(DynamicMatrixType type) const{
       return acc_vec_[matrixNumber_];
     case jerkDynamic:
       return jerk_vec_[matrixNumber_];
-    case copDynamic:
+    case copDynamicX:
       return cop_vec_[matrixNumber_];
     case interpolationPos:
       return posInterpol_;
@@ -61,7 +61,7 @@ void RigidBody::computeDynamics(){
       computeDynamicsMatrices(jerk_vec_[k], S,
                               generalData_->QPSamplingPeriod, generalData_->nbSamplesQP, jerkDynamic);
       computeDynamicsMatrices(cop_vec_[k], S,
-                              generalData_->QPSamplingPeriod, generalData_->nbSamplesQP, copDynamic);
+                              generalData_->QPSamplingPeriod, generalData_->nbSamplesQP, copDynamicX);
 
     }
 
@@ -76,6 +76,6 @@ void RigidBody::computeDynamics(){
                           generalData_->actuationSamplingPeriod, nbSamplingSim, accDynamic);
 
   computeDynamicsMatrices(copInterpol_, generalData_->actuationSamplingPeriod,
-                          generalData_->actuationSamplingPeriod, nbSamplingSim, copDynamic);
+                          generalData_->actuationSamplingPeriod, nbSamplingSim, copDynamicX);
 }
 

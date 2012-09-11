@@ -102,7 +102,7 @@ void FootBody::computeDynamicsMatrices(LinearDynamics & dyn,
     case accDynamic:
       break;
 
-    case copDynamic:
+    case copDynamicX:
       break;
 
     default:

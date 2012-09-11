@@ -38,6 +38,10 @@ namespace MPCWalkgen{
 
       void computeInterpolationDynamics();
 
+      void computeQPDynamicsCoP();
+
+      void computeInterpolationDynamicsCoP();
+
       virtual void interpolate(GlobalSolution & result, double currentTime, const Reference & velRef)=0;
 
     protected:
@@ -56,13 +60,15 @@ namespace MPCWalkgen{
       LinearDynamics vel_vec_;
       LinearDynamics acc_vec_;
       LinearDynamics jerk_vec_;
-      LinearDynamics cop_vec_;
+      LinearDynamics copX_vec_;
+      LinearDynamics copY_vec_;
 
       LinearDynamics posIntInterpol_;
       LinearDynamics posInterpol_;
       LinearDynamics velInterpol_;
       LinearDynamics accInterpol_;
-      LinearDynamics copInterpol_;
+      LinearDynamics copXInterpol_;
+      LinearDynamics copYInterpol_;
 
       int matrixNumber_;
     };

@@ -85,13 +85,14 @@ namespace MPCWalkgen{
     struct MPC_WALKGEN_API RobotData {
       double CoMHeight;
 
-      double b;
-      double h;
+      double copLimitX;
+      double copLimitY;
       double deltaComXLocal;
       std::vector<double> baseLimit;
       std::vector<double> orientationLimit;
       double comLimitX;
       double comLimitY;
+      Eigen::Vector3d gravity;
 
       RobotData();
     };
@@ -113,6 +114,8 @@ namespace MPCWalkgen{
         Eigen::VectorXd CoMTrajYaw_;
         Eigen::VectorXd baseTrajX_;
         Eigen::VectorXd baseTrajY_;
+
+        State();
 
       };
       std::vector<State> state_vec;

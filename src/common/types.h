@@ -44,12 +44,14 @@ namespace MPCWalkgen{
 		velDynamic,
 		accDynamic,
 		jerkDynamic,
-		copDynamic,
+		copDynamicX,
+		copDynamicY,
 		interpolationPosInt,
 		interpolationPos,
 		interpolationVel,
 		interpolationAcc,
-		interpolationCoP
+		interpolationCoPX,
+		interpolationCoPY
 	};
 
 	struct LinearDynamics{

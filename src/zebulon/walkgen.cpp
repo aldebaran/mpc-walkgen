@@ -111,7 +111,7 @@ void Walkgen::mpcData(const MPCData &mpcData){
   }
 
   // Modify dynamic matrices wich are used everywhere in the problem.
-  // So, we must to recall init()
+  // So, we must to recall init().
   if (fabs(mpcData.QPSamplingPeriod-tmpMpcData.QPSamplingPeriod)>EPSILON){
     init();
     return;
@@ -164,6 +164,15 @@ void Walkgen::robotData(const RobotData &robotData){
   if (fabs(robotData.deltaComXLocal-tmpRobotData.deltaComXLocal)>EPSILON){
     comRef_.local.x.fill(robotData.deltaComXLocal);
   }
+
+  if (fabs(robotData.gravity(0)-tmpRobotData.gravity(0))>EPSILON
+   || fabs(robotData.gravity(1)-tmpRobotData.gravity(1))>EPSILON
+   || fabs(robotData.gravity(2)-tmpRobotData.gravity(2))>EPSILON
+  ){
+    robot_->computeDynamicsCoP();
+    generator_->precomputeObjectiveCoP();
+  }
+
 }
 
 void Walkgen::init(const RobotData &robotData, const MPCData &mpcData){

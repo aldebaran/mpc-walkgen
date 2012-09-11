@@ -36,11 +36,14 @@ int MPCData::nbSamplesMPC() const{
 
 RobotData::RobotData()
   :CoMHeight(0.45)
-  ,b(0.264*0.8)
-  ,h(0.252*0.8)
+  ,copLimitX(0.264*0.8)
+  ,copLimitY(0.252*0.8)
   ,deltaComXLocal(0.015)
   ,baseLimit(3)
   ,orientationLimit(3)
+  ,comLimitX(0.071*0.7)
+  ,comLimitY(0.044*0.7)
+  ,gravity(0,0,9.81)
 {
   baseLimit[0]=0.83*10;
   baseLimit[1]=1*10;
@@ -48,8 +51,6 @@ RobotData::RobotData()
   orientationLimit[0]=2*3.14;
   orientationLimit[1]=3*3.14;
   orientationLimit[2]=6*3.14;
-  comLimitX=0.071*0.8;
-  comLimitY=0.044*0.8;
 }
 
 QPPonderation::QPPonderation(int nb)
