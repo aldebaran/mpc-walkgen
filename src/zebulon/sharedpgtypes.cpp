@@ -5,7 +5,18 @@ using namespace MPCWalkgen::Zebulon;
 
 MPCSolution::MPCSolution()
 :state_vec(5)
-{}
+{
+  CoPTrajX.setZero(1);
+  CoPTrajY.setZero(1);
+}
+
+MPCSolution::State::State(){
+  CoMTrajX_.setZero(1);
+  CoMTrajY_.setZero(1);
+  CoMTrajYaw_.setZero(1);
+  baseTrajX_.setZero(1);
+  baseTrajY_.setZero(1);
+}
 
 MPCData::MPCData()
 :QPSamplingPeriod(0.16)
@@ -52,6 +63,7 @@ QPPonderation::QPPonderation(int nb)
   ,OrientationInstantVelocity(nb)
   ,OrientationPosition(nb)
   ,OrientationJerkMin(nb)
+  ,activePonderation(0)
 {
 
   // Normal moveTo
@@ -108,7 +120,6 @@ QPPonderation::QPPonderation(int nb)
   OrientationPosition[3]        = 0;
   OrientationJerkMin[3]         = 0;
 
-  activePonderation = 0;
 }
 
 
