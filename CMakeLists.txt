@@ -2,7 +2,7 @@
 # Requires at least CMake 2.6 to configure the package.
 cmake_minimum_required(VERSION 2.8)
 project(mpc-walkgen)
-
+enable_testing()
 find_package(qibuild)
 # Handle OS specificities
 include(CheckIncludeFiles)
