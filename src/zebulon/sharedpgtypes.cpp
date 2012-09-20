@@ -38,11 +38,11 @@ RobotData::RobotData()
   :CoMHeight(0.45)
   ,copLimitX(0.264*0.8)
   ,copLimitY(0.252*0.8)
-  ,deltaComXLocal(0.015)
+  ,deltaComXLocal(-0.0085)
   ,baseLimit(3)
   ,orientationLimit(3)
-  ,comLimitX(0.071*0.7)
-  ,comLimitY(0.044*0.7)
+  ,comLimitX(0.071*0.8)
+  ,comLimitY(0.044*0.8)
   ,gravity(0,0,9.81)
 {
   baseLimit[0]=0.83*10;
@@ -70,7 +70,7 @@ QPPonderation::QPPonderation(int nb)
   // Normal moveTo
   CopCentering[0]        = 1;
   CoMCentering[0]        = 0;
-  CoMJerkMin[0]          = 0.0001;
+  CoMJerkMin[0]          = 0.001;
   baseJerkMin[0]         = 0;
   baseInstantVelocity[0] = 1;
   basePosition[0]        = 1;
@@ -83,7 +83,7 @@ QPPonderation::QPPonderation(int nb)
   // More stable moveTo
   CopCentering[1]        = 100;
   CoMCentering[1]        = 0;
-  CoMJerkMin[1]          = 0.0001;
+  CoMJerkMin[1]          = 0.001;
   baseJerkMin[1]         = 0;
   baseInstantVelocity[1] = 1;
   basePosition[1]        = 1;
@@ -97,7 +97,7 @@ QPPonderation::QPPonderation(int nb)
   // Normal move
   CopCentering[2]        = 1;
   CoMCentering[2]        = 0;
-  CoMJerkMin[2]          = 0.0001;
+  CoMJerkMin[2]          = 0.001;
   baseJerkMin[2]         = 0;
   baseInstantVelocity[2] = 1;
   basePosition[2]        = 0;
@@ -111,7 +111,7 @@ QPPonderation::QPPonderation(int nb)
   // More stable move
   CopCentering[3]        = 100;
   CoMCentering[3]        = 0;
-  CoMJerkMin[3]          = 0.0001;
+  CoMJerkMin[3]          = 0.001;
   baseJerkMin[3]         = 0;
   baseInstantVelocity[3] = 1;
   basePosition[3]        = 0;
