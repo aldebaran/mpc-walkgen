@@ -408,9 +408,13 @@ void QPGenerator::convertCopToJerk(MPCSolution & result){
 
   double X;
   double Y;
-  zx -= (CoP.S.block(0,0,1,3) * CoM.x)(0,0);
+
+  tmpMat_ = (CoP.S.block(0,0,1,3) * CoM.x);
+  zx -= tmpMat_(0,0);
   X  =  CoP.UInv(0,0) * zx;
-  zy -= (CoP.S.block(0,0,1,3) * CoM.y)(0,0) ;
+
+  tmpMat_ = (CoP.S.block(0,0,1,3) * CoM.y);
+  zy -= tmpMat_(0,0);
   Y  =  CoP.UInv(0,0) * zy;
 
   result.qpSolution.segment(0, N).fill(X);
