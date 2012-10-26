@@ -153,7 +153,7 @@ include_directories("${CMAKE_CURRENT_BINARY_DIR}/include")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 qi_create_lib(mpc-walkgen SHARED ${mpc-walkgen_SRC} ${_HEADERS})
-qi_use_lib(mpc-walkgen eigen3)
+qi_use_lib(mpc-walkgen eigen3 QI)
 if(WITH_LSSOL)
   qi_use_lib(mpc-walkgen LSSOL)
 endif()
