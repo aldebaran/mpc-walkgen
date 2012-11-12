@@ -19,6 +19,12 @@
 
 #include <Eigen/Dense>
 
+// Disable Warning CS4251: need to have dll-interface
+#ifdef _MSC_VER
+ #pragma warning( push )
+ #pragma warning( disable: 4251 )
+#endif
+
 namespace MPCWalkgen
 {
 
@@ -42,4 +48,9 @@ namespace MPCWalkgen
     void reset(int size=3);
   };
 }
+
+#ifdef _MSC_VER
+#  pragma warning( pop )
+#endif
+
 #endif // MPC_WALKGEN_COMMON_SHAREDPGTYPES_H

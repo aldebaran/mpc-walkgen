@@ -17,8 +17,11 @@
 #include <Eigen/Dense>
 #include <vector>
 
-
-
+// Disable Warning CS4251: need to have dll-interface
+#ifdef _MSC_VER
+ #pragma warning( push )
+ #pragma warning( disable: 4251 )
+#endif
 
 
 namespace MPCWalkgen{
@@ -122,5 +125,9 @@ namespace MPCWalkgen{
     };
   }
 }
+
+#ifdef _MSC_VER
+#  pragma warning( pop )
+#endif
 
 #endif // MPC_WALKGEN_ZEBULON_SHAREDPGTYPE_H
