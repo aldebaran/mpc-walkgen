@@ -73,26 +73,47 @@ namespace MPCWalkgen{
       Eigen::VectorXd tmpVec3_;
       Eigen::MatrixXd tmpMat_;
 
+      // These matrices are the precomputed part of the Hessian matrix Q and the linear vector P of the QP problem.
+      // They should be multiplied by a state or reference vector, and then added to the right lines of the matrix/vector
+      // (relative to Base or Com variables)
+      //
+      // Writing convention :
+      //
+      // [Name of matrix ("Q" "p")]
+      // ["CoP" if the matrix is CoP-dynamic-dependant]
+      // const
+      // [Relative to CoM or Base variables ("ComObj" "BaseObj")]
+      // [Must be multiplied by :
+      //     All the Com state "ComState"
+      //     All the Base state "BaseState"
+      //     Com state on axe X/Y "ComStateX" "ComStateY"
+      //     Base state on axe X/Y "BaseStateX" "BaseStateY"
+      //     Com position reference "ComRef"
+      //     CoP position reference "CopRef"
+      //     CoP position reference on axe X/Y "CopRefX" "CopRefY"
+      //     Base position reference "PosRef"
+      //     Base velocity reference "VelREf"
+      //     Base position intergale reference "PoseIntRef"]
       std::vector<Eigen::MatrixXd> Qconst_;
       std::vector<Eigen::MatrixXd> QCoPconst_;
-      std::vector<Eigen::MatrixXd> pconstCoMX_;
-      std::vector<Eigen::MatrixXd> pconstCoMXCoPX_;
-      std::vector<Eigen::MatrixXd> pconstCoMXCoPY_;
-      std::vector<Eigen::MatrixXd> pconstCoMB_;
-      std::vector<Eigen::MatrixXd> pconstCoMBCoPX_;
-      std::vector<Eigen::MatrixXd> pconstCoMBCoPY_;
-      std::vector<Eigen::MatrixXd> pconstBaseX_;
-      std::vector<Eigen::MatrixXd> pconstBaseXCoPX_;
-      std::vector<Eigen::MatrixXd> pconstBaseXCoPY_;
-      std::vector<Eigen::MatrixXd> pconstBaseB_;
-      std::vector<Eigen::MatrixXd> pconstVelRef_;
-      std::vector<Eigen::MatrixXd> pconstPosRef_;
-      std::vector<Eigen::MatrixXd> pconstPosIntRef_;
-      std::vector<Eigen::MatrixXd> pconstComCopRefX_;
-      std::vector<Eigen::MatrixXd> pconstComCopRefY_;
-      std::vector<Eigen::MatrixXd> pconstBaseCopRef_;
-      std::vector<Eigen::MatrixXd> pconstComComRef_;
-      std::vector<Eigen::MatrixXd> pconstBaseComRef_;
+      std::vector<Eigen::MatrixXd> pconstComObjComState_;
+      std::vector<Eigen::MatrixXd> pCoPconstComObjComStateX_;
+      std::vector<Eigen::MatrixXd> pCoPconstComObjComStateY_;
+      std::vector<Eigen::MatrixXd> pconstBaseObjComState;
+      std::vector<Eigen::MatrixXd> pCoPconstBaseObjComStateX_;
+      std::vector<Eigen::MatrixXd> pCoPconstBaseObjComStateY_;
+      std::vector<Eigen::MatrixXd> pconstComObjBaseState;
+      std::vector<Eigen::MatrixXd> pCoPconstComObjBaseStateX_;
+      std::vector<Eigen::MatrixXd> pCoPconstComObjBaseStateY_;
+      std::vector<Eigen::MatrixXd> pconstBaseObjBaseState;
+      std::vector<Eigen::MatrixXd> pconstBaseObjVelRef_;
+      std::vector<Eigen::MatrixXd> pconstBaseObjPosRef_;
+      std::vector<Eigen::MatrixXd> pconstBaseObjPosIntRef_;
+      std::vector<Eigen::MatrixXd> pCoPconstComObjCopRefX_;
+      std::vector<Eigen::MatrixXd> pCoPconstComObjCopRefY_;
+      std::vector<Eigen::MatrixXd> pconstBaseObjCopRef_;
+      std::vector<Eigen::MatrixXd> pconstComObjComRef_;
+      std::vector<Eigen::MatrixXd> pconstBaseObjComRef_;
 
       Eigen::VectorXd yaw_;
       Eigen::VectorXd cosYaw_;

@@ -11,8 +11,8 @@ using namespace Zebulon;
 using namespace Eigen;
 
 QPGenerator::QPGenerator(QPSolver * solver, Reference * velRef, Reference * posRef,
-			 Reference *posIntRef, Reference * comRef, RigidBodySystem *robot,
-			 const MPCData *generalData, const RobotData *robotData)
+             Reference *posIntRef, Reference * comRef, RigidBodySystem *robot,
+             const MPCData *generalData, const RobotData *robotData)
   :solver_(solver)
   ,robot_(robot)
   ,velRef_(velRef)
@@ -36,14 +36,14 @@ void QPGenerator::precomputeObjectiveCoP(){
   int nbUsedPonderations = generalData_->ponderation.baseJerkMin.size();
 
   QCoPconst_.resize(nbUsedPonderations);
-  pconstCoMXCoPX_.resize(nbUsedPonderations);
-  pconstCoMXCoPY_.resize(nbUsedPonderations);
-  pconstComCopRefX_.resize(nbUsedPonderations);
-  pconstComCopRefY_.resize(nbUsedPonderations);
-  pconstBaseXCoPX_.resize(nbUsedPonderations);
-  pconstBaseXCoPY_.resize(nbUsedPonderations);
-  pconstCoMBCoPX_.resize(nbUsedPonderations);
-  pconstCoMBCoPY_.resize(nbUsedPonderations);
+  pCoPconstComObjComStateX_.resize(nbUsedPonderations);
+  pCoPconstComObjComStateY_.resize(nbUsedPonderations);
+  pCoPconstComObjCopRefX_.resize(nbUsedPonderations);
+  pCoPconstComObjCopRefY_.resize(nbUsedPonderations);
+  pCoPconstComObjBaseStateX_.resize(nbUsedPonderations);
+  pCoPconstComObjBaseStateY_.resize(nbUsedPonderations);
+  pCoPconstBaseObjComStateX_.resize(nbUsedPonderations);
+  pCoPconstBaseObjComStateY_.resize(nbUsedPonderations);
 
   int N = generalData_->nbSamplesQP;
 
@@ -53,14 +53,14 @@ void QPGenerator::precomputeObjectiveCoP(){
 
   for (int i = 0; i < nbUsedPonderations; ++i){
     QCoPconst_[i].setZero(4*N,4*N);
-    pconstCoMXCoPX_[i].setZero(N,5);
-    pconstCoMXCoPY_[i].setZero(N,5);
-    pconstComCopRefX_[i].setZero(N,N);
-    pconstComCopRefY_[i].setZero(N,N);
-    pconstBaseXCoPX_[i].setZero(N,5);
-    pconstBaseXCoPY_[i].setZero(N,5);
-    pconstCoMBCoPX_[i].setZero(N,5);
-    pconstCoMBCoPY_[i].setZero(N,5);
+    pCoPconstComObjComStateX_[i].setZero(N,5);
+    pCoPconstComObjComStateY_[i].setZero(N,5);
+    pCoPconstComObjCopRefX_[i].setZero(N,N);
+    pCoPconstComObjCopRefY_[i].setZero(N,N);
+    pCoPconstComObjBaseStateX_[i].setZero(N,5);
+    pCoPconstComObjBaseStateY_[i].setZero(N,5);
+    pCoPconstBaseObjComStateX_[i].setZero(N,5);
+    pCoPconstBaseObjComStateY_[i].setZero(N,5);
 
 
     tmpMat_ = generalData_->ponderation.CopCentering[i]*CoPDynamicsX.UT*CoPDynamicsX.U;
@@ -79,24 +79,24 @@ void QPGenerator::precomputeObjectiveCoP(){
 
 
     tmpMat_ = generalData_->ponderation.CopCentering[i]*CoPDynamicsX.UT*CoPDynamicsX.S;
-    pconstCoMXCoPX_[i].block(0,0,N,5) = tmpMat_;
+    pCoPconstComObjComStateX_[i].block(0,0,N,5) = tmpMat_;
     tmpMat_ = generalData_->ponderation.CopCentering[i]*CoPDynamicsY.UT*CoPDynamicsY.S;
-    pconstCoMXCoPY_[i].block(0,0,N,5) = tmpMat_;
+    pCoPconstComObjComStateY_[i].block(0,0,N,5) = tmpMat_;
 
     tmpMat_ = -generalData_->ponderation.CopCentering[i]*basePosDynamics.UT*CoPDynamicsX.S;
-    pconstCoMBCoPX_[i].block(0,0,N,5) = tmpMat_;
+    pCoPconstBaseObjComStateX_[i].block(0,0,N,5) = tmpMat_;
     tmpMat_ = -generalData_->ponderation.CopCentering[i]*basePosDynamics.UT*CoPDynamicsY.S;
-    pconstCoMBCoPY_[i].block(0,0,N,5) = tmpMat_;
+    pCoPconstBaseObjComStateY_[i].block(0,0,N,5) = tmpMat_;
 
     tmpMat_ = -generalData_->ponderation.CopCentering[i]*CoPDynamicsX.UT*basePosDynamics.S;
-    pconstBaseXCoPX_[i].block(0,0,N,5) = tmpMat_;
+    pCoPconstComObjBaseStateX_[i].block(0,0,N,5) = tmpMat_;
      tmpMat_ = -generalData_->ponderation.CopCentering[i]*CoPDynamicsY.UT*basePosDynamics.S;
-    pconstBaseXCoPY_[i].block(0,0,N,5) = tmpMat_;
+    pCoPconstComObjBaseStateY_[i].block(0,0,N,5) = tmpMat_;
 
     tmpMat_ = -generalData_->ponderation.CopCentering[i]*CoPDynamicsX.UT;
-    pconstComCopRefX_[i].block(0,0,N,N) = tmpMat_;
+    pCoPconstComObjCopRefX_[i].block(0,0,N,N) = tmpMat_;
     tmpMat_ = -generalData_->ponderation.CopCentering[i]*CoPDynamicsY.UT;
-    pconstComCopRefY_[i].block(0,0,N,N) = tmpMat_;
+    pCoPconstComObjCopRefY_[i].block(0,0,N,N) = tmpMat_;
   }
 
 }
@@ -108,16 +108,16 @@ void QPGenerator::precomputeObjective(){
   int nbUsedPonderations = generalData_->ponderation.baseJerkMin.size();
 
   Qconst_.resize(nbUsedPonderations);
-  pconstCoMX_.resize(nbUsedPonderations);
-  pconstBaseX_.resize(nbUsedPonderations);
-  pconstCoMB_.resize(nbUsedPonderations);
-  pconstBaseB_.resize(nbUsedPonderations);
-  pconstVelRef_.resize(nbUsedPonderations);
-  pconstPosRef_.resize(nbUsedPonderations);
-  pconstPosIntRef_.resize(nbUsedPonderations);
-  pconstBaseCopRef_.resize(nbUsedPonderations);
-  pconstComComRef_.resize(nbUsedPonderations);
-  pconstBaseComRef_.resize(nbUsedPonderations);
+  pconstComObjComState_.resize(nbUsedPonderations);
+  pconstComObjBaseState.resize(nbUsedPonderations);
+  pconstBaseObjComState.resize(nbUsedPonderations);
+  pconstBaseObjBaseState.resize(nbUsedPonderations);
+  pconstBaseObjVelRef_.resize(nbUsedPonderations);
+  pconstBaseObjPosRef_.resize(nbUsedPonderations);
+  pconstBaseObjPosIntRef_.resize(nbUsedPonderations);
+  pconstBaseObjCopRef_.resize(nbUsedPonderations);
+  pconstComObjComRef_.resize(nbUsedPonderations);
+  pconstBaseObjComRef_.resize(nbUsedPonderations);
 
   int N = generalData_->nbSamplesQP;
 
@@ -131,16 +131,16 @@ void QPGenerator::precomputeObjective(){
 
   for (int i = 0; i < nbUsedPonderations; ++i){
     Qconst_[i].setZero(4*N,4*N);
-    pconstCoMX_[i].setZero(N,5);
-    pconstBaseX_[i].setZero(N,5);
-    pconstCoMB_[i].setZero(N,5);
-    pconstBaseB_[i].setZero(N,5);
-    pconstVelRef_[i].setZero(N,N);
-    pconstPosRef_[i].setZero(N,N);
-    pconstPosIntRef_[i].setZero(N,N);
-    pconstBaseCopRef_[i].setZero(N,N);
-    pconstComComRef_[i].setZero(N,N);
-    pconstBaseComRef_[i].setZero(N,N);
+    pconstComObjComState_[i].setZero(N,5);
+    pconstComObjBaseState[i].setZero(N,5);
+    pconstBaseObjComState[i].setZero(N,5);
+    pconstBaseObjBaseState[i].setZero(N,5);
+    pconstBaseObjVelRef_[i].setZero(N,N);
+    pconstBaseObjPosRef_[i].setZero(N,N);
+    pconstBaseObjPosIntRef_[i].setZero(N,N);
+    pconstBaseObjCopRef_[i].setZero(N,N);
+    pconstComObjComRef_[i].setZero(N,N);
+    pconstBaseObjComRef_[i].setZero(N,N);
 
     tmpMat_ = generalData_->ponderation.CoMCentering[i]*CoMPosDynamics.UT*CoMPosDynamics.U
         + generalData_->ponderation.CoMJerkMin[i]*idN;
@@ -168,41 +168,41 @@ void QPGenerator::precomputeObjective(){
 
 
     tmpMat_ = generalData_->ponderation.CoMCentering[i]*CoMPosDynamics.UT*CoMPosDynamics.S;
-    pconstCoMX_[i].block(0,0,N,5) = tmpMat_;
+    pconstComObjComState_[i].block(0,0,N,5) = tmpMat_;
 
     tmpMat_ = -generalData_->ponderation.CoMCentering[i]*basePosDynamics.UT*CoMPosDynamics.S;
-    pconstCoMB_[i].block(0,0,N,5) = tmpMat_;
+    pconstBaseObjComState[i].block(0,0,N,5) = tmpMat_;
 
 
 
     tmpMat_ = -generalData_->ponderation.CoMCentering[i]*CoMPosDynamics.UT*basePosDynamics.S;
-    pconstBaseX_[i].block(0,0,N,5) = tmpMat_;
+    pconstComObjBaseState[i].block(0,0,N,5) = tmpMat_;
 
     tmpMat_ = (generalData_->ponderation.CopCentering[i]+generalData_->ponderation.CoMCentering[i])*basePosDynamics.UT*basePosDynamics.S
         + generalData_->ponderation.baseInstantVelocity[i]*baseVelDynamics.UT*baseVelDynamics.S
         + generalData_->ponderation.basePosition[i]*basePosDynamics.UT*basePosDynamics.S
         + generalData_->ponderation.basePositionInt[i]*basePosIntDynamics.UT*basePosIntDynamics.S        ;
-    pconstBaseB_[i].block(0,0,N,5) = tmpMat_;
+    pconstBaseObjBaseState[i].block(0,0,N,5) = tmpMat_;
 
 
     tmpMat_ = -generalData_->ponderation.baseInstantVelocity[i]*baseVelDynamics.UT;
-    pconstVelRef_[i].block(0,0,N,N) = tmpMat_;
+    pconstBaseObjVelRef_[i].block(0,0,N,N) = tmpMat_;
 
     tmpMat_ = -generalData_->ponderation.basePosition[i]*basePosDynamics.UT;
-    pconstPosRef_[i].block(0,0,N,N) = tmpMat_;
+    pconstBaseObjPosRef_[i].block(0,0,N,N) = tmpMat_;
 
     tmpMat_ = -generalData_->ponderation.basePositionInt[i]*basePosIntDynamics.UT;
-    pconstPosIntRef_[i].block(0,0,N,N) = tmpMat_;
+    pconstBaseObjPosIntRef_[i].block(0,0,N,N) = tmpMat_;
 
 
     tmpMat_ = generalData_->ponderation.CopCentering[i]*basePosDynamics.UT;
-    pconstBaseCopRef_[i].block(0,0,N,N) = tmpMat_;
+    pconstBaseObjCopRef_[i].block(0,0,N,N) = tmpMat_;
 
     tmpMat_ = -generalData_->ponderation.CoMCentering[i]*CoMPosDynamics.UT;
-    pconstComComRef_[i].block(0,0,N,N) = tmpMat_;
+    pconstComObjComRef_[i].block(0,0,N,N) = tmpMat_;
 
     tmpMat_ = generalData_->ponderation.CoMCentering[i]*basePosDynamics.UT;
-    pconstBaseComRef_[i].block(0,0,N,N) = tmpMat_;
+    pconstBaseObjComRef_[i].block(0,0,N,N) = tmpMat_;
 
 
   }
@@ -222,74 +222,74 @@ void QPGenerator::buildObjective() {
   solver_->matrix(matrixQ).setTerm(Qconst_[nb]);
   solver_->matrix(matrixQ).addTerm(QCoPconst_[nb]);
 
-  tmpVec_ = pconstCoMX_[nb] * CoM.x;
+  tmpVec_ = pconstComObjComState_[nb] * CoM.x;
   solver_->vector(vectorP).setTerm(tmpVec_,0);
-  tmpVec_ = pconstCoMX_[nb] * CoM.y;
+  tmpVec_ = pconstComObjComState_[nb] * CoM.y;
   solver_->vector(vectorP).setTerm(tmpVec_,N);
 
-  tmpVec_ = pconstCoMXCoPX_[nb] * CoM.x;
+  tmpVec_ = pCoPconstComObjComStateX_[nb] * CoM.x;
   solver_->vector(vectorP).addTerm(tmpVec_,0);
-  tmpVec_ = pconstCoMXCoPY_[nb] * CoM.y;
+  tmpVec_ = pCoPconstComObjComStateY_[nb] * CoM.y;
   solver_->vector(vectorP).addTerm(tmpVec_,N);
 
-  tmpVec_ = pconstCoMB_[nb] * CoM.x;
+  tmpVec_ = pconstBaseObjComState[nb] * CoM.x;
   solver_->vector(vectorP).setTerm(tmpVec_,2*N);
-  tmpVec_ = pconstCoMB_[nb] * CoM.y;
+  tmpVec_ = pconstBaseObjComState[nb] * CoM.y;
   solver_->vector(vectorP).setTerm(tmpVec_,3*N);
 
-  tmpVec_ = pconstCoMBCoPX_[nb] * CoM.x;
+  tmpVec_ = pCoPconstBaseObjComStateX_[nb] * CoM.x;
   solver_->vector(vectorP).addTerm(tmpVec_,2*N);
-  tmpVec_ = pconstCoMBCoPY_[nb] * CoM.y;
+  tmpVec_ = pCoPconstBaseObjComStateY_[nb] * CoM.y;
   solver_->vector(vectorP).addTerm(tmpVec_,3*N);
 
-  tmpVec_ = pconstBaseX_[nb] * base.x;
+  tmpVec_ = pconstComObjBaseState[nb] * base.x;
   solver_->vector(vectorP).addTerm(tmpVec_,0);
-  tmpVec_ = pconstBaseX_[nb] * base.y;
+  tmpVec_ = pconstComObjBaseState[nb] * base.y;
   solver_->vector(vectorP).addTerm(tmpVec_,N);
 
-  tmpVec_ = pconstBaseXCoPX_[nb] * base.x;
+  tmpVec_ = pCoPconstComObjBaseStateX_[nb] * base.x;
   solver_->vector(vectorP).addTerm(tmpVec_,0);
-  tmpVec_ = pconstBaseXCoPY_[nb] * base.y;
+  tmpVec_ = pCoPconstComObjBaseStateY_[nb] * base.y;
   solver_->vector(vectorP).addTerm(tmpVec_,N);
 
-  tmpVec_ = pconstBaseB_[nb] * base.x;
+  tmpVec_ = pconstBaseObjBaseState[nb] * base.x;
   solver_->vector(vectorP).addTerm(tmpVec_,2*N);
-  tmpVec_ = pconstBaseB_[nb] * base.y;
+  tmpVec_ = pconstBaseObjBaseState[nb] * base.y;
   solver_->vector(vectorP).addTerm(tmpVec_,3*N);
 
-  tmpVec_ = pconstVelRef_[nb] * velRef_->global.x;
+  tmpVec_ = pconstBaseObjVelRef_[nb] * velRef_->global.x;
   solver_->vector(vectorP).addTerm(tmpVec_,2*N);
-  tmpVec_ = pconstVelRef_[nb] * velRef_->global.y;
+  tmpVec_ = pconstBaseObjVelRef_[nb] * velRef_->global.y;
   solver_->vector(vectorP).addTerm(tmpVec_,3*N);
 
-  tmpVec_ = pconstPosRef_[nb] * posRef_->global.x;
+  tmpVec_ = pconstBaseObjPosRef_[nb] * posRef_->global.x;
   solver_->vector(vectorP).addTerm(tmpVec_,2*N);
-  tmpVec_ = pconstPosRef_[nb] * posRef_->global.y;
+  tmpVec_ = pconstBaseObjPosRef_[nb] * posRef_->global.y;
   solver_->vector(vectorP).addTerm(tmpVec_,3*N);
 
-  tmpVec_ = pconstPosIntRef_[nb] * posIntRef_->global.x;
+  tmpVec_ = pconstBaseObjPosIntRef_[nb] * posIntRef_->global.x;
   solver_->vector(vectorP).addTerm(tmpVec_,2*N);
-  tmpVec_ = pconstPosIntRef_[nb] * posIntRef_->global.y;
+  tmpVec_ = pconstBaseObjPosIntRef_[nb] * posIntRef_->global.y;
   solver_->vector(vectorP).addTerm(tmpVec_,3*N);
 
-  tmpVec_ = pconstBaseCopRef_[nb] * -comRef_->global.x;
+  tmpVec_ = pconstBaseObjCopRef_[nb] * -comRef_->global.x;
   solver_->vector(vectorP).addTerm(tmpVec_,2*N);
-  tmpVec_ = pconstBaseCopRef_[nb] * -comRef_->global.y;
+  tmpVec_ = pconstBaseObjCopRef_[nb] * -comRef_->global.y;
   solver_->vector(vectorP).addTerm(tmpVec_,3*N);
 
-  tmpVec_ = pconstComCopRefX_[nb] * -comRef_->global.x;
+  tmpVec_ = pCoPconstComObjCopRefX_[nb] * -comRef_->global.x;
   solver_->vector(vectorP).addTerm(tmpVec_,0);
-  tmpVec_ = pconstComCopRefY_[nb] * -comRef_->global.y;
+  tmpVec_ = pCoPconstComObjCopRefY_[nb] * -comRef_->global.y;
   solver_->vector(vectorP).addTerm(tmpVec_,N);
 
-  tmpVec_ = pconstBaseComRef_[nb] * -comRef_->global.x;
+  tmpVec_ = pconstBaseObjComRef_[nb] * -comRef_->global.x;
   solver_->vector(vectorP).addTerm(tmpVec_,2*N);
-  tmpVec_ = pconstBaseComRef_[nb] * -comRef_->global.y;
+  tmpVec_ = pconstBaseObjComRef_[nb] * -comRef_->global.y;
   solver_->vector(vectorP).addTerm(tmpVec_,3*N);
 
-  tmpVec_ = pconstComComRef_[nb] * -comRef_->global.x;
+  tmpVec_ = pconstComObjComRef_[nb] * -comRef_->global.x;
   solver_->vector(vectorP).addTerm(tmpVec_,0);
-  tmpVec_ = pconstComComRef_[nb] * -comRef_->global.y;
+  tmpVec_ = pconstComObjComRef_[nb] * -comRef_->global.y;
   solver_->vector(vectorP).addTerm(tmpVec_,N);
 
 }

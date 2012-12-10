@@ -33,9 +33,9 @@ void QPGeneratorOrientation::precomputeObjective(){
   int nbUsedPonderations = generalData_->ponderation.baseJerkMin.size();
 
   Qconst_.resize(nbUsedPonderations);
-  pconstCoMYaw_.resize(nbUsedPonderations);
-  pconstVelRef_.resize(nbUsedPonderations);
-  pconstPosRef_.resize(nbUsedPonderations);
+  pconstCoMState.resize(nbUsedPonderations);
+  pconstBaseVelRef_.resize(nbUsedPonderations);
+  pconstBasePosRef_.resize(nbUsedPonderations);
 
   int N = generalData_->nbSamplesQP;
 
@@ -46,17 +46,17 @@ void QPGeneratorOrientation::precomputeObjective(){
 
   for (int i = 0; i < nbUsedPonderations; ++i) {
       Qconst_[i].resize(N,N);
-      pconstCoMYaw_[i].resize(N,5);
-      pconstVelRef_[i].resize(N,N);
-      pconstPosRef_[i].resize(N,N);
+      pconstCoMState[i].resize(N,5);
+      pconstBaseVelRef_[i].resize(N,N);
+      pconstBasePosRef_[i].resize(N,N);
 
       Qconst_[i] = generalData_->ponderation.OrientationJerkMin[i] * idN
           + generalData_->ponderation.OrientationInstantVelocity[i] * CoMVelDynamics.UT*CoMVelDynamics.U
           + generalData_->ponderation.OrientationPosition[i] * CoMPosDynamics.UT*CoMPosDynamics.U;
 
-      pconstVelRef_[i] = -generalData_->ponderation.OrientationInstantVelocity[i] * CoMVelDynamics.UT;
-      pconstPosRef_[i] = -generalData_->ponderation.OrientationPosition[i] * CoMPosDynamics.UT;
-      pconstCoMYaw_[i] = -pconstVelRef_[i] * CoMVelDynamics.S - pconstPosRef_[i] * CoMPosDynamics.S;
+      pconstBaseVelRef_[i] = -generalData_->ponderation.OrientationInstantVelocity[i] * CoMVelDynamics.UT;
+      pconstBasePosRef_[i] = -generalData_->ponderation.OrientationPosition[i] * CoMPosDynamics.UT;
+      pconstCoMState[i] = -pconstBaseVelRef_[i] * CoMVelDynamics.S - pconstBasePosRef_[i] * CoMPosDynamics.S;
 
     }
 }
@@ -71,13 +71,13 @@ void QPGeneratorOrientation::buildObjective() {
   solver_->nbVar(N);
   solver_->matrix(matrixQ).setTerm(Qconst_[nb]);
 
-  tmpVec_ = pconstCoMYaw_[nb] * CoM.yaw;
+  tmpVec_ = pconstCoMState[nb] * CoM.yaw;
   solver_->vector(vectorP).setTerm(tmpVec_);
 
-  tmpVec_ = pconstVelRef_[nb] * velRef_->global.yaw;
+  tmpVec_ = pconstBaseVelRef_[nb] * velRef_->global.yaw;
   solver_->vector(vectorP).addTerm(tmpVec_);
 
-  tmpVec_ = pconstPosRef_[nb] * posRef_->global.yaw;
+  tmpVec_ = pconstBasePosRef_[nb] * posRef_->global.yaw;
   solver_->vector(vectorP).addTerm(tmpVec_);
 }
 

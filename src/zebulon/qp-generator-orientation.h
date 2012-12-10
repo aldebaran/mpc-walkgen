@@ -63,9 +63,9 @@ namespace MPCWalkgen{
       Eigen::VectorXd tmpVec_;
 
       std::vector<Eigen::MatrixXd> Qconst_;
-      std::vector<Eigen::MatrixXd> pconstCoMYaw_;
-      std::vector<Eigen::MatrixXd> pconstVelRef_;
-      std::vector<Eigen::MatrixXd> pconstPosRef_;
+      std::vector<Eigen::MatrixXd> pconstCoMState;
+      std::vector<Eigen::MatrixXd> pconstBaseVelRef_;
+      std::vector<Eigen::MatrixXd> pconstBasePosRef_;
 
     };
   }
