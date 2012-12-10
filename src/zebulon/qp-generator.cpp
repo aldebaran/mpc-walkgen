@@ -11,7 +11,7 @@ using namespace Zebulon;
 using namespace Eigen;
 
 QPGenerator::QPGenerator(QPSolver * solver, Reference * velRef, Reference * posRef,
-             Reference *posIntRef, Reference * comRef, RigidBodySystem *robot,
+             Reference *posIntRef, Reference * comRef, Reference * copRef, RigidBodySystem *robot,
              const MPCData *generalData, const RobotData *robotData)
   :solver_(solver)
   ,robot_(robot)
@@ -19,6 +19,7 @@ QPGenerator::QPGenerator(QPSolver * solver, Reference * velRef, Reference * posR
   ,posRef_(posRef)
   ,posIntRef_(posIntRef)
   ,comRef_(comRef)
+  ,copRef_(copRef)
   ,generalData_(generalData)
   ,robotData_(robotData)
   ,tmpVec_(1)
@@ -270,9 +271,9 @@ void QPGenerator::buildObjective() {
   computePartOfVectorP(pconstBaseObjPosRef_[nb], posRef_->global, 2*N);
   computePartOfVectorP(pconstBaseObjPosIntRef_[nb], posIntRef_->global, 2*N);
 
-  computePartOfVectorP(pconstBaseObjCopRef_[nb], comRef_->global, 2*N);
-  computePartOfVectorP(pCoPconstComObjCopRefX_[nb], comRef_->global.x, 0);
-  computePartOfVectorP(pCoPconstComObjCopRefY_[nb], comRef_->global.y, N);
+  computePartOfVectorP(pconstBaseObjCopRef_[nb], copRef_->global, 2*N);
+  computePartOfVectorP(pCoPconstComObjCopRefX_[nb], copRef_->global.x, 0);
+  computePartOfVectorP(pCoPconstComObjCopRefY_[nb], copRef_->global.y, N);
 
   computePartOfVectorP(pconstComObjComRef_[nb], comRef_->global, 0);
   computePartOfVectorP(pconstBaseObjComRef_[nb], comRef_->global, 2*N);
@@ -519,6 +520,11 @@ void QPGenerator::computeReferenceVector(const GlobalSolution & result){
     comRef_->global.y.setZero(generalData_->nbSamplesQP);
   }
 
+  if (copRef_->global.x.rows()!=generalData_->nbSamplesQP){
+    copRef_->global.x.setZero(generalData_->nbSamplesQP);
+    copRef_->global.y.setZero(generalData_->nbSamplesQP);
+  }
+
   for (int i=0;i<generalData_->nbSamplesQP;++i){
 
     velRef_->global.x(i) += velRef_->local.x(i)*cosYaw_(i)-velRef_->local.y(i)*sinYaw_(i);
@@ -527,6 +533,8 @@ void QPGenerator::computeReferenceVector(const GlobalSolution & result){
     comRef_->global.x(i) = comRef_->local.x(i)*cosYaw_(i)-comRef_->local.y(i)*sinYaw_(i);
     comRef_->global.y(i) = comRef_->local.x(i)*sinYaw_(i)+comRef_->local.y(i)*cosYaw_(i);
 
+    copRef_->global.x(i) = copRef_->local.x(i)*cosYaw_(i)-copRef_->local.y(i)*sinYaw_(i);
+    copRef_->global.y(i) = copRef_->local.x(i)*sinYaw_(i)+copRef_->local.y(i)*cosYaw_(i);
   }
 }
 

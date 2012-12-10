@@ -46,7 +46,7 @@ Walkgen::Walkgen(::MPCWalkgen::QPSolverType solvertype)
           mpcData_.nbSamplesQP, 2*mpcData_.nbSamplesQP);
   interpolation_ = new Interpolation();
   robot_ = new RigidBodySystem(&mpcData_, &robotData_, interpolation_);
-  generator_= new QPGenerator(solver_, &velRef_, &posRef_, &posIntRef_, &comRef_, robot_, &mpcData_, &robotData_);
+  generator_= new QPGenerator(solver_, &velRef_, &posRef_, &posIntRef_, &comRef_, &copRef_, robot_, &mpcData_, &robotData_);
   generatorOrientation_= new QPGeneratorOrientation(solverOrientation_, &velRef_, &posRef_, &posIntRef_, robot_, &mpcData_, &robotData_);
 
 }
@@ -161,10 +161,6 @@ void Walkgen::robotData(const RobotData &robotData){
     return;
   }
 
-  if (fabs(robotData.deltaComXLocal-tmpRobotData.deltaComXLocal)>EPSILON){
-    comRef_.local.x.fill(-robotData.deltaComXLocal);
-  }
-
   if (fabs(robotData.gravity(0)-tmpRobotData.gravity(0))>EPSILON
    || fabs(robotData.gravity(1)-tmpRobotData.gravity(1))>EPSILON
    || fabs(robotData.gravity(2)-tmpRobotData.gravity(2))>EPSILON
@@ -226,7 +222,10 @@ void Walkgen::init() {
   newPosIntRef_.resize(mpcData_.nbSamplesQP);
 
   comRef_.resize(mpcData_.nbSamplesQP);
-  comRef_.local.x.fill(robotData_.deltaComXLocal);
+  newcomRef_.resize(mpcData_.nbSamplesQP);
+
+  copRef_.resize(mpcData_.nbSamplesQP);
+  newcopRef_.resize(mpcData_.nbSamplesQP);
 
   initAlreadyCalled_ = true;
 }
@@ -252,6 +251,8 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
       velRef_ = newVelRef_;
       posRef_ = newPosRef_;
       posIntRef_ = newPosIntRef_;
+      comRef_ = newcomRef_;
+      copRef_ = newcopRef_;
 
       upperTimeLimitToFeedback_ += mpcData_.MPCSamplingPeriod;
 
@@ -331,6 +332,29 @@ void Walkgen::posIntReferenceInGlobalFrame(Eigen::VectorXd dx, Eigen::VectorXd d
   newPosIntRef_.global.yaw=dyaw;
 }
 
+void Walkgen::copReferenceInLocalFrame(double dx, double dy, double dyaw){
+  newcopRef_.local.x.fill(dx);
+  newcopRef_.local.y.fill(dy);
+  newcopRef_.local.yaw.fill(dyaw);
+}
+
+void Walkgen::copReferenceInLocalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw){
+  newcopRef_.local.x=dx;
+  newcopRef_.local.y=dy;
+  newcopRef_.local.yaw=dyaw;
+}
+
+void Walkgen::comReferenceInLocalFrame(double dx, double dy, double dyaw){
+  newcomRef_.local.x.fill(dx);
+  newcomRef_.local.y.fill(dy);
+  newcomRef_.local.yaw.fill(dyaw);
+}
+
+void Walkgen::comReferenceInLocalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw){
+  newcomRef_.local.x=dx;
+  newcomRef_.local.y=dy;
+  newcomRef_.local.yaw=dyaw;
+}
 
 const BodyState & Walkgen::bodyState(BodyType body)const{
   return robot_->body(body)->state();
