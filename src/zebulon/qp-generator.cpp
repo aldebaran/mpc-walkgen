@@ -208,6 +208,36 @@ void QPGenerator::precomputeObjective(){
   }
 }
 
+void QPGenerator::computePartOfVectorP(const Eigen::MatrixXd & precomputedMatrix,
+                                       const Eigen::VectorXd & state,
+                                       int pos,
+                                       bool setTerm){
+  tmpVec_ = precomputedMatrix * state;
+
+  if (setTerm){
+    solver_->vector(vectorP).setTerm(tmpVec_,pos);
+  }else{
+    solver_->vector(vectorP).addTerm(tmpVec_,pos);
+  }
+
+}
+
+void QPGenerator::computePartOfVectorP(const Eigen::MatrixXd & precomputedMatrix,
+                                       const BodyState & state,
+                                       int pos,
+                                       bool setTerm){
+  computePartOfVectorP(precomputedMatrix, state.x, pos, setTerm);
+  computePartOfVectorP(precomputedMatrix, state.y, pos+generalData_->nbSamplesQP, setTerm);
+}
+
+
+void QPGenerator::computePartOfVectorP(const Eigen::MatrixXd & precomputedMatrix,
+                                       const Reference::Frame & state,
+                                       int pos,
+                                       bool setTerm){
+  computePartOfVectorP(precomputedMatrix, state.x, pos, setTerm);
+  computePartOfVectorP(precomputedMatrix, state.y, pos+generalData_->nbSamplesQP, setTerm);
+}
 
 void QPGenerator::buildObjective() {
 
@@ -222,75 +252,31 @@ void QPGenerator::buildObjective() {
   solver_->matrix(matrixQ).setTerm(Qconst_[nb]);
   solver_->matrix(matrixQ).addTerm(QCoPconst_[nb]);
 
-  tmpVec_ = pconstComObjComState_[nb] * CoM.x;
-  solver_->vector(vectorP).setTerm(tmpVec_,0);
-  tmpVec_ = pconstComObjComState_[nb] * CoM.y;
-  solver_->vector(vectorP).setTerm(tmpVec_,N);
+  computePartOfVectorP(pconstComObjComState_[nb], CoM, 0, true);
+  computePartOfVectorP(pCoPconstComObjComStateX_[nb], CoM.x, 0);
+  computePartOfVectorP(pCoPconstComObjComStateY_[nb], CoM.y, N);
 
-  tmpVec_ = pCoPconstComObjComStateX_[nb] * CoM.x;
-  solver_->vector(vectorP).addTerm(tmpVec_,0);
-  tmpVec_ = pCoPconstComObjComStateY_[nb] * CoM.y;
-  solver_->vector(vectorP).addTerm(tmpVec_,N);
+  computePartOfVectorP(pconstBaseObjComState[nb], CoM, 2*N);
+  computePartOfVectorP(pCoPconstBaseObjComStateX_[nb], CoM.x, 2*N);
+  computePartOfVectorP(pCoPconstBaseObjComStateY_[nb], CoM.y, 3*N);
 
-  tmpVec_ = pconstBaseObjComState[nb] * CoM.x;
-  solver_->vector(vectorP).setTerm(tmpVec_,2*N);
-  tmpVec_ = pconstBaseObjComState[nb] * CoM.y;
-  solver_->vector(vectorP).setTerm(tmpVec_,3*N);
+  computePartOfVectorP(pconstComObjBaseState[nb], base, 0);
+  computePartOfVectorP(pCoPconstComObjBaseStateX_[nb], base.x, 0);
+  computePartOfVectorP(pCoPconstComObjBaseStateY_[nb], base.y, N);
 
-  tmpVec_ = pCoPconstBaseObjComStateX_[nb] * CoM.x;
-  solver_->vector(vectorP).addTerm(tmpVec_,2*N);
-  tmpVec_ = pCoPconstBaseObjComStateY_[nb] * CoM.y;
-  solver_->vector(vectorP).addTerm(tmpVec_,3*N);
+  computePartOfVectorP(pconstBaseObjBaseState[nb], base, 2*N);
 
-  tmpVec_ = pconstComObjBaseState[nb] * base.x;
-  solver_->vector(vectorP).addTerm(tmpVec_,0);
-  tmpVec_ = pconstComObjBaseState[nb] * base.y;
-  solver_->vector(vectorP).addTerm(tmpVec_,N);
+  computePartOfVectorP(pconstBaseObjVelRef_[nb], velRef_->global, 2*N);
+  computePartOfVectorP(pconstBaseObjPosRef_[nb], posRef_->global, 2*N);
+  computePartOfVectorP(pconstBaseObjPosIntRef_[nb], posIntRef_->global, 2*N);
 
-  tmpVec_ = pCoPconstComObjBaseStateX_[nb] * base.x;
-  solver_->vector(vectorP).addTerm(tmpVec_,0);
-  tmpVec_ = pCoPconstComObjBaseStateY_[nb] * base.y;
-  solver_->vector(vectorP).addTerm(tmpVec_,N);
+  computePartOfVectorP(pconstBaseObjCopRef_[nb], comRef_->global, 2*N);
+  computePartOfVectorP(pCoPconstComObjCopRefX_[nb], comRef_->global.x, 0);
+  computePartOfVectorP(pCoPconstComObjCopRefY_[nb], comRef_->global.y, N);
 
-  tmpVec_ = pconstBaseObjBaseState[nb] * base.x;
-  solver_->vector(vectorP).addTerm(tmpVec_,2*N);
-  tmpVec_ = pconstBaseObjBaseState[nb] * base.y;
-  solver_->vector(vectorP).addTerm(tmpVec_,3*N);
+  computePartOfVectorP(pconstComObjComRef_[nb], comRef_->global, 0);
+  computePartOfVectorP(pconstBaseObjComRef_[nb], comRef_->global, 2*N);
 
-  tmpVec_ = pconstBaseObjVelRef_[nb] * velRef_->global.x;
-  solver_->vector(vectorP).addTerm(tmpVec_,2*N);
-  tmpVec_ = pconstBaseObjVelRef_[nb] * velRef_->global.y;
-  solver_->vector(vectorP).addTerm(tmpVec_,3*N);
-
-  tmpVec_ = pconstBaseObjPosRef_[nb] * posRef_->global.x;
-  solver_->vector(vectorP).addTerm(tmpVec_,2*N);
-  tmpVec_ = pconstBaseObjPosRef_[nb] * posRef_->global.y;
-  solver_->vector(vectorP).addTerm(tmpVec_,3*N);
-
-  tmpVec_ = pconstBaseObjPosIntRef_[nb] * posIntRef_->global.x;
-  solver_->vector(vectorP).addTerm(tmpVec_,2*N);
-  tmpVec_ = pconstBaseObjPosIntRef_[nb] * posIntRef_->global.y;
-  solver_->vector(vectorP).addTerm(tmpVec_,3*N);
-
-  tmpVec_ = pconstBaseObjCopRef_[nb] * -comRef_->global.x;
-  solver_->vector(vectorP).addTerm(tmpVec_,2*N);
-  tmpVec_ = pconstBaseObjCopRef_[nb] * -comRef_->global.y;
-  solver_->vector(vectorP).addTerm(tmpVec_,3*N);
-
-  tmpVec_ = pCoPconstComObjCopRefX_[nb] * -comRef_->global.x;
-  solver_->vector(vectorP).addTerm(tmpVec_,0);
-  tmpVec_ = pCoPconstComObjCopRefY_[nb] * -comRef_->global.y;
-  solver_->vector(vectorP).addTerm(tmpVec_,N);
-
-  tmpVec_ = pconstBaseObjComRef_[nb] * -comRef_->global.x;
-  solver_->vector(vectorP).addTerm(tmpVec_,2*N);
-  tmpVec_ = pconstBaseObjComRef_[nb] * -comRef_->global.y;
-  solver_->vector(vectorP).addTerm(tmpVec_,3*N);
-
-  tmpVec_ = pconstComObjComRef_[nb] * -comRef_->global.x;
-  solver_->vector(vectorP).addTerm(tmpVec_,0);
-  tmpVec_ = pconstComObjComRef_[nb] * -comRef_->global.y;
-  solver_->vector(vectorP).addTerm(tmpVec_,N);
 
 }
 

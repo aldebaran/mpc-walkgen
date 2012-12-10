@@ -162,7 +162,7 @@ void Walkgen::robotData(const RobotData &robotData){
   }
 
   if (fabs(robotData.deltaComXLocal-tmpRobotData.deltaComXLocal)>EPSILON){
-    comRef_.local.x.fill(robotData.deltaComXLocal);
+    comRef_.local.x.fill(-robotData.deltaComXLocal);
   }
 
   if (fabs(robotData.gravity(0)-tmpRobotData.gravity(0))>EPSILON

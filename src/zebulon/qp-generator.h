@@ -57,6 +57,20 @@ namespace MPCWalkgen{
 
       void computeOrientationMatrices(const GlobalSolution & result);
 
+      void computePartOfVectorP(const Eigen::MatrixXd & precomputedMatrix,
+                                const Eigen::VectorXd & state,
+                                int pos,
+                                bool setTerm=false);
+
+      void computePartOfVectorP(const Eigen::MatrixXd & precomputedMatrix,
+                                const BodyState & state,
+                                int pos,
+                                bool setTerm=false);
+
+      void computePartOfVectorP(const Eigen::MatrixXd & precomputedMatrix,
+                                const Reference::Frame & state,
+                                int pos,
+                                bool setTerm=false);
     private:
 
       QPSolver * solver_;
