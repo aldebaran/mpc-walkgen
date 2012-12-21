@@ -332,28 +332,24 @@ void Walkgen::posIntReferenceInGlobalFrame(Eigen::VectorXd dx, Eigen::VectorXd d
   newPosIntRef_.global.yaw=dyaw;
 }
 
-void Walkgen::copReferenceInLocalFrame(double dx, double dy, double dyaw){
+void Walkgen::copReferenceInLocalFrame(double dx, double dy){
   newcopRef_.local.x.fill(dx);
   newcopRef_.local.y.fill(dy);
-  newcopRef_.local.yaw.fill(dyaw);
 }
 
-void Walkgen::copReferenceInLocalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw){
+void Walkgen::copReferenceInLocalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy){
   newcopRef_.local.x=dx;
   newcopRef_.local.y=dy;
-  newcopRef_.local.yaw=dyaw;
 }
 
-void Walkgen::comReferenceInLocalFrame(double dx, double dy, double dyaw){
+void Walkgen::comReferenceInLocalFrame(double dx, double dy){
   newcomRef_.local.x.fill(dx);
   newcomRef_.local.y.fill(dy);
-  newcomRef_.local.yaw.fill(dyaw);
 }
 
-void Walkgen::comReferenceInLocalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw){
+void Walkgen::comReferenceInLocalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy){
   newcomRef_.local.x=dx;
   newcomRef_.local.y=dy;
-  newcomRef_.local.yaw=dyaw;
 }
 
 const BodyState & Walkgen::bodyState(BodyType body)const{

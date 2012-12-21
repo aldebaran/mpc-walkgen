@@ -71,10 +71,10 @@ namespace MPCWalkgen{
       virtual void posReferenceInGlobalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw) = 0;
       virtual void posIntReferenceInGlobalFrame(double dx, double dy, double dyaw) = 0;
       virtual void posIntReferenceInGlobalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw) = 0;
-      virtual void copReferenceInLocalFrame(double dx, double dy, double dyaw) = 0;
-      virtual void copReferenceInLocalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw) = 0;
-      virtual void comReferenceInLocalFrame(double dx, double dy, double dyaw) = 0;
-      virtual void comReferenceInLocalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw) = 0;
+      virtual void copReferenceInLocalFrame(double dx, double dy) = 0;
+      virtual void copReferenceInLocalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy) = 0;
+      virtual void comReferenceInLocalFrame(double dx, double dy) = 0;
+      virtual void comReferenceInLocalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy) = 0;
 
       /// \}
 

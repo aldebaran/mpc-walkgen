@@ -59,10 +59,10 @@ namespace MPCWalkgen{
       virtual void posReferenceInGlobalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw);
       virtual void posIntReferenceInGlobalFrame(double dx, double dy, double dyaw);
       virtual void posIntReferenceInGlobalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw);
-      virtual void copReferenceInLocalFrame(double dx, double dy, double dyaw);
-      virtual void copReferenceInLocalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw);
-      virtual void comReferenceInLocalFrame(double dx, double dy, double dyaw);
-      virtual void comReferenceInLocalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw);
+      virtual void copReferenceInLocalFrame(double dx, double dy);
+      virtual void copReferenceInLocalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy);
+      virtual void comReferenceInLocalFrame(double dx, double dy);
+      virtual void comReferenceInLocalFrame(Eigen::VectorXd dx, Eigen::VectorXd dy);
 
       virtual const BodyState & bodyState(BodyType body)const;
       virtual void bodyState(BodyType body, const BodyState & state);
