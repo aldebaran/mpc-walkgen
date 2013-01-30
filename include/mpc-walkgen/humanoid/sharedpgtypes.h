@@ -17,9 +17,11 @@
 #include <Eigen/Dense>
 #include <vector>
 
-
-
-
+#ifdef _MSC_VER
+# pragma warning( push )
+// disable warning C4251: need to have DLL interface
+# pragma warning( disable: 4251 )
+#endif
 
 namespace MPCWalkgen{
   namespace Humanoid{
@@ -250,5 +252,9 @@ namespace MPCWalkgen{
     };
   }
 }
+
+#ifdef _MSC_VER
+# pragma warning( pop )
+#endif
 
 #endif // MPC_WALKGEN_HUMANOID_SHAREDPGTYPE_H
