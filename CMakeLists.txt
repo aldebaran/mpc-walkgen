@@ -54,27 +54,26 @@ macro(addSolverToEnum solver value)
 endmacro()
 addSolverToEnum("LSSOL" "0")
 addSolverToEnum("QPOASES" "1")
-set(_inc include/mpc-walkgen/common/qp-solver-type.h)
+set(_inc mpc-walkgen/common/qp-solver-type.h)
 
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/${_inc}.in" "${CMAKE_CURRENT_BINARY_DIR}/${_inc}" @ONLY)
-qi_install_header("${CMAKE_CURRENT_BINARY_DIR}/${_inc}" SUBFOLDER mpc-walkgen/common)
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/${_inc}.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/${_inc}" @ONLY)
+set_source_files_properties("${CMAKE_CURRENT_BINARY_DIR}/${_inc}" GENERATED)
 
-add_subdirectory("include")
+qi_install_header("${CMAKE_CURRENT_BINARY_DIR}/${_inc}"
+  SUBFOLDER mpc-walkgen/common)
 
-# Define the set of headers to be installed
-# Do *not* name it ${PROJECT_NAME}_HEADERS to prevent jrlcmake to try
-# installing them automatically (it would mix up the subdirectories)
-set(_HEADERS_NOJRL
-  include/mpc-walkgen/common/api.h
-  ${CMAKE_CURRENT_BINARY_DIR}/include/mpc-walkgen/common/qp-solver-type.h
-  include/mpc-walkgen/common/sharedpgtypes.h
+set(_HEADERS_GENERATED
+  ${CMAKE_CURRENT_BINARY_DIR}/${_inc})
 
-  include/mpc-walkgen/humanoid/walkgen-abstract.h
-  include/mpc-walkgen/humanoid/sharedpgtypes.h
+set(_HEADERS_NOT_GENERATED
+  mpc-walkgen/common/api.h
+  mpc-walkgen/humanoid/walkgen-abstract.h
+  mpc-walkgen/humanoid/sharedpgtypes.h
+  mpc-walkgen/zebulon/walkgen-abstract.h
+  mpc-walkgen/zebulon/sharedpgtypes.h)
 
-  include/mpc-walkgen/zebulon/walkgen-abstract.h
-  include/mpc-walkgen/zebulon/sharedpgtypes.h
-)
+qi_install_header(${_HEADERS_NOT_GENERATED} KEEP_RELATIVE_PATHS)
 
 SET(mpc-walkgen_SRC
   src/common/types.cpp
@@ -149,10 +148,13 @@ if(WITH_QPOASES)
   list(APPEND mpc-walkgen_SRC src/common/qp-solvers/qpoases-solver.cpp)
 endif()
 
-include_directories("${CMAKE_CURRENT_BINARY_DIR}/include")
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
+include_directories("${CMAKE_CURRENT_BINARY_DIR}")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 
-qi_create_lib(mpc-walkgen SHARED ${mpc-walkgen_SRC} ${_HEADERS})
+qi_create_lib(mpc-walkgen SHARED
+  ${mpc-walkgen_SRC}
+  ${_HEADERS_GENERATED}
+  ${_HEADERS_NOT_GENERATED})
 qi_use_lib(mpc-walkgen eigen3 QI)
 if(WITH_LSSOL)
   qi_use_lib(mpc-walkgen LSSOL)
