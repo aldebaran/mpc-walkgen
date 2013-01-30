@@ -56,12 +56,14 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
   if (NULL != tz)
     {
       if (!tzflag)
-	{
-	  _tzset();
-	  tzflag++;
-	}
-      tz->tz_minuteswest = _timezone / 60;
-      tz->tz_dsttime = _daylight;
+      {
+        _tzset();
+        tzflag++;
+      }
+      long seconds;
+      _get_timezone(&seconds);
+      tz->tz_minuteswest =  static_cast<int>(seconds/60);
+      _get_daylight(&(tz->tz_dsttime));
     }
 
   return 0;
