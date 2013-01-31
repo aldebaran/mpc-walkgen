@@ -104,9 +104,9 @@ int main() {
 		robotData.CoPLeftDSHull.y(i) = DefaultCoPDSEdgesY[i];
 
 		robotData.CoPRightSSHull.x(i) = DefaultCoPSSEdgesX[i];
-		robotData.CoPRightSSHull.y(i) =- DefaultCoPSSEdgesY[i];
+		robotData.CoPRightSSHull.y(i) = -DefaultCoPSSEdgesY[i];
 		robotData.CoPRightDSHull.x(i) = DefaultCoPDSEdgesX[i];
-		robotData.CoPRightDSHull.y(i) =- DefaultCoPDSEdgesY[i];
+		robotData.CoPRightDSHull.y(i) = -DefaultCoPDSEdgesY[i];
 	}
 
 	// Create and initialize generator:
