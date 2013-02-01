@@ -19,6 +19,11 @@ if(WITH_QPOASES)
   list(APPEND qpsolverhumanoid_SRC ../src/common/qp-solvers/qpoases-solver.cpp)
 endif()
 qi_create_lib(qpsolverhumanoid STATIC INTERNAL ${qpsolverhumanoid_SRC})
+function(set_static target)
+  set_target_properties(${target} PROPERTIES
+    COMPILE_FLAGS "-Dmpc_walkgen_STATIC_BUILD=1")
+endfunction()
+set_static(qpsolverhumanoid)
 qi_stage_lib(qpsolverhumanoid)
 
 # the timer library holds some timing and benchmark tools.
@@ -39,7 +44,7 @@ endif()
 qi_create_test(bench-qpsolver
   SRC bench/bench-qpsolver.cpp
   DEPENDS qpsolverhumanoid timer ${solverAvailable})
-
+set_static(bench-qpsolver)
 # a simple execution of the walkgen.
 if(WITH_LSSOL AND WITH_QPOASES)
   qi_create_test(bench-solvers-humanoid
@@ -72,11 +77,13 @@ endif()
 qi_create_test(test-qpsolver
   SRC unit-test/test-qpsolver.cpp
   DEPENDS qpsolverhumanoid ${solverAvailable})
+set_static(test-qpsolver)
 
 # Compare LSSOL and qpOASES.
 qi_create_test(test-all-solvers
   SRC unit-test/test-all-solvers.cpp
   DEPENDS qpsolverhumanoid ${solverAvailable})
+set_static(test-all-solvers)
 
 ############
 #API tests
