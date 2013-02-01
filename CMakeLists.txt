@@ -166,9 +166,4 @@ if(WITH_QPOASES)
 endif()
 qi_stage_lib(mpc-walkgen)
 
-# Define subdirectories to explore for cmake
-if(NOT WIN32)
-  # mpc-walkgen makes qibuild test dead-lock on the Aldebaran buildfarm on
-  # windows. Disable them until we find out what happens.
-  add_subdirectory(test)
-endif()
+add_subdirectory(test)
