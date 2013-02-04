@@ -68,6 +68,7 @@ set(_HEADERS_GENERATED
 
 set(_HEADERS_NOT_GENERATED
   mpc-walkgen/common/api.h
+  mpc-walkgen/common/sharedpgtypes.h
   mpc-walkgen/humanoid/walkgen-abstract.h
   mpc-walkgen/humanoid/sharedpgtypes.h
   mpc-walkgen/zebulon/walkgen-abstract.h
