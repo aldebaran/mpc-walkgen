@@ -1,7 +1,6 @@
 #include "types.h"
 
-using namespace MPCWalkgen;
-using namespace Humanoid;
+using namespace MPCWalkgen::Humanoid;
 
 SelectionMatrices::SelectionMatrices(const MPCData & generalData)
   :V(generalData.nbSamplesQP,generalData.nbSamplesQP)
