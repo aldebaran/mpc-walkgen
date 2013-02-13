@@ -21,74 +21,74 @@
 
 namespace MPCWalkgen{
 
-	class QPSolver{
-		public:
-			static const int DefaultNbVarMax_;
-			static const int DefaultNbCtrMax_;
+  class QPSolver{
+    public:
+      static const int DefaultNbVarMax_;
+      static const int DefaultNbCtrMax_;
 
-		public:
-			QPSolver(const int nbVarMin=0, const int nbCtrMin=0, const int nbVarMax=DefaultNbVarMax_, const int nbCtrMax=DefaultNbCtrMax_);
-			virtual ~QPSolver()=0;
+    public:
+      QPSolver(const int nbVarMin=0, const int nbCtrMin=0, const int nbVarMax=DefaultNbVarMax_, const int nbCtrMax=DefaultNbCtrMax_);
+      virtual ~QPSolver()=0;
 
-			void reset();
-			virtual void solve(Eigen::VectorXd & qpSolution,
-					   Eigen::VectorXi & constraints,
-					   Eigen::VectorXd & initialSolution,
-					   Eigen::VectorXi & initialConstraints,
-					   bool useWarmStart)=0;
+      void reset();
+      virtual bool solve(Eigen::VectorXd & qpSolution,
+             Eigen::VectorXi & constraints,
+             Eigen::VectorXd & initialSolution,
+             Eigen::VectorXi & initialConstraints,
+             bool useWarmStart)=0;
 
-			void dump();
+      void dump();
 
-		public:
-			QPMatrix & matrix(const QPMatrixType type);
-			QPVector & vector(const QPVectorType type);
+    public:
+      QPMatrix & matrix(const QPMatrixType type);
+      QPVector & vector(const QPVectorType type);
 
-			void nbVar(const int nbVar);
-			inline int nbVar() const {return nbVar_;}
-			void nbCtr(const int nbCtr);
-			inline int nbCtr() const {return nbCtr_;}
-			void addNbCtr(const int addCtr);
+      void nbVar(const int nbVar);
+      inline int nbVar() const {return nbVar_;}
+      void nbCtr(const int nbCtr);
+      inline int nbCtr() const {return nbCtr_;}
+      void addNbCtr(const int addCtr);
 
-			void varOrder(const Eigen::VectorXi & order);
-			void ctrOrder(const Eigen::VectorXi & order);
+      void varOrder(const Eigen::VectorXi & order);
+      void ctrOrder(const Eigen::VectorXi & order);
 
-			virtual QPSolverType getType() const =0;
+      virtual QPSolverType getType() const =0;
 
-			// can we / should we use the cholesly matrix
-			virtual bool useCholesky() const =0;
-			virtual void useCholesky(bool)=0;
+      // can we / should we use the cholesly matrix
+      virtual bool useCholesky() const =0;
+      virtual void useCholesky(bool)=0;
 
-		protected:
-			virtual bool resizeAll();
+    protected:
+      virtual bool resizeAll();
 
-			void reorderInitialSolution(Eigen::VectorXd & initialSolution,
-						    Eigen::VectorXi & initialConstraints);
-			void reorderSolution(Eigen::VectorXd & qpSolution,
-					     Eigen::VectorXi & constraints,
-					     Eigen::VectorXi & initialConstraints);
+      void reorderInitialSolution(Eigen::VectorXd & initialSolution,
+                Eigen::VectorXi & initialConstraints);
+      void reorderSolution(Eigen::VectorXd & qpSolution,
+               Eigen::VectorXi & constraints,
+               Eigen::VectorXi & initialConstraints);
 
-		protected:
-			QPMatrix matrixQ_;
-			QPMatrix matrixA_;
-			QPVector vectorP_;
-			QPVector vectorBU_;
-			QPVector vectorBL_;
-			QPVector vectorXU_;
-			QPVector vectorXL_;
+    protected:
+      QPMatrix matrixQ_;
+      QPMatrix matrixA_;
+      QPVector vectorP_;
+      QPVector vectorBU_;
+      QPVector vectorBL_;
+      QPVector vectorXU_;
+      QPVector vectorXL_;
 
-			int nbVar_;
-			int nbCtr_;
-			int nbVarMax_;
-			int nbCtrMax_;
+      int nbVar_;
+      int nbCtr_;
+      int nbVarMax_;
+      int nbCtrMax_;
 
-			Eigen::VectorXi varOrder_;
-			Eigen::VectorXi ctrOrder_;
-	};
-	QPSolver* createQPSolver(QPSolverType solvertype,
-			int nbVarMin=0,
-			int nbCtrMin=0,
-			int nbVarMax=QPSolver::DefaultNbVarMax_,
-			int nbCtrMax=QPSolver::DefaultNbCtrMax_);
+      Eigen::VectorXi varOrder_;
+      Eigen::VectorXi ctrOrder_;
+  };
+  QPSolver* createQPSolver(QPSolverType solvertype,
+      int nbVarMin=0,
+      int nbCtrMin=0,
+      int nbVarMax=QPSolver::DefaultNbVarMax_,
+      int nbCtrMax=QPSolver::DefaultNbCtrMax_);
 }
 
 

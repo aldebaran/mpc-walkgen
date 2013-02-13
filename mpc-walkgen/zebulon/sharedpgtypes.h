@@ -121,6 +121,8 @@ namespace MPCWalkgen{
 
       };
       std::vector<State> state_vec;
+
+      bool solutionFound;
     };
   }
 }

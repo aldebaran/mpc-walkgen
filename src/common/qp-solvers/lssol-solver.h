@@ -21,45 +21,45 @@
 
 namespace MPCWalkgen{
 
-	class LSSOLSolver:public QPSolver{
-		public:
-			LSSOLSolver(const int nbVarMin=0, const int nbCtrMin=0, const int nbVarMax=QPSolver::DefaultNbVarMax_, const int nbCtrMax=QPSolver::DefaultNbCtrMax_);
-			virtual ~LSSOLSolver();
+  class LSSOLSolver:public QPSolver{
+    public:
+      LSSOLSolver(const int nbVarMin=0, const int nbCtrMin=0, const int nbVarMax=QPSolver::DefaultNbVarMax_, const int nbCtrMax=QPSolver::DefaultNbCtrMax_);
+      virtual ~LSSOLSolver();
 
-			// accessors
-			inline QPSolverType getType() const
-			{ return QPSOLVERTYPE_LSSOL; }
-			inline bool useCholesky() const
-			{ return useCholesky_; }
-			inline void useCholesky(bool /*ch*/)
-			{ }
+      // accessors
+      inline QPSolverType getType() const
+      { return QPSOLVERTYPE_LSSOL; }
+      inline bool useCholesky() const
+      { return useCholesky_; }
+      inline void useCholesky(bool /*ch*/)
+      { }
 
-			virtual void solve(Eigen::VectorXd & qpSolution,
-					   Eigen::VectorXi & constraints,
-					   Eigen::VectorXd & initialSolution,
-					   Eigen::VectorXi & initialConstraints,
-					   bool useWarmStart);
+      virtual bool solve(Eigen::VectorXd & qpSolution,
+             Eigen::VectorXi & constraints,
+             Eigen::VectorXd & initialSolution,
+             Eigen::VectorXi & initialConstraints,
+             bool useWarmStart);
 
-		protected:
-			virtual bool resizeAll();
+    protected:
+      virtual bool resizeAll();
 
-		protected:
-			Eigen::VectorXi kx_;
-			Eigen::VectorXd bb_;
-			Eigen::VectorXd lambda_;
-			Eigen::VectorXd bu_;
-			Eigen::VectorXd bl_;
+    protected:
+      Eigen::VectorXi kx_;
+      Eigen::VectorXd bb_;
+      Eigen::VectorXd lambda_;
+      Eigen::VectorXd bu_;
+      Eigen::VectorXd bl_;
 
-			int leniw_;
-			int lenw_;
-			Eigen::VectorXd war_;
-			Eigen::VectorXi iwar_;
+      int leniw_;
+      int lenw_;
+      Eigen::VectorXd war_;
+      Eigen::VectorXi iwar_;
 
-			int inform_;
-			int iter_;
-			double obj_;
-			bool useCholesky_;
-	};
+      int inform_;
+      int iter_;
+      double obj_;
+      bool useCholesky_;
+  };
 
 
 

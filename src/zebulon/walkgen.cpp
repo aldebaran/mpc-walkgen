@@ -270,7 +270,7 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
       generator_->buildConstraints();
       generator_->computeWarmStart(solution_);
 
-      solver_->solve(solution_.qpSolution, solution_.constraints,
+      solution_.mpcSolution.solutionFound = solver_->solve(solution_.qpSolution, solution_.constraints,
                      solution_.initialSolution, solution_.initialConstraints, solution_.useWarmStart);
 
       robot_->interpolateBodies(solution_, time, velRef_);

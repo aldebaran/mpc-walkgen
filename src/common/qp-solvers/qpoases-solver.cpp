@@ -7,11 +7,11 @@ using namespace Eigen;
 
 
 QPOasesSolver::QPOasesSolver(const int nbVarMin, const int nbCtrMin, const int nbVarMax, const int nbCtrMax)
-	:QPSolver(nbVarMin, nbCtrMin, nbVarMax, nbCtrMax)
-	,nbVarMin_(nbVarMin)
-	,nbCtrMin_(nbCtrMin)
-	,sizeNbCtr_(nbCtrMax-nbCtrMin+1)
-	,sizeNbVar_(nbVarMax-nbVarMin+1)
+  :QPSolver(nbVarMin, nbCtrMin, nbVarMax, nbCtrMax)
+  ,nbVarMin_(nbVarMin)
+  ,nbCtrMin_(nbCtrMin)
+  ,sizeNbCtr_(nbCtrMax-nbCtrMin+1)
+  ,sizeNbVar_(nbVarMax-nbVarMin+1)
 {
   // If one of the new throws (getting out of memory for instance)
   // All the memory allocated by the previous new will be leaked.
@@ -47,71 +47,67 @@ QPOasesSolver::~QPOasesSolver(){
   }
 }
 
-void QPOasesSolver::solve(VectorXd & qpSolution,
-			  VectorXi & constraints,
-			  VectorXd & initialSolution,
-			  VectorXi & initialConstraints,
-			  bool useWarmStart){
-	int varNumber = nbVar_- nbVarMin_;
-	int ctrNumber = nbCtr_ - nbCtrMin_;
-	int qpNumber = varNumber*sizeNbCtr_ + ctrNumber;
+bool QPOasesSolver::solve(VectorXd & qpSolution,
+        VectorXi & constraints,
+        VectorXd & initialSolution,
+        VectorXi & initialConstraints,
+        bool useWarmStart){
+  int varNumber = nbVar_- nbVarMin_;
+  int ctrNumber = nbCtr_ - nbCtrMin_;
+  int qpNumber = varNumber*sizeNbCtr_ + ctrNumber;
 
-	reorderInitialSolution(initialSolution, initialConstraints);
+  reorderInitialSolution(initialSolution, initialConstraints);
 
-	if (useWarmStart){
-		qpSolution = initialSolution;
-		constraints = initialConstraints;
-		for(int i=0;i<nbVar_;++i){
-		      if (constraints(i)==0){
-			   boundsInit_[varNumber]->setupBound(i,qpOASES::ST_INACTIVE);
-		      }else if (constraints(i)==1){
-			   boundsInit_[varNumber]->setupBound(i,qpOASES::ST_LOWER);
-		      }else{
-			   boundsInit_[varNumber]->setupBound(i,qpOASES::ST_UPPER);
-		      }
-		}
-		for(int i=0;i<nbCtr_;++i){
-		      if (constraints(nbVar_+i)==0){
-			   ctrInit_[ctrNumber]->setupConstraint(i,qpOASES::ST_INACTIVE);
-		      }else if (constraints(nbVar_+i)==1){
-			   ctrInit_[ctrNumber]->setupConstraint(i,qpOASES::ST_LOWER);
-		      }else{
-			   ctrInit_[ctrNumber]->setupConstraint(i,qpOASES::ST_UPPER);
-		      }
-		}
+  if (useWarmStart){
+    qpSolution = initialSolution;
+    constraints = initialConstraints;
+    for(int i=0;i<nbVar_;++i){
+          if (constraints(i)==0){
+         boundsInit_[varNumber]->setupBound(i,qpOASES::ST_INACTIVE);
+          }else if (constraints(i)==1){
+         boundsInit_[varNumber]->setupBound(i,qpOASES::ST_LOWER);
+          }else{
+         boundsInit_[varNumber]->setupBound(i,qpOASES::ST_UPPER);
+          }
+    }
+    for(int i=0;i<nbCtr_;++i){
+          if (constraints(nbVar_+i)==0){
+         ctrInit_[ctrNumber]->setupConstraint(i,qpOASES::ST_INACTIVE);
+          }else if (constraints(nbVar_+i)==1){
+         ctrInit_[ctrNumber]->setupConstraint(i,qpOASES::ST_LOWER);
+          }else{
+         ctrInit_[ctrNumber]->setupConstraint(i,qpOASES::ST_UPPER);
+          }
+    }
 
-	}else{
-		ctrInit_[ctrNumber]->setupAllInactive();
-		boundsInit_[varNumber]->setupAllFree();
-		if (qpSolution.rows()!=nbVar_){
-			qpSolution.setZero(nbVar_);
-		}else{
-			qpSolution.fill(0);
-		}
-		if (constraints.rows()!=nbVar_ + nbCtr_){
-			constraints.setZero(nbVar_ + nbCtr_);
-		}else{
-			constraints.fill(0);
-		}
-	}
+  }else{
+    ctrInit_[ctrNumber]->setupAllInactive();
+    boundsInit_[varNumber]->setupAllFree();
+    if (qpSolution.rows()!=nbVar_){
+      qpSolution.setZero(nbVar_);
+    }else{
+      qpSolution.fill(0);
+    }
+    if (constraints.rows()!=nbVar_ + nbCtr_){
+      constraints.setZero(nbVar_ + nbCtr_);
+    }else{
+      constraints.fill(0);
+    }
+  }
 
-	int ittMax=100;
+  int ittMax=100;
 
-	MatrixXd A = matrixA_().transpose();
+  MatrixXd A = matrixA_().transpose();
 
-	qp_[qpNumber]->init(matrixQ_().data(), vectorP_().data(), A.data(),
-		  vectorXL_().data(), vectorXU_().data(),
-		  vectorBL_().data(), vectorBU_().data(),
-		  ittMax, 0,
-		  qpSolution.data(),NULL,
-		  boundsInit_[varNumber], ctrInit_[ctrNumber]);
+  qp_[qpNumber]->init(matrixQ_().data(), vectorP_().data(), A.data(),
+      vectorXL_().data(), vectorXU_().data(),
+      vectorBL_().data(), vectorBU_().data(),
+      ittMax, 0,
+      qpSolution.data(),NULL,
+      boundsInit_[varNumber], ctrInit_[ctrNumber]);
 
 
         ::qpOASES::returnValue ret = qp_[qpNumber]->getPrimalSolution(qpSolution.data());
-
-        if (ret!=::qpOASES::SUCCESSFUL_RETURN){
-          std::cout << "[ERROR] MPC-Walkgen infeasible" << std::endl;
-        }
 
         qpOASES::Constraints ctr;
         qpOASES::Bounds bounds;
@@ -139,12 +135,17 @@ void QPOasesSolver::solve(VectorXd & qpSolution,
         reorderSolution(qpSolution, constraints, initialConstraints);
 
 
+        if (ret!=::qpOASES::SUCCESSFUL_RETURN){
+          std::cout << "[ERROR] MPC-Walkgen infeasible" << std::endl;
+          return false;
+        }
+        return true;
 }
 
 
 bool QPOasesSolver::resizeAll(){
-	bool maxSizechanged = QPSolver::resizeAll();
+  bool maxSizechanged = QPSolver::resizeAll();
 
-	return maxSizechanged;
+  return maxSizechanged;
 }
 

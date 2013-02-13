@@ -29,39 +29,39 @@ namespace MPCWalkgen{
 
 
 
-	class QPOasesSolver:public QPSolver{
-		public:
-			QPOasesSolver(const int nbVarMin=0, const int nbCtrMin=0, const int nbVarMax=QPSolver::DefaultNbVarMax_, const int nbCtrMax=QPSolver::DefaultNbCtrMax_);
-			virtual ~QPOasesSolver();
+  class QPOasesSolver:public QPSolver{
+    public:
+      QPOasesSolver(const int nbVarMin=0, const int nbCtrMin=0, const int nbVarMax=QPSolver::DefaultNbVarMax_, const int nbCtrMax=QPSolver::DefaultNbCtrMax_);
+      virtual ~QPOasesSolver();
 
-			// accessors
-			inline QPSolverType getType() const
-			{ return QPSOLVERTYPE_QPOASES; }
-			inline bool useCholesky() const
-			{ return false; }
-			inline void useCholesky(bool /*ch*/)
-			{}
+      // accessors
+      inline QPSolverType getType() const
+      { return QPSOLVERTYPE_QPOASES; }
+      inline bool useCholesky() const
+      { return false; }
+      inline void useCholesky(bool /*ch*/)
+      {}
 
-			virtual void solve(Eigen::VectorXd & qpSolution,
-					   Eigen::VectorXi & constraints,
-					   Eigen::VectorXd & initialSolution,
-					   Eigen::VectorXi & initialConstraints,
-					   bool useWarmStart);
+      virtual bool solve(Eigen::VectorXd & qpSolution,
+             Eigen::VectorXi & constraints,
+             Eigen::VectorXd & initialSolution,
+             Eigen::VectorXi & initialConstraints,
+             bool useWarmStart);
 
-		protected:
-			virtual bool resizeAll();
+    protected:
+      virtual bool resizeAll();
 
-		protected:
-			std::vector< ::qpOASES::QProblem*> qp_;
-			std::vector< ::qpOASES::Constraints*> ctrInit_;
-			std::vector< ::qpOASES::Bounds*> boundsInit_;
-			int nbVarMin_;
-			int nbCtrMin_;
-			int sizeNbCtr_;
-			int sizeNbVar_;
+    protected:
+      std::vector< ::qpOASES::QProblem*> qp_;
+      std::vector< ::qpOASES::Constraints*> ctrInit_;
+      std::vector< ::qpOASES::Bounds*> boundsInit_;
+      int nbVarMin_;
+      int nbCtrMin_;
+      int sizeNbCtr_;
+      int sizeNbVar_;
 
 
-	};
+  };
 
 
 
