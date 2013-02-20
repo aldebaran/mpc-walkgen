@@ -22,12 +22,9 @@
 namespace MPCWalkgen{
 
   class QPSolver{
-    public:
-      static const int DefaultNbVarMax_;
-      static const int DefaultNbCtrMax_;
 
     public:
-      QPSolver(const int nbVarMin=0, const int nbCtrMin=0, const int nbVarMax=DefaultNbVarMax_, const int nbCtrMax=DefaultNbCtrMax_);
+      QPSolver(const int nbVarMin, const int nbCtrMin, const int nbVarMax, const int nbCtrMax);
       virtual ~QPSolver()=0;
 
       void reset();
@@ -85,10 +82,15 @@ namespace MPCWalkgen{
       Eigen::VectorXi ctrOrder_;
   };
   QPSolver* createQPSolver(QPSolverType solvertype,
-      int nbVarMin=0,
-      int nbCtrMin=0,
-      int nbVarMax=QPSolver::DefaultNbVarMax_,
-      int nbCtrMax=QPSolver::DefaultNbCtrMax_);
+      int nbVarMin,
+      int nbCtrMin,
+      int nbVarMax,
+      int nbCtrMax);
+
+  QPSolver* createQPSolver(QPSolverType solvertype,
+      int nbVarMin,
+      int nbCtrMin);
+
 }
 
 

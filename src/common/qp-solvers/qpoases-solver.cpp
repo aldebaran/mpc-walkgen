@@ -5,7 +5,6 @@
 using namespace MPCWalkgen;
 using namespace Eigen;
 
-
 QPOasesSolver::QPOasesSolver(const int nbVarMin, const int nbCtrMin, const int nbVarMax, const int nbCtrMax)
   :QPSolver(nbVarMin, nbCtrMin, nbVarMax, nbCtrMax)
   ,nbVarMin_(nbVarMin)

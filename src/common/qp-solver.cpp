@@ -10,11 +10,6 @@
 using namespace MPCWalkgen;
 using namespace Eigen;
 
-
-//TODO: NB_VAR_MAX
-const int QPSolver::DefaultNbVarMax_=100;
-const int QPSolver::DefaultNbCtrMax_=100;
-
 QPSolver::QPSolver(const int nbVarMin, const int nbCtrMin, const int nbVarMax, const int nbCtrMax)
 	:matrixQ_(nbVarMin,nbVarMin,nbVarMax,nbVarMax)
 	,matrixA_(nbCtrMin,nbVarMin,nbCtrMax,nbVarMax)
@@ -217,4 +212,11 @@ QPSolver * MPCWalkgen::createQPSolver(QPSolverType solvertype,
 // the user could not ask for an unsupported QPSolverType, as the enum is
 // generated
 return solver;
+}
+
+
+QPSolver * MPCWalkgen::createQPSolver(QPSolverType solvertype,
+                         int nbVarMin,
+                         int nbCtrMin){
+  return createQPSolver(solvertype, nbVarMin, nbCtrMin, nbVarMin, nbCtrMin);
 }

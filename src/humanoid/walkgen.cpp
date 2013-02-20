@@ -95,13 +95,13 @@ void Walkgen::init() {
   assert(generalData_.QPSamplingPeriod >= generalData_.MPCSamplingPeriod);
 
   // Redistribute the X,Y vectors of variables inside the optimization problems
-
-  VectorXi order(QPSolver::DefaultNbVarMax_);
+  static const int lDefaultNbVarMax = 100;
+  VectorXi order(lDefaultNbVarMax);
   for(int i = 0; i < generalData_.nbSamplesQP; ++i) {// 0,2,4,1,3,5 (CoM)
       order(i) = 2*i;
       order(i+generalData_.nbSamplesQP) = 2*i+1;
     }
-  for(int i = 2*generalData_.nbSamplesQP; i < QPSolver::DefaultNbVarMax_; ++i) {// 6,7,8 (Feet)
+  for(int i = 2*generalData_.nbSamplesQP; i < lDefaultNbVarMax; ++i) {// 6,7,8 (Feet)
       order(i) = i;
     }
   solver_->varOrder(order);
