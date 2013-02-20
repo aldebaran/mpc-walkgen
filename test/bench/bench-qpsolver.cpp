@@ -10,6 +10,7 @@
 
 #include "../src/common/qp-solver.h"
 #include <mpc-walkgen/common/qp-solver-type.h>
+#include <memory>
 
 using namespace Eigen;
 using namespace MPCWalkgen;
@@ -18,22 +19,22 @@ using namespace Humanoid;
   Test whole body problem
 */
 
-bool testBenchmarkQP (QPSolver &qp, unsigned fDofWb, unsigned fNconstraints)
+bool testBenchmarkQP (const std::string& paths, QPSolver &qp,
+                      unsigned fDofWb, unsigned fNconstraints)
 {
+  bool isSuccess = false;
   // nb unknow and constraint of the current problem
   qp.nbVar(6+fDofWb);
   qp.nbCtr(fNconstraints);
 
-  std::string paths = std::string("./");
-
-  std::fstream s_H((paths+"wb_H").c_str(), std::fstream::in);
-  std::fstream s_g((paths+"wb_g").c_str(), std::fstream::in);
-  std::fstream s_A((paths+"wb_A").c_str(), std::fstream::in);
-  std::fstream s_lb((paths+"wb_lb").c_str(), std::fstream::in);
-  std::fstream s_ub((paths+"wb_ub").c_str(), std::fstream::in);
-  std::fstream s_lbA((paths+"wb_lbA").c_str(), std::fstream::in);
-  std::fstream s_ubA((paths+"wb_ubA").c_str(), std::fstream::in);
-  std::fstream s_solution((paths+"wb_solution").c_str(), std::fstream::in);
+  std::fstream s_H((paths+"/wb_H").c_str(), std::fstream::in);
+  std::fstream s_g((paths+"/wb_g").c_str(), std::fstream::in);
+  std::fstream s_A((paths+"/wb_A").c_str(), std::fstream::in);
+  std::fstream s_lb((paths+"/wb_lb").c_str(), std::fstream::in);
+  std::fstream s_ub((paths+"/wb_ub").c_str(), std::fstream::in);
+  std::fstream s_lbA((paths+"/wb_lbA").c_str(), std::fstream::in);
+  std::fstream s_ubA((paths+"/wb_ubA").c_str(), std::fstream::in);
+  std::fstream s_solution((paths+"/wb_solution").c_str(), std::fstream::in);
 
   if (
       !s_H.is_open() ||
@@ -47,8 +48,7 @@ bool testBenchmarkQP (QPSolver &qp, unsigned fDofWb, unsigned fNconstraints)
       )
   {
     std::cout << "data not found" << std::endl;
-    //EXPECT_TRUE(false);
-    return 1;
+    return isSuccess;
   }
 
   std::string line;
@@ -206,11 +206,8 @@ bool testBenchmarkQP (QPSolver &qp, unsigned fDofWb, unsigned fNconstraints)
       )
   {
     std::cout << "vector not same size." << std::endl;
-    return 0;
+    return isSuccess;
   }
-
-
-  bool isSuccess = true;
 
   MPCDebug debug(true);
 
@@ -239,7 +236,7 @@ bool testBenchmarkQP (QPSolver &qp, unsigned fDofWb, unsigned fNconstraints)
     result.reset();
     if (i==0)
     {
-      result.useWarmStart=false;
+      result.useWarmStart = false;
     }
     else
     {
@@ -254,7 +251,7 @@ bool testBenchmarkQP (QPSolver &qp, unsigned fDofWb, unsigned fNconstraints)
              result.useWarmStart);
     debug.getTime(1, false);
 
-
+    isSuccess = true;
     for (unsigned int j=0; j<6+fDofWb; j++)
     {
       if ((result.qpSolution(j)-solution_List.at(i)(j)) > 0.006 ||
@@ -266,47 +263,41 @@ bool testBenchmarkQP (QPSolver &qp, unsigned fDofWb, unsigned fNconstraints)
                   << " " << solution_List.at(i)(j) << std::endl;
         isSuccess = false;
       }
-
     }
   }
 
-
-//std::cout << "100%" << std::endl;
-//std::cout << "bench-qpsolver test :" << std::endl;
-std::cout << "\tMean iteration duration: " << debug.computeInterval(1) << " us" << std::endl;
-std::cout << "\tsuccess " << isSuccess << std::endl;
+  //std::cout << "100%" << std::endl;
+  //std::cout << "bench-qpsolver test :" << std::endl;
+  std::cout << "\tMean iteration duration: " << debug.computeInterval(1) << " us" << std::endl;
+  std::cout << "\tsuccess " << isSuccess << std::endl;
 
   return isSuccess;
 }
 
 
 
-int main()
+int main(int argc, char *argv[])
 {
-	bool success = true;
-
-	unsigned int fDofWb = 23;
-	unsigned int fNconstraints = 18;
-	QPSolver * solver = NULL;
-
+  if (argc != 2)
+  {
+    std::cout << "Usage:\n bench-qpsolver /path/to/data/dir" << std::endl;
+    return 1;
+  }
+  std::string data_dir(argv[1]);
+  unsigned int lDofWb = 23;
+  unsigned int lNconstraints = 18;
+  QPSolverType lSolverType;
 #ifdef MPC_WALKGEN_WITH_QPOASES
-	std::cout << "bench-qpsolver test qpOASES " << std::endl;
-	solver = createQPSolver(QPSOLVERTYPE_QPOASES, 6+fDofWb, fNconstraints);
-	success = testBenchmarkQP(*solver, fDofWb, fNconstraints) && success;
-	if (solver) {
-		delete solver;
-	}
-#endif //MPC_WALKGEN_WITH_QPOASES
+  std::cout << "bench-qpsolver test qpOASES " << std::endl;
+  lSolverType = QPSOLVERTYPE_QPOASES;
+#endif
 
 #ifdef MPC_WALKGEN_WITH_LSSOL
-	std::cout << "bench-qpsolver test LSSOL " << std::endl;
-	solver = createQPSolver(QPSOLVERTYPE_LSSOL, 6+fDofWb, fNconstraints);
-	success = testBenchmarkQP(*solver, fDofWb, fNconstraints) && success;
-	if (solver) {
-		delete solver;
-	}
-#endif //MPC_WALKGEN_WITH_LSSOL
-
-	//return (success ? 0 : 1);
-	return 0;
+  std::cout << "bench-qpsolver test LSSOL " << std::endl;
+  lSolverType = QPSOLVERTYPE_LSSOL;
+#endif
+  const std::auto_ptr<QPSolver> solver(
+      createQPSolver(lSolverType, 6+lDofWb, lNconstraints));
+  bool success = testBenchmarkQP(data_dir, *solver, lDofWb, lNconstraints);
+  return (success ? 0 : 1);
 }

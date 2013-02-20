@@ -43,7 +43,8 @@ endif()
 # Testing all the available qp solvers, using the QPSolver API
 qi_create_test(bench-qpsolver
   SRC bench/bench-qpsolver.cpp
-  DEPENDS qpsolverhumanoid timer ${solverAvailable})
+  DEPENDS qpsolverhumanoid timer ${solverAvailable}
+  ARGUMENTS ${CMAKE_CURRENT_SOURCE_DIR}/data)
 set_static(bench-qpsolver)
 # a simple execution of the walkgen.
 if(WITH_LSSOL AND WITH_QPOASES)
