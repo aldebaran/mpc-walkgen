@@ -20,8 +20,10 @@ if(WITH_QPOASES)
 endif()
 qi_create_lib(qpsolverhumanoid STATIC INTERNAL ${qpsolverhumanoid_SRC})
 function(set_static target)
-  set_target_properties(${target} PROPERTIES
-    COMPILE_FLAGS "-Dmpc_walkgen_STATIC_BUILD=1")
+  if(TARGET ${target})
+    set_target_properties(${target} PROPERTIES
+      COMPILE_FLAGS "-Dmpc_walkgen_STATIC_BUILD=1")
+  endif()
 endfunction()
 set_static(qpsolverhumanoid)
 qi_stage_lib(qpsolverhumanoid)
