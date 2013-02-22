@@ -41,8 +41,8 @@ RobotData::RobotData()
   ,deltaComXLocal(-0.042)
   ,baseLimit(3)
   ,orientationLimit(3)
-  ,comLimitX(0.071*0.8)
-  ,comLimitY(0.044*0.25)
+  ,comLimitX(0.025)
+  ,comLimitY(0.025)
   ,gravity(0,0,9.81)
 {
   baseLimit[0]=0.83*10;
@@ -68,7 +68,7 @@ QPPonderation::QPPonderation(int nb)
 {
 
   // Normal moveTo
-  CopCentering[0]        = 5;
+  CopCentering[0]        = 25;
   CoMCentering[0]        = 0;
   CoMJerkMin[0]          = 0.0001;
   baseJerkMin[0]         = 0;
@@ -81,7 +81,7 @@ QPPonderation::QPPonderation(int nb)
   OrientationJerkMin[0]         = 0;
 
   // More stable moveTo
-  CopCentering[1]        = 100;
+  CopCentering[1]        = 1000;
   CoMCentering[1]        = 0;
   CoMJerkMin[1]          = 0.0001;
   baseJerkMin[1]         = 0;
@@ -95,7 +95,7 @@ QPPonderation::QPPonderation(int nb)
 
 
   // Normal move
-  CopCentering[2]        = 5;
+  CopCentering[2]        = 25;
   CoMCentering[2]        = 0;
   CoMJerkMin[2]          = 0.0001;
   baseJerkMin[2]         = 0;
@@ -109,7 +109,7 @@ QPPonderation::QPPonderation(int nb)
 
 
   // More stable move
-  CopCentering[3]        = 100;
+  CopCentering[3]        = 1000;
   CoMCentering[3]        = 0;
   CoMJerkMin[3]          = 0.0001;
   baseJerkMin[3]         = 0;

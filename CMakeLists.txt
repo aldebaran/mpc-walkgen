@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 2.8)
 project(mpc-walkgen)
 enable_testing()
 find_package(qibuild)
+
 # Handle OS specificities
 include(CheckIncludeFiles)
 check_include_files("sys/time.h" SYS_TIME_H)
