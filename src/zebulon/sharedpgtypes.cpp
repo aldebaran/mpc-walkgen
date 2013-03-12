@@ -68,7 +68,7 @@ QPPonderation::QPPonderation(int nb)
 {
 
   // Normal moveTo
-  CopCentering[0]        = 25;
+  CopCentering[0]        = 5;
   CoMCentering[0]        = 0;
   CoMJerkMin[0]          = 0.0001;
   baseJerkMin[0]         = 0;
@@ -81,7 +81,7 @@ QPPonderation::QPPonderation(int nb)
   OrientationJerkMin[0]         = 0;
 
   // More stable moveTo
-  CopCentering[1]        = 1000;
+  CopCentering[1]        = 100;
   CoMCentering[1]        = 0;
   CoMJerkMin[1]          = 0.0001;
   baseJerkMin[1]         = 0;
@@ -95,7 +95,7 @@ QPPonderation::QPPonderation(int nb)
 
 
   // Normal move
-  CopCentering[2]        = 25;
+  CopCentering[2]        = 5;
   CoMCentering[2]        = 0;
   CoMJerkMin[2]          = 0.0001;
   baseJerkMin[2]         = 0;
@@ -109,7 +109,7 @@ QPPonderation::QPPonderation(int nb)
 
 
   // More stable move
-  CopCentering[3]        = 1000;
+  CopCentering[3]        = 100;
   CoMCentering[3]        = 0;
   CoMJerkMin[3]          = 0.0001;
   baseJerkMin[3]         = 0;
