@@ -104,7 +104,7 @@ QPPonderation::QPPonderation(int nb)
   basePositionInt[2]     = 0;
 
   OrientationInstantVelocity[2] = 1;
-  OrientationPosition[2]        = 0;
+  OrientationPosition[2]        = 1;
   OrientationJerkMin[2]         = 0;
 
 
@@ -118,7 +118,7 @@ QPPonderation::QPPonderation(int nb)
   basePositionInt[3]     = 0;
 
   OrientationInstantVelocity[3] = 1;
-  OrientationPosition[3]        = 0;
+  OrientationPosition[3]        = 1;
   OrientationJerkMin[3]         = 0;
 
 }
