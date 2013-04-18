@@ -133,8 +133,8 @@ void QPGeneratorOrientation::buildConstraintsBaseJerk(){
 
 void QPGeneratorOrientation::buildConstraints(){
 
-  solver_->nbCtr(2*generalData_->nbSamplesQP);
-  solver_->nbVar(generalData_->nbSamplesQP);
+  solver_->nbCtr(generalData_->QPOrientationNbConstraints);
+  solver_->nbVar(generalData_->QPOrientationNbVariables);
 
   buildConstraintsBaseVelocity();
   buildConstraintsBaseAcceleration();
@@ -147,8 +147,9 @@ void QPGeneratorOrientation::computeWarmStart(GlobalSolution & result){
       result.initialConstraintsOrientation= result.constraintsOrientation;
       result.initialSolutionOrientation= result.qpSolutionOrientation;
     }else{
-      result.initialConstraintsOrientation.setZero((2+1)*generalData_->nbSamplesQP);
-      result.initialSolutionOrientation.setZero(generalData_->nbSamplesQP);
+      result.initialConstraintsOrientation.setZero(generalData_->QPOrientationNbConstraints
+                                                 + generalData_->QPOrientationNbVariables);
+      result.initialSolutionOrientation.setZero(generalData_->QPOrientationNbVariables);
     }
 }
 

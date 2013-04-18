@@ -81,6 +81,12 @@ namespace MPCWalkgen{
       int nbSamplesMPC() const;
       QPPonderation ponderation;
 
+
+      int QPNbVariables; //Number of variables in the QP
+      int QPNbConstraints; //Number of constraints in the QP
+      int QPOrientationNbVariables; //Number of variables in the orientation QP
+      int QPOrientationNbConstraints; //Number of constraints in the orientation QP
+
       MPCData();
     };
 
@@ -98,6 +104,33 @@ namespace MPCWalkgen{
 
       RobotData();
     };
+
+    //Environment information :
+    // * obstacle{PositionX, PositionY, Radius} are vectors of size nbObstacle
+    //   which represent the position and the radius of nbObstacle obstacles of circular shape.
+    //
+    // * obstacleLinearizationPoint{X, Y} are vectors of size MPCData.nbSamplesQP
+    //   which represent the linearization points in the preview
+    //   to convexify the obstacles.
+    //
+    //note : nbObstacle <= nbObstacleMax
+    struct MPC_WALKGEN_API EnvData {
+      static int nbObstacleMax;
+
+      EnvData()
+      :nbObstacle(0)
+      {}
+
+      Eigen::VectorXd obstaclePositionX;
+      Eigen::VectorXd obstaclePositionY;
+      Eigen::VectorXd obstacleRadius;
+      Eigen::VectorXd obstacleLinearizationPointX;
+      Eigen::VectorXd obstacleLinearizationPointY;
+
+      double nbObstacle;
+    };
+
+
 
     struct MPC_WALKGEN_API MPCSolution{
 

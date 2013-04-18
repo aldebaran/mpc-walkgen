@@ -30,7 +30,7 @@ namespace MPCWalkgen{
     public:
       QPGenerator(QPSolver * solver, Reference * velRef, Reference * posRef,
                   Reference * posIntRef, Reference * comRef, Reference * copRef, RigidBodySystem * robot,
-                  const MPCData * generalData, const RobotData *robotData);
+                  const MPCData * generalData, const RobotData *robotData, const EnvData *envData);
       ~QPGenerator();
 
       void precomputeObjective();
@@ -41,6 +41,7 @@ namespace MPCWalkgen{
       void buildConstraints();
       void buildConstraintsCoP();
       void buildConstraintsCoM();
+      void buildConstraintsBasePosition();
       void buildConstraintsBaseVelocity();
       void buildConstraintsBaseAcceleration();
       void buildConstraintsBaseJerk();
@@ -82,10 +83,12 @@ namespace MPCWalkgen{
       Reference * copRef_;
       const MPCData * generalData_;
       const RobotData * robotData_;
+      const EnvData * envData_;
 
       Eigen::VectorXd tmpVec_;
       Eigen::VectorXd tmpVec2_;
       Eigen::VectorXd tmpVec3_;
+      Eigen::VectorXd tmpVec4_;
       Eigen::MatrixXd tmpMat_;
 
       // These matrices are the precomputed part of the Hessian matrix Q and the linear vector P of the QP problem.

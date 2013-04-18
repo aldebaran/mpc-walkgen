@@ -12,7 +12,7 @@ using namespace Eigen;
 
 QPGenerator::QPGenerator(QPSolver * solver, Reference * velRef, Reference * posRef,
              Reference *posIntRef, Reference * comRef, Reference * copRef, RigidBodySystem *robot,
-             const MPCData *generalData, const RobotData *robotData)
+             const MPCData *generalData, const RobotData *robotData, const EnvData *envData)
   :solver_(solver)
   ,robot_(robot)
   ,velRef_(velRef)
@@ -22,6 +22,7 @@ QPGenerator::QPGenerator(QPSolver * solver, Reference * velRef, Reference * posR
   ,copRef_(copRef)
   ,generalData_(generalData)
   ,robotData_(robotData)
+  ,envData_(envData)
   ,tmpVec_(1)
   ,tmpVec2_(1)
   ,tmpVec3_(1)
@@ -416,6 +417,53 @@ void QPGenerator::buildConstraintsCoM(){
 
 }
 
+//The base must be out of each circular obstacle, linearized by a tangent plane
+void QPGenerator::buildConstraintsBasePosition(){
+  const int size = envData_->nbObstacle;
+  const int N = generalData_->nbSamplesQP;
+  const LinearDynamics & basePosDynamics = robot_->body(BASE)->dynamics(posDynamic);
+  const BodyState & base = robot_->body(BASE)->state();
+
+  tmpMat_.setZero(N*size, 2*N);
+  tmpVec_.setZero(N*size);
+  tmpVec3_.resize(N);
+  tmpVec2_.resize(N*size);
+  tmpVec2_.fill(-10e11);
+  for(int j=0; j<size; ++j)
+  {
+    for(int i=0; i<N; ++i)
+    {
+      const double dist =
+     std::sqrt(pow2(envData_->obstaclePositionX(j)-envData_->obstacleLinearizationPointX(i))
+              +pow2(envData_->obstaclePositionY(j)-envData_->obstacleLinearizationPointY(i)));
+
+      const double FX = envData_->obstaclePositionX(j) + (envData_->obstacleRadius(j)/dist)
+                     * (envData_->obstacleLinearizationPointX(i) - envData_->obstaclePositionX(j));
+      const double FY = envData_->obstaclePositionY(j) + (envData_->obstacleRadius(j)/dist)
+                     * (envData_->obstacleLinearizationPointY(i) - envData_->obstaclePositionY(j));
+
+      const double FPX = envData_->obstaclePositionX(j) - FX;
+      const double FPY = envData_->obstaclePositionY(j) - FY;
+
+      tmpMat_(j*N+i, i)   = FPX;
+      tmpMat_(j*N+i, i+N) = FPY;
+
+      tmpVec_(j*N+i) = FX*FPX+FY*FPY;
+    }
+
+    tmpVec_.segment(j*N, N) = tmpVec_.segment(j*N, N)-tmpMat_.block(j*N, 0, N, N)*basePosDynamics.S*base.x;
+    tmpVec_.segment(j*N, N) = tmpVec_.segment(j*N, N)-tmpMat_.block(j*N, N, N, N)*basePosDynamics.S*base.y;
+    tmpMat_.block(j*N, 0, N, N) = tmpMat_.block(j*N, 0, N, N)*basePosDynamics.U;
+    tmpMat_.block(j*N, N, N, N) = tmpMat_.block(j*N, N, N, N)*basePosDynamics.U;
+
+  }
+
+
+  solver_->matrix(matrixA).setTerm(tmpMat_, 9*N, 2*N);
+  solver_->vector(vectorBL).setTerm(tmpVec2_, 9*N);
+  solver_->vector(vectorBU).setTerm(tmpVec_, 9*N);
+}
+
 void QPGenerator::buildConstraintsBaseVelocity(){
 
   int N = generalData_->nbSamplesQP;
@@ -485,11 +533,13 @@ void QPGenerator::buildConstraintsBaseJerk(){
 
 void QPGenerator::buildConstraints(){
 
-  solver_->nbCtr(9*generalData_->nbSamplesQP);
-  solver_->nbVar(4*generalData_->nbSamplesQP);
+  solver_->nbCtr(generalData_->QPNbConstraints);
+
+  solver_->nbVar(generalData_->QPNbVariables);
 
   buildConstraintsCoP();
   buildConstraintsCoM();
+  buildConstraintsBasePosition();
   buildConstraintsBaseVelocity();
   buildConstraintsBaseAcceleration();
   buildConstraintsBaseJerk();
@@ -501,8 +551,9 @@ void QPGenerator::computeWarmStart(GlobalSolution & result){
       result.initialConstraints= result.constraints;
       result.initialSolution= result.qpSolution;
     }else{
-      result.initialConstraints.setZero((9+4)*generalData_->nbSamplesQP);
-      result.initialSolution.setZero(4*generalData_->nbSamplesQP);
+      result.initialConstraints.setZero(generalData_->QPNbConstraints
+                                      + generalData_->QPNbVariables);
+      result.initialSolution.setZero(generalData_->QPNbVariables);
     }
 }
 

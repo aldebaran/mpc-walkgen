@@ -36,9 +36,12 @@ namespace MPCWalkgen{
 
       virtual void robotData(const RobotData &robotData);
       virtual void mpcData(const MPCData &mpcData);
+      virtual void envData(const EnvData &envData);
       virtual const MPCData& mpcData();
       virtual const RobotData& robotData();
       virtual const MPCSolution& mpcSolution();
+      virtual const EnvData& envData();
+      virtual void QPBasePosition(Eigen::VectorXd& position);
 
       virtual void init(const RobotData &robotData, const MPCData &mpcData);
       virtual void init(const MPCData &mpcData);
@@ -73,6 +76,7 @@ namespace MPCWalkgen{
       ::MPCWalkgen::QPSolverType qpSolverType_;
       MPCData mpcData_;
       RobotData robotData_;
+      EnvData envData_;
       ::MPCWalkgen::QPSolver * solver_;
       ::MPCWalkgen::QPSolver * solverOrientation_;
       QPGenerator * generator_;

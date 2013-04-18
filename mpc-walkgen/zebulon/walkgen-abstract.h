@@ -39,9 +39,12 @@ namespace MPCWalkgen{
 
       virtual void robotData(const RobotData &robotData) = 0;
       virtual void mpcData(const MPCData &mpcData) = 0;
+      virtual void envData(const EnvData &envData) = 0;
       virtual const MPCData& mpcData() = 0;
       virtual const RobotData& robotData() = 0;
       virtual const MPCSolution& mpcSolution() = 0;
+      virtual const EnvData& envData() = 0;
+      virtual void QPBasePosition(Eigen::VectorXd& position) =0;
 
       /// \brief Initialize the system
       /// \param[in] robotData: data relative to the robot

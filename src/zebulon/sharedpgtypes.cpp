@@ -3,6 +3,8 @@
 
 using namespace MPCWalkgen::Zebulon;
 
+int EnvData::nbObstacleMax=10;
+
 MPCSolution::MPCSolution()
 :state_vec(5)
 {
@@ -23,6 +25,10 @@ MPCData::MPCData()
 ,MPCSamplingPeriod(0.02)
 ,actuationSamplingPeriod(0.02)
 ,nbSamplesQP(10)
+,QPNbVariables(nbSamplesQP*4)
+,QPNbConstraints(nbSamplesQP*9)
+,QPOrientationNbVariables(nbSamplesQP)
+,QPOrientationNbConstraints(nbSamplesQP*2)
 {}
 
 int MPCData::nbSamplesControl() const{

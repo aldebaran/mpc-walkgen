@@ -37,17 +37,25 @@ Walkgen::Walkgen(::MPCWalkgen::QPSolverType solvertype)
   ,upperTimeLimitToFeedback_(0)
   ,initAlreadyCalled_(false)
 {
-
+  //Parameters are :
+  // *Number min of variables
+  // *Number min of constraints
+  // *Number max of variables
+  // *Number max of constraints
   solver_ = createQPSolver(qpSolverType_,
-          4*mpcData_.nbSamplesQP, 9*mpcData_.nbSamplesQP,
-          4*mpcData_.nbSamplesQP, 9*mpcData_.nbSamplesQP);
+      mpcData_.QPNbVariables, mpcData_.QPNbConstraints,
+      mpcData_.QPNbVariables, mpcData_.QPNbConstraints+EnvData::nbObstacleMax*mpcData_.nbSamplesQP);
+
   solverOrientation_ = createQPSolver(qpSolverType_,
-          mpcData_.nbSamplesQP, 2*mpcData_.nbSamplesQP,
-          mpcData_.nbSamplesQP, 2*mpcData_.nbSamplesQP);
+          mpcData_.QPOrientationNbVariables, mpcData_.QPOrientationNbConstraints,
+          mpcData_.QPOrientationNbVariables, mpcData_.QPOrientationNbConstraints);
   interpolation_ = new Interpolation();
   robot_ = new RigidBodySystem(&mpcData_, &robotData_, interpolation_);
-  generator_= new QPGenerator(solver_, &velRef_, &posRef_, &posIntRef_, &comRef_, &copRef_, robot_, &mpcData_, &robotData_);
-  generatorOrientation_= new QPGeneratorOrientation(solverOrientation_, &velRef_, &posRef_, &posIntRef_, robot_, &mpcData_, &robotData_);
+  generator_= new QPGenerator(solver_, &velRef_, &posRef_, &posIntRef_,
+                              &comRef_, &copRef_, robot_, &mpcData_,
+                              &robotData_, &envData_);
+  generatorOrientation_= new QPGeneratorOrientation(solverOrientation_, &velRef_, &posRef_,
+                                                    &posIntRef_, robot_, &mpcData_, &robotData_);
 
 }
 
@@ -82,6 +90,11 @@ Walkgen::~Walkgen(){
 void Walkgen::mpcData(const MPCData &mpcData){
   MPCData tmpMpcData = mpcData_;
   mpcData_ = mpcData;
+  mpcData_.QPNbVariables = mpcData_.nbSamplesQP*4;
+  mpcData_.QPNbConstraints = mpcData_.nbSamplesQP*9;
+  mpcData_.QPOrientationNbVariables = mpcData_.nbSamplesQP;
+  mpcData_.QPOrientationNbConstraints = mpcData_.nbSamplesQP*2;
+
   if (!initAlreadyCalled_){
     init();
     return;
@@ -94,8 +107,8 @@ void Walkgen::mpcData(const MPCData &mpcData){
       delete solver_;
     }
     solver_ = createQPSolver(qpSolverType_,
-            4*mpcData_.nbSamplesQP, 9*mpcData_.nbSamplesQP,
-            4*mpcData_.nbSamplesQP, 9*mpcData_.nbSamplesQP);
+            mpcData_.QPNbVariables, mpcData_.QPNbConstraints,
+            mpcData_.QPNbVariables, mpcData_.QPNbConstraints+EnvData::nbObstacleMax*mpcData_.nbSamplesQP);
     generator_->solver(solver_);
 
     if (solverOrientation_ != 0x0){
@@ -363,6 +376,18 @@ const MPCData& Walkgen::mpcData(){
   return mpcData_;
 }
 
+void Walkgen::envData(const EnvData &envData){
+  assert(envData.nbObstacle<=EnvData::nbObstacleMax);
+  assert(envData.obstacleLinearizationPointX.size()==mpcData_.nbSamplesQP);
+  assert(envData.obstacleLinearizationPointY.size()==mpcData_.nbSamplesQP);
+  assert(envData.obstaclePositionX.size()<=EnvData::nbObstacleMax);
+  assert(envData.obstaclePositionY.size()==envData.obstaclePositionX.size());
+  assert(envData.obstaclePositionY.size()==envData.obstacleRadius.size());
+
+  envData_ = envData;
+  mpcData_.QPNbConstraints = mpcData_.nbSamplesQP*(9+envData_.nbObstacle);
+
+}
 
 const RobotData& Walkgen::robotData(){
   return robotData_;
@@ -370,4 +395,21 @@ const RobotData& Walkgen::robotData(){
 
 const MPCSolution& Walkgen::mpcSolution(){
   return solution_.mpcSolution;
+}
+
+const EnvData& Walkgen::envData(){
+  return envData_;
+}
+
+void Walkgen::QPBasePosition(Eigen::VectorXd& position){
+  const int N = mpcData_.nbSamplesQP;
+  const LinearDynamics & basePosDynamics = robot_->body(BASE)->dynamics(posDynamic);
+  const BodyState & base = robot_->body(BASE)->state();
+  position.resize(2*N);
+
+  position.segment(0, N) = basePosDynamics.U * solution_.qpSolution.segment(2*N,N)
+                         + basePosDynamics.S * base.x;
+  position.segment(N, N) = basePosDynamics.U * solution_.qpSolution.segment(3*N,N)
+                         + basePosDynamics.S * base.y;
+
 }
