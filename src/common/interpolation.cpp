@@ -4,82 +4,93 @@ using namespace MPCWalkgen;
 using namespace Eigen;
 
 Interpolation::Interpolation()
+  :AinvNorm_(9,9)
+  ,b_(9)
+  ,abc_(9)
 {
-	AinvNorm_(0,0) = 6  ;  AinvNorm_(0,1) = -3  ;  AinvNorm_(0,2) = 0.5;
-	AinvNorm_(1,0) = -15;  AinvNorm_(1,1) = 7   ;  AinvNorm_(1,2) = -1;
-	AinvNorm_(2,0) = 10 ;  AinvNorm_(2,1) = -4  ;  AinvNorm_(2,2) = 0.5;
+  AinvNorm_<< 9./2. , 3./2.,  1./6. ,  9./2. ,  0.   , -1./12.,  9./2. , -3./2.,  1./6.  ,
+             -9.    ,-3./2.,  5./12., -9.    ,  3./2.,  5./12., -9.    ,  9./2., -7./12. ,
+              27./2., 3.   , -3./4. ,  27./2., -3./2., -1./2. ,  27./2., -6.   ,  3./4.  ,
+             -9./2. ,-2.   ,  5./12., -9./2. ,  1./2.,  1./6. , -9./2. ,  2.   , -1./4.  ,
+             -1./2. , 4./9., -7./108., 1./2. , -1./18.,-1./54.,  1./2. , -2./9.,  1./36. ,
+              9./2. , 0.   , -1./12.,  9./2. , -3./2.,  1./6. ,  9./2. , -3.   ,  11./12.,
+             -27./2., 0.   ,  1./4. , -27./2.,  9./2., -1./2. , -27./2.,  9.   , -9./4.  ,
+              27./2., 0.   , -1./4. ,  27./2., -9./2.,  1./2. ,  27./2., -8.   ,  7./4.  ,
+             -9./2. , 0.   ,  1./12., -9./2. ,  3./2., -1./6. , -7./2. ,  2.   , -5./12. ;
 }
 
 Interpolation::~Interpolation(){}
 
 
-void Interpolation::computeInterpolationByJerk(VectorXd &solutionX, VectorXd &solutionY, const BodyState &state,
-		 const LinearDynamics &dyn, double jerkX, double jerkY) const{
+void Interpolation::computeInterpolationByJerk(VectorXd &solutionX, VectorXd &solutionY,
+                                               const BodyState &state, const LinearDynamics &dyn,
+                                               double jerkX, double jerkY) const{
 
-	int nbSamples = dyn.U.cols();
-	VectorXd UX = VectorXd::Constant(nbSamples, jerkX);
-	VectorXd UY = VectorXd::Constant(nbSamples, jerkY);
+  int nbSamples = dyn.U.cols();
+  VectorXd UX = VectorXd::Constant(nbSamples, jerkX);
+  VectorXd UY = VectorXd::Constant(nbSamples, jerkY);
 
-	solutionX = dyn.S*state.x + dyn.U*UX;
-	solutionY = dyn.S*state.y + dyn.U*UY;
+  solutionX = dyn.S*state.x + dyn.U*UX;
+  solutionY = dyn.S*state.y + dyn.U*UY;
 }
 
 void Interpolation::computeInterpolationByJerk(VectorXd &solution, const VectorXd &state,
-		 const LinearDynamics &dyn, double jerk) const{
+                                               const LinearDynamics &dyn, double jerk) const{
 
-	int nbSamples = dyn.U.cols();
-	VectorXd U = VectorXd::Constant(nbSamples, jerk);
-
-	solution = dyn.S*state + dyn.U*U;
+  int nbSamples = dyn.U.cols();
+  VectorXd U = VectorXd::Constant(nbSamples, jerk);
+  solution = dyn.S*state + dyn.U*U;
 }
 
 
+void Interpolation::computePolynomialNormalisedFactors( Eigen::VectorXd &factor,
+                                                        const Vector3d &initialstate,
+                                                        const Vector3d &finalState,
+                                                        double T) const{
+  factor(3) = initialstate(0);
+  factor(2) = T*initialstate(1);
+  factor(1) = T*T*initialstate(2)/2;
 
-void Interpolation::computePolynomialNormalisedFactors( Eigen::Matrix<double,6,1> &factor,
-		const Vector3d &initialstate, const Vector3d &finalState, double T) const
-{
-	Vector3d b;
+  b_(0) = - T*T*initialstate(2)/18 - T*initialstate(1)/3 - initialstate(0);
+  b_(1) = - T*T*initialstate(2)/3 - T*initialstate(1);
+  b_(2) = - T*T*initialstate(2);
+  b_(3) = 0;
+  b_(4) = 0;
+  b_(5) = 0;
+  b_(6) = finalState(0);
+  b_(7) = T*finalState(1);
+  b_(8) = T*T*finalState(2);
 
-	factor(5) = initialstate(0);
-	factor(4) = T*initialstate(1);
-	factor(3) = T*T*initialstate(2)/2;
+  abc_=AinvNorm_*b_;
 
-	b(0) = finalState(0) - factor(5) - factor(4) - factor(3);
-	b(1) = finalState(1) - factor(4) - 2*factor(3);
-	b(2) = finalState(2) - 2*factor(3);
-
-	Vector3d abc;
-
-	abc=AinvNorm_*b;
-
-
-	factor(2) = abc(2);
-	factor(1) = abc(1);
-	factor(0) = abc(0);
+  factor(0) = abc_(0);
+  factor(4) = abc_(1);
+  factor(5) = abc_(2);
+  factor(6) = abc_(3);
+  factor(7) = abc_(4);
+  factor(8) = abc_(5);
+  factor(9) = abc_(6);
+  factor(10) = abc_(7);
+  factor(11) = abc_(8);
 }
 
-void Interpolation::computePolynomialFactors( Eigen::Matrix<double,6,1>  & factor,
-	const Vector3d & initialstate, const Vector3d & finalState, double T ) const
-{
-	Matrix3d Ainv;
-	Vector3d b;
-
-	Ainv(0,0) = 6/pow5(T)  ;  Ainv(0,1) = -3/pow4(T)  ;  Ainv(0,2) = 1/(2*pow2(T));
-	Ainv(1,0) = -15/pow4(T);  Ainv(1,1) = 7/pow3(T)   ;  Ainv(1,2) = -1/pow2(T);
-	Ainv(2,0) = 10/pow3(T) ;  Ainv(2,1) = -4/pow2(T)  ;  Ainv(2,2) = 1/(2*T);
-
-	b(0) = finalState(0) - initialstate(0) - initialstate(1)*T - initialstate(2)*T*T/2;
-	b(1) = finalState(1) - initialstate(1) - initialstate(2)*T;
-	b(2) = finalState(2) - initialstate(2);
-
-	Vector3d abc;
-	abc=Ainv*b;
-
-	factor(5) = initialstate(0);
-	factor(4) = initialstate(1);
-	factor(3) = initialstate(2)/2;
-	factor(2) = abc(2);
-	factor(1) = abc(1);
-	factor(0) = abc(0);
+void Interpolation::selectFactors(Eigen::Vector4d & subfactor,
+                             const Eigen::VectorXd & factor,
+                             double t, double T) const{
+  if (t<=T/3){
+    subfactor[0] = factor[0];
+    subfactor[1] = factor[1];
+    subfactor[2] = factor[2];
+    subfactor[3] = factor[3];
+  }else if(t<=2*T/3){
+    subfactor[0] = factor[4];
+    subfactor[1] = factor[5];
+    subfactor[2] = factor[6];
+    subfactor[3] = factor[7];
+  }else{
+    subfactor[0] = factor[8];
+    subfactor[1] = factor[9];
+    subfactor[2] = factor[10];
+    subfactor[3] = factor[11];
+  }
 }
-

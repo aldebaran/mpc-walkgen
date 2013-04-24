@@ -26,7 +26,7 @@ namespace MPCWalkgen{
     public:
       RigidBody(const MPCData * generalData,
                 const RobotData * robotData,
-                const Interpolation * interpolation);
+                const Interpolation *interpolation);
       virtual ~RigidBody();
 
       inline const BodyState & state() const{return state_;}
@@ -40,12 +40,12 @@ namespace MPCWalkgen{
 
       void computeDynamics();
 
-      virtual void interpolate(MPCSolution & result, double currentTime, const Reference & velRef)=0;
+      virtual void interpolate(MPCSolution & result, double currentTime,
+                               const Reference & velRef)=0;
 
     protected:
       virtual void computeDynamicsMatrices(LinearDynamics & dyn,
                                            double S, double T, int N, DynamicMatrixType type)=0;
-
 
     protected:
       const MPCData *generalData_;
@@ -65,6 +65,12 @@ namespace MPCWalkgen{
       LinearDynamics copInterpol_;
 
       int matrixNumber_;
+
+      /// \brief factors of the three polynoms of the spline
+      Eigen::VectorXd factor_;
+
+      /// \brief For a given x, these are the 4 factors of the corresponding polynom of the spline
+      Eigen::Vector4d subfactor_;
     };
   }
 }

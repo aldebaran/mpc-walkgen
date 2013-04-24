@@ -21,23 +21,22 @@
 namespace MPCWalkgen{
   namespace Humanoid{
     class CoMBody:public RigidBody{
-    public:
-      CoMBody(const MPCData * generalData,
-              const RobotData * robotData,
-              const Interpolation * interpolation);
-      virtual ~CoMBody();
+      public:
+        CoMBody(const MPCData * generalData,
+                const RobotData * robotData,
+                const Interpolation * interpolation);
+        virtual ~CoMBody();
 
-      virtual void interpolate(MPCSolution & result, double currentTime, const Reference & velRef);
-
-    protected:
-      virtual void computeDynamicsMatrices(LinearDynamics & dyn,
-                                           double S, double T, int N, DynamicMatrixType type);
-
-    private:
-      void interpolateTrunkOrientation(MPCSolution & result,
-                                       double /*currentTime*/, const Reference & velRef);
+        virtual void interpolate(MPCSolution & result, double currentTime, const Reference & velRef);
 
 
+      protected:
+        virtual void computeDynamicsMatrices(LinearDynamics & dyn,
+                                             double S, double T, int N, DynamicMatrixType type);
+
+      private:
+        void interpolateTrunkOrientation(MPCSolution & result,
+                                         double /*currentTime*/, const Reference & velRef);
     };
   }
 }

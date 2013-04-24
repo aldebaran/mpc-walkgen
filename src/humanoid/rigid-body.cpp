@@ -8,6 +8,7 @@ RigidBody::RigidBody(const MPCData * generalData,
   :generalData_(generalData)
   ,robotData_(robotData)
   ,interpolation_(interpolation)
+  ,factor_(12)
 {}
 
 RigidBody::~RigidBody()

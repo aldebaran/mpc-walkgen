@@ -88,6 +88,14 @@ qi_create_test(test-all-solvers
   DEPENDS qpsolverhumanoid ${solverAvailable})
 set_static(test-all-solvers)
 
+#Test interpolation
+qi_create_gtest(test-interpolation
+  SRC unit-test/test-interpolation.cpp ../src/common/interpolation.cpp
+  DEPENDS mpc-walkgen
+  TIMEOUT 10
+)
+set_static(test-interpolation)
+
 ############
 #API tests
 ############

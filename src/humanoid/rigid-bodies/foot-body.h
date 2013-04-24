@@ -22,27 +22,29 @@
 namespace MPCWalkgen{
   namespace Humanoid{
     class FootBody:public RigidBody{
-    public:
-      FootBody(const MPCData * generalData,
-               const RobotData * robotData,
-               const Interpolation * interpolation, Foot type);
-      virtual ~FootBody();
+      public:
+        FootBody(const MPCData * generalData,
+                 const RobotData * robotData,
+                 const Interpolation *interpolation, Foot type);
+        virtual ~FootBody();
 
-      virtual void interpolate(MPCSolution & result, double currentTime, const Reference & velRef);
+        virtual void interpolate(MPCSolution & result, double currentTime,
+                                 const Reference & velRef);
 
-    protected:
-      virtual void computeDynamicsMatrices(LinearDynamics & dyn,
-                                           double S, double T, int N, DynamicMatrixType type);
+      protected:
+        virtual void computeDynamicsMatrices(LinearDynamics & dyn,
+                                             double S, double T, int N, DynamicMatrixType type);
 
-    private:
-      Eigen::VectorXd & getFootVector(MPCSolution & solution, Axis axis, unsigned derivative);
+      private:
+        Eigen::VectorXd & getFootVector(MPCSolution & solution, Axis axis, unsigned derivative);
 
-      void computeFootInterpolationByPolynomial(MPCSolution & result, Axis axis, int nbSampling,
-                                                const Eigen::Vector3d & FootCurrentState,
-                                                double T, const Eigen::Vector3d & nextSupportFootState);
+        void computeFootInterpolationByPolynomial(MPCSolution & result, Axis axis, int nbSampling,
+                                                  const Eigen::Vector3d & FootCurrentState,
+                                                  double T,
+                                                  const Eigen::Vector3d & nextSupportFootState);
 
-    private:
-      Foot footType_;
+      private:
+        Foot footType_;
     };
   }
 }
