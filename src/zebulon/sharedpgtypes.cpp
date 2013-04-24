@@ -39,7 +39,6 @@ int MPCData::nbSamplesMPC() const{
   return static_cast<int> (round(QPSamplingPeriod / MPCSamplingPeriod) );
 }
 
-
 RobotData::RobotData()
   :CoMHeight(0.45)
   ,copLimitX(0.264*0.8)
@@ -47,8 +46,8 @@ RobotData::RobotData()
   ,deltaComXLocal(-0.042)
   ,baseLimit(3)
   ,orientationLimit(3)
-  ,comLimitX(0.025)
-  ,comLimitY(0.025)
+  ,comLimitX(0.071*0.8)
+  ,comLimitY(0.044*0.5)
   ,gravity(0,0,9.81)
 {
   baseLimit[0]=0.83*10;
@@ -60,73 +59,78 @@ RobotData::RobotData()
 }
 
 QPPonderation::QPPonderation(int nb)
-  :baseInstantVelocity(nb)
-  ,basePosition(nb)
-  ,basePositionInt(nb)
-  ,CopCentering(nb)
-  ,CoMCentering(nb)
-  ,CoMJerkMin(nb)
-  ,baseJerkMin(nb)
-  ,OrientationInstantVelocity(nb)
-  ,OrientationPosition(nb)
-  ,OrientationJerkMin(nb)
+  :nbPartialPonderations(nb)
+  ,baseInstantVelocity(2*(nb+1))
+  ,basePosition(2*(nb+1))
+  ,basePositionInt(2*(nb+1))
+  ,CopCentering(2*(nb+1))
+  ,CoMCentering(2*(nb+1))
+  ,CoMJerkMin(2*(nb+1))
+  ,baseJerkMin(2*(nb+1))
+  ,OrientationInstantVelocity(2*(nb+1))
+  ,OrientationPosition(2*(nb+1))
+  ,OrientationJerkMin(2*(nb+1))
   ,activePonderation(0)
 {
-
-  // Normal moveTo
-  CopCentering[0]        = 5;
+  //moveTo
+  CopCentering[0]        = 0.1;
   CoMCentering[0]        = 0;
   CoMJerkMin[0]          = 0.0001;
   baseJerkMin[0]         = 0;
-  baseInstantVelocity[0] = 1;
-  basePosition[0]        = 1;
+  baseInstantVelocity[0] = 10;
+  basePosition[0]        = 10;
   basePositionInt[0]     = 0;
 
   OrientationInstantVelocity[0] = 1;
   OrientationPosition[0]        = 1;
   OrientationJerkMin[0]         = 0;
 
-  // More stable moveTo
-  CopCentering[1]        = 100;
-  CoMCentering[1]        = 0;
-  CoMJerkMin[1]          = 0.0001;
-  baseJerkMin[1]         = 0;
-  baseInstantVelocity[1] = 1;
-  basePosition[1]        = 1;
-  basePositionInt[1]     = 0;
 
-  OrientationInstantVelocity[1] = 1;
-  OrientationPosition[1]        = 1;
-  OrientationJerkMin[1]         = 0;
+  //move
+  CopCentering[nb+1]        = 0.1;
+  CoMCentering[nb+1]        = 0;
+  CoMJerkMin[nb+1]          = 0.0001;
+  baseJerkMin[nb+1]         = 0;
+  baseInstantVelocity[nb+1] = 1;
+  basePosition[nb+1]        = 0;
+  basePositionInt[nb+1]     = 0;
 
-
-  // Normal move
-  CopCentering[2]        = 5;
-  CoMCentering[2]        = 0;
-  CoMJerkMin[2]          = 0.0001;
-  baseJerkMin[2]         = 0;
-  baseInstantVelocity[2] = 1;
-  basePosition[2]        = 0;
-  basePositionInt[2]     = 0;
-
-  OrientationInstantVelocity[2] = 1;
-  OrientationPosition[2]        = 1;
-  OrientationJerkMin[2]         = 0;
+  OrientationInstantVelocity[nb+1] = 1;
+  OrientationPosition[nb+1]        = 1;
+  OrientationJerkMin[nb+1]         = 0;
 
 
-  // More stable move
-  CopCentering[3]        = 100;
-  CoMCentering[3]        = 0;
-  CoMJerkMin[3]          = 0.0001;
-  baseJerkMin[3]         = 0;
-  baseInstantVelocity[3] = 1;
-  basePosition[3]        = 0;
-  basePositionInt[3]     = 0;
+  for(int i=0; i<nb; ++i)
+  {
+    //more stable moveTo
+    const double factor = static_cast<double>(i)/static_cast<double>(nb);
+    CopCentering[i+1]        = 0.1+factor*factor*100;
+    CoMCentering[i+1]        = 0;
+    CoMJerkMin[i+1]          = 0.0001;
+    baseJerkMin[i+1]         = 0;
+    baseInstantVelocity[i+1] = 10;
+    basePosition[i+1]        = 10;
+    basePositionInt[i+1]     = 0;
 
-  OrientationInstantVelocity[3] = 1;
-  OrientationPosition[3]        = 1;
-  OrientationJerkMin[3]         = 0;
+    OrientationInstantVelocity[i+1] = 1;
+    OrientationPosition[i+1]        = 1;
+    OrientationJerkMin[i+1]         = 0;
 
+    //more stable move
+    CopCentering[nb+i+2]        = 0.1+factor*factor*20;
+    CoMCentering[nb+i+2]        = 0;
+    CoMJerkMin[nb+i+2]          = 0.0001;
+    baseJerkMin[nb+i+2]         = 0;
+    baseInstantVelocity[nb+i+2] = 1;
+    basePosition[nb+i+2]        = 0;
+    basePositionInt[nb+i+2]     = 0;
+
+    OrientationInstantVelocity[nb+i+2] = 1;
+    OrientationPosition[nb+i+2]        = 1;
+    OrientationJerkMin[nb+i+2]         = 0;
+
+
+  }
 }
 
 

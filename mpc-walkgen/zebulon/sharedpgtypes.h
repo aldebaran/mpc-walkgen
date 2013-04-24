@@ -49,6 +49,8 @@ namespace MPCWalkgen{
 
 
     struct MPC_WALKGEN_API QPPonderation{
+      int nbPartialPonderations;
+
       std::vector<double> baseInstantVelocity;
       std::vector<double> basePosition;
       std::vector<double> basePositionInt;
@@ -63,7 +65,7 @@ namespace MPCWalkgen{
       /// \brief Define the element of ponderation std::vector used in this iteration
       int activePonderation;
 
-      QPPonderation(int nb = 4);
+      QPPonderation(int nb = 30);
     };
 
     struct MPC_WALKGEN_API MPCData{
