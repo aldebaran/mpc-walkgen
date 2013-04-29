@@ -52,6 +52,7 @@ int main() {
 
   MPCData mpcData;
   mpcData.ponderation.basePositionInt[0]=0;
+  mpcData.ponderation.basePosition[0]=0;
   walk->init(mpcData);
 
 
@@ -81,9 +82,9 @@ int main() {
   state.x(2) += 0;
   walk->bodyState(COM, state);
 
-  double velocity = 1.0;
+  double velocity = 0.5;
   walk->velReferenceInGlobalFrame(velocity, 0, 0);
-  //walk->posReferenceInGlobalFrame(0, 0, 0);
+  walk->posReferenceInGlobalFrame(0, 0, 0);
   walk->online(0.0);
   double t = 0;
   walk->online(t);
@@ -102,13 +103,13 @@ int main() {
       position(i)=0.16*(i+1)*velocity+result.state_vec[1].baseTrajX_(0);
     }
 
-    walk->posReferenceInGlobalFrame(position, zero, zero);
+    //walk->posReferenceInGlobalFrame(position, zero, zero);
     result = walk->online(t);
-    Eigen::VectorXd basePos;
-    walk->QPBasePosition(basePos);
-    envData.obstacleLinearizationPointX = basePos.segment(0, 10);
-    envData.obstacleLinearizationPointY = basePos.segment(10, 10);
-    walk->envData(envData);
+    //Eigen::VectorXd basePos;
+    //walk->QPBasePosition(basePos);
+    //envData.obstacleLinearizationPointX = basePos.segment(0, 10);
+    //envData.obstacleLinearizationPointY = basePos.segment(10, 10);
+    //walk->envData(envData);
 
 
     dumpTrajectory(result, data_vec);
@@ -120,8 +121,7 @@ int main() {
   for(int i = 0;i < nbFile; ++i){
     check_vec[i] = new std::ifstream((name_vec[i]+".data").c_str());
   }
-
-  bool success = ((fabs(result.state_vec[2].baseTrajX_(0)+velocity)<1e-4)
+  bool success = ((fabs(result.state_vec[2].baseTrajX_(0)-velocity)<1e-4)
       &&(fabs(result.state_vec[2].baseTrajY_(0)-0)<1e-4)
       &&(fabs(result.state_vec[2].CoMTrajYaw_(0)-0)<1e-4));
   for(unsigned i = 0; i < check_vec.size();++i){
