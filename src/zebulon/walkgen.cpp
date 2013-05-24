@@ -142,6 +142,7 @@ void Walkgen::mpcData(const MPCData &mpcData){
     || fabs(mpcData.weighting.basePosition[i]-tmpMpcData.weighting.basePosition[i])>EPSILON
     || fabs(mpcData.weighting.CoMCentering[i]-tmpMpcData.weighting.CoMCentering[i])>EPSILON
     || fabs(mpcData.weighting.CoMJerkMin[i]-tmpMpcData.weighting.CoMJerkMin[i])>EPSILON
+    || fabs(mpcData.weighting.angularMomentumMin[i]-tmpMpcData.weighting.angularMomentumMin[i])>EPSILON
     || fabs(mpcData.weighting.CopCentering[i]-tmpMpcData.weighting.CopCentering[i])>EPSILON){
       generator_->precomputeObjective();
       break;
@@ -177,6 +178,9 @@ void Walkgen::robotData(const RobotData &robotData){
   if (fabs(robotData.gravity(0)-tmpRobotData.gravity(0))>EPSILON
    || fabs(robotData.gravity(1)-tmpRobotData.gravity(1))>EPSILON
    || fabs(robotData.gravity(2)-tmpRobotData.gravity(2))>EPSILON
+   || fabs(robotData.previousGravity(0)-tmpRobotData.previousGravity(0))>EPSILON
+   || fabs(robotData.previousGravity(1)-tmpRobotData.previousGravity(1))>EPSILON
+   || fabs(robotData.previousGravity(2)-tmpRobotData.previousGravity(2))>EPSILON
   ){
     robot_->computeDynamicsCoP();
     generator_->precomputeObjectiveCoP();
@@ -208,7 +212,6 @@ void Walkgen::init() {
   assert(mpcData_.QPSamplingPeriod >= mpcData_.MPCSamplingPeriod);
 
   robot_->computeDynamics();
-
   generator_->precomputeObjective();
   generatorOrientation_->precomputeObjective();
 

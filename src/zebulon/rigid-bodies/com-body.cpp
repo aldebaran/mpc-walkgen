@@ -7,8 +7,8 @@ using namespace Eigen;
 
 
 CoMBody::CoMBody(const MPCData * generalData,
-		 const RobotData * robotData,
-		 const Interpolation * interpolation)
+     const RobotData * robotData,
+     const Interpolation * interpolation)
   :RigidBody(generalData, robotData, interpolation)
 {}
 
@@ -88,7 +88,7 @@ void CoMBody::computeDynamicsMatrices(LinearDynamics & dyn,
           dyn.U(i,0) = dyn.UT(0,i) = S*S*S/6 + i*T*S*S/2 + S*(i*i*T*T/2 );
           for (int j=1; j<N; j++) {
               if (j <= i) {
-                  dyn.U(i,j) = dyn.UT(j,i) =T*T*T/6 + 3*(i-j)*T*T*T/6 + 3*(i-j)*(i-j)*T*T*T/6;
+                  dyn.U(i,j) = dyn.UT(j,i) = T*T*T/6 + (i-j)*T*T*T/2 + (i-j)*(i-j)*T*T*T/2;
                 }
             }
         }

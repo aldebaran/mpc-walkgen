@@ -111,7 +111,8 @@ namespace MPCWalkgen{
       //     CoP position reference on axe X/Y "CopRefX" "CopRefY"
       //     Base position reference "PosRef"
       //     Base velocity reference "VelREf"
-      //     Base position intergale reference "PoseIntRef"]
+      //     Base position integrale reference "PoseIntRef"]
+      //     Base orientation "BaseOrientation"
       std::vector<Eigen::MatrixXd> Qconst_;
       std::vector<Eigen::MatrixXd> QCoPconst_;
       std::vector<Eigen::MatrixXd> pconstComObjComState_;
@@ -132,6 +133,8 @@ namespace MPCWalkgen{
       std::vector<Eigen::MatrixXd> pconstBaseObjCopRef_;
       std::vector<Eigen::MatrixXd> pconstComObjComRef_;
       std::vector<Eigen::MatrixXd> pconstBaseObjComRef_;
+      std::vector<Eigen::MatrixXd> pconstComObjBaseOrientation_;
+      std::vector<Eigen::MatrixXd> pconstBaseObjBaseOrientation_;
 
       Eigen::VectorXd yaw_;
       Eigen::VectorXd cosYaw_;

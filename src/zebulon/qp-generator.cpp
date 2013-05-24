@@ -109,7 +109,6 @@ void QPGenerator::precomputeObjective(){
 
   int nbUsedWeightings = generalData_->weighting.baseJerkMin.size();
 
-  Qconst_.resize(nbUsedWeightings);
   pconstComObjComState_.resize(nbUsedWeightings);
   pconstComObjBaseState.resize(nbUsedWeightings);
   pconstBaseObjComState.resize(nbUsedWeightings);
@@ -120,12 +119,15 @@ void QPGenerator::precomputeObjective(){
   pconstBaseObjCopRef_.resize(nbUsedWeightings);
   pconstComObjComRef_.resize(nbUsedWeightings);
   pconstBaseObjComRef_.resize(nbUsedWeightings);
+  pconstComObjBaseOrientation_.resize(nbUsedWeightings);
+  pconstBaseObjBaseOrientation_.resize(nbUsedWeightings);
 
   int N = generalData_->nbSamplesQP;
 
   MatrixXd idN = MatrixXd::Identity(N,N);
 
   const LinearDynamics & CoMPosDynamics = robot_->body(COM)->dynamics(posDynamic);
+  const LinearDynamics & CoMVelDynamics = robot_->body(COM)->dynamics(velDynamic);
   const LinearDynamics & basePosIntDynamics = robot_->body(BASE)->dynamics(posIntDynamic);
   const LinearDynamics & basePosDynamics = robot_->body(BASE)->dynamics(posDynamic);
   const LinearDynamics & baseVelDynamics = robot_->body(BASE)->dynamics(velDynamic);
@@ -143,15 +145,19 @@ void QPGenerator::precomputeObjective(){
     pconstBaseObjCopRef_[i].setZero(N,N);
     pconstComObjComRef_[i].setZero(N,N);
     pconstBaseObjComRef_[i].setZero(N,N);
+    pconstComObjBaseOrientation_[i].setZero(N,N);
+    pconstBaseObjBaseOrientation_[i].setZero(N,N);
 
     tmpMat_ = generalData_->weighting.CoMCentering[i]*CoMPosDynamics.UT*CoMPosDynamics.U
-        + generalData_->weighting.CoMJerkMin[i]*idN;
+        + generalData_->weighting.CoMJerkMin[i]*idN
+        + generalData_->weighting.angularMomentumMin[i]*CoMVelDynamics.UT*CoMVelDynamics.U;
     Qconst_[i].block(0,0,N,N) = tmpMat_;
     Qconst_[i].block(N,N,N,N) = tmpMat_;
 
 
 
-    tmpMat_ = -generalData_->weighting.CoMCentering[i]*CoMPosDynamics.UT*basePosDynamics.U;
+    tmpMat_ = -generalData_->weighting.CoMCentering[i]*CoMPosDynamics.UT*basePosDynamics.U
+        - generalData_->weighting.angularMomentumMin[i]*CoMVelDynamics.UT*baseVelDynamics.U;
     Qconst_[i].block(0,2*N,N,N) = tmpMat_;
     Qconst_[i].block(N,3*N,N,N) = tmpMat_;
     tmpMat_.transposeInPlace();
@@ -159,8 +165,10 @@ void QPGenerator::precomputeObjective(){
     Qconst_[i].block(3*N,N,N,N) = tmpMat_;
 
 
-    tmpMat_ = (generalData_->weighting.CopCentering[i]+generalData_->weighting.CoMCentering[i])*basePosDynamics.UT*basePosDynamics.U
-        + generalData_->weighting.baseInstantVelocity[i]*baseVelDynamics.UT*baseVelDynamics.U
+    tmpMat_ = (generalData_->weighting.CopCentering[i]+generalData_->weighting.CoMCentering[i])
+              *basePosDynamics.UT*basePosDynamics.U
+        + (generalData_->weighting.baseInstantVelocity[i]+1)
+          *baseVelDynamics.UT*baseVelDynamics.U
         + generalData_->weighting.basePosition[i]*basePosDynamics.UT*basePosDynamics.U
         + generalData_->weighting.basePositionInt[i]*basePosIntDynamics.UT*basePosIntDynamics.U
         + generalData_->weighting.baseJerkMin[i]*idN;
@@ -206,7 +214,11 @@ void QPGenerator::precomputeObjective(){
     tmpMat_ = generalData_->weighting.CoMCentering[i]*basePosDynamics.UT;
     pconstBaseObjComRef_[i].block(0,0,N,N) = tmpMat_;
 
+    tmpMat_ = -generalData_->weighting.angularMomentumMin[i]*CoMVelDynamics.UT;
+    pconstComObjBaseOrientation_[i].block(0,0,N,N) = tmpMat_;
 
+    tmpMat_ = -generalData_->weighting.angularMomentumMin[i]*baseVelDynamics.UT;
+    pconstBaseObjBaseOrientation_[i].block(0,0,N,N) = tmpMat_;
   }
 }
 
@@ -279,7 +291,24 @@ void QPGenerator::buildObjective() {
   computePartOfVectorP(pconstComObjComRef_[nb], comRef_->global, 0);
   computePartOfVectorP(pconstBaseObjComRef_[nb], comRef_->global, 2*N);
 
+  double basePitch = atan(robotData_->gravity(0)/robotData_->gravity(2));
+  double prevBasePitch = atan(robotData_->previousGravity(0)/robotData_->previousGravity(2));
+  double dBasePitch = (basePitch-prevBasePitch)/generalData_->MPCSamplingPeriod;
 
+  double baseRoll = atan(robotData_->gravity(1)/robotData_->gravity(2));
+  double prevBaseRoll = atan(robotData_->previousGravity(1)/robotData_->previousGravity(2));
+  double dBaseRoll = (baseRoll-prevBaseRoll)/generalData_->MPCSamplingPeriod;
+
+  tmpVec_.resize(N);
+  tmpVec2_.resize(N);
+  tmpVec_.fill(-robotData_->CoMHeight*dBasePitch);
+  tmpVec2_.fill(-robotData_->CoMHeight*dBaseRoll);
+
+  computePartOfVectorP(pconstComObjBaseOrientation_[nb], tmpVec_, 0);
+  computePartOfVectorP(pconstComObjBaseOrientation_[nb], tmpVec2_, N);
+
+  computePartOfVectorP(pconstBaseObjBaseOrientation_[nb], tmpVec_, 2*N);
+  computePartOfVectorP(pconstBaseObjBaseOrientation_[nb], tmpVec2_, 3*N);
 }
 
 void QPGenerator::buildConstraintsCoP(){

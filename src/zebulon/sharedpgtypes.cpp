@@ -1,5 +1,6 @@
 #include <mpc-walkgen/zebulon/sharedpgtypes.h>
 #include "../common/tools.h"
+#include <iostream>
 
 using namespace MPCWalkgen::Zebulon;
 
@@ -49,6 +50,7 @@ RobotData::RobotData()
   ,comLimitX(0.071*0.8)
   ,comLimitY(0.044*0.5)
   ,gravity(0,0,9.81)
+  ,previousGravity(0,0,9.81)
 {
   baseLimit[0]=0.83*10;
   baseLimit[1]=1*10;
@@ -67,6 +69,7 @@ QPWeighting::QPWeighting(int nb)
   ,CoMCentering(2*(nb+1))
   ,CoMJerkMin(2*(nb+1))
   ,baseJerkMin(2*(nb+1))
+  ,angularMomentumMin(2*(nb+1))
   ,OrientationInstantVelocity(2*(nb+1))
   ,OrientationPosition(2*(nb+1))
   ,OrientationJerkMin(2*(nb+1))
@@ -76,6 +79,7 @@ QPWeighting::QPWeighting(int nb)
   CopCentering[0]        = 0.1;
   CoMCentering[0]        = 0;
   CoMJerkMin[0]          = 0.0001;
+  angularMomentumMin[0]  = 0.5;
   baseJerkMin[0]         = 0;
   baseInstantVelocity[0] = 10;
   basePosition[0]        = 10;
@@ -87,9 +91,10 @@ QPWeighting::QPWeighting(int nb)
 
 
   //move
-  CopCentering[nb+1]        = 0.1;
+  CopCentering[nb+1]        = 10;
   CoMCentering[nb+1]        = 0;
   CoMJerkMin[nb+1]          = 0.0001;
+  angularMomentumMin[nb+1]  = 0.5;
   baseJerkMin[nb+1]         = 0;
   baseInstantVelocity[nb+1] = 1;
   basePosition[nb+1]        = 0;
@@ -107,6 +112,7 @@ QPWeighting::QPWeighting(int nb)
     CopCentering[i+1]        = 0.1+factor*factor*100;
     CoMCentering[i+1]        = 0;
     CoMJerkMin[i+1]          = 0.0001;
+    angularMomentumMin[i+1]  = 0.5;
     baseJerkMin[i+1]         = 0;
     baseInstantVelocity[i+1] = 10;
     basePosition[i+1]        = 10;
@@ -117,9 +123,10 @@ QPWeighting::QPWeighting(int nb)
     OrientationJerkMin[i+1]         = 0;
 
     //more stable move
-    CopCentering[nb+i+2]        = 0.1+factor*factor*20;
+    CopCentering[nb+i+2]        = 10+factor*factor*20;
     CoMCentering[nb+i+2]        = 0;
     CoMJerkMin[nb+i+2]          = 0.0001;
+    angularMomentumMin[nb+i+2]  = 0.5;
     baseJerkMin[nb+i+2]         = 0;
     baseInstantVelocity[nb+i+2] = 1;
     basePosition[nb+i+2]        = 0;

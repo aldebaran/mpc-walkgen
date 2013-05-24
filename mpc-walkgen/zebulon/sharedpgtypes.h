@@ -58,6 +58,7 @@ namespace MPCWalkgen{
       std::vector<double> CoMCentering;
       std::vector<double> CoMJerkMin;
       std::vector<double> baseJerkMin;
+      std::vector<double> angularMomentumMin;
       std::vector<double> OrientationInstantVelocity;
       std::vector<double> OrientationPosition;
       std::vector<double> OrientationJerkMin;
@@ -103,6 +104,7 @@ namespace MPCWalkgen{
       double comLimitX;
       double comLimitY;
       Eigen::Vector3d gravity;
+      Eigen::Vector3d previousGravity;
 
       RobotData();
     };
