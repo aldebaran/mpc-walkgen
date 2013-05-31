@@ -123,10 +123,12 @@ void CoMBody::computeDynamicsMatrices(LinearDynamics & dyn,
 
     case copDynamicX:
       for (int i=0; i<N; i++) {
+          double gravity = robotData_->gravity(0);// + 0*robotData_->dGravity(0)*(i+3)*generalData_->MPCSamplingPeriod;
+
           dyn.S(i,1) = 1;
           dyn.S(i,2) = i*T + S;
           dyn.S(i,3) = S*S/2 + i*T*S + i*i*T*T/2-robotData_->CoMHeight/robotData_->gravity(2);
-          dyn.S(i,4) = -robotData_->CoMHeight*robotData_->gravity(0)/robotData_->gravity(2);
+          dyn.S(i,4) = -robotData_->CoMHeight*gravity/robotData_->gravity(2);
 
           dyn.U(i,0) = dyn.UT(0,i) =S*S*S/6 + i*T*S*S/2 + S*(i*i*T*T/2 - robotData_->CoMHeight/robotData_->gravity(2));
           for(int j=1; j<N; j++){
@@ -142,10 +144,12 @@ void CoMBody::computeDynamicsMatrices(LinearDynamics & dyn,
 
     case copDynamicY:
       for (int i=0; i<N; i++) {
+          double gravity = robotData_->gravity(1);// + 0*robotData_->dGravity(1)*(i+3)*generalData_->MPCSamplingPeriod;
+
           dyn.S(i,1) = 1;
           dyn.S(i,2) = i*T + S;
           dyn.S(i,3) = S*S/2 + i*T*S + i*i*T*T/2-robotData_->CoMHeight/robotData_->gravity(2);
-          dyn.S(i,4) = -robotData_->CoMHeight*robotData_->gravity(1)/robotData_->gravity(2);
+          dyn.S(i,4) = -robotData_->CoMHeight*gravity/robotData_->gravity(2);
 
           dyn.U(i,0) = dyn.UT(0,i) =S*S*S/6 + i*T*S*S/2 + S*(i*i*T*T/2 - robotData_->CoMHeight/robotData_->gravity(2));
           for(int j=1; j<N; j++){

@@ -51,6 +51,7 @@ RobotData::RobotData()
   ,comLimitY(0.044*0.5)
   ,gravity(0,0,9.81)
   ,previousGravity(0,0,9.81)
+  ,dAngle(0,0)
 {
   baseLimit[0]=0.83*10;
   baseLimit[1]=1*10;
@@ -70,16 +71,18 @@ QPWeighting::QPWeighting(int nb)
   ,CoMJerkMin(2*(nb+1))
   ,baseJerkMin(2*(nb+1))
   ,angularMomentumMin(2*(nb+1))
+  ,torqueMin(2*(nb+1))
   ,OrientationInstantVelocity(2*(nb+1))
   ,OrientationPosition(2*(nb+1))
   ,OrientationJerkMin(2*(nb+1))
   ,activeWeighting(0)
 {
   //moveTo
-  CopCentering[0]        = 0.1;
+  CopCentering[0]        = 1;
   CoMCentering[0]        = 0;
   CoMJerkMin[0]          = 0.0001;
-  angularMomentumMin[0]  = 0.5;
+  angularMomentumMin[0]  = 0;
+  torqueMin[0]           = 0;
   baseJerkMin[0]         = 0;
   baseInstantVelocity[0] = 10;
   basePosition[0]        = 10;
@@ -91,12 +94,13 @@ QPWeighting::QPWeighting(int nb)
 
 
   //move
-  CopCentering[nb+1]        = 10;
+  CopCentering[nb+1]        = 1;
   CoMCentering[nb+1]        = 0;
-  CoMJerkMin[nb+1]          = 0.0001;
-  angularMomentumMin[nb+1]  = 0.5;
+  CoMJerkMin[nb+1]          = 0;
+  angularMomentumMin[nb+1]  = 0;//2;
+  torqueMin[nb+1]           = 0;//0.1;
   baseJerkMin[nb+1]         = 0;
-  baseInstantVelocity[nb+1] = 1;
+  baseInstantVelocity[nb+1] = 15;
   basePosition[nb+1]        = 0;
   basePositionInt[nb+1]     = 0;
 
@@ -109,10 +113,11 @@ QPWeighting::QPWeighting(int nb)
   {
     //more stable moveTo
     const double factor = static_cast<double>(i)/static_cast<double>(nb);
-    CopCentering[i+1]        = 0.1+factor*factor*100;
+    CopCentering[i+1]        = 1;//+factor*factor*100;
     CoMCentering[i+1]        = 0;
     CoMJerkMin[i+1]          = 0.0001;
-    angularMomentumMin[i+1]  = 0.5;
+    angularMomentumMin[i+1]  = 0;
+    torqueMin[i+1]           = 1;
     baseJerkMin[i+1]         = 0;
     baseInstantVelocity[i+1] = 10;
     basePosition[i+1]        = 10;
@@ -123,12 +128,13 @@ QPWeighting::QPWeighting(int nb)
     OrientationJerkMin[i+1]         = 0;
 
     //more stable move
-    CopCentering[nb+i+2]        = 10+factor*factor*20;
+    CopCentering[nb+i+2]        = 1;
     CoMCentering[nb+i+2]        = 0;
-    CoMJerkMin[nb+i+2]          = 0.0001;
-    angularMomentumMin[nb+i+2]  = 0.5;
+    CoMJerkMin[nb+i+2]          = 0;
+    angularMomentumMin[nb+i+2]  = 0;//2;
+    torqueMin[nb+i+2]           = 0;//0.1+factor*50+factor*factor*50;
     baseJerkMin[nb+i+2]         = 0;
-    baseInstantVelocity[nb+i+2] = 1;
+    baseInstantVelocity[nb+i+2] = 15;
     basePosition[nb+i+2]        = 0;
     basePositionInt[nb+i+2]     = 0;
 
