@@ -51,7 +51,7 @@ Walkgen::Walkgen(::MPCWalkgen::QPSolverType solvertype)
 
   preview_ = new QPPreview(&velRef_, robot_, &generalData_);
 
-  generator_= new QPGenerator(preview_, solver_, &velRef_, &ponderation_, robot_, &generalData_);
+  generator_= new QPGenerator(preview_, solver_, &velRef_, &weighting_, robot_, &generalData_);
 
 }
 
@@ -129,7 +129,7 @@ void Walkgen::init() {
   upperTimeLimitToUpdate_ = 0.0;
   upperTimeLimitToFeedback_ = 0.0;
 
-  ponderation_.activePonderation = 0;
+  weighting_.activeWeighting = 0;
 
   velRef_.resize(generalData_.nbSamplesQP);
   newVelRef_.resize(generalData_.nbSamplesQP);
@@ -167,9 +167,9 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
           velRef_.local.yaw.fill(0);
         }
       if (velRef_.local.yaw(0) == 0 && velRef_.local.x(0) == 0 && velRef_.local.y(0) == 0) {
-          ponderation_.activePonderation = 1;
+          weighting_.activeWeighting = 1;
         } else {
-          ponderation_.activePonderation = 0;
+          weighting_.activeWeighting = 0;
         }
 
       double firstSamplingPeriod = upperTimeLimitToUpdate_ - upperTimeLimitToFeedback_;
@@ -189,6 +189,7 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
 
       generator_->computeReferenceVector(solution_);
       generator_->buildObjective(solution_);
+
       generator_->buildConstraints(solution_);
       generator_->computeWarmStart(solution_);
 
@@ -212,13 +213,14 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
   return solution_;
 }
 
-void Walkgen::reference(double dx, double dy, double dyaw){
+void Walkgen::reference(const double & dx, const double & dy, const double & dyaw){
   newVelRef_.local.x.fill(dx);
   newVelRef_.local.y.fill(dy);
   newVelRef_.local.yaw.fill(dyaw);
 }
 
-void Walkgen::reference(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw){
+void Walkgen::reference(const Eigen::VectorXd & dx, const Eigen::VectorXd & dy,
+                        const Eigen::VectorXd & dyaw){
   newVelRef_.local.x=dx;
   newVelRef_.local.y=dy;
   newVelRef_.local.yaw=dyaw;

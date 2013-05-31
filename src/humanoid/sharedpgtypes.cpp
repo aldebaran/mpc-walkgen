@@ -22,9 +22,9 @@ MPCData::MPCData()
 ,actuationSamplingPeriod(0.005)
 ,nbSamplesQP(16)
 ,stepPeriod(0.8)
-,DSPeriod(1e9)
-,DSSSPeriod(0.8)
-,nbStepSSDS(2)
+,SSPeriodBeforeDS(1e9)
+,firstDStoSSPeriod(0.8)
+,nbStepsBeforeDS(2)
 {}
 
 int MPCData::nbFeedbackSamplesLeft(double firstIterationduration) const{
@@ -41,13 +41,10 @@ int MPCData::nbSamplesControl() const{
 
 
 
-RobotData::RobotData(const FootData &leftFoot, const FootData &rightFoot,
-      const HipYawData &leftHipYaw, const HipYawData &rightHipYaw,
+RobotData::RobotData(const HipYawData &leftHipYaw, const HipYawData &rightHipYaw,
       double mass)
 :	CoMHeight(0.814)
 ,freeFlyingFootMaxHeight(0.05)
-,leftFoot(leftFoot)
-,rightFoot(rightFoot)
 ,leftHipYaw(leftHipYaw)
 ,rightHipYaw(rightHipYaw)
 ,robotMass(mass)
@@ -64,7 +61,7 @@ RobotData::RobotData(const FootData &leftFoot, const FootData &rightFoot,
 }
 RobotData::RobotData(){}
 
-QPPonderation::QPPonderation(int nb)
+QPWeighting::QPWeighting(int nb)
 :instantVelocity(nb)
 ,CopCentering(nb)
 ,JerkMin(nb) {
@@ -76,7 +73,7 @@ QPPonderation::QPPonderation(int nb)
   JerkMin[1]         = 0.001;
   instantVelocity[1] = 1;
 
-  activePonderation = 1;
+  activeWeighting = 1;
 }
 
 

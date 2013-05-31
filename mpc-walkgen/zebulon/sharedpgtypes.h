@@ -48,8 +48,8 @@ namespace MPCWalkgen{
 
 
 
-    struct MPC_WALKGEN_API QPPonderation{
-      int nbPartialPonderations;
+    struct MPC_WALKGEN_API QPWeighting{
+      int nbPartialWeightings;
 
       std::vector<double> baseInstantVelocity;
       std::vector<double> basePosition;
@@ -62,10 +62,10 @@ namespace MPCWalkgen{
       std::vector<double> OrientationPosition;
       std::vector<double> OrientationJerkMin;
 
-      /// \brief Define the element of ponderation std::vector used in this iteration
-      int activePonderation;
+      /// \brief Define the element of weighting std::vector used in this iteration
+      int activeWeighting;
 
-      QPPonderation(int nb = 30);
+      QPWeighting(int nb = 30);
     };
 
     struct MPC_WALKGEN_API MPCData{
@@ -81,7 +81,7 @@ namespace MPCWalkgen{
       /// \brief number of simulation iterations between two feedback call
       int nbSamplesControl() const;
       int nbSamplesMPC() const;
-      QPPonderation ponderation;
+      QPWeighting weighting;
 
 
       int QPNbVariables; //Number of variables in the QP

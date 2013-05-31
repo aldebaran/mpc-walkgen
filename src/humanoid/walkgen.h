@@ -33,65 +33,65 @@ namespace MPCWalkgen{
         public WalkgenAbstract
     {
 
-    public:
-      Walkgen(::MPCWalkgen::QPSolverType solvertype);
-      ~Walkgen();
+      public:
+        Walkgen(::MPCWalkgen::QPSolverType solvertype);
+        ~Walkgen();
 
-      virtual void init(const RobotData &robotData, const MPCData &mpcData);
+        virtual void init(const RobotData &robotData, const MPCData &mpcData);
 
-      virtual void init();
+        virtual void init();
 
-      virtual const MPCSolution &online(double time, bool previewBodiesNextState=true);
+        virtual const MPCSolution &online(double time, bool previewBodiesNextState=true);
 
-      virtual const MPCSolution &online(bool previewBodiesNextState=true);
+        virtual const MPCSolution &online(bool previewBodiesNextState=true);
 
-      /// \name Accessors and mutators
-      /// \{
-      void reference(double dx, double dy, double dyaw);
-      void reference(Eigen::VectorXd dx, Eigen::VectorXd dy, Eigen::VectorXd dyaw);
-      /// \}
+        /// \name Accessors and mutators
+        /// \{
+        void reference(const double & dx, const double & dy, const double & dyaw);
+        void reference(const Eigen::VectorXd & dx, const Eigen::VectorXd & dy, const Eigen::VectorXd & dyaw);
+        /// \}
 
-    public:
-      virtual const SupportState &currentSupportState() const;
-      virtual inline void currentSupportState(const SupportState &newSupportState){
-        newCurrentSupport_=newSupportState;
-        isNewCurrentSupport_=true;
-      }
+      public:
+        virtual const SupportState &currentSupportState() const;
+        virtual inline void currentSupportState(const SupportState &newSupportState){
+          newCurrentSupport_=newSupportState;
+          isNewCurrentSupport_=true;
+        }
 
-      virtual const BodyState & bodyState(BodyType body)const;
-      virtual void bodyState(BodyType body, const BodyState & state);
-      /// \}
-
-
-    private:
-      MPCData generalData_;
-      RobotData robotData_;
-
-      ::MPCWalkgen::QPSolver * solver_;
-      QPGenerator * generator_;
-      QPPreview * preview_;
-      ::MPCWalkgen::Interpolation * interpolation_;
-      RigidBodySystem * robot_;
-
-      OrientationsPreview * orientPrw_;
-
-      MPCSolution solution_;
-      Reference velRef_;
-      /// \brief The new value of reference velocity, updated with in online method
-      Reference newVelRef_;
-      QPPonderation ponderation_;
-      /// \brief The new value of current support state, updated with in online method
-      SupportState newCurrentSupport_;
-      bool isNewCurrentSupport_;
+        virtual const BodyState & bodyState(BodyType body)const;
+        virtual void bodyState(BodyType body, const BodyState & state);
+        /// \}
 
 
-      /// \brief Time at which the problem should be updated
-      double upperTimeLimitToUpdate_;
-      double upperTimeLimitToFeedback_;
+      private:
+        MPCData generalData_;
+        RobotData robotData_;
 
-      /// \brief Synchronised time with QP sampling
-      double currentTime_;
-      double currentRealTime_;
+        ::MPCWalkgen::QPSolver * solver_;
+        QPGenerator * generator_;
+        QPPreview * preview_;
+        ::MPCWalkgen::Interpolation * interpolation_;
+        RigidBodySystem * robot_;
+
+        OrientationsPreview * orientPrw_;
+
+        MPCSolution solution_;
+        Reference velRef_;
+        /// \brief The new value of reference velocity, updated with in online method
+        Reference newVelRef_;
+        QPWeighting weighting_;
+        /// \brief The new value of current support state, updated with in online method
+        SupportState newCurrentSupport_;
+        bool isNewCurrentSupport_;
+
+
+        /// \brief Time at which the problem should be updated
+        double upperTimeLimitToUpdate_;
+        double upperTimeLimitToFeedback_;
+
+        /// \brief Synchronised time with QP sampling
+        double currentTime_;
+        double currentRealTime_;
 
     };
   }

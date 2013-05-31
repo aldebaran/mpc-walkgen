@@ -35,17 +35,17 @@ QPGenerator::~QPGenerator(){}
 
 void QPGenerator::precomputeObjectiveCoP(){
 
-  int nbUsedPonderations = generalData_->ponderation.baseJerkMin.size();
+  int nbUsedWeightings = generalData_->weighting.baseJerkMin.size();
 
-  QCoPconst_.resize(nbUsedPonderations);
-  pCoPconstComObjComStateX_.resize(nbUsedPonderations);
-  pCoPconstComObjComStateY_.resize(nbUsedPonderations);
-  pCoPconstComObjCopRefX_.resize(nbUsedPonderations);
-  pCoPconstComObjCopRefY_.resize(nbUsedPonderations);
-  pCoPconstComObjBaseStateX_.resize(nbUsedPonderations);
-  pCoPconstComObjBaseStateY_.resize(nbUsedPonderations);
-  pCoPconstBaseObjComStateX_.resize(nbUsedPonderations);
-  pCoPconstBaseObjComStateY_.resize(nbUsedPonderations);
+  QCoPconst_.resize(nbUsedWeightings);
+  pCoPconstComObjComStateX_.resize(nbUsedWeightings);
+  pCoPconstComObjComStateY_.resize(nbUsedWeightings);
+  pCoPconstComObjCopRefX_.resize(nbUsedWeightings);
+  pCoPconstComObjCopRefY_.resize(nbUsedWeightings);
+  pCoPconstComObjBaseStateX_.resize(nbUsedWeightings);
+  pCoPconstComObjBaseStateY_.resize(nbUsedWeightings);
+  pCoPconstBaseObjComStateX_.resize(nbUsedWeightings);
+  pCoPconstBaseObjComStateY_.resize(nbUsedWeightings);
 
   int N = generalData_->nbSamplesQP;
 
@@ -53,7 +53,7 @@ void QPGenerator::precomputeObjectiveCoP(){
   const LinearDynamics & CoPDynamicsY = robot_->body(COM)->dynamics(copDynamicY);
   const LinearDynamics & basePosDynamics = robot_->body(BASE)->dynamics(posDynamic);
 
-  for (int i = 0; i < nbUsedPonderations; ++i){
+  for (int i = 0; i < nbUsedWeightings; ++i){
     QCoPconst_[i].setZero(4*N,4*N);
     pCoPconstComObjComStateX_[i].setZero(N,5);
     pCoPconstComObjComStateY_[i].setZero(N,5);
@@ -65,39 +65,39 @@ void QPGenerator::precomputeObjectiveCoP(){
     pCoPconstBaseObjComStateY_[i].setZero(N,5);
 
 
-    tmpMat_ = generalData_->ponderation.CopCentering[i]*CoPDynamicsX.UT*CoPDynamicsX.U;
+    tmpMat_ = generalData_->weighting.CopCentering[i]*CoPDynamicsX.UT*CoPDynamicsX.U;
     QCoPconst_[i].block(0,0,N,N) = tmpMat_;
-    tmpMat_ = generalData_->ponderation.CopCentering[i]*CoPDynamicsY.UT*CoPDynamicsY.U;
+    tmpMat_ = generalData_->weighting.CopCentering[i]*CoPDynamicsY.UT*CoPDynamicsY.U;
     QCoPconst_[i].block(N,N,N,N) = tmpMat_;
 
-    tmpMat_ = -generalData_->ponderation.CopCentering[i]*CoPDynamicsX.UT*basePosDynamics.U;
+    tmpMat_ = -generalData_->weighting.CopCentering[i]*CoPDynamicsX.UT*basePosDynamics.U;
     QCoPconst_[i].block(0,2*N,N,N) = tmpMat_;
     QCoPconst_[i].block(N,3*N,N,N) = tmpMat_;
-    tmpMat_ = -generalData_->ponderation.CopCentering[i]*CoPDynamicsY.UT*basePosDynamics.U;
+    tmpMat_ = -generalData_->weighting.CopCentering[i]*CoPDynamicsY.UT*basePosDynamics.U;
     tmpMat_.transposeInPlace();
     QCoPconst_[i].block(2*N,0,N,N) = tmpMat_;
     QCoPconst_[i].block(3*N,N,N,N) = tmpMat_;
 
 
 
-    tmpMat_ = generalData_->ponderation.CopCentering[i]*CoPDynamicsX.UT*CoPDynamicsX.S;
+    tmpMat_ = generalData_->weighting.CopCentering[i]*CoPDynamicsX.UT*CoPDynamicsX.S;
     pCoPconstComObjComStateX_[i].block(0,0,N,5) = tmpMat_;
-    tmpMat_ = generalData_->ponderation.CopCentering[i]*CoPDynamicsY.UT*CoPDynamicsY.S;
+    tmpMat_ = generalData_->weighting.CopCentering[i]*CoPDynamicsY.UT*CoPDynamicsY.S;
     pCoPconstComObjComStateY_[i].block(0,0,N,5) = tmpMat_;
 
-    tmpMat_ = -generalData_->ponderation.CopCentering[i]*basePosDynamics.UT*CoPDynamicsX.S;
+    tmpMat_ = -generalData_->weighting.CopCentering[i]*basePosDynamics.UT*CoPDynamicsX.S;
     pCoPconstBaseObjComStateX_[i].block(0,0,N,5) = tmpMat_;
-    tmpMat_ = -generalData_->ponderation.CopCentering[i]*basePosDynamics.UT*CoPDynamicsY.S;
+    tmpMat_ = -generalData_->weighting.CopCentering[i]*basePosDynamics.UT*CoPDynamicsY.S;
     pCoPconstBaseObjComStateY_[i].block(0,0,N,5) = tmpMat_;
 
-    tmpMat_ = -generalData_->ponderation.CopCentering[i]*CoPDynamicsX.UT*basePosDynamics.S;
+    tmpMat_ = -generalData_->weighting.CopCentering[i]*CoPDynamicsX.UT*basePosDynamics.S;
     pCoPconstComObjBaseStateX_[i].block(0,0,N,5) = tmpMat_;
-     tmpMat_ = -generalData_->ponderation.CopCentering[i]*CoPDynamicsY.UT*basePosDynamics.S;
+     tmpMat_ = -generalData_->weighting.CopCentering[i]*CoPDynamicsY.UT*basePosDynamics.S;
     pCoPconstComObjBaseStateY_[i].block(0,0,N,5) = tmpMat_;
 
-    tmpMat_ = -generalData_->ponderation.CopCentering[i]*CoPDynamicsX.UT;
+    tmpMat_ = -generalData_->weighting.CopCentering[i]*CoPDynamicsX.UT;
     pCoPconstComObjCopRefX_[i].block(0,0,N,N) = tmpMat_;
-    tmpMat_ = -generalData_->ponderation.CopCentering[i]*CoPDynamicsY.UT;
+    tmpMat_ = -generalData_->weighting.CopCentering[i]*CoPDynamicsY.UT;
     pCoPconstComObjCopRefY_[i].block(0,0,N,N) = tmpMat_;
   }
 
@@ -107,19 +107,19 @@ void QPGenerator::precomputeObjective(){
 
   precomputeObjectiveCoP();
 
-  int nbUsedPonderations = generalData_->ponderation.baseJerkMin.size();
+  int nbUsedWeightings = generalData_->weighting.baseJerkMin.size();
 
-  Qconst_.resize(nbUsedPonderations);
-  pconstComObjComState_.resize(nbUsedPonderations);
-  pconstComObjBaseState.resize(nbUsedPonderations);
-  pconstBaseObjComState.resize(nbUsedPonderations);
-  pconstBaseObjBaseState.resize(nbUsedPonderations);
-  pconstBaseObjVelRef_.resize(nbUsedPonderations);
-  pconstBaseObjPosRef_.resize(nbUsedPonderations);
-  pconstBaseObjPosIntRef_.resize(nbUsedPonderations);
-  pconstBaseObjCopRef_.resize(nbUsedPonderations);
-  pconstComObjComRef_.resize(nbUsedPonderations);
-  pconstBaseObjComRef_.resize(nbUsedPonderations);
+  Qconst_.resize(nbUsedWeightings);
+  pconstComObjComState_.resize(nbUsedWeightings);
+  pconstComObjBaseState.resize(nbUsedWeightings);
+  pconstBaseObjComState.resize(nbUsedWeightings);
+  pconstBaseObjBaseState.resize(nbUsedWeightings);
+  pconstBaseObjVelRef_.resize(nbUsedWeightings);
+  pconstBaseObjPosRef_.resize(nbUsedWeightings);
+  pconstBaseObjPosIntRef_.resize(nbUsedWeightings);
+  pconstBaseObjCopRef_.resize(nbUsedWeightings);
+  pconstComObjComRef_.resize(nbUsedWeightings);
+  pconstBaseObjComRef_.resize(nbUsedWeightings);
 
   int N = generalData_->nbSamplesQP;
 
@@ -131,7 +131,7 @@ void QPGenerator::precomputeObjective(){
   const LinearDynamics & baseVelDynamics = robot_->body(BASE)->dynamics(velDynamic);
 
 
-  for (int i = 0; i < nbUsedPonderations; ++i){
+  for (int i = 0; i < nbUsedWeightings; ++i){
     Qconst_[i].setZero(4*N,4*N);
     pconstComObjComState_[i].setZero(N,5);
     pconstComObjBaseState[i].setZero(N,5);
@@ -144,14 +144,14 @@ void QPGenerator::precomputeObjective(){
     pconstComObjComRef_[i].setZero(N,N);
     pconstBaseObjComRef_[i].setZero(N,N);
 
-    tmpMat_ = generalData_->ponderation.CoMCentering[i]*CoMPosDynamics.UT*CoMPosDynamics.U
-        + generalData_->ponderation.CoMJerkMin[i]*idN;
+    tmpMat_ = generalData_->weighting.CoMCentering[i]*CoMPosDynamics.UT*CoMPosDynamics.U
+        + generalData_->weighting.CoMJerkMin[i]*idN;
     Qconst_[i].block(0,0,N,N) = tmpMat_;
     Qconst_[i].block(N,N,N,N) = tmpMat_;
 
 
 
-    tmpMat_ = -generalData_->ponderation.CoMCentering[i]*CoMPosDynamics.UT*basePosDynamics.U;
+    tmpMat_ = -generalData_->weighting.CoMCentering[i]*CoMPosDynamics.UT*basePosDynamics.U;
     Qconst_[i].block(0,2*N,N,N) = tmpMat_;
     Qconst_[i].block(N,3*N,N,N) = tmpMat_;
     tmpMat_.transposeInPlace();
@@ -159,51 +159,51 @@ void QPGenerator::precomputeObjective(){
     Qconst_[i].block(3*N,N,N,N) = tmpMat_;
 
 
-    tmpMat_ = (generalData_->ponderation.CopCentering[i]+generalData_->ponderation.CoMCentering[i])*basePosDynamics.UT*basePosDynamics.U
-        + generalData_->ponderation.baseInstantVelocity[i]*baseVelDynamics.UT*baseVelDynamics.U
-        + generalData_->ponderation.basePosition[i]*basePosDynamics.UT*basePosDynamics.U
-        + generalData_->ponderation.basePositionInt[i]*basePosIntDynamics.UT*basePosIntDynamics.U
-        + generalData_->ponderation.baseJerkMin[i]*idN;
+    tmpMat_ = (generalData_->weighting.CopCentering[i]+generalData_->weighting.CoMCentering[i])*basePosDynamics.UT*basePosDynamics.U
+        + generalData_->weighting.baseInstantVelocity[i]*baseVelDynamics.UT*baseVelDynamics.U
+        + generalData_->weighting.basePosition[i]*basePosDynamics.UT*basePosDynamics.U
+        + generalData_->weighting.basePositionInt[i]*basePosIntDynamics.UT*basePosIntDynamics.U
+        + generalData_->weighting.baseJerkMin[i]*idN;
     Qconst_[i].block(2*N,2*N,N,N) = tmpMat_;
     Qconst_[i].block(3*N,3*N,N,N) = tmpMat_;
 
 
 
-    tmpMat_ = generalData_->ponderation.CoMCentering[i]*CoMPosDynamics.UT*CoMPosDynamics.S;
+    tmpMat_ = generalData_->weighting.CoMCentering[i]*CoMPosDynamics.UT*CoMPosDynamics.S;
     pconstComObjComState_[i].block(0,0,N,5) = tmpMat_;
 
-    tmpMat_ = -generalData_->ponderation.CoMCentering[i]*basePosDynamics.UT*CoMPosDynamics.S;
+    tmpMat_ = -generalData_->weighting.CoMCentering[i]*basePosDynamics.UT*CoMPosDynamics.S;
     pconstBaseObjComState[i].block(0,0,N,5) = tmpMat_;
 
 
 
-    tmpMat_ = -generalData_->ponderation.CoMCentering[i]*CoMPosDynamics.UT*basePosDynamics.S;
+    tmpMat_ = -generalData_->weighting.CoMCentering[i]*CoMPosDynamics.UT*basePosDynamics.S;
     pconstComObjBaseState[i].block(0,0,N,5) = tmpMat_;
 
-    tmpMat_ = (generalData_->ponderation.CopCentering[i]+generalData_->ponderation.CoMCentering[i])*basePosDynamics.UT*basePosDynamics.S
-        + generalData_->ponderation.baseInstantVelocity[i]*baseVelDynamics.UT*baseVelDynamics.S
-        + generalData_->ponderation.basePosition[i]*basePosDynamics.UT*basePosDynamics.S
-        + generalData_->ponderation.basePositionInt[i]*basePosIntDynamics.UT*basePosIntDynamics.S        ;
+    tmpMat_ = (generalData_->weighting.CopCentering[i]+generalData_->weighting.CoMCentering[i])*basePosDynamics.UT*basePosDynamics.S
+        + generalData_->weighting.baseInstantVelocity[i]*baseVelDynamics.UT*baseVelDynamics.S
+        + generalData_->weighting.basePosition[i]*basePosDynamics.UT*basePosDynamics.S
+        + generalData_->weighting.basePositionInt[i]*basePosIntDynamics.UT*basePosIntDynamics.S        ;
     pconstBaseObjBaseState[i].block(0,0,N,5) = tmpMat_;
 
 
-    tmpMat_ = -generalData_->ponderation.baseInstantVelocity[i]*baseVelDynamics.UT;
+    tmpMat_ = -generalData_->weighting.baseInstantVelocity[i]*baseVelDynamics.UT;
     pconstBaseObjVelRef_[i].block(0,0,N,N) = tmpMat_;
 
-    tmpMat_ = -generalData_->ponderation.basePosition[i]*basePosDynamics.UT;
+    tmpMat_ = -generalData_->weighting.basePosition[i]*basePosDynamics.UT;
     pconstBaseObjPosRef_[i].block(0,0,N,N) = tmpMat_;
 
-    tmpMat_ = -generalData_->ponderation.basePositionInt[i]*basePosIntDynamics.UT;
+    tmpMat_ = -generalData_->weighting.basePositionInt[i]*basePosIntDynamics.UT;
     pconstBaseObjPosIntRef_[i].block(0,0,N,N) = tmpMat_;
 
 
-    tmpMat_ = generalData_->ponderation.CopCentering[i]*basePosDynamics.UT;
+    tmpMat_ = generalData_->weighting.CopCentering[i]*basePosDynamics.UT;
     pconstBaseObjCopRef_[i].block(0,0,N,N) = tmpMat_;
 
-    tmpMat_ = -generalData_->ponderation.CoMCentering[i]*CoMPosDynamics.UT;
+    tmpMat_ = -generalData_->weighting.CoMCentering[i]*CoMPosDynamics.UT;
     pconstComObjComRef_[i].block(0,0,N,N) = tmpMat_;
 
-    tmpMat_ = generalData_->ponderation.CoMCentering[i]*basePosDynamics.UT;
+    tmpMat_ = generalData_->weighting.CoMCentering[i]*basePosDynamics.UT;
     pconstBaseObjComRef_[i].block(0,0,N,N) = tmpMat_;
 
 
@@ -243,7 +243,7 @@ void QPGenerator::computePartOfVectorP(const Eigen::MatrixXd & precomputedMatrix
 
 void QPGenerator::buildObjective() {
 
-  int nb = generalData_->ponderation.activePonderation;
+  int nb = generalData_->weighting.activeWeighting;
   int N = generalData_->nbSamplesQP;
 
   const BodyState & CoM = robot_->body(COM)->state();

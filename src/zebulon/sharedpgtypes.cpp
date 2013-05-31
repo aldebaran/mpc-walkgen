@@ -58,8 +58,8 @@ RobotData::RobotData()
   orientationLimit[2]=6*3.14;
 }
 
-QPPonderation::QPPonderation(int nb)
-  :nbPartialPonderations(nb)
+QPWeighting::QPWeighting(int nb)
+  :nbPartialWeightings(nb)
   ,baseInstantVelocity(2*(nb+1))
   ,basePosition(2*(nb+1))
   ,basePositionInt(2*(nb+1))
@@ -70,7 +70,7 @@ QPPonderation::QPPonderation(int nb)
   ,OrientationInstantVelocity(2*(nb+1))
   ,OrientationPosition(2*(nb+1))
   ,OrientationJerkMin(2*(nb+1))
-  ,activePonderation(0)
+  ,activeWeighting(0)
 {
   //moveTo
   CopCentering[0]        = 0.1;

@@ -27,9 +27,11 @@ void FootBody::interpolate(MPCSolution &result, double currentTime, const Refere
   int nbSamples = generalData_->nbSamplesControl();
 
   double transitionalDSPeriod = generalData_->QPSamplingPeriod;
-  double raiseTime = 0.05; // Time during which the horizontal displacement is blocked
+  double raiseTime = 0.02; // Time during which the horizontal displacement is blocked
+
   double freeFlyingTimeLeft = curSupport.timeLimit - transitionalDSPeriod - currentTime;
   double freeFlyingTimeSpent = currentTime - curSupport.startTime;
+
 
   if (result.supportStates_vec[0].phase == SS) {
 
@@ -67,8 +69,10 @@ void FootBody::interpolate(MPCSolution &result, double currentTime, const Refere
     if (freeFlyingTimeLeft - (generalData_->stepPeriod - transitionalDSPeriod)/2 > generalData_->actuationSamplingPeriod) {
       nextFootState.z(0) = robotData_->freeFlyingFootMaxHeight;
       Tz = freeFlyingTimeLeft - (generalData_->stepPeriod - transitionalDSPeriod)/2 ;
+
     } else if (freeFlyingTimeLeft < (generalData_->stepPeriod - transitionalDSPeriod)/2 && freeFlyingTimeLeft > EPSILON) { // Half-time passed
       Tz = freeFlyingTimeLeft;
+
     } else {
       // Tz stays 1
     }
@@ -185,5 +189,3 @@ void FootBody::computeFootInterpolationByPolynomial(MPCSolution &result, Axis ax
     }
   }
 }
-
-

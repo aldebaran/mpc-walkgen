@@ -30,12 +30,12 @@ QPGeneratorOrientation::~QPGeneratorOrientation(){}
 
 void QPGeneratorOrientation::precomputeObjective(){
 
-  int nbUsedPonderations = generalData_->ponderation.baseJerkMin.size();
+  int nbUsedWeightings = generalData_->weighting.baseJerkMin.size();
 
-  Qconst_.resize(nbUsedPonderations);
-  pconstCoMState.resize(nbUsedPonderations);
-  pconstBaseVelRef_.resize(nbUsedPonderations);
-  pconstBasePosRef_.resize(nbUsedPonderations);
+  Qconst_.resize(nbUsedWeightings);
+  pconstCoMState.resize(nbUsedWeightings);
+  pconstBaseVelRef_.resize(nbUsedWeightings);
+  pconstBasePosRef_.resize(nbUsedWeightings);
 
   int N = generalData_->nbSamplesQP;
 
@@ -44,18 +44,18 @@ void QPGeneratorOrientation::precomputeObjective(){
   const LinearDynamics & CoMPosDynamics = robot_->body(COM)->dynamics(posDynamic);
   const LinearDynamics & CoMVelDynamics = robot_->body(COM)->dynamics(velDynamic);
 
-  for (int i = 0; i < nbUsedPonderations; ++i) {
+  for (int i = 0; i < nbUsedWeightings; ++i) {
       Qconst_[i].resize(N,N);
       pconstCoMState[i].resize(N,5);
       pconstBaseVelRef_[i].resize(N,N);
       pconstBasePosRef_[i].resize(N,N);
 
-      Qconst_[i] = generalData_->ponderation.OrientationJerkMin[i] * idN
-          + generalData_->ponderation.OrientationInstantVelocity[i] * CoMVelDynamics.UT*CoMVelDynamics.U
-          + generalData_->ponderation.OrientationPosition[i] * CoMPosDynamics.UT*CoMPosDynamics.U;
+      Qconst_[i] = generalData_->weighting.OrientationJerkMin[i] * idN
+          + generalData_->weighting.OrientationInstantVelocity[i] * CoMVelDynamics.UT*CoMVelDynamics.U
+          + generalData_->weighting.OrientationPosition[i] * CoMPosDynamics.UT*CoMPosDynamics.U;
 
-      pconstBaseVelRef_[i] = -generalData_->ponderation.OrientationInstantVelocity[i] * CoMVelDynamics.UT;
-      pconstBasePosRef_[i] = -generalData_->ponderation.OrientationPosition[i] * CoMPosDynamics.UT;
+      pconstBaseVelRef_[i] = -generalData_->weighting.OrientationInstantVelocity[i] * CoMVelDynamics.UT;
+      pconstBasePosRef_[i] = -generalData_->weighting.OrientationPosition[i] * CoMPosDynamics.UT;
       pconstCoMState[i] = -pconstBaseVelRef_[i] * CoMVelDynamics.S - pconstBasePosRef_[i] * CoMPosDynamics.S;
 
     }
@@ -63,7 +63,7 @@ void QPGeneratorOrientation::precomputeObjective(){
 
 void QPGeneratorOrientation::buildObjective() {
 
-  int nb = generalData_->ponderation.activePonderation;
+  int nb = generalData_->weighting.activeWeighting;
   int N = generalData_->nbSamplesQP;
 
   const BodyState & CoM = robot_->body(COM)->state();

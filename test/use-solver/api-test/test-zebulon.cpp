@@ -51,8 +51,8 @@ int main() {
   WalkgenAbstract * walk = createWalkgen(CURRENT_QPSOLVERTYPE);
 
   MPCData mpcData;
-  mpcData.ponderation.basePositionInt[0]=0;
-  mpcData.ponderation.basePosition[0]=0;
+  mpcData.weighting.basePositionInt[0]=0;
+  mpcData.weighting.basePosition[0]=0;
   walk->init(mpcData);
 
 

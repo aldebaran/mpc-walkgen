@@ -30,7 +30,7 @@ namespace MPCWalkgen{
 
     public:
       QPGenerator(QPPreview * preview, QPSolver * solver,
-                  Reference * velRef, QPPonderation * ponderation,
+                  Reference * velRef, QPWeighting * weighting,
                   RigidBodySystem * robot, const MPCData * generalData);
       ~QPGenerator();
 
@@ -62,7 +62,7 @@ namespace MPCWalkgen{
       QPSolver * solver_;
       RigidBodySystem * robot_;
       Reference * velRef_;
-      QPPonderation * ponderation_;
+      QPWeighting * weighting_;
       const MPCData * generalData_;
 
       Eigen::VectorXd tmpVec_;
@@ -87,7 +87,7 @@ namespace MPCWalkgen{
 }
 
 /*! \fn MPCWalkgen::QPGenerator::QPGenerator(QPPreview * preview, QPSolver * solver,
-*					VelReference * velRef, QPPonderation * ponderation,
+*					VelReference * velRef, QPWeighting * weighting,
 *					RigidBodySystem * robot, const MPCData * generalData)
 * \brief Constructor
 */

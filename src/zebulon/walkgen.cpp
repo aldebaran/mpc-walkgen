@@ -135,24 +135,24 @@ void Walkgen::mpcData(const MPCData &mpcData){
     robot_->computeInterpolationDynamics();
   }
 
-  int size = mpcData.ponderation.baseInstantVelocity.size();
+  int size = mpcData.weighting.baseInstantVelocity.size();
   for(int i=0; i<size; ++i){
-    if (fabs(mpcData.ponderation.baseInstantVelocity[i]-tmpMpcData.ponderation.baseInstantVelocity[i])>EPSILON
-    || fabs(mpcData.ponderation.baseJerkMin[i]-tmpMpcData.ponderation.baseJerkMin[i])>EPSILON
-    || fabs(mpcData.ponderation.basePosition[i]-tmpMpcData.ponderation.basePosition[i])>EPSILON
-    || fabs(mpcData.ponderation.CoMCentering[i]-tmpMpcData.ponderation.CoMCentering[i])>EPSILON
-    || fabs(mpcData.ponderation.CoMJerkMin[i]-tmpMpcData.ponderation.CoMJerkMin[i])>EPSILON
-    || fabs(mpcData.ponderation.CopCentering[i]-tmpMpcData.ponderation.CopCentering[i])>EPSILON){
+    if (fabs(mpcData.weighting.baseInstantVelocity[i]-tmpMpcData.weighting.baseInstantVelocity[i])>EPSILON
+    || fabs(mpcData.weighting.baseJerkMin[i]-tmpMpcData.weighting.baseJerkMin[i])>EPSILON
+    || fabs(mpcData.weighting.basePosition[i]-tmpMpcData.weighting.basePosition[i])>EPSILON
+    || fabs(mpcData.weighting.CoMCentering[i]-tmpMpcData.weighting.CoMCentering[i])>EPSILON
+    || fabs(mpcData.weighting.CoMJerkMin[i]-tmpMpcData.weighting.CoMJerkMin[i])>EPSILON
+    || fabs(mpcData.weighting.CopCentering[i]-tmpMpcData.weighting.CopCentering[i])>EPSILON){
       generator_->precomputeObjective();
       break;
     }
   }
 
-  size = mpcData.ponderation.OrientationInstantVelocity.size();
+  size = mpcData.weighting.OrientationInstantVelocity.size();
   for(int i=0; i<size; ++i){
-    if (fabs(mpcData.ponderation.OrientationInstantVelocity[i]-tmpMpcData.ponderation.OrientationInstantVelocity[i])>EPSILON
-    || fabs(mpcData.ponderation.OrientationJerkMin[i]-tmpMpcData.ponderation.OrientationJerkMin[i])>EPSILON
-    || fabs(mpcData.ponderation.OrientationPosition[i]-tmpMpcData.ponderation.OrientationPosition[i])>EPSILON){
+    if (fabs(mpcData.weighting.OrientationInstantVelocity[i]-tmpMpcData.weighting.OrientationInstantVelocity[i])>EPSILON
+    || fabs(mpcData.weighting.OrientationJerkMin[i]-tmpMpcData.weighting.OrientationJerkMin[i])>EPSILON
+    || fabs(mpcData.weighting.OrientationPosition[i]-tmpMpcData.weighting.OrientationPosition[i])>EPSILON){
       generatorOrientation_->precomputeObjective();
       break;
     }
@@ -223,7 +223,7 @@ void Walkgen::init() {
   upperTimeLimitToUpdate_ = 0.0;
   upperTimeLimitToFeedback_ = 0.0;
 
-  mpcData_.ponderation.activePonderation = 0;
+  mpcData_.weighting.activeWeighting = 0;
 
   velRef_.resize(mpcData_.nbSamplesQP);
   newVelRef_.resize(mpcData_.nbSamplesQP);

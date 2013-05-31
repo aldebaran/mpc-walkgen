@@ -22,10 +22,10 @@ void StateSolver::setSupportState(double time, int sample, const std::vector<dou
     }
 
   // Update time limit for double support phase
-  if (ReferenceGiven && support.phase == DS && (support.timeLimit-time+EPSILON) > generalData_->DSSSPeriod) {
-      //Support.TimeLimit = time+DSSSPeriod_-T_/10.0;
-      support.timeLimit = time + generalData_->DSSSPeriod;
-      support.nbStepsLeft = generalData_->nbStepSSDS;
+  if (ReferenceGiven && support.phase == DS && (support.timeLimit-time+EPSILON) > generalData_->firstDStoSSPeriod) {
+      //Support.TimeLimit = time+firstDStoSSPeriod_-T_/10.0;
+      support.timeLimit = time + generalData_->firstDStoSSPeriod;
+      support.nbStepsLeft = generalData_->nbStepsBeforeDS;
     }
 
   //FSM
@@ -33,14 +33,14 @@ void StateSolver::setSupportState(double time, int sample, const std::vector<dou
       //SS->DS
       if (support.phase == SS && !ReferenceGiven && support.nbStepsLeft == 0){
           support.phase 			= DS;
-          support.timeLimit 		= time + samplingTimes_vec[sample] + generalData_->DSPeriod;
+          support.timeLimit 		= time + samplingTimes_vec[sample] + generalData_->SSPeriodBeforeDS;
           support.stateChanged 	= true;
           support.nbInstants 		= 0;
           //DS->SS
         } else if (((support.phase == DS) && ReferenceGiven) || ((support.phase == DS) && (support.nbStepsLeft > 0))){
           support.phase = SS;
           support.timeLimit 		= time + samplingTimes_vec[sample] + generalData_->stepPeriod;
-          support.nbStepsLeft 	= generalData_->nbStepSSDS;
+          support.nbStepsLeft 	= generalData_->nbStepsBeforeDS;
           support.stateChanged 	= true;
           support.nbInstants 		= 0;
           //SS->SS
@@ -60,7 +60,7 @@ void StateSolver::setSupportState(double time, int sample, const std::vector<dou
               support.nbStepsLeft = support.nbStepsLeft-1;
             }
           if (ReferenceGiven) {
-              support.nbStepsLeft = generalData_->nbStepSSDS;
+              support.nbStepsLeft = generalData_->nbStepsBeforeDS;
             }
         }
     }
