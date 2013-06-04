@@ -109,6 +109,7 @@ void QPGenerator::precomputeObjective(){
 
   int nbUsedWeightings = generalData_->weighting.baseJerkMin.size();
 
+  Qconst_.resize(nbUsedWeightings);
   pconstComObjComState_.resize(nbUsedWeightings);
   pconstComObjBaseState.resize(nbUsedWeightings);
   pconstBaseObjComState.resize(nbUsedWeightings);
