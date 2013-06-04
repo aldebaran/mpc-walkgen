@@ -251,18 +251,24 @@ namespace MPCWalkgen{
       HipYawData leftHipYaw;
       HipYawData rightHipYaw;
 
-      double robotMass; //Never used //TODO: rename mass
+      double robotMass; // Never used //TODO: rename mass
 
-      Eigen::Vector3d leftFootPos; //Initial position of the left foot in frame world
-      Eigen::Vector3d rightFootPos; //Initial position of the right foot in frame world
+      Eigen::Vector3d leftFootPos; // Initial position of the left foot in frame world
+      Eigen::Vector3d rightFootPos; // Initial position of the right foot in frame world
 
-      //Hulls used for constraining the QP
-      ConvexHull leftFootHull; // kinematics constraints for the left foot
-      ConvexHull rightFootHull; // kinematics constraints for the right foot
-      ConvexHull CoPLeftSSHull;
-      ConvexHull CoPRightSSHull;
-      ConvexHull CoPLeftDSHull;
-      ConvexHull CoPRightDSHull;
+      // Hulls used for constraining the QP
+      ConvexHull leftFootHull; /* kinematics constraints for the left foot expressed in the
+                                  current local frame (when the support foot is the right foot) */
+      ConvexHull rightFootHull; /* kinematics constraints for the right foot expressed in the
+                                  current local frame (when the support foot is the left foot) */
+      ConvexHull CoPLeftSSHull; /* expressed in the current local frame
+                                    (when the support foot is the left foot) */
+      ConvexHull CoPRightSSHull; /* expressed in the current local frame
+                                    (when the support foot is the right foot) */
+      ConvexHull CoPLeftDSHull; /* expressed in the current local frame
+                                    (when the support foot is the left foot) */
+      ConvexHull CoPRightDSHull; /* expressed in the current local frame
+                                    (when the support foot is the right foot) */
 
       RobotData(const HipYawData &leftHipYaw, const HipYawData &rightHipYaw,
                 double mass);

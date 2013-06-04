@@ -116,9 +116,9 @@ void RigidBodySystem::convexHull(ConvexHull &hull, HullType type, const SupportS
   switch (type){
     case FootHull:
       if (prwSupport.foot == LEFT){
-          hull = robotData_.leftFootHull;
-        }else{
           hull = robotData_.rightFootHull;
+        }else{
+          hull = robotData_.leftFootHull;
         }
       break;
     case CoPHull:

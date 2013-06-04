@@ -67,7 +67,7 @@ int main() {
   const int nbVertFeet = 5;
   // Feasible foot positions
   double DefaultFPosEdgesX[nbVertFeet] = {-0.28, -0.2, 0.0, 0.2, 0.28};
-  double DefaultFPosEdgesY[nbVertFeet] = {-0.2, -0.3, -0.4, -0.3, -0.2};
+  double DefaultFPosEdgesY[nbVertFeet] = {0.2, 0.3, 0.4, 0.3, 0.2};
 
   robotData.leftFootHull.resize(nbVertFeet);
   robotData.rightFootHull.resize(nbVertFeet);
