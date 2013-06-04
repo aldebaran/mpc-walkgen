@@ -95,6 +95,7 @@ namespace MPCWalkgen{
     };
 
     struct MPC_WALKGEN_API RobotData {
+      Eigen::Vector2d dAngle;
       double CoMHeight;
 
       double copLimitX;
@@ -106,7 +107,6 @@ namespace MPCWalkgen{
       double comLimitY;
       Eigen::Vector3d gravity;
       Eigen::Vector3d previousGravity;
-      Eigen::Vector2d dAngle;
 
       RobotData();
     };

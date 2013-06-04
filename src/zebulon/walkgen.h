@@ -31,6 +31,7 @@ namespace MPCWalkgen{
     {
 
     public:
+      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
       Walkgen(::MPCWalkgen::QPSolverType solvertype);
       virtual ~Walkgen();
 

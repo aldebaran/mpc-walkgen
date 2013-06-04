@@ -41,7 +41,8 @@ int MPCData::nbSamplesMPC() const{
 }
 
 RobotData::RobotData()
-  :CoMHeight(0.45)
+  :dAngle(0,0)
+  ,CoMHeight(0.45)
   ,copLimitX(0.264*0.8)
   ,copLimitY(0.252*0.8)
   ,deltaComXLocal(-0.042)
@@ -51,7 +52,6 @@ RobotData::RobotData()
   ,comLimitY(0.044*0.5)
   ,gravity(0,0,9.81)
   ,previousGravity(0,0,9.81)
-  ,dAngle(0,0)
 {
   baseLimit[0]=0.83*10;
   baseLimit[1]=1*10;
