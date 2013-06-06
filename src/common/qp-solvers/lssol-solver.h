@@ -38,6 +38,8 @@ namespace MPCWalkgen{
              Eigen::VectorXi & constraints,
              Eigen::VectorXd & initialSolution,
              Eigen::VectorXi & initialConstraints,
+             Eigen::VectorXd & initialLagrangeMultiplier,
+             Eigen::VectorXd & lagrangeMultiplier,
              bool useWarmStart);
 
     protected:
@@ -46,7 +48,6 @@ namespace MPCWalkgen{
     protected:
       Eigen::VectorXi kx_;
       Eigen::VectorXd bb_;
-      Eigen::VectorXd lambda_;
       Eigen::VectorXd bu_;
       Eigen::VectorXd bl_;
 

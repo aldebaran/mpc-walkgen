@@ -36,17 +36,18 @@ namespace MPCWalkgen{
       void precomputeObjective();
       void precomputeObjectiveCoP();
 
-      void buildObjective();
+      void buildObjective(GlobalSolution &result);
 
-      void buildConstraints();
+      void buildConstraints(GlobalSolution & result);
       void buildConstraintsCoP();
       void buildConstraintsCoM();
-      void buildConstraintsBasePosition();
+      void buildConstraintsBasePosition(GlobalSolution & result);
       void buildConstraintsBaseVelocity();
       void buildConstraintsBaseAcceleration();
       void buildConstraintsBaseJerk();
 
       void computeWarmStart(GlobalSolution & result);
+      void computefinalSolution(GlobalSolution & result);
 
       void computeReferenceVector(const GlobalSolution & result);
 
@@ -89,7 +90,10 @@ namespace MPCWalkgen{
       Eigen::VectorXd tmpVec2_;
       Eigen::VectorXd tmpVec3_;
       Eigen::VectorXd tmpVec4_;
+      Eigen::VectorXd tmpVec5_;
+      Eigen::VectorXd tmpVec6_;
       Eigen::MatrixXd tmpMat_;
+      Eigen::MatrixXd tmpMat2_;
 
       // These matrices are the precomputed part of the Hessian matrix Q and the linear vector P of the QP problem.
       // They should be multiplied by a state or reference vector, and then added to the right lines of the matrix/vector

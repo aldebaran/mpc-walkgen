@@ -31,11 +31,17 @@ namespace MPCWalkgen{
       Eigen::VectorXi constraints;
       Eigen::VectorXi initialConstraints;
 
+      Eigen::VectorXd lagrangeMultiplier;
+      Eigen::VectorXd initialLagrangeMultiplier;
+
       Eigen::VectorXd qpSolutionOrientation;
       Eigen::VectorXd initialSolutionOrientation;
 
       Eigen::VectorXi constraintsOrientation;
       Eigen::VectorXi initialConstraintsOrientation;
+
+      Eigen::VectorXd lagrangeMultiplierOrientation;
+      Eigen::VectorXd initialLagrangeMultiplierOrientation;
 
       bool useWarmStart;
 

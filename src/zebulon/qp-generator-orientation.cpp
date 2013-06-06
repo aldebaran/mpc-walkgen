@@ -146,10 +146,13 @@ void QPGeneratorOrientation::computeWarmStart(GlobalSolution & result){
   if (result.constraintsOrientation.rows()>=solver_->nbCtr()+solver_->nbVar()){
       result.initialConstraintsOrientation= result.constraintsOrientation;
       result.initialSolutionOrientation= result.qpSolutionOrientation;
+      result.initialLagrangeMultiplierOrientation = result.lagrangeMultiplierOrientation;
     }else{
       result.initialConstraintsOrientation.setZero(generalData_->QPOrientationNbConstraints
                                                  + generalData_->QPOrientationNbVariables);
       result.initialSolutionOrientation.setZero(generalData_->QPOrientationNbVariables);
+      result.initialLagrangeMultiplierOrientation.setZero(generalData_->QPOrientationNbConstraints
+                                                        + generalData_->QPOrientationNbVariables);
     }
 }
 

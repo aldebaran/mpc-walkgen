@@ -50,6 +50,8 @@ bool QPOasesSolver::solve(VectorXd & qpSolution,
         VectorXi & constraints,
         VectorXd & initialSolution,
         VectorXi & initialConstraints,
+        VectorXd & initialLagrangeMultiplier,
+        VectorXd & lagrangeMultiplier,
         bool useWarmStart){
   int varNumber = nbVar_- nbVarMin_;
   int ctrNumber = nbCtr_ - nbCtrMin_;
@@ -60,6 +62,7 @@ bool QPOasesSolver::solve(VectorXd & qpSolution,
   if (useWarmStart){
     qpSolution = initialSolution;
     constraints = initialConstraints;
+    lagrangeMultiplier = initialLagrangeMultiplier;
     for(int i=0;i<nbVar_;++i){
           if (constraints(i)==0){
          boundsInit_[varNumber]->setupBound(i,qpOASES::ST_INACTIVE);
@@ -107,6 +110,7 @@ bool QPOasesSolver::solve(VectorXd & qpSolution,
 
 
         ::qpOASES::returnValue ret = qp_[qpNumber]->getPrimalSolution(qpSolution.data());
+        qp_[qpNumber]->getDualSolution(lagrangeMultiplier.data());
 
         qpOASES::Constraints ctr;
         qpOASES::Bounds bounds;
@@ -131,7 +135,8 @@ bool QPOasesSolver::solve(VectorXd & qpSolution,
             }
         }
 
-        reorderSolution(qpSolution, constraints, initialConstraints);
+        reorderSolution(qpSolution, constraints,
+                        initialConstraints, initialLagrangeMultiplier, lagrangeMultiplier);
 
 
         if (ret!=::qpOASES::SUCCESSFUL_RETURN){

@@ -278,16 +278,29 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
       generatorOrientation_->computeWarmStart(solution_);
 
       solverOrientation_->solve(solution_.qpSolutionOrientation,
-                                solution_.constraintsOrientation, solution_.initialSolutionOrientation,
-                                solution_.initialConstraintsOrientation, solution_.useWarmStart);
+                                solution_.constraintsOrientation,
+                                solution_.initialSolutionOrientation,
+                                solution_.initialConstraintsOrientation,
+                                solution_.initialLagrangeMultiplierOrientation,
+                                solution_.lagrangeMultiplierOrientation,
+                                solution_.useWarmStart);
 
       generator_->computeReferenceVector(solution_);
-      generator_->buildObjective();
-      generator_->buildConstraints();
       generator_->computeWarmStart(solution_);
+      generator_->buildObjective(solution_);
+      generator_->buildConstraints(solution_);
 
-      solution_.mpcSolution.solutionFound = solver_->solve(solution_.qpSolution, solution_.constraints,
-                     solution_.initialSolution, solution_.initialConstraints, solution_.useWarmStart);
+
+      solution_.mpcSolution.solutionFound = solver_->solve(solution_.qpSolution,
+                                                           solution_.constraints,
+                                                           solution_.initialSolution,
+                                                           solution_.initialConstraints,
+                                                           solution_.initialLagrangeMultiplier,
+                                                           solution_.lagrangeMultiplier,
+                                                           solution_.useWarmStart);
+
+
+      generator_->computefinalSolution(solution_);
 
       robot_->interpolateBodies(solution_, time, velRef_);
 

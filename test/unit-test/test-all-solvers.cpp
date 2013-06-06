@@ -54,9 +54,10 @@ Eigen::VectorXd test_all_solvers(QPSolver & qp1, int nbVar, int nbCtr)
   result1.useWarmStart=false;
   result1.initialSolution.resize(nbVar);
   result1.initialConstraints.resize(nbVar+nbCtr);
-
+  Eigen::VectorXd tmp(100);
   qp1.solve(result1.qpSolution, result1.constraints,
-     result1.initialSolution, result1.initialConstraints, result1.useWarmStart);
+     result1.initialSolution, result1.initialConstraints,
+     tmp, tmp, result1.useWarmStart);
 
   return result1.qpSolution;
 }
