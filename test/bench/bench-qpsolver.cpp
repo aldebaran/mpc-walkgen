@@ -245,9 +245,11 @@ bool testBenchmarkQP (const std::string& paths, QPSolver &qp,
       result.initialConstraints = result.constraints;
     }
 
+    Eigen::VectorXd tmp(100);
     debug.getTime(1, true);
     qp.solve(result.qpSolution, result.constraints,
              result.initialSolution, result.initialConstraints,
+             tmp, tmp,
              result.useWarmStart);
     debug.getTime(1, false);
 

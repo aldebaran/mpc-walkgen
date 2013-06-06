@@ -32,6 +32,8 @@ namespace MPCWalkgen{
              Eigen::VectorXi & constraints,
              Eigen::VectorXd & initialSolution,
              Eigen::VectorXi & initialConstraints,
+             Eigen::VectorXd & initialLagrangeMultiplier,
+             Eigen::VectorXd & lagrangeMultiplier,
              bool useWarmStart)=0;
 
       void dump();
@@ -62,7 +64,9 @@ namespace MPCWalkgen{
                 Eigen::VectorXi & initialConstraints);
       void reorderSolution(Eigen::VectorXd & qpSolution,
                Eigen::VectorXi & constraints,
-               Eigen::VectorXi & initialConstraints);
+               Eigen::VectorXi & initialConstraints,
+               Eigen::VectorXd &initialLagrangeMultiplier,
+               Eigen::VectorXd & lagrangeMultiplier);
 
     protected:
       QPMatrix matrixQ_;

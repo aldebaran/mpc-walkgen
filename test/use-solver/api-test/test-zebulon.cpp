@@ -52,25 +52,28 @@ int main() {
 
   MPCData mpcData;
   mpcData.weighting.basePositionInt[0]=0;
-  mpcData.weighting.basePosition[0]=0;
+  mpcData.weighting.basePosition[0]=10;
   walk->init(mpcData);
 
 
 
   EnvData envData;
-  Eigen::VectorXd obstacleRadius(2);
-  Eigen::VectorXd obstaclePositionX(2);
-  Eigen::VectorXd obstaclePositionY(2);
-  obstacleRadius(0) = 2;
-  obstaclePositionX(0) = 7;
-  obstaclePositionY(0) = -1;
-  obstacleRadius(1) = 1;
-  obstaclePositionX(1) = 10;
-  obstaclePositionY(1) = 0.5;
+  Eigen::VectorXd obstacleRadius(3);
+  Eigen::VectorXd obstaclePositionX(3);
+  Eigen::VectorXd obstaclePositionY(3);
+  obstacleRadius(0) = 1;
+  obstaclePositionX(0) = 2;
+  obstaclePositionY(0) = -0.2;
+  obstacleRadius(1) = 0.5;
+  obstaclePositionX(1) = 4;
+  obstaclePositionY(1) = 0.1;
+  obstacleRadius(2) = 0.5;
+  obstaclePositionX(2) = 5;
+  obstaclePositionY(2) = -0.3;
   envData.obstacleRadius = obstacleRadius;
   envData.obstaclePositionX = obstaclePositionX;
   envData.obstaclePositionY = obstaclePositionY;
-  envData.nbObstacle = 2;
+  envData.nbObstacle = 3;
 
 
   // Run:
@@ -96,20 +99,20 @@ int main() {
   basePos.fill(0);
   zero.fill(0);
 
-  for (t += 0.005; t < 15; t += 0.005){
+  for (t += 0.001; t < 45; t += 0.001){
 
     for(int i=0; i<10; ++i)
     {
       position(i)=0.16*(i+1)*velocity+result.state_vec[1].baseTrajX_(0);
     }
 
-    //walk->posReferenceInGlobalFrame(position, zero, zero);
+    walk->posReferenceInGlobalFrame(position, zero, zero);
     result = walk->online(t);
-    //Eigen::VectorXd basePos;
-    //walk->QPBasePosition(basePos);
-    //envData.obstacleLinearizationPointX = basePos.segment(0, 10);
-    //envData.obstacleLinearizationPointY = basePos.segment(10, 10);
-    //walk->envData(envData);
+    Eigen::VectorXd basePos;
+    walk->QPBasePosition(basePos);
+    envData.obstacleLinearizationPointX = basePos.segment(0, 10);
+    envData.obstacleLinearizationPointY = basePos.segment(10, 10);
+    walk->envData(envData);
 
 
     dumpTrajectory(result, data_vec);

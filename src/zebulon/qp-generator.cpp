@@ -262,7 +262,7 @@ void QPGenerator::computePartOfVectorP(const Eigen::MatrixXd & precomputedMatrix
   computePartOfVectorP(precomputedMatrix, state.y, pos+generalData_->nbSamplesQP, setTerm);
 }
 
-void QPGenerator::buildObjective() {
+void QPGenerator::buildObjective(GlobalSolution & result) {
 
   int nb = generalData_->weighting.activeWeighting;
   int N = generalData_->nbSamplesQP;
@@ -330,6 +330,11 @@ void QPGenerator::buildObjective() {
 
   computePartOfVectorP(pconstBaseObjBaseOrientation_[nb], tmpVec3_, 2*N);
   computePartOfVectorP(pconstBaseObjBaseOrientation_[nb], tmpVec2_, 3*N);
+
+
+  //Convert X in deltaX
+  const Eigen::MatrixXd & Q = solver_->matrix(matrixQ)();
+  solver_->vector(vectorP).addTerm(Q*result.initialSolution);
 }
 
 void QPGenerator::buildConstraintsCoP(){
@@ -468,50 +473,62 @@ void QPGenerator::buildConstraintsCoM(){
 }
 
 //The base must be out of each circular obstacle, linearized by a tangent plane
-void QPGenerator::buildConstraintsBasePosition(){
-  const int size = envData_->nbObstacle;
+void QPGenerator::buildConstraintsBasePosition(GlobalSolution & result){
+
+  const int s = envData_->nbObstacle;
   const int N = generalData_->nbSamplesQP;
   const LinearDynamics & basePosDynamics = robot_->body(BASE)->dynamics(posDynamic);
   const BodyState & base = robot_->body(BASE)->state();
 
-  tmpMat_.setZero(N*size, 2*N);
-  tmpVec_.setZero(N*size);
-  tmpVec3_.resize(N);
-  tmpVec2_.resize(N*size);
+
+
+  tmpMat_.setZero(N*s, 2*N);
+  tmpMat2_.setZero(N, N);
+  tmpVec_.setZero(N*s);
+  tmpVec2_.resize(N*s);
   tmpVec2_.fill(-10e11);
-  for(int j=0; j<size; ++j)
+
+  tmpVec3_ = result.initialSolution.segment(2*N, N);
+  tmpVec4_ = result.initialSolution.segment(3*N, N);
+
+  for(int j=0; j<s; ++j)
   {
     for(int i=0; i<N; ++i)
     {
-      const double dist =
-     std::sqrt(pow2(envData_->obstaclePositionX(j)-envData_->obstacleLinearizationPointX(i))
-              +pow2(envData_->obstaclePositionY(j)-envData_->obstacleLinearizationPointY(i)));
+      Eigen::VectorXd tmp = (basePosDynamics.U.block(i,0,1,N)*tmpVec3_);
+      Eigen::VectorXd tmp2 = (basePosDynamics.S.block(i,0,1,5)*base.x);
+      double gix = tmp(0) + tmp2(0) - envData_->obstaclePositionX(j);
 
-      const double FX = envData_->obstaclePositionX(j) + (envData_->obstacleRadius(j)/dist)
-                     * (envData_->obstacleLinearizationPointX(i) - envData_->obstaclePositionX(j));
-      const double FY = envData_->obstaclePositionY(j) + (envData_->obstacleRadius(j)/dist)
-                     * (envData_->obstacleLinearizationPointY(i) - envData_->obstaclePositionY(j));
+      tmp = (basePosDynamics.U.block(i,0,1,N)*tmpVec4_);
+      tmp2 = (basePosDynamics.S.block(i,0,1,5)*base.y);
+      double giy = tmp(0) + tmp2(0) - envData_->obstaclePositionY(j);
 
-      const double FPX = envData_->obstaclePositionX(j) - FX;
-      const double FPY = envData_->obstaclePositionY(j) - FY;
+      double gi = envData_->obstacleRadius(j) * envData_->obstacleRadius(j)
+                - gix*gix - giy*giy;
 
-      tmpMat_(j*N+i, i)   = FPX;
-      tmpMat_(j*N+i, i+N) = FPY;
+      tmpVec_(i+j*N) = -gi;
 
-      tmpVec_(j*N+i) = FX*FPX+FY*FPY;
+      tmpMat_.block(i+j*N,0,1,N) = -2*gix * basePosDynamics.U.block(i,0,1,N);
+      tmpMat_.block(i+j*N,N,1,N) = -2*giy * basePosDynamics.U.block(i,0,1,N);
+
+      tmpMat2_ -= basePosDynamics.U.block(i,0,1,N).transpose()*basePosDynamics.U.block(i,0,1,N)
+                * -result.initialLagrangeMultiplier((4+9)*N + i+j*N);
+
     }
-
-    tmpVec_.segment(j*N, N) = tmpVec_.segment(j*N, N)-tmpMat_.block(j*N, 0, N, N)*basePosDynamics.S*base.x;
-    tmpVec_.segment(j*N, N) = tmpVec_.segment(j*N, N)-tmpMat_.block(j*N, N, N, N)*basePosDynamics.S*base.y;
-    tmpMat_.block(j*N, 0, N, N) = tmpMat_.block(j*N, 0, N, N)*basePosDynamics.U;
-    tmpMat_.block(j*N, N, N, N) = tmpMat_.block(j*N, N, N, N)*basePosDynamics.U;
-
   }
 
 
   solver_->matrix(matrixA).setTerm(tmpMat_, 9*N, 2*N);
   solver_->vector(vectorBL).setTerm(tmpVec2_, 9*N);
   solver_->vector(vectorBU).setTerm(tmpVec_, 9*N);
+
+  solver_->vector(vectorBU).addTerm(tmpMat_*result.initialSolution.segment(2*N, 2*N), 9*N);
+
+
+  solver_->matrix(matrixQ).addTerm(tmpMat2_, 2*N, 2*N);
+  solver_->matrix(matrixQ).addTerm(tmpMat2_, 3*N, 3*N);
+
+
 }
 
 void QPGenerator::buildConstraintsBaseVelocity(){
@@ -581,7 +598,7 @@ void QPGenerator::buildConstraintsBaseJerk(){
 
 }
 
-void QPGenerator::buildConstraints(){
+void QPGenerator::buildConstraints(GlobalSolution & result){
 
   solver_->nbCtr(generalData_->QPNbConstraints);
 
@@ -589,22 +606,40 @@ void QPGenerator::buildConstraints(){
 
   buildConstraintsCoP();
   buildConstraintsCoM();
-  buildConstraintsBasePosition();
+  buildConstraintsBasePosition(result);
   buildConstraintsBaseVelocity();
   buildConstraintsBaseAcceleration();
   buildConstraintsBaseJerk();
 
+  //Convert X in deltaX
+  const Eigen::MatrixXd& A = solver_->matrix(matrixA)();
+  const Eigen::VectorXd Ax = -A*result.initialSolution;
+
+  solver_->vector(vectorXU).addTerm(-result.initialSolution);
+  solver_->vector(vectorXL).addTerm(-result.initialSolution);
+  solver_->vector(vectorBU).addTerm(Ax);
+  solver_->vector(vectorBL).addTerm(Ax);
+
 }
 
 void QPGenerator::computeWarmStart(GlobalSolution & result){
-  if (result.constraints.rows()>=solver_->nbCtr()+solver_->nbVar()){
+  if (result.constraints.rows()>=generalData_->QPNbConstraints+generalData_->QPNbVariables){
       result.initialConstraints= result.constraints;
       result.initialSolution= result.qpSolution;
+      result.initialLagrangeMultiplier = result.lagrangeMultiplier;
     }else{
       result.initialConstraints.setZero(generalData_->QPNbConstraints
                                       + generalData_->QPNbVariables);
       result.initialSolution.setZero(generalData_->QPNbVariables);
+      result.initialLagrangeMultiplier.setZero(generalData_->QPNbConstraints
+                                      + generalData_->QPNbVariables);
     }
+}
+
+void QPGenerator::computefinalSolution(GlobalSolution & result)
+{
+  //Convert deltaX in X
+  result.qpSolution += result.initialSolution;
 }
 
 void QPGenerator::computeReferenceVector(const GlobalSolution & result){

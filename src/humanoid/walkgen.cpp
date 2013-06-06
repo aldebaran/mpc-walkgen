@@ -193,10 +193,12 @@ const MPCSolution & Walkgen::online(double time, bool previewBodiesNextState){
       generator_->buildConstraints(solution_);
       generator_->computeWarmStart(solution_);
 
+      Eigen::VectorXd tmp(100);
       solver_->solve(solution_.qpSolution,
                      solution_.constraints,
                      solution_.initialSolution,
                      solution_.initialConstraints,
+                     tmp,tmp,
                      solution_.useWarmStart);
 
       generator_->convertCopToJerk(solution_);

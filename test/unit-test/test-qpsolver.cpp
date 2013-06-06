@@ -36,82 +36,84 @@ obj = -8.2222
 
 bool testQP (QPSolver & qp)
 {
-	qp.reset();
-	qp.nbVar(2);
-	qp.nbCtr(3);
+  qp.reset();
+  qp.nbVar(2);
+  qp.nbCtr(3);
 
 
-	// create the qp problem
-	Matrix2d Q;
-	Q << 1, -1, -1, 2;
-	Q *= 0.5;
-	qp.matrix(matrixQ).addTerm(Q);
+  // create the qp problem
+  Matrix2d Q;
+  Q << 1, -1, -1, 2;
+  Q *= 0.5;
+  qp.matrix(matrixQ).addTerm(Q);
 
-	Vector2d P;
-	P << -2, -6;
-	qp.vector(vectorP).addTerm(P);
+  Vector2d P;
+  P << -2, -6;
+  qp.vector(vectorP).addTerm(P);
 
-	MatrixXd A(3,2);
-	A << 1,  1,
-	  -1,  2,
-	   2,  1;
-	qp.matrix(matrixA).addTerm(A);
+  MatrixXd A(3,2);
+  A << 1,  1,
+    -1,  2,
+     2,  1;
+  qp.matrix(matrixA).addTerm(A);
 
-	Vector3d bl;
-	bl << -1e10, -1e10, -1e10;
-	qp.vector(vectorBL).addTerm(bl);
+  Vector3d bl;
+  bl << -1e10, -1e10, -1e10;
+  qp.vector(vectorBL).addTerm(bl);
 
 
-	Vector3d bu;
-	bu << 2,2,3;
-	qp.vector(vectorBU).addTerm(bu);
+  Vector3d bu;
+  bu << 2,2,3;
+  qp.vector(vectorBU).addTerm(bu);
 
-	Vector2d xl;
-	xl.fill(0);
-	qp.vector(vectorXL).addTerm(xl);
+  Vector2d xl;
+  xl.fill(0);
+  qp.vector(vectorXL).addTerm(xl);
 
-	Vector2d xu;
-	xu.fill(1e10);
-	qp.vector(vectorXU).addTerm(xu);
+  Vector2d xu;
+  xu.fill(1e10);
+  qp.vector(vectorXU).addTerm(xu);
 
-	MPCSolution result;
-	result.reset();
-	result.useWarmStart=false;
-	result.initialSolution.resize(2);
-	result.initialConstraints.resize(2+3);
+  MPCSolution result;
+  result.reset();
+  result.useWarmStart=false;
+  result.initialSolution.resize(2);
+  result.initialConstraints.resize(2+3);
 
-	qp.solve(result.qpSolution, result.constraints,
-		 result.initialSolution, result.initialConstraints,
-		 result.useWarmStart);
+  Eigen::VectorXd tmp(100);
+  qp.solve(result.qpSolution, result.constraints,
+     result.initialSolution, result.initialConstraints,
+     tmp, tmp,
+     result.useWarmStart);
 
-	Vector2d expectedResult;
-	expectedResult << 2./3., 4./3.;
-	std::cout << result.qpSolution.transpose() << std::endl;
-	bool success = ((result.qpSolution - expectedResult).norm() < 1e-4);
-	return success;
+  Vector2d expectedResult;
+  expectedResult << 2./3., 4./3.;
+  std::cout << result.qpSolution.transpose() << std::endl;
+  bool success = ((result.qpSolution - expectedResult).norm() < 1e-4);
+  return success;
 }
 
 
 int main()
 {
-	bool success = true;
-	QPSolver * solver = NULL;
+  bool success = true;
+  QPSolver * solver = NULL;
 #ifdef MPC_WALKGEN_WITH_QPOASES
-	std::cout << "Testing qpOASES " << std::endl;
-	solver = createQPSolver(QPSOLVERTYPE_QPOASES, 2 , 3);
-	success = testQP(*solver) && success;
-	if (solver) {
-		delete solver;
-	}
+  std::cout << "Testing qpOASES " << std::endl;
+  solver = createQPSolver(QPSOLVERTYPE_QPOASES, 2 , 3);
+  success = testQP(*solver) && success;
+  if (solver) {
+    delete solver;
+  }
 #endif //MPC_WALKGEN_WITH_QPOASES
 
 #ifdef MPC_WALKGEN_WITH_LSSOL
-	std::cout << "Testing LSSOL " << std::endl;
-	solver = createQPSolver(QPSOLVERTYPE_LSSOL, 2 , 3);
-	success = testQP(*solver) && success;
-	if (solver) {
-		delete solver;
-	}
+  std::cout << "Testing LSSOL " << std::endl;
+  solver = createQPSolver(QPSOLVERTYPE_LSSOL, 2 , 3);
+  success = testQP(*solver) && success;
+  if (solver) {
+    delete solver;
+  }
 #endif //MPC_WALKGEN_WITH_LSSOL
-	return (success ? 0 : 1);
+  return (success ? 0 : 1);
 }
