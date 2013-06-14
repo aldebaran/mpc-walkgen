@@ -23,54 +23,56 @@ namespace MPCWalkgen{
   namespace Humanoid{
     class RigidBody{
 
-    public:
-      RigidBody(const MPCData * generalData,
-                const RobotData * robotData,
-                const Interpolation *interpolation);
-      virtual ~RigidBody();
+      public:
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-      inline const BodyState & state() const{return state_;}
-      inline BodyState & state(){return state_;}
+        RigidBody(const MPCData * generalData,
+                  const RobotData * robotData,
+                  const Interpolation *interpolation);
+        virtual ~RigidBody();
 
-      inline void state(const BodyState & s){state_=s;}
+        inline const BodyState & state() const{return state_;}
+        inline BodyState & state(){return state_;}
 
-      const LinearDynamics & dynamics(DynamicMatrixType type) const;
+        inline void state(const BodyState & s){state_=s;}
 
-      void setDynamics(double firstSamplingPeriod);
+        const LinearDynamics & dynamics(DynamicMatrixType type) const;
 
-      void computeDynamics();
+        void setDynamics(double firstSamplingPeriod);
 
-      virtual void interpolate(MPCSolution & result, double currentTime,
-                               const Reference & velRef)=0;
+        void computeDynamics();
 
-    protected:
-      virtual void computeDynamicsMatrices(LinearDynamics & dyn,
-                                           double S, double T, int N, DynamicMatrixType type)=0;
+        virtual void interpolate(MPCSolution & result, double currentTime,
+                                 const Reference & velRef)=0;
 
-    protected:
-      const MPCData *generalData_;
-      const RobotData *robotData_;
-      const Interpolation *interpolation_;
+      protected:
+        virtual void computeDynamicsMatrices(LinearDynamics & dyn,
+                                             double S, double T, int N, DynamicMatrixType type)=0;
 
-      BodyState state_;
-      std::vector<LinearDynamics> pos_vec_;
-      std::vector<LinearDynamics> vel_vec_;
-      std::vector<LinearDynamics> acc_vec_;
-      std::vector<LinearDynamics> jerk_vec_;
-      std::vector<LinearDynamics> cop_vec_;
+      protected:
+        const MPCData *generalData_;
+        const RobotData *robotData_;
+        const Interpolation *interpolation_;
 
-      LinearDynamics posInterpol_;
-      LinearDynamics velInterpol_;
-      LinearDynamics accInterpol_;
-      LinearDynamics copInterpol_;
+        BodyState state_;
+        std::vector<LinearDynamics> pos_vec_;
+        std::vector<LinearDynamics> vel_vec_;
+        std::vector<LinearDynamics> acc_vec_;
+        std::vector<LinearDynamics> jerk_vec_;
+        std::vector<LinearDynamics> cop_vec_;
 
-      int matrixNumber_;
+        LinearDynamics posInterpol_;
+        LinearDynamics velInterpol_;
+        LinearDynamics accInterpol_;
+        LinearDynamics copInterpol_;
 
-      /// \brief factors of the three polynoms of the spline
-      Eigen::VectorXd factor_;
+        int matrixNumber_;
 
-      /// \brief For a given x, these are the 4 factors of the corresponding polynom of the spline
-      Eigen::Vector4d subfactor_;
+        /// \brief factors of the three polynoms of the spline
+        Eigen::VectorXd factor_;
+
+        /// \brief For a given x, these are the 4 factors of the corresponding polynom of the spline
+        Eigen::Vector4d subfactor_;
     };
   }
 }
