@@ -96,11 +96,11 @@ QPWeighting::QPWeighting(int nb)
   //move
   CopCentering[nb+1]        = 1;
   CoMCentering[nb+1]        = 0;
-  CoMJerkMin[nb+1]          = 0;
+  CoMJerkMin[nb+1]          = 0.0001;
   angularMomentumMin[nb+1]  = 0;//2;
   torqueMin[nb+1]           = 0;//0.1;
   baseJerkMin[nb+1]         = 0;
-  baseInstantVelocity[nb+1] = 15;
+  baseInstantVelocity[nb+1] = 10;
   basePosition[nb+1]        = 0;
   basePositionInt[nb+1]     = 0;
 
@@ -113,7 +113,7 @@ QPWeighting::QPWeighting(int nb)
   {
     //more stable moveTo
     const double factor = static_cast<double>(i)/static_cast<double>(nb);
-    CopCentering[i+1]        = 1;//+factor*factor*100;
+    CopCentering[i+1]        = 1+factor*factor*10;
     CoMCentering[i+1]        = 0;
     CoMJerkMin[i+1]          = 0.0001;
     angularMomentumMin[i+1]  = 0;
@@ -128,13 +128,13 @@ QPWeighting::QPWeighting(int nb)
     OrientationJerkMin[i+1]         = 0;
 
     //more stable move
-    CopCentering[nb+i+2]        = 1;
+    CopCentering[nb+i+2]        = 1+factor*factor*10;
     CoMCentering[nb+i+2]        = 0;
-    CoMJerkMin[nb+i+2]          = 0;
+    CoMJerkMin[nb+i+2]          = 0.0001;
     angularMomentumMin[nb+i+2]  = 0;//2;
     torqueMin[nb+i+2]           = 0;//0.1+factor*50+factor*factor*50;
     baseJerkMin[nb+i+2]         = 0;
-    baseInstantVelocity[nb+i+2] = 15;
+    baseInstantVelocity[nb+i+2] = 10;
     basePosition[nb+i+2]        = 0;
     basePositionInt[nb+i+2]     = 0;
 
