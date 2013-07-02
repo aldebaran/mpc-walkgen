@@ -168,3 +168,5 @@ endif()
 qi_stage_lib(mpc-walkgen)
 
 add_subdirectory(test)
+
+add_subdirectory(new)
