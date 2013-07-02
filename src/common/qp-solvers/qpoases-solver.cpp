@@ -101,6 +101,7 @@ bool QPOasesSolver::solve(VectorXd & qpSolution,
 
   MatrixXd A = matrixA_().transpose();
 
+
   qp_[qpNumber]->init(matrixQ_().data(), vectorP_().data(), A.data(),
       vectorXL_().data(), vectorXU_().data(),
       vectorBL_().data(), vectorBU_().data(),

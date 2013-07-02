@@ -12,7 +12,7 @@
 #include <vector>
 #include <algorithm>
 #include <stdio.h>
-
+#include <qi/os.hpp>
 using namespace Eigen;
 using namespace MPCWalkgen;
 using namespace Zebulon;
@@ -52,7 +52,7 @@ int main() {
 
   MPCData mpcData;
   mpcData.weighting.basePositionInt[0]=0;
-  mpcData.weighting.basePosition[0]=10;
+  mpcData.weighting.basePosition[0]=0;
   walk->init(mpcData);
 
 
@@ -99,20 +99,31 @@ int main() {
   basePos.fill(0);
   zero.fill(0);
 
-  for (t += 0.001; t < 45; t += 0.001){
-
+  for (t += 0.001; t < 2.0; t += 0.02){
+/*
     for(int i=0; i<10; ++i)
     {
       position(i)=0.16*(i+1)*velocity+result.state_vec[1].baseTrajX_(0);
-    }
+    }*/
+/*
+    walk->posReferenceInGlobalFrame(position, zero, zero);*/
+   qi::os::timeval t1, t2;
+    qi::os::gettimeofday(&t1);
 
-    walk->posReferenceInGlobalFrame(position, zero, zero);
     result = walk->online(t);
+
+    qi::os::gettimeofday(&t2);
+    double total =
+      (static_cast<double>(t2.tv_sec-t1.tv_sec)
+       +0.000001*static_cast<double>((t2.tv_usec-t1.tv_usec)))
+      /static_cast<double>(1);
+    std::cout << "Solving time : " << floor(1000000*total)/1000 << " ms" << std::endl;
+/*
     Eigen::VectorXd basePos;
     walk->QPBasePosition(basePos);
     envData.obstacleLinearizationPointX = basePos.segment(0, 10);
     envData.obstacleLinearizationPointY = basePos.segment(10, 10);
-    walk->envData(envData);
+    walk->envData(envData);*/
 
 
     dumpTrajectory(result, data_vec);
