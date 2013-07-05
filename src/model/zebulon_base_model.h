@@ -31,10 +31,21 @@ namespace MPCWalkgen
 
     /// \brief compute all of the dynamics
     void computeDynamics();
+    void computeCopXDynamic();
+    void computeCopYDynamic();
     void computeBasePosDynamic();
     void computeBaseVelDynamic();
     void computeBaseAccDynamic();
     void computeBaseJerkDynamic();
+
+    /// \brief Get the linear dynamic correspond to the CoP position X
+    inline const LinearDynamic& getCopXLinearDynamic() const
+    {return copXDynamic_;}
+
+
+    /// \brief Get the linear dynamic correspond to the CoP position Y
+    inline const LinearDynamic& getCopYLinearDynamic() const
+    {return copYDynamic_;}
 
     /// \brief Get the linear dynamic correspond to the base position
     inline const LinearDynamic& getBasePosLinearDynamic() const
@@ -100,6 +111,22 @@ namespace MPCWalkgen
     inline Scalar getSamplingPeriod(void) const
     {return samplingPeriod_;}
 
+    /// \brief Set the CoM constant height
+    void setComHeight(Scalar comHeight);
+
+    /// \brief Set the base mass
+    void setMass(Scalar mass);
+
+    /// \brief Get the base mass
+    inline Scalar getMass(void) const
+    {return mass_;}
+
+    /// \brief Set the robot total mass
+    void setTotalMass(Scalar mass);
+
+    /// \brief Set the constant gravity vector
+    void setGravity(const Vector3& gravity);
+
     /// \brief Get the base velocity maximum value
     inline Scalar getVelocityLimit(void) const
     {return velocityLimit_;}
@@ -156,6 +183,11 @@ namespace MPCWalkgen
     VectorX stateX_;
     VectorX stateY_;
 
+    Scalar comHeight_;
+    Vector3 gravity_;
+    Scalar mass_;
+    Scalar totalMass_;
+
     Scalar velocityLimit_;
     Scalar accelerationLimit_;
     Scalar jerkLimit_;
@@ -164,6 +196,8 @@ namespace MPCWalkgen
     LinearDynamic baseVelDynamic_;
     LinearDynamic baseAccDynamic_;
     LinearDynamic baseJerkDynamic_;
+    LinearDynamic copXDynamic_;
+    LinearDynamic copYDynamic_;
     Hull supportHull_;
 
   };

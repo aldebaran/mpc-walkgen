@@ -22,8 +22,11 @@ namespace Tools
   class ConstantJerkDynamic
   {
   public:
-    static void computePosDynamic(Scalar T, int N, LinearDynamic& dyn,
-                                  Scalar shiftS=0.0, Scalar shiftAcc=0.0);
+    static void computeCopDynamic(Scalar T, int N, LinearDynamic& dyn,
+                                  Scalar comHeight, Scalar gravityX,
+                                  Scalar gravityY, Scalar mass, Scalar totalMass);
+
+    static void computePosDynamic(Scalar T, int N, LinearDynamic& dyn);
 
     static void computeVelDynamic(Scalar T, int N, LinearDynamic& dyn);
 

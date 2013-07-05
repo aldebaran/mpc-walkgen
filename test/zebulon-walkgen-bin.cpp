@@ -9,11 +9,14 @@ int main(void)
 
   int nbSamples = 10;
 
-  ZebulonWalkgenImp walkgen;
+  ZebulonWalkgenImpl walkgen;
 
   walkgen.setNbSamples(nbSamples);
-  walkgen.setSamplingPeriod(0.16) ;
-  walkgen.setComHeight(0.45);
+  walkgen.setSamplingPeriod(0.16);
+  walkgen.setComBodyHeight(0.76);
+  walkgen.setComBaseHeight(0.13);
+  walkgen.setBodyMass(12.5);
+  walkgen.setBaseMass(17.5);
 
   Scalar copLimitMin = 0.01;
   Scalar copLimitMax = 0.015;
@@ -38,7 +41,7 @@ int main(void)
   Config config;
   config.withBaseMotionConstraints = true;
   config.withComConstraints = true;
-  config.withCopConstraints = true;
+  config.withCopConstraints = false;
   walkgen.setConfig(config);
 
   VectorX velRef(2*nbSamples);
@@ -67,7 +70,7 @@ int main(void)
   walkgen.setBaseJerkLimit(10.0);
 
   Scalar samplingFeedback = 0.02;
-  for(Scalar t=0.0; t<15.0; t+=samplingFeedback)
+  for(Scalar t=0.0; t<5.0; t+=samplingFeedback)
   {
     qi::os::timeval t1, t2;
     qi::os::gettimeofday(&t1);
@@ -79,7 +82,7 @@ int main(void)
       (static_cast<double>(t2.tv_sec-t1.tv_sec)
        +0.000001*static_cast<double>((t2.tv_usec-t1.tv_usec)))
       /static_cast<double>(1);
-    std::cout << "Solving time : " << floor(1000000*total)/1000 << " ms" << std::endl;
+    //std::cout << "Solving time : " << floor(1000000*total)/1000 << " ms" << std::endl;
   }
 
   return 0;

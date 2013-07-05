@@ -19,18 +19,21 @@ namespace MPCWalkgen
 {
   class ZebulonWalkgen;
 
-  class MPC_WALKGEN_NEW_API ZebulonWalkgenImp
+  class MPC_WALKGEN_NEW_API ZebulonWalkgenImpl
   {
   public:
-    ZebulonWalkgenImp();
-    ~ZebulonWalkgenImp();
+    ZebulonWalkgenImpl();
+    ~ZebulonWalkgenImpl();
 
     void setNbSamples(int nbSamples);
     void setSamplingPeriod(Scalar samplingPeriod);
 
     void setGravity(const Vector3& gravity);
     void setBaseHull(const std::vector<Vector3> p);
-    void setComHeight(Scalar comHeight);
+    void setComBodyHeight(Scalar comHeight);
+    void setComBaseHeight(Scalar comHeight);
+    void setBodyMass(Scalar mass);
+    void setBaseMass(Scalar mass);
 
     void setVelRefInWorldFrame(const VectorX& velRef);
     void setPosRefInWorldFrame(const VectorX& posRef);

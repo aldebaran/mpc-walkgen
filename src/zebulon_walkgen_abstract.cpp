@@ -3,13 +3,13 @@
 
 using namespace MPCWalkgen;
 
-ZebulonWalkgenImp::ZebulonWalkgenImp()
+ZebulonWalkgenImpl::ZebulonWalkgenImpl()
 :walkgen(NULL)
 {
   walkgen = new ZebulonWalkgen();
 }
 
-ZebulonWalkgenImp::~ZebulonWalkgenImp()
+ZebulonWalkgenImpl::~ZebulonWalkgenImpl()
 {
   if (walkgen!=NULL)
   {
@@ -17,111 +17,126 @@ ZebulonWalkgenImp::~ZebulonWalkgenImp()
   }
 }
 
-void ZebulonWalkgenImp::setNbSamples(int nbSamples)
+void ZebulonWalkgenImpl::setNbSamples(int nbSamples)
 {
   walkgen->setNbSamples(nbSamples);
 }
 
-void ZebulonWalkgenImp::setSamplingPeriod(Scalar samplingPeriod)
+void ZebulonWalkgenImpl::setSamplingPeriod(Scalar samplingPeriod)
 {
   walkgen->setSamplingPeriod(samplingPeriod);
 }
 
-void ZebulonWalkgenImp::setGravity(const Vector3& gravity)
+void ZebulonWalkgenImpl::setGravity(const Vector3& gravity)
 {
   walkgen->setGravity(gravity);
 }
 
-void ZebulonWalkgenImp::setBaseHull(const std::vector<Vector3> p)
+void ZebulonWalkgenImpl::setBaseHull(const std::vector<Vector3> p)
 {
   walkgen->setBaseHull(Hull(p));
 }
 
-void ZebulonWalkgenImp::setComHeight(Scalar comHeight)
+void ZebulonWalkgenImpl::setComBodyHeight(Scalar comHeight)
 {
-  walkgen->setComHeight(comHeight);
+  walkgen->setComBodyHeight(comHeight);
 }
 
-void ZebulonWalkgenImp::setVelRefInWorldFrame(const VectorX& velRef)
+void ZebulonWalkgenImpl::setComBaseHeight(Scalar comHeight)
+{
+  walkgen->setComBaseHeight(comHeight);
+}
+
+void ZebulonWalkgenImpl::setBodyMass(Scalar mass)
+{
+  walkgen->setBodyMass(mass);
+}
+
+void ZebulonWalkgenImpl::setBaseMass(Scalar mass)
+{
+  walkgen->setBaseMass(mass);
+}
+
+void ZebulonWalkgenImpl::setVelRefInWorldFrame(const VectorX& velRef)
 {
   walkgen->setVelRefInWorldFrame(velRef);
 }
 
-void ZebulonWalkgenImp::setPosRefInWorldFrame(const VectorX& posRef)
+void ZebulonWalkgenImpl::setPosRefInWorldFrame(const VectorX& posRef)
 {
   walkgen->setPosRefInWorldFrame(posRef);
 }
-void ZebulonWalkgenImp::setCopRefInLocalFrame(const VectorX& copRef)
+void ZebulonWalkgenImpl::setCopRefInLocalFrame(const VectorX& copRef)
 {
   walkgen->setCopRefInLocalFrame(copRef);
 }
 
-void ZebulonWalkgenImp::setBaseVelLimit(Scalar limit)
+void ZebulonWalkgenImpl::setBaseVelLimit(Scalar limit)
 {
   walkgen->setBaseVelLimit(limit);
 }
 
-void ZebulonWalkgenImp::setBaseAccLimit(Scalar limit)
+void ZebulonWalkgenImpl::setBaseAccLimit(Scalar limit)
 {
   walkgen->setBaseAccLimit(limit);
 }
 
-void ZebulonWalkgenImp::setBaseJerkLimit(Scalar limit)
+void ZebulonWalkgenImpl::setBaseJerkLimit(Scalar limit)
 {
   walkgen->setBaseJerkLimit(limit);
 }
 
-void ZebulonWalkgenImp::setBaseStateX(const VectorX& state)
+void ZebulonWalkgenImpl::setBaseStateX(const VectorX& state)
 {
   walkgen->setBaseStateX(state);
 }
 
-void ZebulonWalkgenImp::setBaseStateY(const VectorX& state)
+void ZebulonWalkgenImpl::setBaseStateY(const VectorX& state)
 {
   walkgen->setBaseStateY(state);
 }
 
-void ZebulonWalkgenImp::setComStateX(const VectorX& state)
+void ZebulonWalkgenImpl::setComStateX(const VectorX& state)
 {
   walkgen->setComStateX(state);
 }
 
-void ZebulonWalkgenImp::setComStateY(const VectorX& state)
+void ZebulonWalkgenImpl::setComStateY(const VectorX& state)
 {
   walkgen->setComStateY(state);
 }
 
-void ZebulonWalkgenImp::setWeightings(const Weighting& weighting)
+void ZebulonWalkgenImpl::setWeightings(const Weighting& weighting)
 {
   walkgen->setWeightings(weighting);
 }
 
-void ZebulonWalkgenImp::setConfig(const Config& config)
+void ZebulonWalkgenImpl::setConfig(const Config& config)
 {
   walkgen->setConfig(config);
 }
 
-void ZebulonWalkgenImp::solve(Scalar feedBackPeriod)
+void ZebulonWalkgenImpl::solve(Scalar feedBackPeriod)
 {
   walkgen->solve(feedBackPeriod);
 }
 
-const VectorX& ZebulonWalkgenImp::getBaseStateX()
+const VectorX& ZebulonWalkgenImpl::getBaseStateX()
 {
   return walkgen->getBaseStateX();
 }
 
-const VectorX& ZebulonWalkgenImp::getBaseStateY()
+const VectorX& ZebulonWalkgenImpl::getBaseStateY()
 {
   return walkgen->getBaseStateY();
 }
 
-const VectorX& ZebulonWalkgenImp::getComStateX()
+const VectorX& ZebulonWalkgenImpl::getComStateX()
 {
   return walkgen->getComStateX();
 }
 
-const VectorX& ZebulonWalkgenImp::getComStateY()
+const VectorX& ZebulonWalkgenImpl::getComStateY()
 {
   return walkgen->getComStateY();
 }

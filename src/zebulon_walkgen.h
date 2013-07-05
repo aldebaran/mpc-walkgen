@@ -37,7 +37,10 @@ namespace MPCWalkgen
 
     void setGravity(const Vector3& gravity);
     void setBaseHull(const Hull& hull);
-    void setComHeight(Scalar comHeight);
+    void setComBodyHeight(Scalar comHeight);
+    void setComBaseHeight(Scalar comHeight);
+    void setBodyMass(Scalar mass);
+    void setBaseMass(Scalar mass);
 
     void setVelRefInWorldFrame(const VectorX& velRef);
     void setPosRefInWorldFrame(const VectorX& posRef);

@@ -10,10 +10,13 @@ LIPModel::LIPModel(int nbSamples,
                    Vector3 gravity,
                    bool autoCompute)
 :autoCompute_(autoCompute)
+,useLipModel2_(false)
 ,nbSamples_(nbSamples)
 ,samplingPeriod_(samplingPeriod)
 ,comHeight_(comHeight)
 ,gravity_(gravity)
+,mass_(1.0)
+,totalMass_(1.0)
 {
   assert(samplingPeriod>0);
   assert(nbSamples>0);
@@ -43,22 +46,18 @@ void LIPModel::computeDynamics()
 
 void LIPModel::computeCopXDynamic()
 {
-  assert(std::abs(gravity_(2))>EPSILON);
-
-  Tools::ConstantJerkDynamic::computePosDynamic(samplingPeriod_, nbSamples_,
-                                                copXDynamic_,
-                                                comHeight_*gravity_(0)/gravity_(2),
-                                                comHeight_/gravity_(2));
+    Tools::ConstantJerkDynamic::computeCopDynamic(samplingPeriod_, nbSamples_,
+                                                  copXDynamic_,  comHeight_,
+                                                  gravity_(0), gravity_(2),
+                                                  mass_, totalMass_);
 }
 
 void LIPModel::computeCopYDynamic()
 {
-  assert(std::abs(gravity_(2))>EPSILON);
-
-  Tools::ConstantJerkDynamic::computePosDynamic(samplingPeriod_, nbSamples_,
-                                                copYDynamic_,
-                                                comHeight_*gravity_(1)/gravity_(2),
-                                                comHeight_/gravity_(2));
+    Tools::ConstantJerkDynamic::computeCopDynamic(samplingPeriod_, nbSamples_,
+                                                  copYDynamic_,  comHeight_,
+                                                  gravity_(1), gravity_(2),
+                                                  mass_, totalMass_);
 }
 
 void LIPModel::computeComPosDynamic()
@@ -137,6 +136,32 @@ void LIPModel::setGravity(const Vector3& gravity)
   assert(std::abs(gravity_(2))>EPSILON);
 
   gravity_ = gravity;
+
+  if (autoCompute_)
+  {
+    computeCopXDynamic();
+    computeCopYDynamic();
+  }
+}
+
+void LIPModel::setMass(Scalar mass)
+{
+  assert(mass==mass);
+
+  mass_ = mass;
+
+  if (autoCompute_)
+  {
+    computeCopXDynamic();
+    computeCopYDynamic();
+  }
+}
+
+void LIPModel::setTotalMass(Scalar mass)
+{
+  assert(mass==mass);
+  assert(mass>=mass_);
+  totalMass_ = mass;
 
   if (autoCompute_)
   {

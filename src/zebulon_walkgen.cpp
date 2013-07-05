@@ -74,9 +74,9 @@ void ZebulonWalkgen::setGravity(const Vector3& gravity)
   assert(std::abs(gravity(2))>EPSILON);
 
   lipModel_.setGravity(gravity);
+  baseModel_.setGravity(gravity);
 
   copConstraint_.computeConstantPart();
-  comConstraint_.computeConstantPart();
   copCenteringObj_.computeConstantPart();
 
   computeConstantPart();
@@ -94,14 +94,58 @@ void ZebulonWalkgen::setBaseHull(const Hull& hull)
   computeConstantPart();
 }
 
-void ZebulonWalkgen::setComHeight(Scalar comHeight)
+void ZebulonWalkgen::setComBodyHeight(Scalar comHeight)
 {
   assert(comHeight==comHeight);
 
   lipModel_.setComHeight(comHeight);
 
   copConstraint_.computeConstantPart();
-  comConstraint_.computeConstantPart();
+  copCenteringObj_.computeConstantPart();
+
+  computeConstantPart();
+}
+
+void ZebulonWalkgen::setComBaseHeight(Scalar comHeight)
+{
+  assert(comHeight==comHeight);
+
+  baseModel_.setComHeight(comHeight);
+
+  copConstraint_.computeConstantPart();
+  copCenteringObj_.computeConstantPart();
+
+  computeConstantPart();
+}
+
+void ZebulonWalkgen::setBodyMass(Scalar mass)
+{
+  assert(mass==mass);
+
+
+  Scalar totalMass = mass + baseModel_.getMass();
+  lipModel_.setTotalMass(totalMass);
+  baseModel_.setTotalMass(totalMass);
+
+  lipModel_.setMass(mass);
+
+  copConstraint_.computeConstantPart();
+  copCenteringObj_.computeConstantPart();
+
+  computeConstantPart();
+}
+
+void ZebulonWalkgen::setBaseMass(Scalar mass)
+{
+  assert(mass==mass);
+
+  Scalar totalMass = lipModel_.getMass() + mass;
+  lipModel_.setTotalMass(totalMass);
+  baseModel_.setTotalMass(totalMass);
+
+  baseModel_.setMass(mass);
+
+  copConstraint_.computeConstantPart();
   copCenteringObj_.computeConstantPart();
 
   computeConstantPart();
@@ -292,14 +336,6 @@ void ZebulonWalkgen::solve(Scalar feedBackPeriod)
 
   qpoasesSolver_.solve(qpMatrix_, dX_, true);
   X_ += dX_;
-
-  std::cout << X_(2*N) << "\t\t"
-            << baseModel_.getStateX()(1) << "\t\t"
-            << baseModel_.getStateX()(2) << "\t\t"
-            << lipModel_.getStateX()(0) - baseModel_.getStateX()(0)
-               - (0.45/9.81)*lipModel_.getStateX()(2) << "\t\t"
-            << lipModel_.getStateX()(0) - baseModel_.getStateX()(0)  << "\t\t"
-  << std::endl;
 
   lipModel_.updateStateX(X_(0), feedBackPeriod);
   lipModel_.updateStateY(X_(N), feedBackPeriod);
