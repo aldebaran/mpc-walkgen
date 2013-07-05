@@ -15,6 +15,10 @@ BaseModel::BaseModel(int nbSamples,
 :autoCompute_(autoCompute)
 ,nbSamples_(nbSamples)
 ,samplingPeriod_(samplingPeriod)
+,comHeight_(0.0)
+,gravity_(Vector3(0.0, 0.0, 9.81))
+,mass_(0.0)
+,totalMass_(1.0)
 ,velocityLimit_(velocityLimit)
 ,accelerationLimit_(accelerationLimit)
 ,jerkLimit_(jerkLimit)
@@ -45,6 +49,25 @@ void BaseModel::computeDynamics()
   computeBaseVelDynamic();
   computeBaseAccDynamic();
   computeBaseJerkDynamic();
+  computeCopXDynamic();
+  computeCopYDynamic();
+}
+
+
+void BaseModel::computeCopXDynamic()
+{
+    Tools::ConstantJerkDynamic::computeCopDynamic(samplingPeriod_, nbSamples_,
+                                                  copXDynamic_,  comHeight_,
+                                                  gravity_(0), gravity_(2),
+                                                  mass_, totalMass_);
+}
+
+void BaseModel::computeCopYDynamic()
+{
+    Tools::ConstantJerkDynamic::computeCopDynamic(samplingPeriod_, nbSamples_,
+                                                  copYDynamic_,  comHeight_,
+                                                  gravity_(1), gravity_(2),
+                                                  mass_, totalMass_);
 }
 
 void BaseModel::computeBasePosDynamic()
@@ -100,5 +123,59 @@ void BaseModel::setSamplingPeriod(Scalar samplingPeriod)
   if (autoCompute_)
   {
     computeDynamics();
+  }
+}
+
+
+void BaseModel::setComHeight(Scalar comHeight)
+{
+  assert(comHeight==comHeight);
+
+  comHeight_ = comHeight;
+
+  if (autoCompute_)
+  {
+    computeCopXDynamic();
+    computeCopYDynamic();
+  }
+}
+
+void BaseModel::setGravity(const Vector3& gravity)
+{
+  assert(gravity==gravity);
+  assert(std::abs(gravity_(2))>EPSILON);
+
+  gravity_ = gravity;
+
+  if (autoCompute_)
+  {
+    computeCopXDynamic();
+    computeCopYDynamic();
+  }
+}
+
+void BaseModel::setMass(Scalar mass)
+{
+  assert(mass==mass);
+
+  mass_ = mass;
+
+  if (autoCompute_)
+  {
+    computeCopXDynamic();
+    computeCopYDynamic();
+  }
+}
+
+void BaseModel::setTotalMass(Scalar mass)
+{
+  assert(mass==mass);
+  assert(mass>=mass_);
+  totalMass_ = mass;
+
+  if (autoCompute_)
+  {
+    computeCopXDynamic();
+    computeCopYDynamic();
   }
 }

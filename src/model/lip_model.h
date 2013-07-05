@@ -113,11 +113,23 @@ namespace MPCWalkgen
     /// \brief Set the CoM constant height
     void setComHeight(Scalar comHeight);
 
+    /// \brief Set the body mass
+    void setMass(Scalar mass);
+
+    /// \brief Get the body mass
+    inline Scalar getMass(void) const
+    {return mass_;}
+
+    /// \brief Set the robot total mass
+    void setTotalMass(Scalar mass);
+
     /// \brief Set the constant gravity vector
     void setGravity(const Vector3& gravity);
 
   private:
     bool autoCompute_;
+
+    bool useLipModel2_;
 
     int nbSamples_;
     Scalar samplingPeriod_;
@@ -127,6 +139,8 @@ namespace MPCWalkgen
 
     Scalar comHeight_;
     Vector3 gravity_;
+    Scalar mass_;
+    Scalar totalMass_;
 
     LinearDynamic comPosDynamic_;
     LinearDynamic comVelDynamic_;

@@ -1,11 +1,45 @@
 #include "tools.h"
+#include <cmath>
 
 using namespace MPCWalkgen;
 
-void Tools::ConstantJerkDynamic::computePosDynamic(Scalar T, int N,
-                                                   LinearDynamic& dyn,
-                                                   Scalar shiftS,
-                                                   Scalar shiftAcc)
+void Tools::ConstantJerkDynamic::computeCopDynamic(Scalar T, int N, LinearDynamic& dyn,
+                                                   Scalar comHeight, Scalar gravityX,
+                                                   Scalar gravityY, Scalar mass,
+                                                   Scalar totalMass)
+{
+  assert(T>0.0);
+  assert(N>0);
+  assert(std::abs(gravityY)>EPSILON);
+  assert(totalMass>=mass);
+  assert(totalMass>EPSILON);
+  assert(mass>=0);
+
+  Scalar TT = std::pow(T, 2);
+  Scalar TTT = std::pow(T, 3);
+  Scalar m = mass/totalMass;
+
+  dyn.reset(N);
+
+  for (int i=0; i<N; ++i)
+  {
+    dyn.S(i,0) = dyn.ST(0,i) = m;
+    dyn.S(i,1) = dyn.ST(1,i) = m*(i+1)*T;
+    dyn.S(i,2) = dyn.ST(2,i) = m*TT*(1.0/2.0 + i + std::pow(static_cast<Scalar>(i), 2)/2.0)
+                             - m*comHeight/gravityY;
+    dyn.S(i,3) = dyn.ST(3,i) = -m*comHeight*gravityX/gravityY;
+
+    for(int j=0; j<=i; j++)
+    {
+      dyn.U(i,j) = dyn.UT(j,i) = m*TTT*
+                                 (1.0/6.0 + (i-j)/2.0 + std::pow(static_cast<Scalar>(i-j),2)/2.0)
+                               - m*T*comHeight/gravityY;
+    }
+
+  }
+}
+
+void Tools::ConstantJerkDynamic::computePosDynamic(Scalar T, int N, LinearDynamic& dyn)
 {
   assert(T>0.0);
   assert(N>0);
@@ -19,13 +53,12 @@ void Tools::ConstantJerkDynamic::computePosDynamic(Scalar T, int N,
   {
     dyn.S(i,0) = dyn.ST(0,i) = 1.0;
     dyn.S(i,1) = dyn.ST(1,i) = (i+1)*T;
-    dyn.S(i,2) = dyn.ST(2,i) = TT*(1.0/2.0 + i + std::pow(static_cast<Scalar>(i), 2)/2.0)-shiftAcc;
-    dyn.S(i,3) = dyn.ST(3,i) = -shiftS;
+    dyn.S(i,2) = dyn.ST(2,i) = TT*(1.0/2.0 + i + std::pow(static_cast<Scalar>(i), 2)/2.0);
 
     for(int j=0; j<=i; j++)
     {
       dyn.U(i,j) = dyn.UT(j,i) =
-                  TTT*(1.0/6.0 + (i-j)/2.0 + std::pow(static_cast<Scalar>(i-j),2)/2.0) - T*shiftAcc;
+                  TTT*(1.0/6.0 + (i-j)/2.0 + std::pow(static_cast<Scalar>(i-j),2)/2.0);
     }
 
   }
