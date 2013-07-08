@@ -24,14 +24,10 @@ namespace MPCWalkgen
   typedef Eigen::VectorXf VectorX;
   typedef Eigen::Vector3f Vector3;
 
-  struct MPC_WALKGEN_NEW_API Weighting
+  class MPC_WALKGEN_NEW_API Weighting
   {
-    Weighting()
-    :velocityTracking(0.0)
-    ,positionTracking(0.0)
-    ,copCentering(0.0)
-    ,jerkMinimization(0.0)
-    {}
+  public:
+    Weighting();
 
     Scalar velocityTracking;
     Scalar positionTracking;
@@ -39,13 +35,10 @@ namespace MPCWalkgen
     Scalar jerkMinimization;
   };
 
-  struct MPC_WALKGEN_NEW_API Config
+  class MPC_WALKGEN_NEW_API Config
   {
-    Config()
-    :withCopConstraints(true)
-    ,withComConstraints(true)
-    ,withBaseMotionConstraints(true)
-    {}
+  public:
+    Config();
 
     bool withCopConstraints;
     bool withComConstraints;

@@ -35,6 +35,7 @@ src/tools.cpp
 src/zebulon_walkgen.h
 src/zebulon_walkgen.cpp
 src/zebulon_walkgen_abstract.cpp
+src/shared_type.cpp
 )
 
 SET(mpc-walkgen_PUBLIC_HEADERS
