@@ -34,7 +34,9 @@ void QPOasesSolver::solve(const QPMatrices& m, VectorX& sol,
   qp_.setPrintLevel(qpOASES::PL_NONE);
 
 
-  int ittMax = 100;
+  //The number of itterations can be high in the init phase (approximatively equals to the
+  //number of constraints, aka 250).
+  int ittMax = 10000;
   ::qpOASES::returnValue ret;
   if (qpIsInitialized_)
   {
