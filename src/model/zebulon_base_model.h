@@ -162,16 +162,26 @@ namespace MPCWalkgen
 
 
     /// \brief Get the base support polygon
-    inline const Hull& getSupportHull(void) const
-    {return supportHull_;}
+    inline const Hull& getCopSupportHull(void) const
+    {return copSupportHull_;}
 
     /// \brief Set the base support polygon
-    inline void setSupportHull(const Hull& supportHull)
+    inline void setCopSupportHull(const Hull& supportHull)
     {
       assert(supportHull.p.size()>=3);
-      supportHull_=supportHull;
+      copSupportHull_=supportHull;
     }
 
+    /// \brief Get the base support polygon
+    inline const Hull& getComSupportHull(void) const
+    {return comSupportHull_;}
+
+    /// \brief Set the base support polygon
+    inline void setComSupportHull(const Hull& supportHull)
+    {
+      assert(supportHull.p.size()>=3);
+      comSupportHull_=supportHull;
+    }
 
 
   private:
@@ -198,7 +208,8 @@ namespace MPCWalkgen
     LinearDynamic baseJerkDynamic_;
     LinearDynamic copXDynamic_;
     LinearDynamic copYDynamic_;
-    Hull supportHull_;
+    Hull copSupportHull_;
+    Hull comSupportHull_;
 
   };
 

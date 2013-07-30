@@ -60,7 +60,7 @@ int ComConstraint::getNbConstraints()
 {
   assert(baseModel_.getNbSamples() == lipModel_.getNbSamples());
 
-  return baseModel_.getNbSamples()*baseModel_.getSupportHull().p.size();
+  return baseModel_.getNbSamples()*baseModel_.getComSupportHull().p.size();
 }
 
 void ComConstraint::computeConstantPart()
@@ -92,7 +92,7 @@ void ComConstraint::computeConstantPart()
 void ComConstraint::computeconstraintMatrices()
 {
   int N = lipModel_.getNbSamples();
-  const Hull& supportHull = baseModel_.getSupportHull();
+  const Hull& supportHull = baseModel_.getComSupportHull();
   int M = supportHull.p.size();
 
   A_.setZero(M*N, 2*N);

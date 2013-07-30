@@ -29,7 +29,8 @@ int main(void)
   p[5] = Vector3(0.0, -copLimitMax, 0.0);
   p[6] = Vector3(copLimitMin, -copLimitMin, 0.0);
   p[7] = Vector3(copLimitMax, 0.0, 0.0);
-  walkgen.setBaseHull(p);
+  walkgen.setBaseCopHull(p);
+  walkgen.setBaseComHull(p);
 
   Weighting weighting;
   weighting.copCentering = 10.0;

@@ -82,13 +82,23 @@ void ZebulonWalkgen::setGravity(const Vector3& gravity)
   computeConstantPart();
 }
 
-void ZebulonWalkgen::setBaseHull(const Hull& hull)
+void ZebulonWalkgen::setBaseCopHull(const Hull& hull)
 {
   assert(hull.p.size()>=3);
 
-  baseModel_.setSupportHull(hull);
+  baseModel_.setCopSupportHull(hull);
 
   copConstraint_.computeConstantPart();
+
+  computeConstantPart();
+}
+
+void ZebulonWalkgen::setBaseComHull(const Hull& hull)
+{
+  assert(hull.p.size()>=3);
+
+  baseModel_.setComSupportHull(hull);
+
   comConstraint_.computeConstantPart();
 
   computeConstantPart();
