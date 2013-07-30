@@ -263,7 +263,7 @@ void ZebulonWalkgen::setConfig(const Config& config)
 }
 
 
-void ZebulonWalkgen::solve(Scalar feedBackPeriod)
+bool ZebulonWalkgen::solve(Scalar feedBackPeriod)
 {
   int N = lipModel_.getNbSamples();
   int M1 = config_.withCopConstraints? copConstraint_.getNbConstraints() : 0;
@@ -344,7 +344,7 @@ void ZebulonWalkgen::solve(Scalar feedBackPeriod)
   qpMatrix_.bu *= invCtrNormFactor_;
   qpMatrix_.bl *= invCtrNormFactor_;
 
-  qpoasesSolver_.solve(qpMatrix_, dX_, true);
+  bool solutionFound = qpoasesSolver_.solve(qpMatrix_, dX_, true);
   X_ += dX_;
 
   lipModel_.updateStateX(X_(0), feedBackPeriod);
@@ -352,7 +352,7 @@ void ZebulonWalkgen::solve(Scalar feedBackPeriod)
   baseModel_.updateStateX(X_(2*N), feedBackPeriod);
   baseModel_.updateStateY(X_(3*N), feedBackPeriod);
 
-
+  return solutionFound;
 }
 
 

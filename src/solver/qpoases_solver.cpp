@@ -14,7 +14,7 @@ QPOasesSolver::QPOasesSolver(int nbVar, int nbCtr)
   qp_.setPrintLevel(qpOASES::PL_NONE);
 }
 
-void QPOasesSolver::solve(const QPMatrices& m, VectorX& sol,
+bool QPOasesSolver::solve(const QPMatrices& m, VectorX& sol,
                           bool useWarmStart)
 {
   assert(m.Q.rows() == m.Q.cols());
@@ -55,6 +55,9 @@ void QPOasesSolver::solve(const QPMatrices& m, VectorX& sol,
 
   if (ret!=::qpOASES::SUCCESSFUL_RETURN){
     std::cout << "[ERROR] MPC-Walkgen infeasible. QPOases error code " << ret << std::endl;
+    return false;
   }
+
+  return true;
 }
 
