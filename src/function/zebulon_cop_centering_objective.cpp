@@ -64,6 +64,7 @@ const MatrixX& CopCenteringObjective::getGradient(const VectorX& x0)
     tmp_.noalias() += dynCopYCom.S*lipModel_.getStateY();
     tmp_.noalias() += (dynCopYBase.S-dynBasePos.S)*baseModel_.getStateY();
     gradient_.block(3*N, 0, N, 1).noalias() += (dynCopYBase.UT-dynBasePos.UT)*tmp_;
+
   }
   else
   {
@@ -134,10 +135,10 @@ void CopCenteringObjective::computeConstantPart()
     hessian_.block(N, N, N, N) = dynCopYCom.UT*dynCopYCom.U;
 
     hessian_.block(2*N, 2*N, N, N) = (dynCopXBase.UT-dynBasePos.UT)*(dynCopXBase.U-dynBasePos.U);
-    hessian_.block(3*N, 3*N, N, N) = (dynCopXBase.UT-dynBasePos.UT)*(dynCopYBase.U-dynBasePos.U);
+    hessian_.block(3*N, 3*N, N, N) = (dynCopYBase.UT-dynBasePos.UT)*(dynCopYBase.U-dynBasePos.U);
 
     hessian_.block(2*N, 0, N, N) = (dynCopXBase.UT-dynBasePos.UT)*dynCopXCom.U;
-    hessian_.block(3*N, N, N, N) = (dynCopXBase.UT-dynBasePos.UT)*dynCopYCom.U;
+    hessian_.block(3*N, N, N, N) = (dynCopYBase.UT-dynBasePos.UT)*dynCopYCom.U;
 
     hessian_.block(0, 2*N, N, N) = dynCopXCom.UT*(dynCopXBase.U-dynBasePos.U);
     hessian_.block(N, 3*N, N, N) = dynCopYCom.UT*(dynCopYBase.U-dynBasePos.U);
