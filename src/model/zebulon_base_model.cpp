@@ -22,7 +22,8 @@ BaseModel::BaseModel(int nbSamples,
 ,velocityLimit_(velocityLimit)
 ,accelerationLimit_(accelerationLimit)
 ,jerkLimit_(jerkLimit)
-,supportHull_(supportHull)
+,copSupportHull_(supportHull)
+,comSupportHull_(supportHull)
 {
   assert(samplingPeriod>0);
   assert(nbSamples>0);

@@ -32,9 +32,14 @@ void ZebulonWalkgenImpl::setGravity(const Vector3& gravity)
   walkgen->setGravity(gravity);
 }
 
-void ZebulonWalkgenImpl::setBaseHull(const std::vector<Vector3> p)
+void ZebulonWalkgenImpl::setBaseCopHull(const std::vector<Vector3> p)
 {
-  walkgen->setBaseHull(Hull(p));
+  walkgen->setBaseCopHull(Hull(p));
+}
+
+void ZebulonWalkgenImpl::setBaseComHull(const std::vector<Vector3> p)
+{
+  walkgen->setBaseComHull(Hull(p));
 }
 
 void ZebulonWalkgenImpl::setComBodyHeight(Scalar comHeight)

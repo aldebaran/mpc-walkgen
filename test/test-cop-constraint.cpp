@@ -28,7 +28,7 @@ TEST_F(CopConstraintTest, functionValue)
   p[1] = Vector3(0.0, copLimitMax, 0.0);
   p[0] = Vector3(copLimitMin, copLimitMin, 0.0);
   Hull h(p);
-  m2.setSupportHull(h);
+  m2.setCopSupportHull(h);
 
   CopConstraint ctr(m1, m2);
   VectorX jerkInit(4);
@@ -111,7 +111,7 @@ TEST_F(CopConstraintTest, sizeOfvalues)
 
   CopConstraint ctr(m1, m2);
 
-  int M = m2.getSupportHull().p.size();
+  int M = m2.getCopSupportHull().p.size();
 
   VectorX jerkInit(4*nbSamples);
   jerkInit.fill(0.0);
