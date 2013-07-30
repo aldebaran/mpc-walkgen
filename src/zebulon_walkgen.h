@@ -59,7 +59,7 @@ namespace MPCWalkgen
     void setWeightings(const Weighting& weighting);
     void setConfig(const Config& config);
 
-    void solve(Scalar feedBackPeriod);
+    bool solve(Scalar feedBackPeriod);
 
     const VectorX& getBaseStateX();
     const VectorX& getBaseStateY();

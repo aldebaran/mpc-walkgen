@@ -22,7 +22,7 @@ namespace MPCWalkgen
   public:
     QPOasesSolver(int nbVar, int nbCtr);
 
-    void solve(const QPMatrices& m, VectorX& sol,
+    bool solve(const QPMatrices& m, VectorX& sol,
                bool useWarmStart = false);
 
   private:

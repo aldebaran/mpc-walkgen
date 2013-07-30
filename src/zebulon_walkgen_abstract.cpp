@@ -121,9 +121,9 @@ void ZebulonWalkgenImpl::setConfig(const Config& config)
   walkgen->setConfig(config);
 }
 
-void ZebulonWalkgenImpl::solve(Scalar feedBackPeriod)
+bool ZebulonWalkgenImpl::solve(Scalar feedBackPeriod)
 {
-  walkgen->solve(feedBackPeriod);
+  return walkgen->solve(feedBackPeriod);
 }
 
 const VectorX& ZebulonWalkgenImpl::getBaseStateX()
