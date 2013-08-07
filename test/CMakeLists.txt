@@ -81,4 +81,5 @@ qi_create_bin(zebulon-walkgen-bin
   SRC
 ./zebulon-walkgen-bin.cpp
   DEPENDS mpc-walkgen QPOASESfloat
+  NO_INSTALL
 )
