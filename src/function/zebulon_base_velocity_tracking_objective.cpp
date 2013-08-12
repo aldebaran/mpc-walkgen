@@ -66,6 +66,5 @@ void BaseVelocityTrackingObjective::computeConstantPart()
   hessian_.block(N, N, N, N) = dyn.UT*dyn.U;
   hessian_.block(0, N, N, N).fill(0.0);
   hessian_.block(N, 0, N, N).fill(0.0);
-
   tmp_.resize(N);
 }

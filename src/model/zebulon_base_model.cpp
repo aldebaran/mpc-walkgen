@@ -16,7 +16,7 @@ BaseModel::BaseModel(int nbSamples,
 ,nbSamples_(nbSamples)
 ,samplingPeriod_(samplingPeriod)
 ,comHeight_(0.0)
-,gravity_(Vector3(0.0, 0.0, 9.81))
+,gravity_(Vector3(0.0, 0.0, GRAVITY))
 ,mass_(0.0)
 ,totalMass_(1.0)
 ,velocityLimit_(velocityLimit)
@@ -24,6 +24,8 @@ BaseModel::BaseModel(int nbSamples,
 ,jerkLimit_(jerkLimit)
 ,copSupportHull_(supportHull)
 ,comSupportHull_(supportHull)
+,wheelToBaseDist_(0.0)
+,angleWheelToBaseCom_(0.0)
 {
   assert(samplingPeriod>0);
   assert(nbSamples>0);
@@ -36,6 +38,10 @@ BaseModel::BaseModel(int nbSamples,
   stateX_(3)=1.0;
   stateY_.setZero(4);
   stateY_(3)=1.0;
+  stateRoll_.setZero(4);
+  stateRoll_(3)=1.0;
+  statePitch_.setZero(4);
+  statePitch_(3)=1.0;
   if (autoCompute_)
   {
     computeDynamics();

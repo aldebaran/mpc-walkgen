@@ -35,6 +35,8 @@ namespace MPCWalkgen
     void setComBaseHeight(Scalar comHeight);
     void setBodyMass(Scalar mass);
     void setBaseMass(Scalar mass);
+    void setWheelToBaseDistance(Scalar dist);
+    void setAngleWheelToBaseCom(Scalar angle);
 
     void setVelRefInWorldFrame(const VectorX& velRef);
     void setPosRefInWorldFrame(const VectorX& posRef);
@@ -46,6 +48,8 @@ namespace MPCWalkgen
 
     void setBaseStateX(const VectorX& state);
     void setBaseStateY(const VectorX& state);
+    void setBaseStateRoll(const VectorX& state);
+    void setBaseStatePitch(const VectorX& state);
     void setComStateX(const VectorX& state);
     void setComStateY(const VectorX& state);
 

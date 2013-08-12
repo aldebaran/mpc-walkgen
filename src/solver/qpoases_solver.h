@@ -25,6 +25,12 @@ namespace MPCWalkgen
     bool solve(const QPMatrices& m, VectorX& sol,
                bool useWarmStart = false);
 
+    inline int getNbVar() const
+    {return nbVar_;}
+
+    inline int getNbCtr() const
+    {return nbCtr_;}
+
   private:
     Eigen::VectorXi constraints_;
 

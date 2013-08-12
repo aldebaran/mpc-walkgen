@@ -23,7 +23,7 @@ namespace MPCWalkgen
     LIPModel(int nbSamples = 1,
              Scalar samplingPeriod = 1.0,
              Scalar comHeight = 1.0,
-             Vector3 gravity = Vector3(0.0, 0.0, 9.81),
+             Vector3 gravity = Vector3(0.0, 0.0, GRAVITY),
              bool autoCompute = true);
 
     ~LIPModel();
@@ -112,6 +112,10 @@ namespace MPCWalkgen
 
     /// \brief Set the CoM constant height
     void setComHeight(Scalar comHeight);
+
+    /// \brief Get the CoM constant height
+    inline Scalar getComHeight(void) const
+    {return comHeight_;}
 
     /// \brief Set the body mass
     void setMass(Scalar mass);

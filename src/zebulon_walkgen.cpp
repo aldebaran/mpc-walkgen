@@ -7,6 +7,7 @@ ZebulonWalkgen::ZebulonWalkgen()
 :velTrackingObj_(baseModel_)
 ,posTrackingObj_(baseModel_)
 ,jerkMinObj_(lipModel_, baseModel_)
+,tiltMinObj_(lipModel_, baseModel_)
 ,copCenteringObj_(lipModel_, baseModel_)
 ,copConstraint_(lipModel_, baseModel_)
 ,comConstraint_(lipModel_, baseModel_)
@@ -42,6 +43,7 @@ void ZebulonWalkgen::setNbSamples(int nbSamples)
   X_.setZero(4*nbSamples);
 
   jerkMinObj_.computeConstantPart();
+  tiltMinObj_.computeConstantPart();
   copConstraint_.computeConstantPart();
   comConstraint_.computeConstantPart();
   copCenteringObj_.computeConstantPart();
@@ -65,6 +67,7 @@ void ZebulonWalkgen::setSamplingPeriod(Scalar samplingPeriod)
   velTrackingObj_.computeConstantPart();
   posTrackingObj_.computeConstantPart();
   baseMotionConstraint_.computeConstantPart();
+  tiltMinObj_.computeConstantPart();
 
   computeConstantPart();
 }
@@ -112,6 +115,7 @@ void ZebulonWalkgen::setComBodyHeight(Scalar comHeight)
 
   copConstraint_.computeConstantPart();
   copCenteringObj_.computeConstantPart();
+  tiltMinObj_.computeConstantPart();
 
   computeConstantPart();
 }
@@ -141,6 +145,7 @@ void ZebulonWalkgen::setBodyMass(Scalar mass)
 
   copConstraint_.computeConstantPart();
   copCenteringObj_.computeConstantPart();
+  tiltMinObj_.computeConstantPart();
 
   computeConstantPart();
 }
@@ -157,7 +162,25 @@ void ZebulonWalkgen::setBaseMass(Scalar mass)
 
   copConstraint_.computeConstantPart();
   copCenteringObj_.computeConstantPart();
+  tiltMinObj_.computeConstantPart();
 
+  computeConstantPart();
+}
+
+
+void ZebulonWalkgen::setWheelToBaseDistance(Scalar dist)
+{
+  baseModel_.setWheelToBaseDistance(dist);
+
+  tiltMinObj_.computeConstantPart();
+  computeConstantPart();
+}
+
+void ZebulonWalkgen::setAngleWheelToBaseCom(Scalar angle)
+{
+  baseModel_.setAngleWheelToBaseCom(angle);
+
+  tiltMinObj_.computeConstantPart();
   computeConstantPart();
 }
 
@@ -221,6 +244,24 @@ void ZebulonWalkgen::setBaseStateY(const VectorX& state)
   baseModel_.setStateY(state);
 }
 
+void ZebulonWalkgen::setBaseStateRoll(const VectorX& state)
+{
+  assert(state==state);
+  assert(state.size()==4);
+  assert(state(3)==1.0);
+
+  baseModel_.setStateRoll(state);
+}
+
+void ZebulonWalkgen::setBaseStatePitch(const VectorX& state)
+{
+  assert(state==state);
+  assert(state.size()==4);
+  assert(state(3)==1.0);
+
+  baseModel_.setStatePitch(state);
+}
+
 void ZebulonWalkgen::setComStateX(const VectorX& state)
 {
   assert(state==state);
@@ -245,6 +286,7 @@ void ZebulonWalkgen::setWeightings(const Weighting& weighting)
   assert(weighting.velocityTracking>=0);
   assert(weighting.velocityTracking>=0);
   assert(weighting.jerkMinimization>=0);
+  assert(weighting.tiltMinimization>=0);
 
   weighting_ = weighting;
 
@@ -276,8 +318,8 @@ bool ZebulonWalkgen::solve(Scalar feedBackPeriod)
   assert(posTrackingObj_.getGradient(B_).size() == 2*N);
 
   assert(copCenteringObj_.getGradient(X_).size() == 4*N);
-
   assert(jerkMinObj_.getGradient(X_).size() == 4*N);
+  assert(tiltMinObj_.getGradient(X_).size() == 4*N);
 
   if (config_.withCopConstraints)
   {
@@ -317,6 +359,10 @@ bool ZebulonWalkgen::solve(Scalar feedBackPeriod)
   if (weighting_.jerkMinimization>0.0)
   {
     qpMatrix_.p += weighting_.jerkMinimization*jerkMinObj_.getGradient(X_);
+  }
+  if (weighting_.tiltMinimization>0.0)
+  {
+    qpMatrix_.p += weighting_.tiltMinimization*tiltMinObj_.getGradient(X_);
   }
 
   if (config_.withCopConstraints)
@@ -396,6 +442,9 @@ void ZebulonWalkgen::computeConstantPart()
   assert(jerkMinObj_.getHessian().rows() == 4*N);
   assert(jerkMinObj_.getHessian().cols() == 4*N);
 
+  assert(tiltMinObj_.getHessian().rows() == 4*N);
+  assert(tiltMinObj_.getHessian().cols() == 4*N);
+
   if (config_.withCopConstraints)
   {
     assert(copConstraint_.getGradient().cols() == 4*N);
@@ -439,6 +488,10 @@ void ZebulonWalkgen::computeConstantPart()
   if (weighting_.jerkMinimization>0.0)
   {
     qpMatrix_.Q += weighting_.jerkMinimization*jerkMinObj_.getHessian();
+  }
+  if (weighting_.tiltMinimization>0.0)
+  {
+    qpMatrix_.Q += weighting_.tiltMinimization*tiltMinObj_.getHessian();
   }
 
   if (config_.withCopConstraints)

@@ -8,6 +8,7 @@ Weighting::Weighting()
 ,positionTracking(0.0)
 ,copCentering(0.0)
 ,jerkMinimization(0.0)
+,tiltMinimization(0.0)
 {}
 
 Config::Config()

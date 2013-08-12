@@ -33,6 +33,7 @@ namespace MPCWalkgen
     Scalar positionTracking;
     Scalar copCentering;
     Scalar jerkMinimization;
+    Scalar tiltMinimization;
   };
 
   class MPC_WALKGEN_NEW_API Config

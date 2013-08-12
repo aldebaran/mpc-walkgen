@@ -19,6 +19,8 @@ src/function/zebulon_base_position_tracking_objective.h
 src/function/zebulon_base_position_tracking_objective.cpp
 src/function/zebulon_jerk_minimization_objective.h
 src/function/zebulon_jerk_minimization_objective.cpp
+src/function/zebulon_tilt_minimization_objective.h
+src/function/zebulon_tilt_minimization_objective.cpp
 src/function/zebulon_cop_centering_objective.h
 src/function/zebulon_cop_centering_objective.cpp
 src/function/zebulon_cop_constraint.h
