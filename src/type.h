@@ -22,6 +22,7 @@ namespace MPCWalkgen
   #define QPOASES_REAL_IS_FLOAT
 
   static const Scalar EPSILON = 0.0001;
+  static const Scalar GRAVITY = 9.81;
 
   /// \brief  Matrices relative to a linear dynamic of type : Y = U X + S x
   ///         Where X is the control variables and x the initial state

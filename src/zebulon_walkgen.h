@@ -18,6 +18,7 @@
 #include "function/zebulon_base_velocity_tracking_objective.h"
 #include "function/zebulon_base_position_tracking_objective.h"
 #include "function/zebulon_jerk_minimization_objective.h"
+#include "function/zebulon_tilt_minimization_objective.h"
 #include "function/zebulon_cop_centering_objective.h"
 #include "function/zebulon_cop_constraint.h"
 #include "function/zebulon_com_constraint.h"
@@ -42,6 +43,8 @@ namespace MPCWalkgen
     void setComBaseHeight(Scalar comHeight);
     void setBodyMass(Scalar mass);
     void setBaseMass(Scalar mass);
+    void setWheelToBaseDistance(Scalar dist);
+    void setAngleWheelToBaseCom(Scalar angle);
 
     void setVelRefInWorldFrame(const VectorX& velRef);
     void setPosRefInWorldFrame(const VectorX& posRef);
@@ -53,6 +56,8 @@ namespace MPCWalkgen
 
     void setBaseStateX(const VectorX& state);
     void setBaseStateY(const VectorX& state);
+    void setBaseStateRoll(const VectorX& state);
+    void setBaseStatePitch(const VectorX& state);
     void setComStateX(const VectorX& state);
     void setComStateY(const VectorX& state);
 
@@ -78,6 +83,7 @@ namespace MPCWalkgen
     BaseVelocityTrackingObjective velTrackingObj_;
     BasePositionTrackingObjective posTrackingObj_;
     JerkMinimizationObjective jerkMinObj_;
+    TiltMinimizationObjective tiltMinObj_;
     CopCenteringObjective copCenteringObj_;
     CopConstraint copConstraint_;
     ComConstraint comConstraint_;

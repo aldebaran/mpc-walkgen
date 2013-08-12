@@ -91,6 +91,32 @@ namespace MPCWalkgen
     }
 
 
+    /// \brief Get the state of the base along the Theta coordinate
+    inline const VectorX& getStateRoll() const
+    {return stateRoll_;}
+
+    /// \brief Get the state of the CoM along the Theta coordinate
+    ///        It's a vector of size 4:
+    ///        (Position, Velocity, Acceleration, 1)
+    inline void setStateRoll(const VectorX& state)
+    {
+      assert(state==state);assert(state.size()==4);assert(state(3)==1);
+      stateRoll_=state;
+    }
+
+    /// \brief Get the state of the base along the Theta coordinate
+    inline const VectorX& getStatePitch() const
+    {return statePitch_;}
+
+    /// \brief Get the state of the CoM along the Theta coordinate
+    ///        It's a vector of size 4:
+    ///        (Position, Velocity, Acceleration, 1)
+    inline void setStatePitch(const VectorX& state)
+    {
+      assert(state==state);assert(state.size()==4);assert(state(3)==1);
+      statePitch_=state;
+    }
+
     /// \brief Set the number of samples for this dynamic
     void setNbSamples(int nbSamples);
 
@@ -183,6 +209,22 @@ namespace MPCWalkgen
       comSupportHull_=supportHull;
     }
 
+    inline Scalar getWheelToBaseDistance(void) const
+    {return wheelToBaseDist_;}
+
+    inline void setWheelToBaseDistance(Scalar dist)
+    {
+      assert(dist>=0.0);
+      wheelToBaseDist_=dist;
+    }
+
+    inline Scalar getAngleWheelToBaseCom(void) const
+    {return angleWheelToBaseCom_;}
+
+    inline void setAngleWheelToBaseCom(Scalar angle)
+    {
+      angleWheelToBaseCom_=angle;
+    }
 
   private:
     bool autoCompute_;
@@ -192,6 +234,8 @@ namespace MPCWalkgen
 
     VectorX stateX_;
     VectorX stateY_;
+    VectorX stateRoll_;
+    VectorX statePitch_;
 
     Scalar comHeight_;
     Vector3 gravity_;
@@ -210,6 +254,9 @@ namespace MPCWalkgen
     LinearDynamic copYDynamic_;
     Hull copSupportHull_;
     Hull comSupportHull_;
+
+    Scalar wheelToBaseDist_;
+    Scalar angleWheelToBaseCom_;
 
   };
 

@@ -18,8 +18,8 @@ int main(void)
   walkgen.setBodyMass(12.5);
   walkgen.setBaseMass(17.5);
 
-  Scalar copLimitMin = 0.01;
-  Scalar copLimitMax = 0.015;
+  Scalar copLimitMin = 0.01*.2;
+  Scalar copLimitMax = 0.015*.2;
   std::vector<Vector3> p(8);
   p[0] = Vector3(copLimitMin, copLimitMin, 0.0);
   p[1] = Vector3(0.0, copLimitMax, 0.0);
@@ -33,10 +33,11 @@ int main(void)
   walkgen.setBaseComHull(p);
 
   Weighting weighting;
-  weighting.copCentering = 10.0;
-  weighting.velocityTracking = 1.0;
-  weighting.positionTracking = 0.0;
-  weighting.jerkMinimization = 0.001;
+  weighting.copCentering = 1.0;
+  weighting.velocityTracking = 0.01;
+  weighting.positionTracking = 0.01;
+  weighting.jerkMinimization = 0.00001;
+  weighting.tiltMinimization = 100.0;
   walkgen.setWeightings(weighting);
 
   Config config;
@@ -46,7 +47,7 @@ int main(void)
   walkgen.setConfig(config);
 
   VectorX velRef(2*nbSamples);
-  velRef.segment(0, nbSamples).fill(1.5);
+  velRef.segment(0, nbSamples).fill(0.0);
   velRef.segment(nbSamples, nbSamples).fill(0.0);
   walkgen.setVelRefInWorldFrame(velRef);
 
@@ -55,7 +56,7 @@ int main(void)
   walkgen.setPosRefInWorldFrame(posRef);
 
   VectorX copRef(2*nbSamples);
-  copRef.segment(0, nbSamples).fill(0.01);
+  copRef.segment(0, nbSamples).fill(0.0);
   copRef.segment(nbSamples, nbSamples).fill(0.0);
   walkgen.setCopRefInLocalFrame(copRef);
 
@@ -71,8 +72,38 @@ int main(void)
   walkgen.setBaseJerkLimit(10.0);
 
   Scalar samplingFeedback = 0.02;
-  for(Scalar t=0.0; t<5.0; t+=samplingFeedback)
+  Scalar f = 1.0;
+  for(Scalar t=0.0; t<6.0*f; t+=samplingFeedback)
   {
+    Scalar ddt=0.0;
+    if (t<0.5*f)
+    {
+      ddt = 0.0;
+    }
+    else if (t<1.0*f)
+    {
+      ddt = 4.0;
+    }
+    else if (t<3.0*f)
+    {
+      ddt = -2.0;
+    }
+    else if (t<3.5*f)
+    {
+      ddt = 4.0;
+    }
+    else
+    {
+      ddt = 0.0;
+    }
+
+    VectorX baseState(4);
+    baseState(0) = 0.0;
+    baseState(1) = 0.0;
+    baseState(2) = ddt;
+    baseState(3) = 1.0;
+    walkgen.setBaseStateRoll(baseState);
+
     qi::os::timeval t1, t2;
     qi::os::gettimeofday(&t1);
 
@@ -83,6 +114,10 @@ int main(void)
       (static_cast<double>(t2.tv_sec-t1.tv_sec)
        +0.000001*static_cast<double>((t2.tv_usec-t1.tv_usec)))
       /static_cast<double>(1);
+
+    std::cout << ddt << "\t\t" << walkgen.getBaseStateX()(2) << "\t\t" <<walkgen.getComStateX()(2)
+              << "\t\t"  << walkgen.getBaseStateX()(0) << "\t\t" <<walkgen.getComStateX()(0)
+              << std::endl;
     //std::cout << "Solving time : " << floor(1000000*total)/1000 << " ms" << std::endl;
   }
 

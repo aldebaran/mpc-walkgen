@@ -62,6 +62,16 @@ void ZebulonWalkgenImpl::setBaseMass(Scalar mass)
   walkgen->setBaseMass(mass);
 }
 
+void ZebulonWalkgenImpl::setWheelToBaseDistance(Scalar dist)
+{
+  walkgen->setWheelToBaseDistance(dist);
+}
+
+void ZebulonWalkgenImpl::setAngleWheelToBaseCom(Scalar angle)
+{
+  walkgen->setAngleWheelToBaseCom(angle);
+}
+
 void ZebulonWalkgenImpl::setVelRefInWorldFrame(const VectorX& velRef)
 {
   walkgen->setVelRefInWorldFrame(velRef);
@@ -99,6 +109,16 @@ void ZebulonWalkgenImpl::setBaseStateX(const VectorX& state)
 void ZebulonWalkgenImpl::setBaseStateY(const VectorX& state)
 {
   walkgen->setBaseStateY(state);
+}
+
+void ZebulonWalkgenImpl::setBaseStateRoll(const VectorX& state)
+{
+  walkgen->setBaseStateRoll(state);
+}
+
+void ZebulonWalkgenImpl::setBaseStatePitch(const VectorX& state)
+{
+  walkgen->setBaseStatePitch(state);
 }
 
 void ZebulonWalkgenImpl::setComStateX(const VectorX& state)
