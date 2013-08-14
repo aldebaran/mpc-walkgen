@@ -1,7 +1,7 @@
+
 #include <mpc-walkgen/shared_type.h>
 
 using namespace MPCWalkgen;
-
 
 Weighting::Weighting()
 :velocityTracking(0.0)

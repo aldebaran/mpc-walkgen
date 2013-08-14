@@ -11,6 +11,8 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 SET(mpc-walkgen_SRC
 src/model/zebulon_base_model.h
 src/model/zebulon_base_model.cpp
+src/model/humanoid_foot_model.h
+src/model/humanoid_foot_model.cpp
 src/model/lip_model.h
 src/model/lip_model.cpp
 src/function/zebulon_base_velocity_tracking_objective.h
@@ -29,6 +31,16 @@ src/function/zebulon_com_constraint.h
 src/function/zebulon_com_constraint.cpp
 src/function/zebulon_base_motion_constraint.h
 src/function/zebulon_base_motion_constraint.cpp
+src/function/humanoid_lip_com_velocity_tracking_objective.h
+src/function/humanoid_lip_com_velocity_tracking_objective.cpp
+src/function/humanoid_lip_com_jerk_minimization_objective.h
+src/function/humanoid_lip_com_jerk_minimization_objective.cpp
+src/function/humanoid_cop_centering_objective.h
+src/function/humanoid_cop_centering_objective.cpp
+src/function/humanoid_cop_constraint.h
+src/function/humanoid_cop_constraint.cpp
+src/function/humanoid_foot_constraint.h
+src/function/humanoid_foot_constraint.cpp
 src/solver/qpoases_solver.h
 src/solver/qpoases_solver.cpp
 src/type.h
@@ -37,10 +49,14 @@ src/tools.cpp
 src/zebulon_walkgen.h
 src/zebulon_walkgen.cpp
 src/zebulon_walkgen_abstract.cpp
+src/humanoid_walkgen.h
+src/humanoid_walkgen.cpp
+src/humanoid_walkgen_abstract.cpp
 src/shared_type.cpp
 )
 
 SET(mpc-walkgen_PUBLIC_HEADERS
+mpc-walkgen/humanoid_walkgen_abstract.h
 mpc-walkgen/zebulon_walkgen_abstract.h
 mpc-walkgen/shared_type.h
 mpc-walkgen/api.h

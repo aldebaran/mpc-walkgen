@@ -30,6 +30,7 @@ const MatrixX& TiltMinimizationObjective::getGradient(const VectorX& x0)
   Scalar factorRoll = baseModel_.getStateRoll()(0)
                + baseModel_.getStateRoll()(2)
                + baseModel_.getStateRoll()(1);
+
   Scalar factorPitch = baseModel_.getStatePitch()(0)
                + baseModel_.getStatePitch()(2)
                + baseModel_.getStatePitch()(1);
@@ -88,9 +89,9 @@ void TiltMinimizationObjective::computeConstantPart()
   sin2Theta0_ = std::sin(2.0*theta0_);
   cos2theta0_ = std::cos(2.0*theta0_);
 
-  Scalar alpha1 = m_*GRAVITY/normalizationFactor_;
+  Scalar alpha1 = m_*GRAVITY_NORM/normalizationFactor_;
   Scalar alpha2 = -m_*hc_/normalizationFactor_;
-  Scalar alpha3 = -m_*GRAVITY/normalizationFactor_;
+  Scalar alpha3 = -m_*GRAVITY_NORM/normalizationFactor_;
   Scalar alpha4 = -M_*L_*(sinTheta0_-theta0_*cosTheta0_)/normalizationFactor_;
 
   partialFactor5_= (M_*L_*L_*(1.0-cos2theta0_-4.0*theta0_*sin2Theta0_)/2.0)/normalizationFactor_;

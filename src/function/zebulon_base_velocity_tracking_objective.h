@@ -1,10 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 ///
-///\file	base_velocity_tracking_objective.h
-///\brief	Implement the base velocity tracking objective
+///\file base_velocity_tracking_objective.h
+///\brief Implement the base velocity tracking objective
 ///\author Lafaye Jory
-///\version	1.0
-///\date	19/06/13
+///\date 19/06/13
 ///
 ////////////////////////////////////////////////////////////////////////////////
 

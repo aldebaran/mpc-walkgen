@@ -1,10 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 ///
-///\file	base_position_tracking_objective.h
-///\brief	Implement the base position tracking objective
+///\file base_position_tracking_objective.h
+///\brief Implement the base position tracking objective
 ///\author Lafaye Jory
-///\version	1.0
-///\date	19/06/13
+///\date 19/06/13
 ///
 ////////////////////////////////////////////////////////////////////////////////
 

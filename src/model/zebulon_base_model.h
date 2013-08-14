@@ -1,10 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 ///
-///\file	base_model.h
-///\brief	Implement the zebulon base model
+///\file base_model.h
+///\brief Implement the zebulon base model
 ///\author Lafaye Jory
-///\version	1.0
-///\date	19/06/13
+///\date 19/06/13
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -19,15 +18,12 @@ namespace MPCWalkgen
 
   class BaseModel
   {
-  public:
-    BaseModel(int nbSamples = 1,
-              Scalar samplingPeriod = 1.0,
-              Scalar velocityLimit = 1.0,
-              Scalar accelerationLimit = 1.0,
-              Scalar jerkLimit = 1.0,
-              const Hull& supportHull = Hull(),
-              bool autoCompute = true);
-    ~BaseModel();
+    public:
+      BaseModel(int nbSamples,
+                Scalar samplingPeriod,
+                bool autoCompute);
+      BaseModel();
+      ~BaseModel();
 
     /// \brief compute all of the dynamics
     void computeDynamics();
@@ -72,7 +68,7 @@ namespace MPCWalkgen
     ///        (Position, Velocity, Acceleration, 1)
     inline void setStateX(const VectorX& state)
     {
-      assert(state==state);assert(state.size()==4);assert(state(3)==1);
+      assert(state==state);assert(state.size()==4);assert(state(3)==1.0);
       stateX_=state;
     }
 
@@ -86,7 +82,7 @@ namespace MPCWalkgen
     ///        (Position, Velocity, Acceleration, 1)
     inline void setStateY(const VectorX& state)
     {
-      assert(state==state);assert(state.size()==4);assert(state(3)==1);
+      assert(state==state);assert(state.size()==4);assert(state(3)==1.0);
       stateY_=state;
     }
 
@@ -100,7 +96,7 @@ namespace MPCWalkgen
     ///        (Position, Velocity, Acceleration, 1)
     inline void setStateRoll(const VectorX& state)
     {
-      assert(state==state);assert(state.size()==4);assert(state(3)==1);
+      assert(state==state);assert(state.size()==4);assert(state(3)==1.0);
       stateRoll_=state;
     }
 
@@ -113,7 +109,7 @@ namespace MPCWalkgen
     ///        (Position, Velocity, Acceleration, 1)
     inline void setStatePitch(const VectorX& state)
     {
-      assert(state==state);assert(state.size()==4);assert(state(3)==1);
+      assert(state==state);assert(state.size()==4);assert(state(3)==1.0);
       statePitch_=state;
     }
 

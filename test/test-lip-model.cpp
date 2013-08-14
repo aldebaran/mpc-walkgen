@@ -1,14 +1,20 @@
+////////////////////////////////////////////////////////////////////////////////
+///
+///\file test-lip-model.cpp
+///\brief Test the LIP model
+///\author Lafaye Jory
+///\date 20/07/13
+///
+////////////////////////////////////////////////////////////////////////////////
+
 #include <gtest/gtest.h>
 #include "../src/model/lip_model.h"
 
 
-using namespace Eigen;
-using namespace MPCWalkgen;
-
 class lipModelTest: public ::testing::Test{};
 
 
-void checkLinearDynamicSize(const LinearDynamic& dyn, Scalar nbSamples)
+void checkLinearDynamicSize(const MPCWalkgen::LinearDynamic& dyn, MPCWalkgen::Scalar nbSamples)
 {
   ASSERT_EQ(dyn.U.rows(), nbSamples);
   ASSERT_EQ(dyn.U.cols(), nbSamples);
@@ -25,8 +31,12 @@ void checkLinearDynamicSize(const LinearDynamic& dyn, Scalar nbSamples)
 
 TEST_F(lipModelTest, sizeOfMatrices)
 {
-  Scalar nbSamples = 10.0;
-  LIPModel m(nbSamples);
+  using namespace MPCWalkgen;
+
+  int nbSamples = 10;
+  Scalar samplingPeriod = 1.0;
+  bool autoCompute = true;
+  LIPModel m(nbSamples, samplingPeriod, autoCompute);
 
   checkLinearDynamicSize(m.getComPosLinearDynamic(), nbSamples);
   checkLinearDynamicSize(m.getComVelLinearDynamic(), nbSamples);
@@ -38,11 +48,18 @@ TEST_F(lipModelTest, sizeOfMatrices)
 
 TEST_F(lipModelTest, valuesOfMatrices)
 {
-  Scalar nbSamples = 1.0;
+  using namespace MPCWalkgen;
+
+  int nbSamples = 1;
   Scalar samplingPeriod = 2.0;
+  bool autoCompute = true;
   Scalar comHeight = 0.45;
   Vector3 gravity(1.0, -1.0, 9.0);
-  LIPModel m(nbSamples, samplingPeriod, comHeight, gravity);
+  LIPModel m(nbSamples, samplingPeriod, autoCompute);
+
+  m.setSamplingPeriod(samplingPeriod);
+  m.setComHeight(comHeight);
+  m.setGravity(gravity);
 
   VectorX jerk(nbSamples);
   jerk(0) = 1.0;

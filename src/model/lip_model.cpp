@@ -6,21 +6,37 @@ using namespace MPCWalkgen;
 
 LIPModel::LIPModel(int nbSamples,
                    Scalar samplingPeriod,
-                   Scalar comHeight,
-                   Vector3 gravity,
                    bool autoCompute)
 :autoCompute_(autoCompute)
 ,useLipModel2_(false)
 ,nbSamples_(nbSamples)
 ,samplingPeriod_(samplingPeriod)
-,comHeight_(comHeight)
-,gravity_(gravity)
+,comHeight_(1.0)
+,gravity_(GRAVITY_VECTOR)
 ,mass_(1.0)
 ,totalMass_(1.0)
 {
-  assert(samplingPeriod>0);
-  assert(nbSamples>0);
-  assert(std::abs(gravity_(2))>EPSILON);
+
+  stateX_.setZero(4);
+  stateX_(3)=1.0;
+  stateY_.setZero(4);
+  stateY_(3)=1.0;
+  if (autoCompute_)
+  {
+    computeDynamics();
+  }
+}
+
+LIPModel::LIPModel()
+:autoCompute_(true)
+,useLipModel2_(false)
+,nbSamples_(1)
+,samplingPeriod_(1.0)
+,comHeight_(1.0)
+,gravity_(GRAVITY_VECTOR)
+,mass_(1.0)
+,totalMass_(1.0)
+{
 
   stateX_.setZero(4);
   stateX_(3)=1.0;
