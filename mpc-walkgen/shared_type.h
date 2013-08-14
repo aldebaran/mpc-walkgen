@@ -1,10 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 ///
-///\file	zebulon_type.h
-///\brief	Some structures and typedefs
+///\file zebulon_type.h
+///\brief Some structures and typedefs
 ///\author Lafaye Jory
-///\version	1.0
-///\date	19/06/13
+///\date 19/06/13
 ///
 ////////////////////////////////////////////////////////////////////////////////
 #pragma once
@@ -17,33 +16,38 @@
 
 namespace MPCWalkgen
 {
-  /// \brief  Typedefs to abstract the choice between float and double
+  /// \brief  Typedefs to abstract the choice between float and double.
+  ///         The following "typedefed" matrices must contain Scalar type
   typedef float Scalar;
-  typedef Eigen::MatrixXf MatrixX;
-  typedef Eigen::Matrix3f Matrix3;
-  typedef Eigen::VectorXf VectorX;
-  typedef Eigen::Vector3f Vector3;
+  typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> MatrixX;
+  typedef Eigen::Matrix<Scalar, 3, 3> Matrix3;
+  typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> VectorX;
+  typedef Eigen::Matrix<Scalar, 3, 1> Vector3;
 
-  class MPC_WALKGEN_NEW_API Weighting
+
+  //Weighting and config will be moved inside zebulon_walkgen_abstract (as a Humanoid version
+  //already exist in humanoid_walkgen_abstract)
+  //It is not implemented for now to be sure to keep compatibility with naoqi
+  class MPC_WALKGEN_NEW_API  Weighting
   {
-  public:
-    Weighting();
+    public:
+      Weighting();
 
-    Scalar velocityTracking;
-    Scalar positionTracking;
-    Scalar copCentering;
-    Scalar jerkMinimization;
-    Scalar tiltMinimization;
+      Scalar velocityTracking;
+      Scalar positionTracking;
+      Scalar copCentering;
+      Scalar jerkMinimization;
+      Scalar tiltMinimization;
   };
 
-  class MPC_WALKGEN_NEW_API Config
+  class MPC_WALKGEN_NEW_API  Config
   {
-  public:
-    Config();
+    public:
+      Config();
 
-    bool withCopConstraints;
-    bool withComConstraints;
-    bool withBaseMotionConstraints;
+      bool withCopConstraints;
+      bool withComConstraints;
+      bool withBaseMotionConstraints;
   };
 
 }

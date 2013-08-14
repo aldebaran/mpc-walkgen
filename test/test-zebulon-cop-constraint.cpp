@@ -1,17 +1,25 @@
+////////////////////////////////////////////////////////////////////////////////
+///
+///\file test-zebulon-cop-constraint.cpp
+///\brief Test the Zebulon CoP constraints function
+///\author Lafaye Jory
+///\date 20/07/13
+///
+////////////////////////////////////////////////////////////////////////////////
+
 #include <gtest/gtest.h>
 #include "../src/model/zebulon_base_model.h"
 #include "../src/model/lip_model.h"
-#include "../src/function/zebulon_com_constraint.h"
+#include "../src/function/zebulon_cop_constraint.h"
 
-using namespace Eigen;
-using namespace MPCWalkgen;
-
-class ComConstraintTest: public ::testing::Test{};
+class ZebulonCopConstraintTest: public ::testing::Test{};
 
 
 
-TEST_F(ComConstraintTest, functionValue)
+TEST_F(ZebulonCopConstraintTest, functionValue)
 {
+  using namespace MPCWalkgen;
+
   LIPModel m1;
   BaseModel m2;
 
@@ -28,9 +36,9 @@ TEST_F(ComConstraintTest, functionValue)
   p[1] = Vector3(0.0, copLimitMax, 0.0);
   p[0] = Vector3(copLimitMin, copLimitMin, 0.0);
   Hull h(p);
-  m2.setComSupportHull(h);
+  m2.setCopSupportHull(h);
 
-  ComConstraint ctr(m1, m2);
+  CopConstraint ctr(m1, m2);
   VectorX jerkInit(4);
 
   jerkInit(0) = 0.0;
@@ -45,6 +53,7 @@ TEST_F(ComConstraintTest, functionValue)
   ASSERT_TRUE(ctr.getFunction(jerkInit)(5)<0.0);
   ASSERT_TRUE(ctr.getFunction(jerkInit)(6)<0.0);
   ASSERT_TRUE(ctr.getFunction(jerkInit)(7)<0.0);
+
 
   jerkInit(0) = 0.0;
   jerkInit(1) = 0.0;
@@ -102,15 +111,20 @@ TEST_F(ComConstraintTest, functionValue)
 }
 
 
-TEST_F(ComConstraintTest, sizeOfvalues)
+TEST_F(ZebulonCopConstraintTest, sizeOfvalues)
 {
+  using namespace MPCWalkgen;
+
   int nbSamples = 3;
-  LIPModel m1(nbSamples);
-  BaseModel m2(nbSamples);
+  Scalar samplingPeriod = 1.0;
+  bool autoCompute = true;
+  LIPModel m1(nbSamples, samplingPeriod, autoCompute);
+  BaseModel m2(nbSamples, samplingPeriod, autoCompute);
 
-  ComConstraint ctr(m1, m2);
 
-  int M = m2.getComSupportHull().p.size();
+  CopConstraint ctr(m1, m2);
+
+  int M = m2.getCopSupportHull().p.size();
 
   VectorX jerkInit(4*nbSamples);
   jerkInit.fill(0.0);

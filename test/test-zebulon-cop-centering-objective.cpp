@@ -1,17 +1,25 @@
+////////////////////////////////////////////////////////////////////////////////
+///
+///\file test-zebulon-cop-centering-objective.cpp
+///\brief Test the Zebulon CoP centering objective function
+///\author Lafaye Jory
+///\date 20/07/13
+///
+////////////////////////////////////////////////////////////////////////////////
+
 #include <gtest/gtest.h>
 #include "../src/model/zebulon_base_model.h"
 #include "../src/model/lip_model.h"
 #include "../src/function/zebulon_cop_centering_objective.h"
 
-using namespace Eigen;
-using namespace MPCWalkgen;
-
-class CopCenteringTest: public ::testing::Test{};
+class ZebulonCopCenteringTest: public ::testing::Test{};
 
 
 
-TEST_F(CopCenteringTest, functionValue)
+TEST_F(ZebulonCopCenteringTest, functionValue)
 {
+  using namespace MPCWalkgen;
+
   LIPModel m1;
   BaseModel m2;
   CopCenteringObjective obj(m1, m2);
@@ -73,11 +81,15 @@ TEST_F(CopCenteringTest, functionValue)
 }
 
 
-TEST_F(CopCenteringTest, sizeOfvalues)
+TEST_F(ZebulonCopCenteringTest, sizeOfvalues)
 {
+  using namespace MPCWalkgen;
+
   int nbSamples = 3;
-  LIPModel m1(nbSamples);
-  BaseModel m2(nbSamples);
+  Scalar samplingPeriod = 1.0;
+  bool autoCompute = true;
+  LIPModel m1(nbSamples, samplingPeriod, autoCompute);
+  BaseModel m2(nbSamples, samplingPeriod, autoCompute);
   CopCenteringObjective obj(m1, m2);
 
   VectorX jerkInit(4*nbSamples);

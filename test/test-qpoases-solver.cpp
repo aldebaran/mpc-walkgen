@@ -1,9 +1,14 @@
+////////////////////////////////////////////////////////////////////////////////
+///
+///\file test-qpoases-solver.cpp
+///\brief Test the QPOases solver
+///\author Lafaye Jory
+///\date 20/07/13
+///
+////////////////////////////////////////////////////////////////////////////////
+
 #include <gtest/gtest.h>
 #include "../src/solver/qpoases_solver.h"
-
-
-using namespace Eigen;
-using namespace MPCWalkgen;
 
 class QPOasesTest: public ::testing::Test{};
 
@@ -11,6 +16,8 @@ class QPOasesTest: public ::testing::Test{};
 
 TEST_F(QPOasesTest, testSolver)
 {
+  using namespace MPCWalkgen;
+
   QPOasesSolver qp(2, 0);
   QPMatrices m;
 
@@ -51,6 +58,8 @@ TEST_F(QPOasesTest, testSolver)
 
 TEST_F(QPOasesTest, testSolverWithConstraint)
 {
+  using namespace MPCWalkgen;
+
   QPOasesSolver qp(2, 1);
   QPMatrices m;
 

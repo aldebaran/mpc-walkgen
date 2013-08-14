@@ -1,14 +1,20 @@
+////////////////////////////////////////////////////////////////////////////////
+///
+///\file test-zebulon-base-model.cpp
+///\brief Test the Zebulon base model
+///\author Lafaye Jory
+///\date 20/07/13
+///
+////////////////////////////////////////////////////////////////////////////////
+
 #include <gtest/gtest.h>
 #include "../src/model/zebulon_base_model.h"
 
-
-using namespace Eigen;
-using namespace MPCWalkgen;
-
-class baseModelTest: public ::testing::Test{};
+class ZebulonBaseModelTest: public ::testing::Test{};
 
 
-void checkLinearDynamicSize(const LinearDynamic& dyn, Scalar nbSamples)
+void checkLinearDynamicSize(const MPCWalkgen::LinearDynamic& dyn,
+                            MPCWalkgen::Scalar nbSamples)
 {
   ASSERT_EQ(dyn.U.rows(), nbSamples);
   ASSERT_EQ(dyn.U.cols(), nbSamples);
@@ -24,10 +30,14 @@ void checkLinearDynamicSize(const LinearDynamic& dyn, Scalar nbSamples)
 }
 
 
-TEST_F(baseModelTest, sizeOfMatrices)
+TEST_F(ZebulonBaseModelTest, sizeOfMatrices)
 {
-  Scalar nbSamples = 10.0;
-  BaseModel m(nbSamples);
+  using namespace MPCWalkgen;
+
+  int nbSamples = 10;
+  Scalar samplingPeriod = 1.0;
+  bool autoCompute = true;
+  BaseModel m(nbSamples, samplingPeriod, autoCompute);
 
   checkLinearDynamicSize(m.getBasePosLinearDynamic(), nbSamples);
   checkLinearDynamicSize(m.getBaseVelLinearDynamic(), nbSamples);
@@ -35,11 +45,14 @@ TEST_F(baseModelTest, sizeOfMatrices)
   checkLinearDynamicSize(m.getBaseJerkLinearDynamic(), nbSamples);
 }
 
-TEST_F(baseModelTest, valuesOfMatrices)
+TEST_F(ZebulonBaseModelTest, valuesOfMatrices)
 {
-  Scalar nbSamples = 1.0;
+  using namespace MPCWalkgen;
+
+  int nbSamples = 1;
   Scalar samplingPeriod = 2.0;
-  BaseModel m(nbSamples, samplingPeriod);
+  bool autoCompute = true;
+  BaseModel m(nbSamples, samplingPeriod, autoCompute);
 
   VectorX jerk(nbSamples);
   jerk(0) = 1.0;

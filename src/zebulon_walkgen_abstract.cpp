@@ -3,8 +3,21 @@
 
 using namespace MPCWalkgen;
 
+ZebulonWalkgenImpl::Weighting::Weighting()
+  :velocityTracking(0.0)
+  ,positionTracking(0.0)
+  ,copCentering(0.0)
+  ,jerkMinimization(0.0)
+{}
+
+ZebulonWalkgenImpl::Config::Config()
+  :withCopConstraints(true)
+  ,withComConstraints(true)
+  ,withBaseMotionConstraints(true)
+{}
+
 ZebulonWalkgenImpl::ZebulonWalkgenImpl()
-:walkgen(NULL)
+  :walkgen(NULL)
 {
   walkgen = new ZebulonWalkgen();
 }
@@ -131,12 +144,12 @@ void ZebulonWalkgenImpl::setComStateY(const VectorX& state)
   walkgen->setComStateY(state);
 }
 
-void ZebulonWalkgenImpl::setWeightings(const Weighting& weighting)
+void ZebulonWalkgenImpl::setWeightings(const MPCWalkgen::Weighting& weighting)
 {
   walkgen->setWeightings(weighting);
 }
 
-void ZebulonWalkgenImpl::setConfig(const Config& config)
+void ZebulonWalkgenImpl::setConfig(const MPCWalkgen::Config& config)
 {
   walkgen->setConfig(config);
 }
@@ -146,23 +159,22 @@ bool ZebulonWalkgenImpl::solve(Scalar feedBackPeriod)
   return walkgen->solve(feedBackPeriod);
 }
 
-const VectorX& ZebulonWalkgenImpl::getBaseStateX()
+const VectorX& ZebulonWalkgenImpl::getBaseStateX() const
 {
   return walkgen->getBaseStateX();
 }
 
-const VectorX& ZebulonWalkgenImpl::getBaseStateY()
+const VectorX& ZebulonWalkgenImpl::getBaseStateY() const
 {
   return walkgen->getBaseStateY();
 }
 
-const VectorX& ZebulonWalkgenImpl::getComStateX()
+const VectorX& ZebulonWalkgenImpl::getComStateX() const
 {
   return walkgen->getComStateX();
 }
 
-const VectorX& ZebulonWalkgenImpl::getComStateY()
+const VectorX& ZebulonWalkgenImpl::getComStateY() const
 {
   return walkgen->getComStateY();
 }
-

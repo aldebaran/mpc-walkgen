@@ -7,33 +7,51 @@ using namespace MPCWalkgen;
 
 BaseModel::BaseModel(int nbSamples,
                      Scalar samplingPeriod,
-                     Scalar velocityLimit,
-                     Scalar accelerationLimit,
-                     Scalar jerkLimit,
-                     const Hull &supportHull,
                      bool autoCompute)
-:autoCompute_(autoCompute)
-,nbSamples_(nbSamples)
-,samplingPeriod_(samplingPeriod)
-,comHeight_(0.0)
-,gravity_(Vector3(0.0, 0.0, GRAVITY))
-,mass_(0.0)
-,totalMass_(1.0)
-,velocityLimit_(velocityLimit)
-,accelerationLimit_(accelerationLimit)
-,jerkLimit_(jerkLimit)
-,copSupportHull_(supportHull)
-,comSupportHull_(supportHull)
+  :autoCompute_(autoCompute)
+  ,nbSamples_(nbSamples)
+  ,samplingPeriod_(samplingPeriod)
+  ,comHeight_(0.0)
+  ,gravity_(GRAVITY_VECTOR)
+  ,mass_(0.0)
+  ,totalMass_(1.0)
+  ,velocityLimit_(1.0)
+  ,accelerationLimit_(1.0)
+  ,jerkLimit_(1.0)
 ,wheelToBaseDist_(0.0)
 ,angleWheelToBaseCom_(0.0)
 {
   assert(samplingPeriod>0);
   assert(nbSamples>0);
-  assert(velocityLimit>=0);
-  assert(accelerationLimit>=0);
-  assert(jerkLimit>=0);
-  assert(supportHull.p.size()>=3);
 
+  stateX_.setZero(4);
+  stateX_(3)=1.0;
+  stateY_.setZero(4);
+  stateY_(3)=1.0;
+  stateRoll_.setZero(4);
+  stateRoll_(3)=1.0;
+  statePitch_.setZero(4);
+  statePitch_(3)=1.0;
+  if (autoCompute_)
+  {
+    computeDynamics();
+  }
+}
+
+BaseModel::BaseModel()
+  :autoCompute_(true)
+  ,nbSamples_(1)
+  ,samplingPeriod_(1.0)
+  ,comHeight_(0.0)
+  ,gravity_(GRAVITY_VECTOR)
+  ,mass_(0.0)
+  ,totalMass_(1.0)
+  ,velocityLimit_(1.0)
+  ,accelerationLimit_(1.0)
+  ,jerkLimit_(1.0)
+  ,copSupportHull_()
+  ,comSupportHull_()
+{
   stateX_.setZero(4);
   stateX_(3)=1.0;
   stateY_.setZero(4);

@@ -1,17 +1,24 @@
+////////////////////////////////////////////////////////////////////////////////
+///
+///\file test-zebulon-base-velocity-tracking-objective.cpp
+///\brief Test the Zebulon base velocity tracking objective function
+///\author Lafaye Jory
+///\date 20/07/13
+///
+////////////////////////////////////////////////////////////////////////////////
+
 #include <gtest/gtest.h>
 #include "../src/model/zebulon_base_model.h"
 #include "../src/function/zebulon_base_velocity_tracking_objective.h"
 
-
-using namespace Eigen;
-using namespace MPCWalkgen;
-
-class BaseVelocityTrackingTest: public ::testing::Test{};
+class ZebulonBaseVelocityTrackingTest: public ::testing::Test{};
 
 
 
-TEST_F(BaseVelocityTrackingTest, functionValue)
+TEST_F(ZebulonBaseVelocityTrackingTest, functionValue)
 {
+  using namespace MPCWalkgen;
+
   BaseModel m;
   BaseVelocityTrackingObjective obj(m);
 
@@ -45,10 +52,14 @@ TEST_F(BaseVelocityTrackingTest, functionValue)
 }
 
 
-TEST_F(BaseVelocityTrackingTest, sizeOfvalues)
+TEST_F(ZebulonBaseVelocityTrackingTest, sizeOfvalues)
 {
+  using namespace MPCWalkgen;
+
   int nbSamples = 3;
-  BaseModel m(nbSamples);
+  Scalar samplingPeriod = 1.0;
+  bool autoCompute = true;
+  BaseModel m(nbSamples, samplingPeriod, autoCompute);
   BaseVelocityTrackingObjective obj(m);
 
   VectorX jerkInit(2*nbSamples);

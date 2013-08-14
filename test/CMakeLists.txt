@@ -5,29 +5,43 @@ qi_create_gtest(test-lip-model
   TIMEOUT 1
 )
 
-qi_create_gtest(test-base-model
-  SRC ./test-base-model.cpp ../src/model/zebulon_base_model.cpp ../src/tools.cpp
+qi_create_gtest(test-zebulon-base-model
+  SRC ./test-zebulon-base-model.cpp ../src/model/zebulon_base_model.cpp ../src/tools.cpp
   TIMEOUT 1
 )
 
-qi_create_gtest(test-base-velocity-tracking-objective
-  SRC ./test-base-velocity-tracking-objective
+qi_create_gtest(test-humanoid-foot-model
+  SRC ./test-humanoid-foot-model.cpp ../src/model/humanoid_foot_model.cpp ../src/tools.cpp
+  TIMEOUT 1
+)
+
+qi_create_gtest(test-zebulon-base-velocity-tracking-objective
+  SRC ./test-zebulon-base-velocity-tracking-objective
       ../src/model/zebulon_base_model.cpp
       ../src/tools.cpp
       ../src/function/zebulon_base_velocity_tracking_objective.cpp
   TIMEOUT 1
 )
 
-qi_create_gtest(test-base-position-tracking-objective
-  SRC ./test-base-position-tracking-objective
+qi_create_gtest(test-humanoid-lip-com-velocity-tracking-objective
+  SRC ./test-humanoid-lip-com-velocity-tracking-objective
+      ../src/model/humanoid_foot_model.cpp
+      ../src/model/lip_model.cpp
+      ../src/tools.cpp
+      ../src/function/humanoid_lip_com_velocity_tracking_objective.cpp
+  TIMEOUT 1
+)
+
+qi_create_gtest(test-zebulon-base-position-tracking-objective
+  SRC ./test-zebulon-base-position-tracking-objective
       ../src/model/zebulon_base_model.cpp
       ../src/tools.cpp
       ../src/function/zebulon_base_position_tracking_objective.cpp
   TIMEOUT 1
 )
 
-qi_create_gtest(test-jerk-minimization-objective
-  SRC ./test-jerk-minimization-objective
+qi_create_gtest(test-zebulon-jerk-minimization-objective
+  SRC ./test-zebulon-jerk-minimization-objective
       ../src/model/zebulon_base_model.cpp
       ../src/model/lip_model.cpp
       ../src/tools.cpp
@@ -35,8 +49,17 @@ qi_create_gtest(test-jerk-minimization-objective
   TIMEOUT 1
 )
 
-qi_create_gtest(test-cop-centering-objective
-  SRC ./test-cop-centering-objective.cpp
+qi_create_gtest(test-humanoid-lip-com-jerk-minimization-objective
+  SRC ./test-humanoid-lip-com-jerk-minimization-objective
+      ../src/model/humanoid_foot_model.cpp
+      ../src/model/lip_model.cpp
+      ../src/tools.cpp
+      ../src/function/humanoid_lip_com_jerk_minimization_objective.cpp
+  TIMEOUT 1
+)
+
+qi_create_gtest(test-zebulon-cop-centering-objective
+  SRC ./test-zebulon-cop-centering-objective.cpp
       ../src/model/zebulon_base_model.cpp
       ../src/model/lip_model.cpp
       ../src/tools.cpp
@@ -44,8 +67,17 @@ qi_create_gtest(test-cop-centering-objective
   TIMEOUT 1
 )
 
-qi_create_gtest(test-cop-constraint
-  SRC ./test-cop-constraint.cpp
+qi_create_gtest(test-humanoid-cop-centering-objective
+  SRC ./test-humanoid-cop-centering-objective.cpp
+      ../src/model/humanoid_foot_model.cpp
+      ../src/model/lip_model.cpp
+      ../src/tools.cpp
+      ../src/function/humanoid_cop_centering_objective.cpp
+  TIMEOUT 1
+)
+
+qi_create_gtest(test-zebulon-cop-constraint
+  SRC ./test-zebulon-cop-constraint.cpp
       ../src/model/zebulon_base_model.cpp
       ../src/model/lip_model.cpp
       ../src/tools.cpp
@@ -53,8 +85,8 @@ qi_create_gtest(test-cop-constraint
   TIMEOUT 1
 )
 
-qi_create_gtest(test-com-constraint
-  SRC ./test-com-constraint.cpp
+qi_create_gtest(test-zebulon-com-constraint
+  SRC ./test-zebulon-com-constraint.cpp
       ../src/model/zebulon_base_model.cpp
       ../src/model/lip_model.cpp
       ../src/tools.cpp
@@ -62,8 +94,8 @@ qi_create_gtest(test-com-constraint
   TIMEOUT 1
 )
 
-qi_create_gtest(test-base-motion-constraint
-  SRC ./test-base-motion-constraint.cpp
+qi_create_gtest(test-zebulon-base-motion-constraint
+  SRC ./test-zebulon-base-motion-constraint.cpp
       ../src/model/zebulon_base_model.cpp
       ../src/tools.cpp
       ../src/function/zebulon_base_motion_constraint.cpp

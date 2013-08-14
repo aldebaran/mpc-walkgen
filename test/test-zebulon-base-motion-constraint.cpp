@@ -1,16 +1,24 @@
+////////////////////////////////////////////////////////////////////////////////
+///
+///\file test-zebulon-base-motion-constraint.cpp
+///\brief Test the Zebulon base motion constraint function
+///\author Lafaye Jory
+///\date 20/07/13
+///
+////////////////////////////////////////////////////////////////////////////////
+
 #include <gtest/gtest.h>
 #include "../src/model/zebulon_base_model.h"
 #include "../src/function/zebulon_base_motion_constraint.h"
 
-using namespace Eigen;
-using namespace MPCWalkgen;
-
-class BaseMotionConstraintTest: public ::testing::Test{};
+class ZebulonBaseMotionConstraintTest: public ::testing::Test{};
 
 
 
-TEST_F(BaseMotionConstraintTest, functionValue)
+TEST_F(ZebulonBaseMotionConstraintTest, functionValue)
 {
+  using namespace MPCWalkgen;
+
   BaseModel m;
 
   BaseMotionConstraint ctr(m);
@@ -69,10 +77,14 @@ TEST_F(BaseMotionConstraintTest, functionValue)
 }
 
 
-TEST_F(BaseMotionConstraintTest, sizeOfvalues)
+TEST_F(ZebulonBaseMotionConstraintTest, sizeOfvalues)
 {
+  using namespace MPCWalkgen;
+
   int nbSamples = 3;
-  BaseModel m(nbSamples);
+  Scalar samplingPeriod = 1.0;
+  bool autoCompute = true;
+  BaseModel m(nbSamples, samplingPeriod, autoCompute);
 
   BaseMotionConstraint ctr(m);
 

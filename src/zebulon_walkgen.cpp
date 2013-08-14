@@ -280,7 +280,7 @@ void ZebulonWalkgen::setComStateY(const VectorX& state)
   lipModel_.setStateY(state);
 }
 
-void ZebulonWalkgen::setWeightings(const Weighting& weighting)
+void ZebulonWalkgen::setWeightings(const  Weighting& weighting)
 {
   assert(weighting.copCentering>=0);
   assert(weighting.velocityTracking>=0);
@@ -549,3 +549,5 @@ void ZebulonWalkgen::computeNormalizationFactor(MatrixX& Q, MatrixX& A)
   }
   invCtrNormFactor_ = 1.0/invCtrNormFactor_;
 }
+
+

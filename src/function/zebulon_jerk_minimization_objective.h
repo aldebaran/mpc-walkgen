@@ -1,10 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 ///
-///\file	zebulon_jerk_minimization_objective.h
-///\brief	Implement the jerk minimization objective
+///\file zebulon_jerk_minimization_objective.h
+///\brief Implement the jerk minimization objective
 ///\author Lafaye Jory
-///\version	1.0
-///\date	19/06/13
+///\date 19/06/13
 ///
 ////////////////////////////////////////////////////////////////////////////////
 

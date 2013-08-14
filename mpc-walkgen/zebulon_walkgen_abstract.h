@@ -1,10 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 ///
-///\file	zebulon_walkgen_abstract.h
-///\brief	Main program for Zebulon
+///\file zebulon_walkgen_abstract.h
+///\brief Main program for Zebulon
 ///\author Lafaye Jory
-///\version	1.0
-///\date	19/06/13
+///\date 19/06/13
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -21,50 +20,75 @@ namespace MPCWalkgen
 
   class MPC_WALKGEN_NEW_API ZebulonWalkgenImpl
   {
-  public:
-    ZebulonWalkgenImpl();
-    ~ZebulonWalkgenImpl();
+    public:
 
-    void setNbSamples(int nbSamples);
-    void setSamplingPeriod(Scalar samplingPeriod);
+      // For now weighting and config for Zebulon both exist in zebulon_walkgen_abstract
+      // and shared_type to assure compatibility with other depo that currently use MPC-Walkgen
+      // API like naoqi. Eventually shared_type will be deleted.
+      class Weighting
+      {
+        public:
+          Weighting();
 
-    void setGravity(const Vector3& gravity);
-    void setBaseCopHull(const std::vector<Vector3> p);
-    void setBaseComHull(const std::vector<Vector3> p);
-    void setComBodyHeight(Scalar comHeight);
-    void setComBaseHeight(Scalar comHeight);
-    void setBodyMass(Scalar mass);
-    void setBaseMass(Scalar mass);
-    void setWheelToBaseDistance(Scalar dist);
-    void setAngleWheelToBaseCom(Scalar angle);
+          Scalar velocityTracking;
+          Scalar positionTracking;
+          Scalar copCentering;
+          Scalar jerkMinimization;
+      };
 
-    void setVelRefInWorldFrame(const VectorX& velRef);
-    void setPosRefInWorldFrame(const VectorX& posRef);
-    void setCopRefInLocalFrame(const VectorX& copRef);
+      class Config
+      {
+        public:
+          Config();
 
-    void setBaseVelLimit(Scalar limit);
-    void setBaseAccLimit(Scalar limit);
-    void setBaseJerkLimit(Scalar limit);
+          bool withCopConstraints;
+          bool withComConstraints;
+          bool withBaseMotionConstraints;
+      };
 
-    void setBaseStateX(const VectorX& state);
-    void setBaseStateY(const VectorX& state);
-    void setBaseStateRoll(const VectorX& state);
-    void setBaseStatePitch(const VectorX& state);
-    void setComStateX(const VectorX& state);
-    void setComStateY(const VectorX& state);
+      ZebulonWalkgenImpl();
+      ~ZebulonWalkgenImpl();
 
-    void setWeightings(const Weighting& weighting);
-    void setConfig(const Config& config);
+      void setNbSamples(int nbSamples);
+      void setSamplingPeriod(Scalar samplingPeriod);
 
-    bool solve(Scalar feedBackPeriod);
+      void setGravity(const Vector3& gravity);
+      void setBaseCopHull(const std::vector<Vector3> p);
+      void setBaseComHull(const std::vector<Vector3> p);
+      void setComBodyHeight(Scalar comHeight);
+      void setComBaseHeight(Scalar comHeight);
+      void setBodyMass(Scalar mass);
+      void setBaseMass(Scalar mass);
+      void setWheelToBaseDistance(Scalar dist);
+      void setAngleWheelToBaseCom(Scalar angle);
 
-    const VectorX& getBaseStateX();
-    const VectorX& getBaseStateY();
-    const VectorX& getComStateX();
-    const VectorX& getComStateY();
+      void setVelRefInWorldFrame(const VectorX& velRef);
+      void setPosRefInWorldFrame(const VectorX& posRef);
+      void setCopRefInLocalFrame(const VectorX& copRef);
 
-  private:
-    ZebulonWalkgen* walkgen;
+      void setBaseVelLimit(Scalar limit);
+      void setBaseAccLimit(Scalar limit);
+      void setBaseJerkLimit(Scalar limit);
+
+      void setBaseStateX(const VectorX& state);
+      void setBaseStateY(const VectorX& state);
+      void setBaseStateRoll(const VectorX& state);
+      void setBaseStatePitch(const VectorX& state);
+      void setComStateX(const VectorX& state);
+      void setComStateY(const VectorX& state);
+
+      void setWeightings(const MPCWalkgen::Weighting& weighting);
+      void setConfig(const MPCWalkgen::Config& config);
+
+      bool solve(Scalar feedBackPeriod);
+
+      const VectorX& getBaseStateX() const;
+      const VectorX& getBaseStateY() const;
+      const VectorX& getComStateX() const;
+      const VectorX& getComStateY() const;
+
+    private:
+      ZebulonWalkgen* walkgen;
   };
 }
 

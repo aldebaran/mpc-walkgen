@@ -1,10 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 ///
-///\file	tools.h
-///\brief	Some tools
+///\file tools.h
+///\brief Some tools
 ///\author Lafaye Jory
-///\version	1.0
-///\date	19/06/13
+///\date 19/06/13
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -16,28 +15,31 @@
 
 namespace MPCWalkgen
 {
-namespace Tools
-{
-
-  class ConstantJerkDynamic
+  namespace Tools
   {
-  public:
-    static void computeCopDynamic(Scalar T, int N, LinearDynamic& dyn,
-                                  Scalar comHeight, Scalar gravityX,
-                                  Scalar gravityY, Scalar mass, Scalar totalMass);
 
-    static void computePosDynamic(Scalar T, int N, LinearDynamic& dyn);
+    class ConstantJerkDynamic
+    {
+      public:
+        static void computeCopDynamic(Scalar T, int N, LinearDynamic& dyn,
+                                      Scalar comHeight, Scalar gravityX,
+                                      Scalar gravityY, Scalar mass, Scalar totalMass);
 
-    static void computeVelDynamic(Scalar T, int N, LinearDynamic& dyn);
+        static void computePosDynamic(Scalar T, int N, LinearDynamic& dyn);
 
-    static void computeAccDynamic(Scalar T, int N, LinearDynamic& dyn);
+        static void computeVelDynamic(Scalar T, int N, LinearDynamic& dyn);
 
-    static void computeJerkDynamic(int N, LinearDynamic& dyn);
+        static void computeAccDynamic(Scalar T, int N, LinearDynamic& dyn);
 
-    static void updateState(Scalar jerk, Scalar T, VectorX& state);
-  };
+        static void computeJerkDynamic(int N, LinearDynamic& dyn);
 
-}
+        static void updateState(Scalar jerk, Scalar T, VectorX& state);
+
+
+    };
+
+    void inverseLU(const MatrixX& A, MatrixX& Ap, Scalar eps);
+  }
 }
 
 #endif //MPC_WALKGEN_TOOLS_H
