@@ -1,4 +1,3 @@
-
 #include <mpc-walkgen/shared_type.h>
 
 using namespace MPCWalkgen;

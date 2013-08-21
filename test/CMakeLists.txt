@@ -1,17 +1,26 @@
 include_directories(BEFORE ${PROJECT_SOURCE_DIR}/src)
 
 qi_create_gtest(test-lip-model
-  SRC ./test-lip-model.cpp ../src/model/lip_model.cpp ../src/tools.cpp
+  SRC ./test-lip-model.cpp
+../src/model/lip_model.cpp
+../src/tools.cpp
+../src/type.cpp
   TIMEOUT 1
 )
 
 qi_create_gtest(test-zebulon-base-model
-  SRC ./test-zebulon-base-model.cpp ../src/model/zebulon_base_model.cpp ../src/tools.cpp
+  SRC ./test-zebulon-base-model.cpp
+../src/model/zebulon_base_model.cpp
+../src/tools.cpp
+../src/type.cpp
   TIMEOUT 1
 )
 
 qi_create_gtest(test-humanoid-foot-model
-  SRC ./test-humanoid-foot-model.cpp ../src/model/humanoid_foot_model.cpp ../src/tools.cpp
+  SRC ./test-humanoid-foot-model.cpp
+../src/model/humanoid_foot_model.cpp
+../src/tools.cpp
+../src/type.cpp
   TIMEOUT 1
 )
 
@@ -19,6 +28,7 @@ qi_create_gtest(test-zebulon-base-velocity-tracking-objective
   SRC ./test-zebulon-base-velocity-tracking-objective
       ../src/model/zebulon_base_model.cpp
       ../src/tools.cpp
+      ../src/type.cpp
       ../src/function/zebulon_base_velocity_tracking_objective.cpp
   TIMEOUT 1
 )
@@ -28,6 +38,7 @@ qi_create_gtest(test-humanoid-lip-com-velocity-tracking-objective
       ../src/model/humanoid_foot_model.cpp
       ../src/model/lip_model.cpp
       ../src/tools.cpp
+      ../src/type.cpp
       ../src/function/humanoid_lip_com_velocity_tracking_objective.cpp
   TIMEOUT 1
 )
@@ -36,6 +47,7 @@ qi_create_gtest(test-zebulon-base-position-tracking-objective
   SRC ./test-zebulon-base-position-tracking-objective
       ../src/model/zebulon_base_model.cpp
       ../src/tools.cpp
+      ../src/type.cpp
       ../src/function/zebulon_base_position_tracking_objective.cpp
   TIMEOUT 1
 )
@@ -45,6 +57,7 @@ qi_create_gtest(test-zebulon-jerk-minimization-objective
       ../src/model/zebulon_base_model.cpp
       ../src/model/lip_model.cpp
       ../src/tools.cpp
+      ../src/type.cpp
       ../src/function/zebulon_jerk_minimization_objective.cpp
   TIMEOUT 1
 )
@@ -54,6 +67,7 @@ qi_create_gtest(test-humanoid-lip-com-jerk-minimization-objective
       ../src/model/humanoid_foot_model.cpp
       ../src/model/lip_model.cpp
       ../src/tools.cpp
+      ../src/type.cpp
       ../src/function/humanoid_lip_com_jerk_minimization_objective.cpp
   TIMEOUT 1
 )
@@ -63,6 +77,7 @@ qi_create_gtest(test-zebulon-cop-centering-objective
       ../src/model/zebulon_base_model.cpp
       ../src/model/lip_model.cpp
       ../src/tools.cpp
+      ../src/type.cpp
       ../src/function/zebulon_cop_centering_objective.cpp
   TIMEOUT 1
 )
@@ -72,6 +87,7 @@ qi_create_gtest(test-humanoid-cop-centering-objective
       ../src/model/humanoid_foot_model.cpp
       ../src/model/lip_model.cpp
       ../src/tools.cpp
+      ../src/type.cpp
       ../src/function/humanoid_cop_centering_objective.cpp
   TIMEOUT 1
 )
@@ -81,7 +97,18 @@ qi_create_gtest(test-zebulon-cop-constraint
       ../src/model/zebulon_base_model.cpp
       ../src/model/lip_model.cpp
       ../src/tools.cpp
+      ../src/type.cpp
       ../src/function/zebulon_cop_constraint.cpp
+  TIMEOUT 1
+)
+
+qi_create_gtest(test-humanoid-cop-constraint
+  SRC ./test-humanoid-cop-constraint.cpp
+      ../src/model/humanoid_foot_model.cpp
+      ../src/model/lip_model.cpp
+      ../src/tools.cpp
+      ../src/type.cpp
+      ../src/function/humanoid_cop_constraint.cpp
   TIMEOUT 1
 )
 
@@ -90,7 +117,18 @@ qi_create_gtest(test-zebulon-com-constraint
       ../src/model/zebulon_base_model.cpp
       ../src/model/lip_model.cpp
       ../src/tools.cpp
+      ../src/type.cpp
       ../src/function/zebulon_com_constraint.cpp
+  TIMEOUT 1
+)
+
+qi_create_gtest(test-humanoid-foot-constraint
+  SRC ./test-humanoid-foot-constraint.cpp
+      ../src/model/humanoid_foot_model.cpp
+      ../src/model/lip_model.cpp
+      ../src/tools.cpp
+      ../src/type.cpp
+      ../src/function/humanoid_foot_constraint.cpp
   TIMEOUT 1
 )
 
@@ -98,6 +136,7 @@ qi_create_gtest(test-zebulon-base-motion-constraint
   SRC ./test-zebulon-base-motion-constraint.cpp
       ../src/model/zebulon_base_model.cpp
       ../src/tools.cpp
+      ../src/type.cpp
       ../src/function/zebulon_base_motion_constraint.cpp
   TIMEOUT 1
 )

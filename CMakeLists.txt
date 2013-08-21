@@ -44,6 +44,7 @@ src/function/humanoid_foot_constraint.cpp
 src/solver/qpoases_solver.h
 src/solver/qpoases_solver.cpp
 src/type.h
+src/type.cpp
 src/tools.h
 src/tools.cpp
 src/zebulon_walkgen.h

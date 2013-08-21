@@ -33,35 +33,14 @@ namespace MPCWalkgen
   ///         -nbSamples stands for Y's number of rows
   ///         -stateVectorSize stands for x's number of rows
   ///         -variableVectorSize stands for X's number of rows
-  struct LinearDynamic
+  class LinearDynamic
   {
-      inline void reset(int nbSamples,
-                        int stateVectorSize,
-                        int variableVectorSize)
-      {
-        U.setZero(nbSamples, variableVectorSize);
-        UT.setZero(variableVectorSize, nbSamples);
+    public:
+      void reset(int nbSamples,
+                 int stateVectorSize,
+                 int variableVectorSize);
 
-        //I
-        if(nbSamples==variableVectorSize)
-        {
-          Uinv.setZero(nbSamples, variableVectorSize);
-          UTinv.setZero(variableVectorSize, nbSamples);
-        }
-        else
-        {
-          Uinv.setConstant(nbSamples,
-                           variableVectorSize,
-                           std::numeric_limits<Scalar>::quiet_NaN());
-          UTinv.setConstant(variableVectorSize,
-                            nbSamples,
-                            std::numeric_limits<Scalar>::quiet_NaN());
-
-        }
-        S.setZero(nbSamples, stateVectorSize);
-        ST.setZero(stateVectorSize, nbSamples);
-      }
-
+    public:
       MatrixX U;
       MatrixX UT;
       MatrixX Uinv;
@@ -85,26 +64,33 @@ namespace MPCWalkgen
   };
 
   /// \brief  Define a convex hull bounded by the points p
-  struct Hull
+  class Hull
   {
-      Hull():p(3)
+    public:
+      Hull();
+
+      Hull(std::vector<Vector3> pp);
+
+      inline const Vector3& getVectorMin() const
       {
-        p[0](0)=1.0;
-        p[0](1)=-1.0;
-        p[0](2)=0.0;
-
-        p[1](0)=1.0;
-        p[1](1)=1.0;
-        p[1](2)=0.0;
-
-        p[2](0)=-1.0;
-        p[2](1)=0.0;
-        p[2](2)=0.0;
+        return vectorMin_;
+      }
+      inline const Vector3& getVectorMax() const
+      {
+        return vectorMax_;
       }
 
-      Hull(std::vector<Vector3> pp):p(pp){}
+    private:
+      void computeBoundsVectors();
 
+    public:
       std::vector<Vector3> p;
+      /// \brief Vector containing the minimum values of X, Y, and Z
+      ///        coordinates of each vector of the hull
+      Vector3 vectorMin_;
+      /// \brief Vector containing the maximum values of X, Y, and Z
+      ///        coordinates of each vector of the hull
+      Vector3 vectorMax_;
   };
 
 }

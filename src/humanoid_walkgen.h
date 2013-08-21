@@ -31,14 +31,16 @@ namespace MPCWalkgen
       HumanoidWalkgen();
       ~HumanoidWalkgen();
 
-      void setSamplingPeriod(Scalar samplingPeriod);
       void setNbSamples(int nbSamples);
+      void setSamplingPeriod(Scalar samplingPeriod);
       void setStepPeriod(Scalar stepPeriod);
 
-      void setLeftFootKinematicHull(const std::vector<Vector3>& leftFootHull);
-      void setRightFootKinematicHull(const std::vector<Vector3>& rightFootHull);
-      void setSSCopHull(const std::vector<Vector3>& SSCopHull);
-      void setDSCopHull(const std::vector<Vector3>& DSCopHull);
+      void setLeftFootKinematicHull(const Hull& hull);
+      void setRightFootKinematicHull(const Hull& hull);
+      void setLeftFootCopSSHull(const Hull& hull);
+      void setRightFootCopSSHull(const Hull& hull);
+      void setLeftFootCopDSHull(const Hull& hull);
+      void setRightFootCopDSHull(const Hull& hull);
 
       void setVelRefInWorldFrame(const VectorX& velRef);
 

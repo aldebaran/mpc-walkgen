@@ -6,6 +6,8 @@ namespace MPCWalkgen
     :velTrackingObj_(lipModel_, leftFootModel_, rightFootModel_)
     ,jerkMinObj_(lipModel_, leftFootModel_, rightFootModel_)
     ,copCenteringObj_(lipModel_, leftFootModel_, rightFootModel_)
+    ,copConstraint_(lipModel_, leftFootModel_, rightFootModel_)
+    ,footConstraint_(lipModel_, leftFootModel_, rightFootModel_)
     ,qpoasesSolver_(1, 1)
     ,weighting_()
     ,config_()
@@ -13,14 +15,7 @@ namespace MPCWalkgen
     computeConstantPart();
   }
 
-  HumanoidWalkgen::~HumanoidWalkgen()
-  {
-  }
-
-  void HumanoidWalkgen::setSamplingPeriod(Scalar samplingPeriod)
-  {
-
-  }
+  HumanoidWalkgen::~HumanoidWalkgen(){}
 
   void HumanoidWalkgen::setNbSamples(int nbSamples)
   {
@@ -31,9 +26,18 @@ namespace MPCWalkgen
     rightFootModel_.setNbSamples(nbSamples);
 
     copCenteringObj_.computeConstantPart();
-    velTrackingObj_.computeConstantPart();
-    jerkMinObj_.computeConstantPart();
-    copConstraint_.computeConstantPart();
+    footConstraint_.computeConstantPart();
+
+    computeConstantPart();
+  }
+
+  void HumanoidWalkgen::setSamplingPeriod(Scalar samplingPeriod)
+  {
+    lipModel_.setSamplingPeriod(samplingPeriod);
+    leftFootModel_.setSamplingPeriod(samplingPeriod);
+    rightFootModel_.setSamplingPeriod(samplingPeriod);
+
+    copCenteringObj_.computeConstantPart();
     footConstraint_.computeConstantPart();
 
     computeConstantPart();
@@ -44,137 +48,176 @@ namespace MPCWalkgen
 
   }
 
-  void HumanoidWalkgen::setLeftFootKinematicHull(const std::vector<Vector3>& leftFootHull)
+  void HumanoidWalkgen::setLeftFootKinematicHull(const Hull& hull)
   {
-
+    assert(hull.p.size()>=3);
+    leftFootModel_.setKinematicHull(hull);
   }
 
-  void HumanoidWalkgen::setRightFootKinematicHull(const std::vector<Vector3>& rightFootHull)
+  void HumanoidWalkgen::setRightFootKinematicHull(const Hull &hull)
   {
-
+    assert(hull.p.size()>=3);
+    rightFootModel_.setKinematicHull(hull);
   }
 
-  void HumanoidWalkgen::setSSCopHull(const std::vector<Vector3>& SSCopHull)
+  void HumanoidWalkgen::setLeftFootCopSSHull(const Hull& hull)
   {
+    assert(hull.p.size()==4);
+    leftFootModel_.setCopSSHull(hull);
 
+    copConstraint_.computeConstantPart();
   }
 
-  void HumanoidWalkgen::setDSCopHull(const std::vector<Vector3>& DSCopHull)
+  void HumanoidWalkgen::setRightFootCopSSHull(const Hull& hull)
   {
+    assert(hull.p.size()==4);
+    leftFootModel_.setCopSSHull(hull);
 
+    copConstraint_.computeConstantPart();
   }
+
+  //TODO: delete DS setters
+  void HumanoidWalkgen::setLeftFootCopDSHull(const Hull &hull)
+  {
+    assert(hull.p.size()==4);
+    leftFootModel_.setCopDSHull(hull);
+
+    copConstraint_.computeConstantPart();
+  }
+
+  void HumanoidWalkgen::setRightFootCopDSHull(const Hull &hull)
+  {
+    assert(hull.p.size()==4);
+    leftFootModel_.setCopDSHull(hull);
+
+    copConstraint_.computeConstantPart();
+  }
+
 
   void HumanoidWalkgen::setVelRefInWorldFrame(const VectorX& velRef)
   {
-
+    //TODO: complete
   }
 
+
+  //TODO: for all state setters, add the 2nd or 4th element (=1)
+  //Makes the public API more intuitive
   void HumanoidWalkgen::setLeftFootStateX(const VectorX& state)
   {
-
+    assert(state==state);
+    assert(state.size()==2);
+    assert(state(1)==1.0);
+    leftFootModel_.setStateX(state);
   }
 
   void HumanoidWalkgen::setLeftFootStateY(const VectorX& state)
   {
-
+    assert(state==state);
+    assert(state.size()==2);
+    assert(state(1)==1.0);
+    leftFootModel_.setStateY(state);
   }
 
   void HumanoidWalkgen::setLeftFootStateZ(const VectorX& state)
   {
-
+    assert(state==state);
+    assert(state.size()==2);
+    assert(state(1)==1.0);
+    leftFootModel_.setStateZ(state);
   }
 
   void HumanoidWalkgen::setRightFootStateX(const VectorX& state)
   {
-
+    assert(state==state);
+    assert(state.size()==2);
+    assert(state(1)==1.0);
+    rightFootModel_.setStateX(state);
   }
 
   void HumanoidWalkgen::setRightFootStateY(const VectorX& state)
   {
-
+    assert(state==state);
+    assert(state.size()==2);
+    assert(state(1)==1.0);
+    rightFootModel_.setStateY(state);
   }
 
   void HumanoidWalkgen::setRightFootStateZ(const VectorX& state)
   {
-
+    assert(state==state);
+    assert(state.size()==2);
+    assert(state(1)==1.0);
+    rightFootModel_.setStateZ(state);
   }
 
   void HumanoidWalkgen::setComStateX(const VectorX& state)
   {
-
+    assert(state==state);
+    assert(state.size()==4);
+    assert(state(3)==1.0);
+    lipModel_.setStateX(state);
   }
 
   void HumanoidWalkgen::setComStateY(const VectorX& state)
   {
-
+    assert(state==state);
+    assert(state.size()==4);
+    assert(state(3)==1.0);
+    lipModel_.setStateY(state);
   }
 
   void HumanoidWalkgen::setComStateZ(const VectorX& state)
   {
-
+    assert(state==state);
+    assert(state.size()==4);
+    assert(state(1)==0.0);
+    assert(state(2)==0.0);
+    assert(state(3)==1.0);
+    lipModel_.setComHeight(state(0));
   }
 
   const VectorX& HumanoidWalkgen::getLeftFootStateX() const
   {
-
-    VectorX null;
-    const VectorX& ret(null);
-    return ret;
+    return leftFootModel_.getStateX();
   }
 
   const VectorX& HumanoidWalkgen::getLeftFootStateY() const
   {
-    VectorX null;
-    const VectorX& ret(null);
-    return ret;
+    return leftFootModel_.getStateY();
   }
 
   const VectorX& HumanoidWalkgen::getLeftFootStateZ() const
   {
-    VectorX null;
-    const VectorX& ret(null);
-    return ret;
+    return leftFootModel_.getStateZ();
   }
 
   const VectorX& HumanoidWalkgen::getRightFootStateX() const
   {
-    VectorX null;
-    const VectorX& ret(null);
-    return ret;
+    return rightFootModel_.getStateX();
   }
 
   const VectorX& HumanoidWalkgen::getRightFootStateY() const
   {
-    VectorX null;
-    const VectorX& ret(null);
-    return ret;
+    return rightFootModel_.getStateY();
   }
   const VectorX& HumanoidWalkgen::getRightFootStateZ() const
   {
-    VectorX null;
-    const VectorX& ret(null);
-    return ret;
+    return rightFootModel_.getStateZ();
   }
 
   const VectorX& HumanoidWalkgen::getComStateX() const
   {
-    VectorX null;
-    const VectorX& ret(null);
-    return ret;
+    return lipModel_.getStateX();
   }
 
   const VectorX& HumanoidWalkgen::getComStateY() const
   {
-    VectorX null;
-    const VectorX& ret(null);
-    return ret;
+    return lipModel_.getStateY();
   }
 
   const VectorX& HumanoidWalkgen::getComStateZ() const
   {
-    VectorX null;
-    const VectorX& ret(null);
-    return ret;
+    return lipModel_.getStateZ();
   }
 
   void HumanoidWalkgen::setLeftFootMaxHeight(
@@ -246,27 +289,27 @@ namespace MPCWalkgen
 
 
     int N = lipModel_.getNbSamples();
-    int M1 = config_.withCopConstraints? copConstraint_.getNbConstraints() : 0;
-    int M2 = config_.withFeetConstraints? footConstraint_.getNbConstraints() : 0;
+    int NbCtr1 = config_.withCopConstraints? copConstraint_.getNbConstraints() : 0;
+    int NbCtr2 = config_.withFeetConstraints? footConstraint_.getNbConstraints() : 0;
 
     assert(feedBackPeriod>0);
 
     qpMatrix_.p.fill(0.0);
-    qpMatrix_.bu.fill(std::numeric_limits<float>::max());
-    qpMatrix_.bl.fill(-std::numeric_limits<float>::max());
-    qpMatrix_.xu.fill(std::numeric_limits<float>::max());
-    qpMatrix_.xl.fill(-std::numeric_limits<float>::max());
+    qpMatrix_.bu.fill(std::numeric_limits<Scalar>::max());
+    qpMatrix_.bl.fill(-std::numeric_limits<Scalar>::max());
+    qpMatrix_.xu.fill(std::numeric_limits<Scalar>::max());
+    qpMatrix_.xl.fill(-std::numeric_limits<Scalar>::max());
 
-
+    //TODO: Complete
   }
-
 
   void HumanoidWalkgen::computeConstantPart()
   {
     int N = lipModel_.getNbSamples();
-    int M1 = config_.withCopConstraints? copConstraint_.getNbConstraints() : 0;
-    int M2 = config_.withFeetConstraints? footConstraint_.getNbConstraints() : 0;
-    int M = M1+M2;
+    int NbCtr1 = config_.withCopConstraints? copConstraint_.getNbConstraints() : 0;
+    int NbCtr2 = config_.withFeetConstraints? footConstraint_.getNbConstraints() : 0;
+    int NbCtr = NbCtr1+NbCtr2;
 
+    //TODO: Complete
   }
 }

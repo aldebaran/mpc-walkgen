@@ -21,6 +21,9 @@ LIPModel::LIPModel(int nbSamples,
   stateX_(3)=1.0;
   stateY_.setZero(4);
   stateY_(3)=1.0;
+  stateZ_.setZero(4);
+  stateZ_(0) = comHeight_;
+  stateZ_(3) = 1.0;
   if (autoCompute_)
   {
     computeDynamics();
@@ -42,6 +45,9 @@ LIPModel::LIPModel()
   stateX_(3)=1.0;
   stateY_.setZero(4);
   stateY_(3)=1.0;
+  stateZ_.setZero(4);
+  stateZ_(0) = comHeight_;
+  stateZ_(3) = 1.0;
   if (autoCompute_)
   {
     computeDynamics();
@@ -138,6 +144,7 @@ void LIPModel::setComHeight(Scalar comHeight)
   assert(comHeight==comHeight);
 
   comHeight_ = comHeight;
+  stateZ_(0) = comHeight;
 
   if (autoCompute_)
   {

@@ -88,6 +88,10 @@ namespace MPCWalkgen
       inline const VectorX& getStateY() const
       {return stateY_;}
 
+      /// \brief Get the state of the CoM along the Z coordinate
+      inline const VectorX& getStateZ() const
+      {return stateZ_;}
+
       /// \brief Set the number of samples for this dynamic
       void setNbSamples(int nbSamples);
 
@@ -138,6 +142,7 @@ namespace MPCWalkgen
 
       VectorX stateX_;
       VectorX stateY_;
+      VectorX stateZ_; // For future case of use? Jory?
 
       Scalar comHeight_;
       Vector3 gravity_;

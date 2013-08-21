@@ -10,21 +10,19 @@ namespace MPCWalkgen
     ,leftFootModel_(leftFootModel)
     ,rightFootModel_(rightFootModel)
   {
-    assert(leftFootModel_.getSamplingPeriod() == lipModel_.getSamplingPeriod());
-    assert(rightFootModel_.getSamplingPeriod() == lipModel_.getSamplingPeriod());
+    assert(leftFootModel_.getNbSamples() == lipModel_.getNbSamples());
+    assert(rightFootModel_.getNbSamples() == lipModel_.getNbSamples());
+    assert(leftFootModel_.getNbPreviewedSteps() == rightFootModel_.getNbPreviewedSteps());
 
     gradient_.setZero(1, 1);
     hessian_.setZero(1, 1);
-
-    computeConstantPart();
   }
 
   HumanoidLipComJerkMinimizationObjective::~HumanoidLipComJerkMinimizationObjective(){}
 
   const MatrixX& HumanoidLipComJerkMinimizationObjective::getGradient(const VectorX& x0)
   {
-
-    assert(leftFootModel_.getNbPreviewedSteps()==rightFootModel_.getNbPreviewedSteps());
+    assert(x0.rows() == 2*lipModel_.getNbSamples() + 2*leftFootModel_.getNbPreviewedSteps());
 
     int N = lipModel_.getNbSamples();
     int M = leftFootModel_.getNbPreviewedSteps();
@@ -36,31 +34,35 @@ namespace MPCWalkgen
     gradient_.setZero(2*N + 2*M, 1);
 
     //TODO: sparse matrices?
-    tmp_.setZero(2*N + 2*M, 2*N);
-    tmp_.block(0, 0, 2*N, 2*N) = leftFootModel_.getRotationMatrix()
-        + rightFootModel_.getRotationMatrix(); //Is decomposing the rotation matrix relevant?
-    tmp_.block(2*N, 0, M, N) = leftFootModel_.getFootPosLinearDynamic().UT
-        + rightFootModel_.getFootPosLinearDynamic().UT;
-    tmp_.block(2*N + M, N, M, N) = leftFootModel_.getFootPosLinearDynamic().UT
-        + rightFootModel_.getFootPosLinearDynamic().UT;
+    // Ill change these tmp matrices after calculus optimization
+    MatrixX tmp = MatrixX::Zero(2*N + 2*M, 2*N);
+    tmp.block(0, 0, 2*N, 2*N) = leftFootModel_.getRotationMatrix() +
+                                 rightFootModel_.getRotationMatrix();
+    //Is decomposing the rotation matrix relevant?
+    tmp.block(2*N, 0, M, N) = leftFootModel_.getFootPosLinearDynamic().UT +
+                               rightFootModel_.getFootPosLinearDynamic().UT;
+    tmp.block(2*N + M, N, M, N) = leftFootModel_.getFootPosLinearDynamic().UT +
+                                   rightFootModel_.getFootPosLinearDynamic().UT;
 
-    tmp2_.setZero(2*N, 2*stateSize);
-    tmp2_.block(0, 0, N, stateSize)
+    MatrixX tmp2 = MatrixX::Zero(2*N, 2*stateSize);
+    tmp2.block(0, 0, N, stateSize)
         = dynCopX.UTinv*dynCopX.Uinv*dynCopX.S;
-    tmp2_.block(N, stateSize, N, stateSize)
+    tmp2.block(N, stateSize, N, stateSize)
         = dynCopY.UTinv*dynCopY.Uinv*dynCopY.S;
 
-    tmp3_.setZero(2*stateSize, 1);
-    tmp3_.block(0, 0, stateSize, 1) = lipModel_.getStateX();
-    tmp3_.block(stateSize, 0, stateSize, 1) = lipModel_.getStateY();
+    VectorX tmp3 = VectorX::Zero(2*stateSize);
+    tmp3.segment(0, stateSize) = lipModel_.getStateX();
+    tmp3.segment(stateSize, stateSize) = lipModel_.getStateY();
 
-    gradient_ = tmp_*tmp2_*tmp3_;
+    gradient_ = tmp*tmp2*tmp3;
     gradient_ += getHessian()*x0;
     return gradient_;
   }
 
   const MatrixX& HumanoidLipComJerkMinimizationObjective::getHessian()
   {
+    assert(leftFootModel_.getNbSamples() == lipModel_.getNbSamples());
+    assert(rightFootModel_.getNbSamples() == lipModel_.getNbSamples());
     assert(leftFootModel_.getNbPreviewedSteps()==rightFootModel_.getNbPreviewedSteps());
 
     int N = lipModel_.getNbSamples();
@@ -71,24 +73,20 @@ namespace MPCWalkgen
 
     hessian_.setZero(2*N + 2*M, 2*N + 2*M);
 
-    tmp_.setZero(2*N, 2*N + 2*M);
-    tmp_.block(0, 0, 2*N, 2*N) = leftFootModel_.getRotationMatrixT()
-        + rightFootModel_.getRotationMatrixT(); //Is decomposing the rotation matrix relevant?
-    tmp_.block(0, 2*N, N, M) = leftFootModel_.getFootPosLinearDynamic().U
-        + rightFootModel_.getFootPosLinearDynamic().U;
-    tmp_.block(N, 2*N + M, N, M) = leftFootModel_.getFootPosLinearDynamic().U
-        + rightFootModel_.getFootPosLinearDynamic().U;
+    MatrixX tmp = MatrixX::Zero(2*N, 2*N + 2*M);
+    //Is decomposing the rotation matrix relevant?
+    tmp.block(0, 0, 2*N, 2*N) = leftFootModel_.getRotationMatrixT() +
+                                 rightFootModel_.getRotationMatrixT();
+    tmp.block(0, 2*N, N, M) = leftFootModel_.getFootPosLinearDynamic().U +
+                               rightFootModel_.getFootPosLinearDynamic().U;
+    tmp.block(N, 2*N + M, N, M) = leftFootModel_.getFootPosLinearDynamic().U +
+                                   rightFootModel_.getFootPosLinearDynamic().U;
 
-    tmp2_.setZero(2*N, 2*N);
-    tmp2_.block(0, 0, N, N) = dynCopX.UTinv*dynCopX.Uinv;
-    tmp2_.block(N, N, N, N) = dynCopY.UTinv*dynCopY.Uinv;
-    hessian_ = tmp_.transpose()*tmp2_*tmp_;
+    MatrixX tmp2 = MatrixX::Zero(2*N, 2*N);
+    tmp2.block(0, 0, N, N) = dynCopX.UTinv*dynCopX.Uinv;
+    tmp2.block(N, N, N, N) = dynCopY.UTinv*dynCopY.Uinv;
+    hessian_ = tmp.transpose()*tmp2*tmp;
 
     return hessian_;
-  }
-
-  void HumanoidLipComJerkMinimizationObjective::computeConstantPart()
-  {
-    //No constant part here
   }
 }

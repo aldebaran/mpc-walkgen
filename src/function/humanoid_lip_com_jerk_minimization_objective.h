@@ -27,19 +27,12 @@ namespace MPCWalkgen{
       const MatrixX& getGradient(const VectorX& x0);
       const MatrixX& getHessian();
 
-      void computeConstantPart();
-
     private:
       const LIPModel& lipModel_;
       const HumanoidFootModel& leftFootModel_, rightFootModel_;
 
       MatrixX gradient_;
       MatrixX hessian_;
-
-      //No worries, this will be changed after matrix optim
-      MatrixX tmp_;
-      MatrixX tmp2_;
-      MatrixX tmp3_;
   };
 }
 #endif // MPC_WALKGEN_HUMANOID_JERK_MINIMIZATION_OBJECTIVE_H
