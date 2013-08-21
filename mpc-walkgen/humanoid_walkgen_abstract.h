@@ -17,113 +17,121 @@
 namespace MPCWalkgen
 {
 
-    class HumanoidWalkgen;
+  class HumanoidWalkgen;
 
-    class MPC_WALKGEN_NEW_API HumanoidWalkgenImpl
-    {
+  class MPC_WALKGEN_NEW_API HumanoidWalkgenImpl
+  {
 
-      public:
+    public:
 
-        class Weighting
-        {
-          public:
-            Weighting();
+      class Weighting
+      {
+        public:
+          Weighting();
 
-            Scalar velocityTracking;
-            Scalar copCentering;
-            Scalar jerkMinimization;
-        };
+          Scalar velocityTracking;
+          Scalar copCentering;
+          Scalar jerkMinimization;
+      };
 
-        class Config
-        {
-          public:
-            Config();
+      class Config
+      {
+        public:
+          Config();
 
-            bool withCopConstraints;
-            bool withFeetConstraints;
-        };
+          bool withCopConstraints;
+          bool withFeetConstraints;
+      };
 
-        HumanoidWalkgenImpl();
-        ~HumanoidWalkgenImpl();
+      HumanoidWalkgenImpl();
+      ~HumanoidWalkgenImpl();
 
-       /// \brief Set the QP sampling period in seconds
-       void setSamplingPeriod(Scalar samplingPeriod);
-       /// \brief Set the number of QP samples within the preview window
-       void setNbSamples(int nbSamples);
-       /// \brief Set the step period in seconds. It must be a multiple of
-       ///  the QP sampling period
-       void setStepPeriod(Scalar stepPeriod);
+      /// \brief Set the number of QP samples within the preview window
+      void setNbSamples(int nbSamples);
+      /// \brief Set the QP sampling period in seconds
+      void setSamplingPeriod(Scalar samplingPeriod);
+      /// \brief Set the step period in seconds. It must be a multiple of
+      ///  the QP sampling period
+      void setStepPeriod(Scalar stepPeriod);
 
-       ///  \brief Set the hull of the positions that left and right foot can reach
-       ///   according to their kinematic constraints (in local frame)
-       void setLeftFootKinematicHull(
-           const std::vector<Vector3>& leftFootHull);
-       void setRightFootKinematicHull(
-           const std::vector<Vector3>& rightFootHull);
-       ///  \brief Set the simple support CoP Hull in local frame
-       void setSSCopHull(const std::vector<Vector3>& SSCoPHull);
-       ///  \brief Set the double support CoP Hull in local frame
-       void setDSCopHull(const std::vector<Vector3>& DSCoPHull);
-
-
-       /// \brief Set the velocity reference in world frame
-       void setVelRefInWorldFrame(const VectorX& velRef);
-
-
-       /// \brief Getters and setters for both feet and CoM position, velocity
-       /// and acceleration
-       void setLeftFootStateX(const VectorX& state);
-       void setLeftFootStateY(const VectorX& state);
-       void setLeftFootStateZ(const VectorX& state);
-       void setRightFootStateX(const VectorX& state);
-       void setRightFootStateY(const VectorX& state);
-       void setRightFootStateZ(const VectorX& state);
-       void setComStateX(const VectorX& state);
-       void setComStateY(const VectorX& state);
-       void setComStateZ(const VectorX& state);
-
-       const VectorX& getLeftFootStateX() const;
-       const VectorX& getLeftFootStateY() const;
-       const VectorX& getLeftFootStateZ() const;
-       const VectorX& getRightFootStateX() const;
-       const VectorX& getRightFootStateY() const;
-       const VectorX& getRightFootStateZ() const;
-       const VectorX& getComStateX() const;
-       const VectorX& getComStateY() const;
-       const VectorX& getComStateZ() const;
-
-       ///  \brief Set the maximum height that both feet can reach during a step
-       void setLeftFootMaxHeight(Scalar leftFootMaxHeight);
-       void setRightFootMaxHeight(Scalar rightFootMaxHeight);
+      ///  \brief Set the hull of the positions that left and right foot can reach
+      ///   according to their kinematic constraints (in local frame)
+      void setLeftFootKinematicHull(
+          const std::vector<Vector3>& hull);
+      void setRightFootKinematicHull(
+          const std::vector<Vector3>& hull);
+      ///  \brief Set the simple support CoP Hull for left and right foot
+      ///         in local frame
+      void setLeftFootCopSSHull(
+          const std::vector<Vector3>& hull);
+      void setRightFootCopSSHull(
+          const std::vector<Vector3>& hull);
+      ///  \brief Set the double support CoP Hull for left and right foot
+      ///         in local frame
+      void setLeftFootCopDSHull(
+          const std::vector<Vector3>& hull);
+      void setRightFootCopDSHull(
+          const std::vector<Vector3>& hull);
 
 
-       /// \brief Set upper and lower bounds for left and right foot yaw angles
-       void setLeftFootYawUpperBound(Scalar leftFootYawUpperBound);
-       void setLeftFootYawLowerBound(Scalar leftFootYawLowerBound);
-       void setRightFootYawUpperBound(Scalar rightFootYawUpperBound);
-       void setRightFootYawLowerBound(Scalar rightFootYawLowerBound);
-       /// \brief Set upper bound for left and right foot angular speed around yaw axis
-       void setLeftFootYawSpeedUpperBound(Scalar leftFootYawSpeedUpperBound);
-       void setRightFootYawSpeedUpperBound(Scalar rightFootYawSpeedUpperBound);
-       /// \brief Set upper bound for left and right foot angular acceleration around yaw axis
-       void setLeftFootYawAccelerationUpperBound(Scalar leftFootYawAccelerationUpperBound);
-       void setRightFootYawAccelerationUpperBound(Scalar rightFootYawAccelerationUpperBound);
+      /// \brief Set the velocity reference in world frame
+      void setVelRefInWorldFrame(const VectorX& velRef);
+
+
+      /// \brief Getters and setters for both feet and CoM position, velocity
+      /// and acceleration
+      void setLeftFootStateX(const VectorX& state);
+      void setLeftFootStateY(const VectorX& state);
+      void setLeftFootStateZ(const VectorX& state);
+      void setRightFootStateX(const VectorX& state);
+      void setRightFootStateY(const VectorX& state);
+      void setRightFootStateZ(const VectorX& state);
+      void setComStateX(const VectorX& state);
+      void setComStateY(const VectorX& state);
+      void setComStateZ(const VectorX& state);
+
+      const VectorX& getLeftFootStateX() const;
+      const VectorX& getLeftFootStateY() const;
+      const VectorX& getLeftFootStateZ() const;
+      const VectorX& getRightFootStateX() const;
+      const VectorX& getRightFootStateY() const;
+      const VectorX& getRightFootStateZ() const;
+      const VectorX& getComStateX() const;
+      const VectorX& getComStateY() const;
+      const VectorX& getComStateZ() const;
+
+      ///  \brief Set the maximum height that both feet can reach during a step
+      void setLeftFootMaxHeight(Scalar leftFootMaxHeight);
+      void setRightFootMaxHeight(Scalar rightFootMaxHeight);
+
+
+      /// \brief Set upper and lower bounds for left and right foot yaw angles
+      void setLeftFootYawUpperBound(Scalar leftFootYawUpperBound);
+      void setLeftFootYawLowerBound(Scalar leftFootYawLowerBound);
+      void setRightFootYawUpperBound(Scalar rightFootYawUpperBound);
+      void setRightFootYawLowerBound(Scalar rightFootYawLowerBound);
+      /// \brief Set upper bound for left and right foot angular speed around yaw axis
+      void setLeftFootYawSpeedUpperBound(Scalar leftFootYawSpeedUpperBound);
+      void setRightFootYawSpeedUpperBound(Scalar rightFootYawSpeedUpperBound);
+      /// \brief Set upper bound for left and right foot angular acceleration around yaw axis
+      void setLeftFootYawAccelerationUpperBound(Scalar leftFootYawAccelerationUpperBound);
+      void setRightFootYawAccelerationUpperBound(Scalar rightFootYawAccelerationUpperBound);
 
 
 
-       //TODO: doc
-       void setWeightings(const Weighting& weighting);
-       void setConfig(const Config& config);
+      //TODO: doc
+      void setWeightings(const Weighting& weighting);
+      void setConfig(const Config& config);
 
-       //TODO: more doc
-       /// \brief solve the given QP problem
-       /// \param feedBackPeriod: in seconds, the time between each call
-       /// of the MPC. This is also the period waited for before new samples are
-       /// sent to the actuators
-       void solve(Scalar feedBackPeriod);
+      //TODO: more doc
+      /// \brief solve the given QP problem
+      /// \param feedBackPeriod: in seconds, the time between each call
+      /// of the MPC. This is also the period waited for before new samples are
+      /// sent to the actuators
+      void solve(Scalar feedBackPeriod);
 
-      private:
-        HumanoidWalkgen* walkgen;
-    };
-  }
+    private:
+      HumanoidWalkgen* walkgen;
+  };
+}
 #endif // MPC_WALKGEN_HUMANOID_WALKGEN_ABSTRACT_H

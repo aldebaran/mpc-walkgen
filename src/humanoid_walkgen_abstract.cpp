@@ -28,14 +28,14 @@ namespace MPCWalkgen
     }
   }
 
-  void HumanoidWalkgenImpl::setSamplingPeriod(Scalar samplingPeriod)
-  {
-    walkgen->setSamplingPeriod(samplingPeriod);
-  }
-
   void HumanoidWalkgenImpl::setNbSamples(int nbSamples)
   {
     walkgen->setNbSamples(nbSamples);
+  }
+
+  void HumanoidWalkgenImpl::setSamplingPeriod(Scalar samplingPeriod)
+  {
+    walkgen->setSamplingPeriod(samplingPeriod);
   }
 
   void HumanoidWalkgenImpl::setStepPeriod(Scalar stepPeriod)
@@ -44,35 +44,45 @@ namespace MPCWalkgen
   }
 
   void HumanoidWalkgenImpl::setLeftFootKinematicHull(
-      const std::vector<Vector3>& leftFootHull)
+      const std::vector<Vector3>& hull)
   {
-    walkgen->setLeftFootKinematicHull(leftFootHull);
+    walkgen->setLeftFootKinematicHull(Hull(hull));
   }
 
   void HumanoidWalkgenImpl::setRightFootKinematicHull(
-      const std::vector<Vector3>& rightFootHull)
+      const std::vector<Vector3>& hull)
   {
-    walkgen->setRightFootKinematicHull(rightFootHull);
+    walkgen->setRightFootKinematicHull(Hull(hull));
   }
 
-  void HumanoidWalkgenImpl::setSSCopHull(
-      const std::vector<Vector3>& SSCopHull)
+  void HumanoidWalkgenImpl::setLeftFootCopSSHull(
+      const std::vector<Vector3>& hull)
   {
-    walkgen->setSSCopHull(SSCopHull);
+    walkgen->setLeftFootCopSSHull(Hull(hull));
   }
 
-  void HumanoidWalkgenImpl::setDSCopHull(
-      const std::vector<Vector3>& DSCopHull)
+  void HumanoidWalkgenImpl::setRightFootCopSSHull(
+      const std::vector<Vector3>& hull)
   {
-    walkgen->setDSCopHull(DSCopHull);
+    walkgen->setRightFootCopSSHull(Hull(hull));
   }
 
+  void HumanoidWalkgenImpl::setLeftFootCopDSHull(
+      const std::vector<Vector3>& hull)
+  {
+    walkgen->setLeftFootCopDSHull(Hull(hull));
+  }
+
+  void HumanoidWalkgenImpl::setRightFootCopDSHull(
+      const std::vector<Vector3>& hull)
+  {
+    walkgen->setRightFootCopDSHull(Hull(hull));
+  }
 
   void HumanoidWalkgenImpl::setVelRefInWorldFrame(const VectorX& velRef)
   {
     walkgen->setVelRefInWorldFrame(velRef);
   }
-
 
   void HumanoidWalkgenImpl::setLeftFootStateX(const VectorX& state)
   {
@@ -155,8 +165,6 @@ namespace MPCWalkgen
   {
     return walkgen->getComStateZ();
   }
-
-
 
   void HumanoidWalkgenImpl::setLeftFootMaxHeight(Scalar leftFootMaxHeight)
   {

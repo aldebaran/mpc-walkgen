@@ -33,8 +33,6 @@ namespace MPCWalkgen{
       ///        (refX, refY)
       void setVelRefInWorldFrame(const VectorX& velRefInWorldFrame);
 
-      void computeConstantPart();
-
     private:
       const LIPModel& lipModel_;
       const HumanoidFootModel& leftFootModel_, rightFootModel_; //Const ref? See Seb
@@ -43,10 +41,6 @@ namespace MPCWalkgen{
 
       MatrixX gradient_;
       MatrixX hessian_;
-
-      //No worries, this will be changed after matrix optim
-      MatrixX tmp_;
-      MatrixX tmp2_;
   };
 }
 #endif // MPC_WALKGEN_HUMANOID_VELOCITY_TRACKING_OBJECTIVE_H

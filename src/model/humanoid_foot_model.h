@@ -44,7 +44,8 @@ namespace MPCWalkgen{
           Scalar hipYawAccelerationUpperBound_;
           Scalar hipYawLowerBound_;
           Scalar maxHeight_;
-          //TODO: Add KinematicHull
+
+          Hull kinematicHull_;
       };
 
       HumanoidFootModel(int nbSamples,
@@ -73,6 +74,32 @@ namespace MPCWalkgen{
       ///        will be the support foot
       inline int getNbPreviewedSteps() const
       {return nbPreviewedSteps_;}
+
+      /// \brief Get the double support hull in which the CoP
+      ///        must remain
+      inline const Hull& getCopDSHull() const
+      {return copDSHull_;}
+
+      /// \brief Get the double support hull
+      inline void setCopDSHull(const Hull& CopDSHull)
+      {
+        assert(CopDSHull.p.size()==4);
+        copDSHull_=CopDSHull;
+      }
+
+      /// \brief Get the simple support hull in which the CoP
+      ///        must remain
+      inline const Hull& getCopSSHull() const
+      {return copSSHull_;}
+
+      /// \brief Get the simple support hull
+      inline void setCopSSHull(const Hull& CopSSHull)
+      {
+        assert(CopSSHull.p.size()==4);
+        copSSHull_=CopSSHull;
+      }
+
+
 
       /// \brief Get the state of the Foot along the X coordinate
       ///        It is a vector of size 4:
@@ -122,6 +149,19 @@ namespace MPCWalkgen{
       inline const VectorX& getStateYaw() const
       {return stateYaw_;}
 
+      /// \brief True if the foot touch the ground at the ith sample
+      inline bool isInContact(int i) const
+      {
+        assert(i>=0);
+        return isInContact_[i];
+      }
+
+      /// \brief True if the foot is the support foot  at the ith sample
+      inline bool isSupportFoot(int i) const
+      {
+        assert(i>=0);
+        return isSupportFoot_[i];
+      }
 
       /// \brief Compute the selection matrix attached to the foot
       void computeSelectionMatrix();
@@ -164,8 +204,19 @@ namespace MPCWalkgen{
       void setMaxHeight(
           Scalar maxHeight);
 
-    private:
+      /// \brief Set the hull of the reachable positions by the foot
+      void setKinematicHull(const Hull& kinematicHull);
+      /// \brief Get the hull of the reachable positions by the foot
+      inline const Hull& getKinematicHull() const
+      {return kinematicLimits_.kinematicHull_;}
 
+    private:
+      /// \brief constructors initialization instruction
+      void xInit();
+      /// \brief default initialization of SS and DS CoP hulls
+      void xCreateDefaultCopHulls();
+
+    private:
       int nbSamples_;
       Scalar samplingPeriod_;
       int nbPreviewedSteps_;
@@ -174,12 +225,22 @@ namespace MPCWalkgen{
       VectorX stateY_;
       VectorX stateZ_;
       VectorX stateYaw_;
+
       SelectionMatrix selectionMatrix_;
       LinearDynamic footPosDynamic_;
+
       MatrixX rotationMatrix_;
       MatrixX rotationMatrixT_;
+
       KinematicLimits kinematicLimits_;
 
+      Hull copDSHull_;
+      Hull copSSHull_;
+
+      /// \brief Vector of size nbSamples_
+      std::vector<bool> isInContact_;
+      /// \brief Vector of size nbPreviewedSteps_
+      std::vector<bool> isSupportFoot_;
   };
 }
 
