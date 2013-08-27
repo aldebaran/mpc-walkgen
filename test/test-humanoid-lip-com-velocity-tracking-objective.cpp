@@ -8,14 +8,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <gtest/gtest.h>
-#include "../src/model/humanoid_foot_model.h"
+#include "../src/humanoid_feet_supervisor.h"
 #include "../src/model/lip_model.h"
 #include "../src/function/humanoid_lip_com_velocity_tracking_objective.h"
 
 
 class HumanoidLipComVelocityTrackingTest: public ::testing::Test{};
 
-TEST_F(HumanoidLipComVelocityTrackingTest, functionValue)
+TEST_F(HumanoidLipComVelocityTrackingTest, HessianAndGradientValue)
 {
 
   /*
@@ -30,28 +30,31 @@ TEST_F(HumanoidLipComVelocityTrackingTest, functionValue)
 }
 
 
-TEST_F(HumanoidLipComVelocityTrackingTest, sizeOfvalues)
+TEST_F(HumanoidLipComVelocityTrackingTest, HessianAndGradientSize)
 {
+
   using namespace MPCWalkgen;
+
+  //TODO: Add footSteps
 
   int nbSamples = 3;
   Scalar samplingPeriod = 1.0;
-  int nbPreviewedSteps = 2;
+  int nbPreviewedSteps = 0;
   bool autoCompute = true;
   HumanoidFootModel leftFoot(nbSamples, samplingPeriod, nbPreviewedSteps),
-      rightFoot(nbSamples, samplingPeriod, nbPreviewedSteps);
+                    rightFoot(nbSamples, samplingPeriod, nbPreviewedSteps);
+  HumanoidFeetSupervisor feetSupervisor(leftFoot,
+                                        rightFoot,
+                                        nbSamples,
+                                        samplingPeriod);
   LIPModel lip(nbSamples, samplingPeriod, autoCompute);
-  HumanoidLipComVelocityTrackingObjective obj(lip, leftFoot, rightFoot);
+  HumanoidLipComVelocityTrackingObjective obj(lip, feetSupervisor);
 
-  ASSERT_EQ(leftFoot.getNbPreviewedSteps(), rightFoot.getNbPreviewedSteps());
-
-  VectorX jerkInit(2*nbSamples + 2*leftFoot.getNbPreviewedSteps());
+  VectorX jerkInit(2*nbSamples + 2*feetSupervisor.getNbPreviewedSteps());
   jerkInit.fill(0.0);
 
 
-  ASSERT_EQ(obj.getHessian().rows(), 2*nbSamples + 2*leftFoot.getNbPreviewedSteps());
-  ASSERT_EQ(obj.getHessian().cols(), 2*nbSamples + 2*leftFoot.getNbPreviewedSteps());
-  ASSERT_EQ(obj.getGradient(jerkInit).rows(), 2*nbSamples + 2*leftFoot.getNbPreviewedSteps());
-  ASSERT_EQ(obj.getGradient(jerkInit).cols(), 1);
-
+  ASSERT_EQ(obj.getHessian().rows(), 6);
+  ASSERT_EQ(obj.getHessian().cols(), 6);
+  ASSERT_EQ(obj.getGradient(jerkInit).rows(), 6);
 }

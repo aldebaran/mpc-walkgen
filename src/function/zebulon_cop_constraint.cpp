@@ -80,7 +80,7 @@ int CopConstraint::getNbConstraints()
 {
   assert(baseModel_.getNbSamples() == lipModel_.getNbSamples());
 
-  return baseModel_.getNbSamples()*baseModel_.getCopSupportHull().p.size();
+  return baseModel_.getNbSamples()*baseModel_.getCopSupportConvexPolygon().getNbVertices();
 }
 
 void CopConstraint::computeConstantPart()
@@ -133,16 +133,16 @@ void CopConstraint::computeConstantPart()
 void CopConstraint::computeconstraintMatrices()
 {
   int N = lipModel_.getNbSamples();
-  const Hull& supportHull = baseModel_.getCopSupportHull();
-  int M = supportHull.p.size();
+  const ConvexPolygon& supportConvexPolygon = baseModel_.getCopSupportConvexPolygon();
+  int M = supportConvexPolygon.getNbVertices();
 
   A_.setZero(M*N, 2*N);
   b_.resize(M*N);
 
   for(int i=0; i<M; ++i)
   {
-    const Vector3& p1 = supportHull.p[i];
-    const Vector3& p2 = supportHull.p[(i+1)%M];
+    const Vector2& p1 = supportConvexPolygon.getVertices()[i];
+    const Vector2& p2 = supportConvexPolygon.getVertices()[(i+1)%M];
 
     for(int j=0; j<N; ++j)
     {

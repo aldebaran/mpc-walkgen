@@ -53,6 +53,8 @@ src/zebulon_walkgen_abstract.cpp
 src/humanoid_walkgen.h
 src/humanoid_walkgen.cpp
 src/humanoid_walkgen_abstract.cpp
+src/humanoid_feet_supervisor.h
+src/humanoid_feet_supervisor.cpp
 src/shared_type.cpp
 )
 

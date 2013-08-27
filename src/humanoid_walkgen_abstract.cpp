@@ -1,3 +1,12 @@
+////////////////////////////////////////////////////////////////////////////////
+///
+///\file humanoid_walkgen_abstract.cpp
+///\brief Main program for Humanoid
+///\author de Gourcuff Martin
+///\date 10/07/13
+///
+////////////////////////////////////////////////////////////////////////////////
+
 #include <mpc-walkgen/humanoid_walkgen_abstract.h>
 #include "humanoid_walkgen.h"
 
@@ -43,40 +52,28 @@ namespace MPCWalkgen
     walkgen->setStepPeriod(stepPeriod);
   }
 
-  void HumanoidWalkgenImpl::setLeftFootKinematicHull(
-      const std::vector<Vector3>& hull)
+  void HumanoidWalkgenImpl::setLeftFootKinematicConvexPolygon(
+      const std::vector<Vector2>& convexPolygon)
   {
-    walkgen->setLeftFootKinematicHull(Hull(hull));
+    walkgen->setLeftFootKinematicConvexPolygon(ConvexPolygon(convexPolygon));
   }
 
-  void HumanoidWalkgenImpl::setRightFootKinematicHull(
-      const std::vector<Vector3>& hull)
+  void HumanoidWalkgenImpl::setRightFootKinematicConvexPolygon(
+      const std::vector<Vector2>& convexPolygon)
   {
-    walkgen->setRightFootKinematicHull(Hull(hull));
+    walkgen->setRightFootKinematicConvexPolygon(ConvexPolygon(convexPolygon));
   }
 
-  void HumanoidWalkgenImpl::setLeftFootCopSSHull(
-      const std::vector<Vector3>& hull)
+  void HumanoidWalkgenImpl::setLeftFootCopConvexPolygon(
+      const std::vector<Vector2>& convexPolygon)
   {
-    walkgen->setLeftFootCopSSHull(Hull(hull));
+    walkgen->setLeftFootCopConvexPolygon(ConvexPolygon(convexPolygon));
   }
 
-  void HumanoidWalkgenImpl::setRightFootCopSSHull(
-      const std::vector<Vector3>& hull)
+  void HumanoidWalkgenImpl::setRightFootCopConvexPolygon(
+      const std::vector<Vector2>& convexPolygon)
   {
-    walkgen->setRightFootCopSSHull(Hull(hull));
-  }
-
-  void HumanoidWalkgenImpl::setLeftFootCopDSHull(
-      const std::vector<Vector3>& hull)
-  {
-    walkgen->setLeftFootCopDSHull(Hull(hull));
-  }
-
-  void HumanoidWalkgenImpl::setRightFootCopDSHull(
-      const std::vector<Vector3>& hull)
-  {
-    walkgen->setRightFootCopDSHull(Hull(hull));
+    walkgen->setRightFootCopConvexPolygon(ConvexPolygon(convexPolygon));
   }
 
   void HumanoidWalkgenImpl::setVelRefInWorldFrame(const VectorX& velRef)

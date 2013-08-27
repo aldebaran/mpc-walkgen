@@ -14,6 +14,7 @@
 #include "type.h"
 #include "model/lip_model.h"
 #include "model/humanoid_foot_model.h"
+#include "humanoid_feet_supervisor.h"
 #include "function/humanoid_lip_com_velocity_tracking_objective.h"
 #include "function/humanoid_lip_com_jerk_minimization_objective.h"
 #include "function/humanoid_cop_centering_objective.h"
@@ -35,12 +36,10 @@ namespace MPCWalkgen
       void setSamplingPeriod(Scalar samplingPeriod);
       void setStepPeriod(Scalar stepPeriod);
 
-      void setLeftFootKinematicHull(const Hull& hull);
-      void setRightFootKinematicHull(const Hull& hull);
-      void setLeftFootCopSSHull(const Hull& hull);
-      void setRightFootCopSSHull(const Hull& hull);
-      void setLeftFootCopDSHull(const Hull& hull);
-      void setRightFootCopDSHull(const Hull& hull);
+      void setLeftFootKinematicConvexPolygon(const ConvexPolygon& convexPolygon);
+      void setRightFootKinematicConvexPolygon(const ConvexPolygon& convexPolygon);
+      void setLeftFootCopConvexPolygon(const ConvexPolygon& convexPolygon);
+      void setRightFootCopConvexPolygon(const ConvexPolygon& convexPolygon);
 
       void setVelRefInWorldFrame(const VectorX& velRef);
 
@@ -89,8 +88,9 @@ namespace MPCWalkgen
       void computeConstantPart();
 
     private:
-      HumanoidFootModel leftFootModel_, rightFootModel_;
+      const HumanoidFootModel leftFootModel_, rightFootModel_;
       LIPModel lipModel_;
+      HumanoidFeetSupervisor feetSupervisor_;
 
       HumanoidLipComVelocityTrackingObjective velTrackingObj_;
       HumanoidLipComJerkMinimizationObjective jerkMinObj_;

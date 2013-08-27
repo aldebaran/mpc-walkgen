@@ -1,13 +1,25 @@
+////////////////////////////////////////////////////////////////////////////////
+///
+///\file humanoid_walkgen.cpp
+///\brief Main program for Humanoid
+///\author de Gourcuff Martin
+///\date 11/07/13
+///
+////////////////////////////////////////////////////////////////////////////////
+
 #include "humanoid_walkgen.h"
 
 namespace MPCWalkgen
 {
+
+  //TODO: MAke leftFootModel and RightFootModel disappear
   HumanoidWalkgen::HumanoidWalkgen()
-    :velTrackingObj_(lipModel_, leftFootModel_, rightFootModel_)
-    ,jerkMinObj_(lipModel_, leftFootModel_, rightFootModel_)
-    ,copCenteringObj_(lipModel_, leftFootModel_, rightFootModel_)
-    ,copConstraint_(lipModel_, leftFootModel_, rightFootModel_)
-    ,footConstraint_(lipModel_, leftFootModel_, rightFootModel_)
+    :feetSupervisor_(leftFootModel_, rightFootModel_)
+    ,velTrackingObj_(lipModel_, feetSupervisor_)
+    ,jerkMinObj_(lipModel_, feetSupervisor_)
+    ,copCenteringObj_(lipModel_, feetSupervisor_)
+    ,copConstraint_(lipModel_, feetSupervisor_)
+    ,footConstraint_(lipModel_, feetSupervisor_)
     ,qpoasesSolver_(1, 1)
     ,weighting_()
     ,config_()
@@ -22,77 +34,54 @@ namespace MPCWalkgen
     assert(nbSamples>0);
 
     lipModel_.setNbSamples(nbSamples);
-    leftFootModel_.setNbSamples(nbSamples);
-    rightFootModel_.setNbSamples(nbSamples);
+    feetSupervisor_.setNbSamples(nbSamples);
 
     copCenteringObj_.computeConstantPart();
-    footConstraint_.computeConstantPart();
+
+    copConstraint_.computeConstantPart();
 
     computeConstantPart();
   }
 
   void HumanoidWalkgen::setSamplingPeriod(Scalar samplingPeriod)
   {
+    assert(samplingPeriod>=0);
+
     lipModel_.setSamplingPeriod(samplingPeriod);
-    leftFootModel_.setSamplingPeriod(samplingPeriod);
-    rightFootModel_.setSamplingPeriod(samplingPeriod);
+    feetSupervisor_.setSamplingPeriod(samplingPeriod);
 
     copCenteringObj_.computeConstantPart();
-    footConstraint_.computeConstantPart();
+
+    copConstraint_.computeConstantPart();
 
     computeConstantPart();
   }
 
   void HumanoidWalkgen::setStepPeriod(Scalar stepPeriod)
   {
-
+    assert(stepPeriod>0.0);
+    feetSupervisor_.setStepPeriod(stepPeriod);
   }
 
-  void HumanoidWalkgen::setLeftFootKinematicHull(const Hull& hull)
+  void HumanoidWalkgen::setLeftFootKinematicConvexPolygon(const ConvexPolygon& convexPolygon)
   {
-    assert(hull.p.size()>=3);
-    leftFootModel_.setKinematicHull(hull);
+    feetSupervisor_.setLeftFootKinematicConvexPolygon(convexPolygon);
   }
 
-  void HumanoidWalkgen::setRightFootKinematicHull(const Hull &hull)
+  void HumanoidWalkgen::setRightFootKinematicConvexPolygon(const ConvexPolygon &convexPolygon)
   {
-    assert(hull.p.size()>=3);
-    rightFootModel_.setKinematicHull(hull);
+    feetSupervisor_.setRightFootKinematicConvexPolygon(convexPolygon);
   }
 
-  void HumanoidWalkgen::setLeftFootCopSSHull(const Hull& hull)
+  void HumanoidWalkgen::setLeftFootCopConvexPolygon(const ConvexPolygon& convexPolygon)
   {
-    assert(hull.p.size()==4);
-    leftFootModel_.setCopSSHull(hull);
-
-    copConstraint_.computeConstantPart();
+    feetSupervisor_.setLeftFootCopConvexPolygon(convexPolygon);
   }
 
-  void HumanoidWalkgen::setRightFootCopSSHull(const Hull& hull)
+  void HumanoidWalkgen::setRightFootCopConvexPolygon(const ConvexPolygon& convexPolygon)
   {
-    assert(hull.p.size()==4);
-    leftFootModel_.setCopSSHull(hull);
-
-    copConstraint_.computeConstantPart();
+    feetSupervisor_.setRightFootCopConvexPolygon(convexPolygon);
   }
-
-  //TODO: delete DS setters
-  void HumanoidWalkgen::setLeftFootCopDSHull(const Hull &hull)
-  {
-    assert(hull.p.size()==4);
-    leftFootModel_.setCopDSHull(hull);
-
-    copConstraint_.computeConstantPart();
-  }
-
-  void HumanoidWalkgen::setRightFootCopDSHull(const Hull &hull)
-  {
-    assert(hull.p.size()==4);
-    leftFootModel_.setCopDSHull(hull);
-
-    copConstraint_.computeConstantPart();
-  }
-
 
   void HumanoidWalkgen::setVelRefInWorldFrame(const VectorX& velRef)
   {
@@ -107,7 +96,7 @@ namespace MPCWalkgen
     assert(state==state);
     assert(state.size()==2);
     assert(state(1)==1.0);
-    leftFootModel_.setStateX(state);
+    feetSupervisor_.setLeftFootStateX(state);
   }
 
   void HumanoidWalkgen::setLeftFootStateY(const VectorX& state)
@@ -115,7 +104,7 @@ namespace MPCWalkgen
     assert(state==state);
     assert(state.size()==2);
     assert(state(1)==1.0);
-    leftFootModel_.setStateY(state);
+    feetSupervisor_.setLeftFootStateY(state);
   }
 
   void HumanoidWalkgen::setLeftFootStateZ(const VectorX& state)
@@ -123,7 +112,7 @@ namespace MPCWalkgen
     assert(state==state);
     assert(state.size()==2);
     assert(state(1)==1.0);
-    leftFootModel_.setStateZ(state);
+    feetSupervisor_.setLeftFootStateZ(state);
   }
 
   void HumanoidWalkgen::setRightFootStateX(const VectorX& state)
@@ -131,7 +120,7 @@ namespace MPCWalkgen
     assert(state==state);
     assert(state.size()==2);
     assert(state(1)==1.0);
-    rightFootModel_.setStateX(state);
+    feetSupervisor_.setRightFootStateX(state);
   }
 
   void HumanoidWalkgen::setRightFootStateY(const VectorX& state)
@@ -139,7 +128,7 @@ namespace MPCWalkgen
     assert(state==state);
     assert(state.size()==2);
     assert(state(1)==1.0);
-    rightFootModel_.setStateY(state);
+    feetSupervisor_.setRightFootStateY(state);
   }
 
   void HumanoidWalkgen::setRightFootStateZ(const VectorX& state)
@@ -147,7 +136,7 @@ namespace MPCWalkgen
     assert(state==state);
     assert(state.size()==2);
     assert(state(1)==1.0);
-    rightFootModel_.setStateZ(state);
+    feetSupervisor_.setRightFootStateZ(state);
   }
 
   void HumanoidWalkgen::setComStateX(const VectorX& state)
@@ -223,60 +212,61 @@ namespace MPCWalkgen
   void HumanoidWalkgen::setLeftFootMaxHeight(
       Scalar leftFootMaxHeight)
   {
-    leftFootModel_.setMaxHeight(
+    feetSupervisor_.setLeftFootMaxHeight(
           leftFootMaxHeight);
   }
+
   void HumanoidWalkgen::setRightFootMaxHeight(
       Scalar rightFootMaxHeight)
   {
-    rightFootModel_.setMaxHeight(
+        feetSupervisor_.setRightFootMaxHeight(
           rightFootMaxHeight);
   }
 
   void HumanoidWalkgen::setLeftFootYawUpperBound(Scalar leftFootYawUpperBound)
   {
-    leftFootModel_.setHipYawUpperBound(
+    feetSupervisor_.setLeftFootYawUpperBound(
           leftFootYawUpperBound);
   }
   void HumanoidWalkgen::setLeftFootYawLowerBound(Scalar leftFootYawLowerBound)
   {
-    leftFootModel_.setHipYawLowerBound(
+    feetSupervisor_.setLeftFootYawLowerBound(
           leftFootYawLowerBound);
   }
   void HumanoidWalkgen::setRightFootYawUpperBound(Scalar rightFootYawUpperBound)
   {
-    rightFootModel_.setHipYawUpperBound(
+    feetSupervisor_.setRightFootYawUpperBound(
           rightFootYawUpperBound);
   }
   void HumanoidWalkgen::setRightFootYawLowerBound(Scalar rightFootYawLowerBound)
   {
-    rightFootModel_.setHipYawLowerBound(
+    feetSupervisor_.setRightFootYawLowerBound(
           rightFootYawLowerBound);
   }
 
   void HumanoidWalkgen::setLeftFootYawSpeedUpperBound(
       Scalar leftFootYawSpeedUpperBound)
   {
-    leftFootModel_.setHipYawSpeedUpperBound(
+    feetSupervisor_.setLeftFootYawSpeedUpperBound(
           leftFootYawSpeedUpperBound);
   }
   void HumanoidWalkgen::setRightFootYawSpeedUpperBound(
       Scalar rightFootYawSpeedUpperBound)
   {
-    rightFootModel_.setHipYawSpeedUpperBound(
+    feetSupervisor_.setRightFootYawSpeedUpperBound(
           rightFootYawSpeedUpperBound);
   }
 
   void HumanoidWalkgen::setLeftFootYawAccelerationUpperBound(
       Scalar leftFootYawAccelerationUpperBound)
   {
-    leftFootModel_.setHipYawAccelerationUpperBound(
+    feetSupervisor_.setLeftFootYawAccelerationUpperBound(
           leftFootYawAccelerationUpperBound);
   }
   void HumanoidWalkgen::setRightFootYawAccelerationUpperBound(
       Scalar rightFootYawAccelerationUpperBound)
   {
-    rightFootModel_.setHipYawAccelerationUpperBound(
+    feetSupervisor_.setRightFootYawAccelerationUpperBound(
           rightFootYawAccelerationUpperBound);
   }
 

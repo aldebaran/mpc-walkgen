@@ -54,25 +54,18 @@ namespace MPCWalkgen
       ///  the QP sampling period
       void setStepPeriod(Scalar stepPeriod);
 
-      ///  \brief Set the hull of the positions that left and right foot can reach
+      ///  \brief Set the convex polygon of the positions that left and right foot can reach
       ///   according to their kinematic constraints (in local frame)
-      void setLeftFootKinematicHull(
-          const std::vector<Vector3>& hull);
-      void setRightFootKinematicHull(
-          const std::vector<Vector3>& hull);
-      ///  \brief Set the simple support CoP Hull for left and right foot
+      void setLeftFootKinematicConvexPolygon(
+          const std::vector<Vector2>& convexPolygon);
+      void setRightFootKinematicConvexPolygon(
+          const std::vector<Vector2>& convexPolygon);
+      ///  \brief Set the simple support CoP convex polygon for left and right foot
       ///         in local frame
-      void setLeftFootCopSSHull(
-          const std::vector<Vector3>& hull);
-      void setRightFootCopSSHull(
-          const std::vector<Vector3>& hull);
-      ///  \brief Set the double support CoP Hull for left and right foot
-      ///         in local frame
-      void setLeftFootCopDSHull(
-          const std::vector<Vector3>& hull);
-      void setRightFootCopDSHull(
-          const std::vector<Vector3>& hull);
-
+      void setLeftFootCopConvexPolygon(
+          const std::vector<Vector2>& convexPolygon);
+      void setRightFootCopConvexPolygon(
+          const std::vector<Vector2>& convexPolygon);
 
       /// \brief Set the velocity reference in world frame
       void setVelRefInWorldFrame(const VectorX& velRef);
