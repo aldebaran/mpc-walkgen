@@ -12,7 +12,7 @@
 
 #include "../type.h"
 #include "../model/lip_model.h"
-#include "../model/humanoid_foot_model.h"
+#include "../humanoid_feet_supervisor.h"
 
 
 namespace MPCWalkgen
@@ -21,8 +21,7 @@ namespace MPCWalkgen
   {
     public:
       HumanoidCopCenteringObjective(const LIPModel& lipModel,
-                                    const HumanoidFootModel& leftFootModel,
-                                    const HumanoidFootModel& rightFootModel);
+                                    const HumanoidFeetSupervisor& feetSupervisor);
       ~HumanoidCopCenteringObjective();
 
       const MatrixX& getGradient(const VectorX& x0);
@@ -31,7 +30,7 @@ namespace MPCWalkgen
 
     private:
       const LIPModel& lipModel_;
-      const HumanoidFootModel& leftFootModel_, rightFootModel_;
+      const HumanoidFeetSupervisor& feetSupervisor_;
 
       MatrixX gradient_;
       MatrixX hessian_;

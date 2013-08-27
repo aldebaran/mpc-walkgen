@@ -45,14 +45,26 @@ void ZebulonWalkgenImpl::setGravity(const Vector3& gravity)
   walkgen->setGravity(gravity);
 }
 
-void ZebulonWalkgenImpl::setBaseCopHull(const std::vector<Vector3> p)
+void ZebulonWalkgenImpl::setBaseCopHull(const std::vector<Vector3>& p)
 {
-  walkgen->setBaseCopHull(Hull(p));
+  //Ugly but necessary to keep compatibility with Naoqi
+  std::vector<Vector2> p2D(p.size());
+
+  for(size_t i=0; i<p.size(); ++i)
+  {
+    p2D[i] = p[i].head<2>();
+  }
+  walkgen->setBaseCopConvexPolygon(ConvexPolygon(p2D));
 }
 
-void ZebulonWalkgenImpl::setBaseComHull(const std::vector<Vector3> p)
+void ZebulonWalkgenImpl::setBaseComHull(const std::vector<Vector3>& p)
 {
-  walkgen->setBaseComHull(Hull(p));
+  std::vector<Vector2> p2D(p.size());
+  for(size_t i=0; i<p.size(); ++i)
+  {
+    p2D[i] = p[i].head<2>();
+  }
+  walkgen->setBaseComConvexPolygon(ConvexPolygon(p2D));
 }
 
 void ZebulonWalkgenImpl::setComBodyHeight(Scalar comHeight)

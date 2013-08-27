@@ -36,8 +36,8 @@ namespace MPCWalkgen
     void setSamplingPeriod(Scalar samplingPeriod);
 
     void setGravity(const Vector3& gravity);
-    void setBaseCopHull(const Hull& hull);
-    void setBaseComHull(const Hull& hull);
+    void setBaseCopConvexPolygon(const ConvexPolygon& convexPolygon);
+    void setBaseComConvexPolygon(const ConvexPolygon& convexPolygon);
     void setComBodyHeight(Scalar comHeight);
     void setComBaseHeight(Scalar comHeight);
     void setBodyMass(Scalar mass);

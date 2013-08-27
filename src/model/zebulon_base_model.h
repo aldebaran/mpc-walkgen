@@ -69,7 +69,7 @@ namespace MPCWalkgen
     inline void setStateX(const VectorX& state)
     {
       assert(state==state);assert(state.size()==4);assert(state(3)==1.0);
-      stateX_=state;
+      stateX_ = state;
     }
 
 
@@ -83,7 +83,7 @@ namespace MPCWalkgen
     inline void setStateY(const VectorX& state)
     {
       assert(state==state);assert(state.size()==4);assert(state(3)==1.0);
-      stateY_=state;
+      stateY_ = state;
     }
 
 
@@ -97,7 +97,7 @@ namespace MPCWalkgen
     inline void setStateRoll(const VectorX& state)
     {
       assert(state==state);assert(state.size()==4);assert(state(3)==1.0);
-      stateRoll_=state;
+      stateRoll_ = state;
     }
 
     /// \brief Get the state of the base along the Theta coordinate
@@ -110,7 +110,7 @@ namespace MPCWalkgen
     inline void setStatePitch(const VectorX& state)
     {
       assert(state==state);assert(state.size()==4);assert(state(3)==1.0);
-      statePitch_=state;
+      statePitch_ = state;
     }
 
     /// \brief Set the number of samples for this dynamic
@@ -157,7 +157,7 @@ namespace MPCWalkgen
     inline void setVelocityLimit(Scalar velocityLimit)
     {
       assert(velocityLimit>=0);
-      velocityLimit_=velocityLimit;
+      velocityLimit_ = velocityLimit;
     }
 
     /// \brief Get the base acceleration maximum value
@@ -168,7 +168,7 @@ namespace MPCWalkgen
     inline void setAccelerationLimit(Scalar accelerationLimit)
     {
       assert(accelerationLimit>=0);
-      accelerationLimit_=accelerationLimit;
+      accelerationLimit_ = accelerationLimit;
     }
 
     /// \brief Get the base jerk maximum value
@@ -179,30 +179,30 @@ namespace MPCWalkgen
     inline void setJerkLimit(Scalar jerkLimit)
     {
       assert(jerkLimit>=0);
-      jerkLimit_=jerkLimit;
+      jerkLimit_ = jerkLimit;
     }
 
 
     /// \brief Get the base support polygon
-    inline const Hull& getCopSupportHull(void) const
-    {return copSupportHull_;}
+    inline const ConvexPolygon& getCopSupportConvexPolygon(void) const
+    {return copSupportConvexPolygon_;}
 
     /// \brief Set the base support polygon
-    inline void setCopSupportHull(const Hull& supportHull)
+    inline void setCopSupportConvexPolygon(const ConvexPolygon& supportConvexPolygon)
     {
-      assert(supportHull.p.size()>=3);
-      copSupportHull_=supportHull;
+      assert(supportConvexPolygon.getNbVertices()>=3);
+      copSupportConvexPolygon_ = supportConvexPolygon;
     }
 
     /// \brief Get the base support polygon
-    inline const Hull& getComSupportHull(void) const
-    {return comSupportHull_;}
+    inline const ConvexPolygon& getComSupportConvexPolygon(void) const
+    {return comSupportConvexPolygon_;}
 
     /// \brief Set the base support polygon
-    inline void setComSupportHull(const Hull& supportHull)
+    inline void setComSupportConvexPolygon(const ConvexPolygon& supportConvexPolygon)
     {
-      assert(supportHull.p.size()>=3);
-      comSupportHull_=supportHull;
+      assert(supportConvexPolygon.getNbVertices()>=3);
+      comSupportConvexPolygon_ = supportConvexPolygon;
     }
 
     inline Scalar getWheelToBaseDistance(void) const
@@ -211,7 +211,7 @@ namespace MPCWalkgen
     inline void setWheelToBaseDistance(Scalar dist)
     {
       assert(dist>=0.0);
-      wheelToBaseDist_=dist;
+      wheelToBaseDist_ = dist;
     }
 
     inline Scalar getAngleWheelToBaseCom(void) const
@@ -219,7 +219,7 @@ namespace MPCWalkgen
 
     inline void setAngleWheelToBaseCom(Scalar angle)
     {
-      angleWheelToBaseCom_=angle;
+      angleWheelToBaseCom_ = angle;
     }
 
   private:
@@ -248,8 +248,8 @@ namespace MPCWalkgen
     LinearDynamic baseJerkDynamic_;
     LinearDynamic copXDynamic_;
     LinearDynamic copYDynamic_;
-    Hull copSupportHull_;
-    Hull comSupportHull_;
+    ConvexPolygon copSupportConvexPolygon_;
+    ConvexPolygon comSupportConvexPolygon_;
 
     Scalar wheelToBaseDist_;
     Scalar angleWheelToBaseCom_;

@@ -12,7 +12,7 @@
 
 #include "../type.h"
 #include "../model/lip_model.h"
-#include "../model/humanoid_foot_model.h"
+#include "../humanoid_feet_supervisor.h"
 
 namespace MPCWalkgen
 {
@@ -20,28 +20,41 @@ namespace MPCWalkgen
   {
     public:
       HumanoidCopConstraint(const LIPModel& lipModel,
-                            const HumanoidFootModel& leftFootModel,
-                            const HumanoidFootModel& rightFootModel);
+                            const HumanoidFeetSupervisor& feetSupervisor);
       ~HumanoidCopConstraint();
 
-      int getNbConstraints() const;
-
-      const VectorX& getFunction();
+      unsigned int getNbConstraints();
+      const VectorX& getFunction(const VectorX &x0);
+      const MatrixX& getGradient(unsigned int sizeVec);
+      const VectorX& getSupBounds();
+      const VectorX& getInfBounds();
 
       void computeConstantPart();
 
     private:
-      const LIPModel& lipModel_;
-      const HumanoidFootModel& leftFootModel_, rightFootModel_;
+      /// \brief Compute the number of general constraints over the whole
+      ///        QP preview window
+      void xComputeNbGeneralConstraints();
+      /// \brief Compute general constraints Matrices A and b
+      ///        for constraint of the form A*X +b <= 0
+      void xComputeGeneralConstraintsMatrices(unsigned int sizeVec);
+      /// \brief Compute bounds vectors infBound_ and supBound_
+      ///        for constraint of the form infBound_ <= X <= supBound_
+      void xComputeBoundsVectors();
 
-      Vector3 ssLeftFootBoundsMin_;
-      Vector3 ssLeftFootBoundsMax_;
-      Vector3 ssRightFootBoundsMin_;
-      Vector3 ssRightFootBoundsMax_;
-      Vector3 dsBoundsMin_;
-      Vector3 dsBoundsMax_;
+      const LIPModel& lipModel_;
+      const HumanoidFeetSupervisor& feetSupervisor_;
+
+      unsigned int nbGeneralConstraints_;
 
       VectorX function_;
+      MatrixX gradient_;
+
+      VectorX supBound_;
+      VectorX infBound_;
+
+      MatrixX A_;
+      VectorX b_;
   };
 }
 #endif // MPC_WALKGEN_HUMANOID_COP_CONSTRAINT_H

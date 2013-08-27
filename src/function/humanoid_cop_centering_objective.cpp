@@ -1,3 +1,12 @@
+////////////////////////////////////////////////////////////////////////////////
+///
+///\file humanoid_cop_centering_objective.cpp
+///\brief Implement the CoP centering objective
+///\author de Gourcuff Martin
+///\date 12/07/13
+///
+////////////////////////////////////////////////////////////////////////////////
+
 #include "humanoid_cop_centering_objective.h"
 
 
@@ -5,11 +14,9 @@ namespace MPCWalkgen
 {
   HumanoidCopCenteringObjective::HumanoidCopCenteringObjective
   (const LIPModel& lipModel,
-   const HumanoidFootModel& leftFootModel,
-   const HumanoidFootModel& rightFootModel)
+   const HumanoidFeetSupervisor& feetSupervisor)
     :lipModel_(lipModel)
-    ,leftFootModel_(leftFootModel)
-    ,rightFootModel_(rightFootModel)
+    ,feetSupervisor_(feetSupervisor)
   {
     gradient_.setZero(1, 1);
     hessian_.setZero(1, 1);
@@ -21,7 +28,9 @@ namespace MPCWalkgen
 
   const MatrixX& HumanoidCopCenteringObjective::getGradient(const VectorX& x0)
   {
-    assert(x0.rows() == 2*lipModel_.getNbSamples() + 2*leftFootModel_.getNbPreviewedSteps());
+    assert(feetSupervisor_.getNbSamples() == lipModel_.getNbSamples());
+    assert(x0.rows() == 2*lipModel_.getNbSamples() + 2*feetSupervisor_.getNbPreviewedSteps());
+
     gradient_.noalias() = getHessian()*x0;
     return gradient_;
   }
@@ -33,12 +42,10 @@ namespace MPCWalkgen
 
   void HumanoidCopCenteringObjective::computeConstantPart()
   {
-    assert(leftFootModel_.getNbSamples() == lipModel_.getNbSamples());
-    assert(rightFootModel_.getNbSamples() == lipModel_.getNbSamples());
-    assert(leftFootModel_.getNbPreviewedSteps() == rightFootModel_.getNbPreviewedSteps());
+    assert(feetSupervisor_.getNbSamples() == lipModel_.getNbSamples());
 
-    int N = lipModel_.getNbSamples();
-    int M = leftFootModel_.getNbPreviewedSteps();
+    unsigned int N = lipModel_.getNbSamples();
+    unsigned int M = feetSupervisor_.getNbPreviewedSteps();
     hessian_ = MatrixX::Identity(2*N + 2*M, 2*N + 2*M);
 
     hessian_.block(2*N, 2*N, 2*M, 2*M) = MatrixX::Zero(2*M, 2*M);

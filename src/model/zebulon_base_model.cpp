@@ -18,8 +18,10 @@ BaseModel::BaseModel(int nbSamples,
   ,velocityLimit_(1.0)
   ,accelerationLimit_(1.0)
   ,jerkLimit_(1.0)
-,wheelToBaseDist_(0.0)
-,angleWheelToBaseCom_(0.0)
+  ,copSupportConvexPolygon_()
+  ,comSupportConvexPolygon_()
+  ,wheelToBaseDist_(0.0)
+  ,angleWheelToBaseCom_(0.0)
 {
   assert(samplingPeriod>0);
   assert(nbSamples>0);
@@ -49,8 +51,10 @@ BaseModel::BaseModel()
   ,velocityLimit_(1.0)
   ,accelerationLimit_(1.0)
   ,jerkLimit_(1.0)
-  ,copSupportHull_()
-  ,comSupportHull_()
+  ,copSupportConvexPolygon_()
+  ,comSupportConvexPolygon_()
+  ,wheelToBaseDist_(0.0)
+  ,angleWheelToBaseCom_(0.0)
 {
   stateX_.setZero(4);
   stateX_(3)=1.0;
@@ -81,18 +85,18 @@ void BaseModel::computeDynamics()
 
 void BaseModel::computeCopXDynamic()
 {
-    Tools::ConstantJerkDynamic::computeCopDynamic(samplingPeriod_, nbSamples_,
-                                                  copXDynamic_,  comHeight_,
-                                                  gravity_(0), gravity_(2),
-                                                  mass_, totalMass_);
+  Tools::ConstantJerkDynamic::computeCopDynamic(samplingPeriod_, nbSamples_,
+                                                copXDynamic_,  comHeight_,
+                                                gravity_(0), gravity_(2),
+                                                mass_, totalMass_);
 }
 
 void BaseModel::computeCopYDynamic()
 {
-    Tools::ConstantJerkDynamic::computeCopDynamic(samplingPeriod_, nbSamples_,
-                                                  copYDynamic_,  comHeight_,
-                                                  gravity_(1), gravity_(2),
-                                                  mass_, totalMass_);
+  Tools::ConstantJerkDynamic::computeCopDynamic(samplingPeriod_, nbSamples_,
+                                                copYDynamic_,  comHeight_,
+                                                gravity_(1), gravity_(2),
+                                                mass_, totalMass_);
 }
 
 void BaseModel::computeBasePosDynamic()

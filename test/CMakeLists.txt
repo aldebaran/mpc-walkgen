@@ -35,6 +35,7 @@ qi_create_gtest(test-zebulon-base-velocity-tracking-objective
 
 qi_create_gtest(test-humanoid-lip-com-velocity-tracking-objective
   SRC ./test-humanoid-lip-com-velocity-tracking-objective
+      ../src/humanoid_feet_supervisor.cpp
       ../src/model/humanoid_foot_model.cpp
       ../src/model/lip_model.cpp
       ../src/tools.cpp
@@ -64,6 +65,7 @@ qi_create_gtest(test-zebulon-jerk-minimization-objective
 
 qi_create_gtest(test-humanoid-lip-com-jerk-minimization-objective
   SRC ./test-humanoid-lip-com-jerk-minimization-objective
+      ../src/humanoid_feet_supervisor.cpp
       ../src/model/humanoid_foot_model.cpp
       ../src/model/lip_model.cpp
       ../src/tools.cpp
@@ -84,6 +86,7 @@ qi_create_gtest(test-zebulon-cop-centering-objective
 
 qi_create_gtest(test-humanoid-cop-centering-objective
   SRC ./test-humanoid-cop-centering-objective.cpp
+      ../src/humanoid_feet_supervisor.cpp
       ../src/model/humanoid_foot_model.cpp
       ../src/model/lip_model.cpp
       ../src/tools.cpp
@@ -104,6 +107,7 @@ qi_create_gtest(test-zebulon-cop-constraint
 
 qi_create_gtest(test-humanoid-cop-constraint
   SRC ./test-humanoid-cop-constraint.cpp
+      ../src/humanoid_feet_supervisor.cpp
       ../src/model/humanoid_foot_model.cpp
       ../src/model/lip_model.cpp
       ../src/tools.cpp
@@ -124,6 +128,7 @@ qi_create_gtest(test-zebulon-com-constraint
 
 qi_create_gtest(test-humanoid-foot-constraint
   SRC ./test-humanoid-foot-constraint.cpp
+      ../src/humanoid_feet_supervisor.cpp
       ../src/model/humanoid_foot_model.cpp
       ../src/model/lip_model.cpp
       ../src/tools.cpp
@@ -153,4 +158,10 @@ qi_create_bin(zebulon-walkgen-bin
 ./zebulon-walkgen-bin.cpp
   DEPENDS mpc-walkgen QPOASESfloat
   NO_INSTALL
+)
+
+qi_create_gtest(test-convex-polygon-function
+  SRC ./test-convex-polygon-function.cpp
+../src/type.cpp
+  TIMEOUT 1
 )
