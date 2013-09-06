@@ -27,14 +27,13 @@ const MatrixX& TiltMinimizationObjective::getGradient(const VectorX& x0)
   assert(baseModel_.getNbSamples()*4==x0.size());
   assert(baseModel_.getNbSamples() == lipModel_.getNbSamples());
 
-  //Temporary parameters. Need to be changes with an implementation of the new equations
-  Scalar factorTheta  = 350.0;
-  Scalar factoracc    = 10.0;
+  Scalar factorRoll = baseModel_.getStateRoll()(0)
+               + baseModel_.getStateRoll()(2)
+               + baseModel_.getStateRoll()(1);
 
-  Scalar factorRoll = baseModel_.getStateRoll()(0)*factorTheta
-               + baseModel_.getStateRoll()(2)*factoracc;
-  Scalar factorPitch = baseModel_.getStatePitch()(0)*factorTheta
-               + baseModel_.getStatePitch()(2)*factoracc;
+  Scalar factorPitch = baseModel_.getStatePitch()(0)
+               + baseModel_.getStatePitch()(2)
+               + baseModel_.getStatePitch()(1);
 
   Scalar alpha5 = partialFactor5_*factorRoll;
   Scalar alpha6 = partialFactor6_*factorPitch;
