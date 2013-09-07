@@ -132,6 +132,10 @@ namespace MPCWalkgen
       /// \brief Set the constant gravity vector
       void setGravity(const Vector3& gravity);
 
+      /// \brief Get the constant gravity vector
+      inline const Vector3& getGravity(void) const
+      {return gravity_;}
+
     private:
       bool autoCompute_;
 

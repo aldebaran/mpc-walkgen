@@ -19,6 +19,7 @@
 #include "function/zebulon_jerk_minimization_objective.h"
 #include "function/zebulon_tilt_minimization_objective.h"
 #include "function/zebulon_cop_centering_objective.h"
+#include "function/zebulon_com_centering_objective.h"
 #include "function/zebulon_cop_constraint.h"
 #include "function/zebulon_com_constraint.h"
 #include "function/zebulon_base_motion_constraint.h"
@@ -84,6 +85,7 @@ namespace MPCWalkgen
     JerkMinimizationObjective jerkMinObj_;
     TiltMinimizationObjective tiltMinObj_;
     CopCenteringObjective copCenteringObj_;
+    ComCenteringObjective comCenteringObj_;
     CopConstraint copConstraint_;
     ComConstraint comConstraint_;
     BaseMotionConstraint baseMotionConstraint_;

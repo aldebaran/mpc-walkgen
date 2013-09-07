@@ -9,6 +9,7 @@ ZebulonWalkgen::ZebulonWalkgen()
 ,jerkMinObj_(lipModel_, baseModel_)
 ,tiltMinObj_(lipModel_, baseModel_)
 ,copCenteringObj_(lipModel_, baseModel_)
+,comCenteringObj_(lipModel_, baseModel_)
 ,copConstraint_(lipModel_, baseModel_)
 ,comConstraint_(lipModel_, baseModel_)
 ,baseMotionConstraint_(baseModel_)
@@ -47,6 +48,7 @@ void ZebulonWalkgen::setNbSamples(int nbSamples)
   copConstraint_.computeConstantPart();
   comConstraint_.computeConstantPart();
   copCenteringObj_.computeConstantPart();
+  comCenteringObj_.computeConstantPart();
   velTrackingObj_.computeConstantPart();
   posTrackingObj_.computeConstantPart();
   baseMotionConstraint_.computeConstantPart();
@@ -64,6 +66,7 @@ void ZebulonWalkgen::setSamplingPeriod(Scalar samplingPeriod)
   copConstraint_.computeConstantPart();
   comConstraint_.computeConstantPart();
   copCenteringObj_.computeConstantPart();
+  comCenteringObj_.computeConstantPart();
   velTrackingObj_.computeConstantPart();
   posTrackingObj_.computeConstantPart();
   baseMotionConstraint_.computeConstantPart();
@@ -81,6 +84,7 @@ void ZebulonWalkgen::setGravity(const Vector3& gravity)
 
   copConstraint_.computeConstantPart();
   copCenteringObj_.computeConstantPart();
+  comCenteringObj_.updateGravityShift();
 
   computeConstantPart();
 }
@@ -115,6 +119,7 @@ void ZebulonWalkgen::setComBodyHeight(Scalar comHeight)
 
   copConstraint_.computeConstantPart();
   copCenteringObj_.computeConstantPart();
+  comCenteringObj_.updateGravityShift();
   tiltMinObj_.computeConstantPart();
 
   computeConstantPart();
@@ -128,6 +133,7 @@ void ZebulonWalkgen::setComBaseHeight(Scalar comHeight)
 
   copConstraint_.computeConstantPart();
   copCenteringObj_.computeConstantPart();
+  comCenteringObj_.updateGravityShift();
 
   computeConstantPart();
 }
@@ -145,6 +151,7 @@ void ZebulonWalkgen::setBodyMass(Scalar mass)
 
   copConstraint_.computeConstantPart();
   copCenteringObj_.computeConstantPart();
+  comCenteringObj_.updateGravityShift();
   tiltMinObj_.computeConstantPart();
 
   computeConstantPart();
@@ -162,6 +169,7 @@ void ZebulonWalkgen::setBaseMass(Scalar mass)
 
   copConstraint_.computeConstantPart();
   copCenteringObj_.computeConstantPart();
+  comCenteringObj_.updateGravityShift();
   tiltMinObj_.computeConstantPart();
 
   computeConstantPart();
@@ -203,6 +211,7 @@ void ZebulonWalkgen::setCopRefInLocalFrame(const VectorX& copRef)
   assert(copRef==copRef);
   assert(copRef.size()==lipModel_.getNbSamples()*2);
   copCenteringObj_.setCopRefInLocalFrame(copRef);
+  comCenteringObj_.setComRefInLocalFrame(copRef);
 }
 
 void ZebulonWalkgen::setBaseVelLimit(Scalar limit)
@@ -283,6 +292,7 @@ void ZebulonWalkgen::setComStateY(const VectorX& state)
 void ZebulonWalkgen::setWeightings(const  Weighting& weighting)
 {
   assert(weighting.copCentering>=0);
+  assert(weighting.comCentering>=0);
   assert(weighting.velocityTracking>=0);
   assert(weighting.velocityTracking>=0);
   assert(weighting.jerkMinimization>=0);
@@ -318,6 +328,7 @@ bool ZebulonWalkgen::solve(Scalar feedBackPeriod)
   assert(posTrackingObj_.getGradient(B_).size() == 2*N);
 
   assert(copCenteringObj_.getGradient(X_).size() == 4*N);
+  assert(comCenteringObj_.getGradient(X_).size() == 4*N);
   assert(jerkMinObj_.getGradient(X_).size() == 4*N);
   assert(tiltMinObj_.getGradient(X_).size() == 4*N);
 
@@ -355,6 +366,10 @@ bool ZebulonWalkgen::solve(Scalar feedBackPeriod)
   if (weighting_.copCentering>0.0)
   {
     qpMatrix_.p += weighting_.copCentering*copCenteringObj_.getGradient(X_);
+  }
+  if (weighting_.comCentering>0.0)
+  {
+    qpMatrix_.p += weighting_.comCentering*comCenteringObj_.getGradient(X_);
   }
   if (weighting_.jerkMinimization>0.0)
   {
@@ -439,6 +454,9 @@ void ZebulonWalkgen::computeConstantPart()
   assert(copCenteringObj_.getHessian().rows() == 4*N);
   assert(copCenteringObj_.getHessian().cols() == 4*N);
 
+  assert(comCenteringObj_.getHessian().rows() == 4*N);
+  assert(comCenteringObj_.getHessian().cols() == 4*N);
+
   assert(jerkMinObj_.getHessian().rows() == 4*N);
   assert(jerkMinObj_.getHessian().cols() == 4*N);
 
@@ -484,6 +502,10 @@ void ZebulonWalkgen::computeConstantPart()
   if (weighting_.copCentering>0.0)
   {
     qpMatrix_.Q += weighting_.copCentering*copCenteringObj_.getHessian();
+  }
+  if (weighting_.comCentering>0.0)
+  {
+    qpMatrix_.Q += weighting_.comCentering*comCenteringObj_.getHessian();
   }
   if (weighting_.jerkMinimization>0.0)
   {
