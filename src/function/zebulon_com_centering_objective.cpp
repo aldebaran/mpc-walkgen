@@ -8,11 +8,12 @@ ComCenteringObjective::ComCenteringObjective(const LIPModel& lipModel,
 ,baseModel_(baseModel)
 ,function_(1)
 {
+  assert(baseModel_.getNbSamples() == lipModel_.getNbSamples());
+  assert(baseModel_.getSamplingPeriod() == lipModel_.getSamplingPeriod());
+
   comRefInLocalFrame_.setZero(2*baseModel_.getNbSamples());
   comShiftInLocalFrame_.setZero(2*baseModel_.getNbSamples());
   gravityShift_.setZero(2*baseModel_.getNbSamples());
-  assert(baseModel_.getNbSamples() == lipModel_.getNbSamples());
-  assert(baseModel_.getSamplingPeriod() == lipModel_.getSamplingPeriod());
 
   function_.fill(0);
   gradient_.setZero(1, 1);
@@ -23,6 +24,14 @@ ComCenteringObjective::ComCenteringObjective(const LIPModel& lipModel,
 
 
 ComCenteringObjective::~ComCenteringObjective(){}
+
+void ComCenteringObjective::setNbSamples(int nbSamples)
+{
+  assert(nbSamples>0);
+  comRefInLocalFrame_.setZero(2*nbSamples);
+  comShiftInLocalFrame_.setZero(2*nbSamples);
+  gravityShift_.setZero(2*nbSamples);
+}
 
 const MatrixX& ComCenteringObjective::getGradient(const VectorX& x0)
 {
@@ -40,7 +49,6 @@ const MatrixX& ComCenteringObjective::getGradient(const VectorX& x0)
   int N = lipModel_.getNbSamples();
 
   gradient_.noalias() = getHessian()*x0;
-
 
   tmp_.noalias() = -comShiftInLocalFrame_.segment(0, N);
   tmp_.noalias() += dynCom.S*lipModel_.getStateX();
@@ -80,10 +88,6 @@ void ComCenteringObjective::updateGravityShift()
   assert(baseModel_.getNbSamples() == lipModel_.getNbSamples());
   assert(baseModel_.getSamplingPeriod() == lipModel_.getSamplingPeriod());
 
-  int N = lipModel_.getNbSamples();
-
-  gravityShift_.resize(N*2);
-
   Scalar m  = lipModel_.getMass();
   Scalar M  = baseModel_.getMass();
   Scalar cy = lipModel_.getComHeight();
@@ -96,9 +100,10 @@ void ComCenteringObjective::updateGravityShift()
   Scalar shiftX = factor*g(0)/g(2);
   Scalar shiftY = factor*g(1)/g(2);
 
+  int N = baseModel_.getNbSamples();
+  gravityShift_.setZero(2*N);
   gravityShift_.segment(0,N).fill(shiftX);
   gravityShift_.segment(N,N).fill(shiftY);
-
   comShiftInLocalFrame_ = comRefInLocalFrame_ + gravityShift_;
 }
 
