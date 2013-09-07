@@ -34,6 +34,7 @@ namespace MPCWalkgen
 
     void computeConstantPart();
     void updateGravityShift();
+    void setNbSamples(int nbSamples);
 
   private:
     const LIPModel& lipModel_;

@@ -40,6 +40,8 @@ void ZebulonWalkgen::setNbSamples(int nbSamples)
 
   lipModel_.setNbSamples(nbSamples);
   baseModel_.setNbSamples(nbSamples);
+  comCenteringObj_.setNbSamples(nbSamples);
+
   dX_.setZero(4*nbSamples);
   X_.setZero(4*nbSamples);
 
