@@ -37,6 +37,7 @@ namespace MPCWalkgen
       Scalar velocityTracking;
       Scalar positionTracking;
       Scalar copCentering;
+      Scalar comCentering;
       Scalar jerkMinimization;
       Scalar tiltMinimization;
   };

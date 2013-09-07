@@ -25,6 +25,8 @@ src/function/zebulon_tilt_minimization_objective.h
 src/function/zebulon_tilt_minimization_objective.cpp
 src/function/zebulon_cop_centering_objective.h
 src/function/zebulon_cop_centering_objective.cpp
+src/function/zebulon_com_centering_objective.h
+src/function/zebulon_com_centering_objective.cpp
 src/function/zebulon_cop_constraint.h
 src/function/zebulon_cop_constraint.cpp
 src/function/zebulon_com_constraint.h

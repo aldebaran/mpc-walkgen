@@ -136,6 +136,10 @@ namespace MPCWalkgen
     /// \brief Set the CoM constant height
     void setComHeight(Scalar comHeight);
 
+    /// \brief Get the CoM constant height
+    inline Scalar getComHeight(void) const
+    {return comHeight_;}
+
     /// \brief Set the base mass
     void setMass(Scalar mass);
 
