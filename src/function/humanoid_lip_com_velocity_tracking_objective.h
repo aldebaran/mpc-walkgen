@@ -23,7 +23,7 @@ namespace MPCWalkgen{
           const HumanoidFeetSupervisor& feetSupervisor);
       ~HumanoidLipComVelocityTrackingObjective();
 
-      const MatrixX& getGradient(const VectorX& x0);
+      const VectorX& getGradient(const VectorX& x0);
       const MatrixX& getHessian();
 
       /// \brief Set the base velocity reference in the world frame
@@ -38,7 +38,7 @@ namespace MPCWalkgen{
 
       VectorX velRefInWorldFrame_;
 
-      MatrixX gradient_;
+      VectorX gradient_;
       MatrixX hessian_;
   };
 }

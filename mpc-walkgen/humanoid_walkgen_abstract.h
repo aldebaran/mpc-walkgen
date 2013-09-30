@@ -117,10 +117,14 @@ namespace MPCWalkgen
       void setConfig(const Config& config);
 
       //TODO: more doc
-      /// \brief solve the given QP problem
+      /// \brief solve the given QP problem of the form:
+      ///        1/2*xT.H.x + xT.g
+      ///        under the following constraints:
+      ///        bl <= A.x <= bu
+      ///        xl <= x <= xu
       /// \param feedBackPeriod: in seconds, the time between each call
-      /// of the MPC. This is also the period waited for before new samples are
-      /// sent to the actuators
+      ///        of the MPC. This is also the period waited for before
+      ///        new samples are sent to the actuators
       void solve(Scalar feedBackPeriod);
 
     private:

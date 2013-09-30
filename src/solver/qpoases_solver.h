@@ -20,6 +20,7 @@ namespace MPCWalkgen
   class QPOasesSolver
   {
   public:
+          QPOasesSolver();
     QPOasesSolver(int nbVar, int nbCtr);
 
     bool solve(const QPMatrices& m, VectorX& sol,

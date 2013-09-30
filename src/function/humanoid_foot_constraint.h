@@ -23,27 +23,27 @@ namespace MPCWalkgen
                              const HumanoidFeetSupervisor& feetSupervisor);
       ~HumanoidFootConstraint();
 
-      unsigned int getNbConstraints();
+      int getNbConstraints();
       const VectorX& getFunction(const VectorX &x0);
-      const MatrixX& getGradient(unsigned int sizeVec);
-      const VectorX& getSupBounds();
-      const VectorX& getInfBounds();
+      const MatrixX& getGradient(int sizeVec);
+      const VectorX& getSupBounds(const VectorX &x0);
+      const VectorX& getInfBounds(const VectorX &x0);
 
     private:
       /// \brief Compute the number of general constraints over the whole
       ///        QP preview window
-      void xComputeNbGeneralConstraints();
+      void computeNbGeneralConstraints();
       /// \brief Compute general constraints Matrices A and b
       ///        such that A*X + b <= 0
-      void xComputeGeneralConstraintsMatrices(unsigned int sizeVec);
+      void computeGeneralConstraintsMatrices(int sizeVec);
       /// \brief Compute bounds vectors infBound_ and supBound_
       ///        such that infBound_ <= X <= supBound_
-      void xComputeBoundsVectors();
+      void computeBoundsVectors(const VectorX &x0);
 
       const LIPModel& lipModel_;
       const HumanoidFeetSupervisor& feetSupervisor_;
 
-      unsigned int nbGeneralConstraints_;
+      int nbGeneralConstraints_;
 
       VectorX function_;
       MatrixX gradient_;

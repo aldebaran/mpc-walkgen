@@ -38,6 +38,9 @@ TEST_F(ConvexConvexPolygonTest, angleBetweenVecs)
   ASSERT_NEAR(ConvexPolygon::angleBetweenVecs(p[0], p[2]), -0.78539818525314331, EPSILON);
   ASSERT_NEAR(ConvexPolygon::angleBetweenVecs(p[0], p[3]), 0.78539818525314331, EPSILON);
   ASSERT_NEAR(ConvexPolygon::angleBetweenVecs(p[0], p[4]), 2.3561944961547852, EPSILON);
+  ASSERT_NEAR(ConvexPolygon::angleBetweenVecs(p[2], Vector2(0.0, 0.0)), 0.0, EPSILON);
+  ASSERT_NEAR(ConvexPolygon::angleBetweenVecs(p[0], p[0]), 0.0, EPSILON);
+  ASSERT_NEAR(ConvexPolygon::angleBetweenVecs(p[0], Vector2(2.0, 0.0)), 0.0, EPSILON);
 }
 
 TEST_F(ConvexConvexPolygonTest, geLowestAndLeftmostPointsIndex)
@@ -49,6 +52,10 @@ TEST_F(ConvexConvexPolygonTest, geLowestAndLeftmostPointsIndex)
 
 
   ASSERT_EQ(ConvexPolygon::getIndexOfLowestAndLeftmostVertice(p), 1);
+
+  p[2] = p[1];
+
+  ASSERT_EQ(ConvexPolygon::getIndexOfLowestAndLeftmostVertice(p), 1);
 }
 
 TEST_F(ConvexConvexPolygonTest, getIndexOfSmallestAngleVertice)
@@ -57,6 +64,10 @@ TEST_F(ConvexConvexPolygonTest, getIndexOfSmallestAngleVertice)
 
   std::vector<Vector2> p(5);
   createStandardConvexSet(p);
+
+  ASSERT_EQ(ConvexPolygon::getIndexOfSmallestAngleVertice(2, p[1], p), 3);
+
+  p[4] = p[3];
 
   ASSERT_EQ(ConvexPolygon::getIndexOfSmallestAngleVertice(2, p[1], p), 3);
 }
@@ -85,4 +96,20 @@ TEST_F(ConvexConvexPolygonTest, getConvexConvexPolygon)
   ASSERT_EQ(convexSet[3], p1[5]);
   ASSERT_EQ(convexSet[4], p1[1]);
   ASSERT_EQ(convexSet[5], p1[0]);
+
+  p1[0] = Vector2(1.0, 0.0);
+  p1[1] = Vector2(-1.0, 1.0);
+  p1[2] = Vector2(-1.0, 1.0);
+  p1[3] = Vector2(0.0, 0.0);
+  p1[4] = Vector2(1.0, 1.0);
+  p1[5] = Vector2(1.0, -1.0);
+  p1[6] = Vector2(0.0, 1.0);
+  p1[7] = Vector2(1.0, -1.0);
+  p1[8] = Vector2(1.0, 1.0);
+
+  convexSet = ConvexPolygon::extractVertices(p1);
+  ASSERT_EQ(convexSet.size(), 3);
+  ASSERT_EQ(convexSet[0], p1[5]);
+  ASSERT_EQ(convexSet[1], p1[4]);
+  ASSERT_EQ(convexSet[2], p1[1]);
 }

@@ -32,6 +32,8 @@ namespace MPCWalkgen
       HumanoidWalkgen();
       ~HumanoidWalkgen();
 
+      void setMaximumNbOfSteps(int maximumNbOfSteps);
+
       void setNbSamples(int nbSamples);
       void setSamplingPeriod(Scalar samplingPeriod);
       void setStepPeriod(Scalar stepPeriod);
@@ -82,9 +84,13 @@ namespace MPCWalkgen
       void setWeightings(const HumanoidWalkgenImpl::Weighting& weighting);
       void setConfig(const HumanoidWalkgenImpl::Config& config);
 
-      void solve(Scalar feedBackPeriod);
+      bool solve(Scalar feedBackPeriod);
 
     private:
+      /// \brief Convert CoP state in local frame into CoM jerk values in world frame
+      void convertCopInLFtoJerkInWF();
+      /// \brief Compute the constant parts of the QP matrices
+      //Useless
       void computeConstantPart();
 
     private:
@@ -99,13 +105,31 @@ namespace MPCWalkgen
       HumanoidCopConstraint copConstraint_;
       HumanoidFootConstraint footConstraint_;
 
-      QPOasesSolver qpoasesSolver_;
+      /// \brief Vector containing all possible sizes of QPsolver
+      std::vector<QPOasesSolver> qpoasesSolverVec_;
 
-      QPMatrices qpMatrix_;
+      VectorX dX_;
+      /// \brief Solution of the QP problem: CoP position in local frame and
+      ///        previewed footsteps positions in world frame.
+      VectorX X_;
+      /// \brief Transformed solution of the QP problem: CoM jerk in world frame and
+      ///        previewed foosteps positions in world frame.
+      VectorX transformedX_; //TODO: Change this ugly name
+
+
+      /// \brief QPMatrices is a struct containing the matrices of the QP problem:
+      ///        1/2*xT.H.x + xT.g
+      ///        under the following constraints:
+      ///        bl <= A.x <= bu
+      ///        xl <= x <= xu
+      ///        Here we use a vector containing all possible sizes of QPMatrices
+      std::vector<QPMatrices> qpMatrixVec_;
 
       HumanoidWalkgenImpl::Weighting weighting_;
       HumanoidWalkgenImpl::Config config_;
 
+      int maximumNbOfConstraints_;
+      int maximumNbOfSteps_;
   };
 }
 

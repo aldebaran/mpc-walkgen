@@ -31,10 +31,9 @@ TEST_F(HumanoidLipComJerkMinimizationTest, HessianAndGradientSize)
 
   int nbSamples = 3;
   Scalar samplingPeriod = 1.0;
-  int nbPreviewedSteps = 0;
   bool autoCompute = true;
-  HumanoidFootModel leftFoot(nbSamples, samplingPeriod, nbPreviewedSteps),
-                    rightFoot(nbSamples, samplingPeriod, nbPreviewedSteps);
+  HumanoidFootModel leftFoot(nbSamples, samplingPeriod),
+                    rightFoot(nbSamples, samplingPeriod);
   HumanoidFeetSupervisor feetSupervisor(leftFoot,
                                         rightFoot,
                                         nbSamples,

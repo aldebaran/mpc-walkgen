@@ -24,15 +24,14 @@ namespace MPCWalkgen
                                     const HumanoidFeetSupervisor& feetSupervisor);
       ~HumanoidCopCenteringObjective();
 
-      const MatrixX& getGradient(const VectorX& x0);
+      const VectorX &getGradient(const VectorX& x0);
       const MatrixX& getHessian();
-      void computeConstantPart();
 
     private:
       const LIPModel& lipModel_;
       const HumanoidFeetSupervisor& feetSupervisor_;
 
-      MatrixX gradient_;
+      VectorX gradient_;
       MatrixX hessian_;
   };
 }

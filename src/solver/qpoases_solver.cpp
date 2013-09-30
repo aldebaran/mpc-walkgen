@@ -3,6 +3,17 @@
 
 using namespace MPCWalkgen;
 
+QPOasesSolver::QPOasesSolver()
+:constraints_(2)
+,qp_(1, 1)
+,nbVar_(1)
+,nbCtr_(1)
+,qpIsInitialized_(false)
+{
+  constraints_.fill(0);
+  qp_.setPrintLevel(qpOASES::PL_NONE);
+}
+
 QPOasesSolver::QPOasesSolver(int nbVar, int nbCtr)
 :constraints_(nbVar+nbCtr)
 ,qp_(nbVar, nbCtr)
@@ -38,7 +49,7 @@ bool QPOasesSolver::solve(const QPMatrices& m, VectorX& sol,
   //number of constraints, aka 250).
   int ittMax = 10000;
   ::qpOASES::returnValue ret;
-  if (qpIsInitialized_)
+  if (qpIsInitialized_ && useWarmStart)
   {
     ret = qp_.hotstart(m.p.data(), m.xl.data(), m.xu.data(),
                                             m.bl.data(), m.bu.data(),

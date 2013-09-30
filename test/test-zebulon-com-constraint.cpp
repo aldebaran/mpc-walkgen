@@ -122,7 +122,7 @@ TEST_F(ZebulonComConstraintTest, sizeOfvalues)
 
   ComConstraint ctr(m1, m2);
 
-  size_t M = m2.getComSupportConvexPolygon().getNbVertices();
+  int M = m2.getComSupportConvexPolygon().getNbVertices();
 
   VectorX jerkInit(4*nbSamples);
   jerkInit.fill(0.0);

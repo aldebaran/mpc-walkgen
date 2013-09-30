@@ -12,6 +12,7 @@
 
 #include "model/humanoid_foot_model.h"
 #include "type.h"
+#include <boost/circular_buffer.hpp>
 
 namespace MPCWalkgen
 {
@@ -26,8 +27,8 @@ namespace MPCWalkgen
       ///        Matrix V0 is the same but for the current step
       struct SelectionMatrices
       {
-          void reset(unsigned int nbSamples,
-                     unsigned int nbPreviewedSteps);
+          void reset(int nbSamples,
+                     int nbPreviewedSteps);
           LinearDynamic toLinearDynamics();
 
           Eigen::MatrixXi V;
@@ -38,7 +39,7 @@ namespace MPCWalkgen
 
       HumanoidFeetSupervisor(const HumanoidFootModel& leftFoot,
                              const HumanoidFootModel& rightFoot,
-                             unsigned int nbSamples,
+                             int nbSamples,
                              Scalar samplingPeriod);
       HumanoidFeetSupervisor(const HumanoidFootModel& leftFoot,
                              const HumanoidFootModel& rightFoot);
@@ -76,14 +77,17 @@ namespace MPCWalkgen
       void setRightFootYawAccelerationUpperBound(
           Scalar rightFootYawAccelerationUpperBound);
 
-      inline unsigned int getNbSamples() const
+      inline int getNbSamples() const
       {return nbSamples_;}
 
       inline Scalar getSamplingPeriod() const
       {return samplingPeriod_;}
 
-      inline unsigned int getNbPreviewedSteps() const
+      inline int getNbPreviewedSteps() const
       {return nbPreviewedSteps_;}
+
+      inline int getStepPeriod() const
+      {return stepPeriod_;}
 
       inline const SelectionMatrices& getSelectionMatrices() const
       {return selectionMatrices_;}
@@ -97,37 +101,49 @@ namespace MPCWalkgen
       inline const MatrixX& getRotationMatrixT() const
       {return rotationMatrixT_;}
 
-      inline const std::vector<ConvexPolygon>& getCopConvexPolygonVec() const
-      {return copConvexPolygonVec_;}
+      inline const boost::circular_buffer<ConvexPolygon>& getCopConvexPolygons() const
+      {return copConvexPolygons_;}
 
-      inline unsigned int getSampleID() const
-      {return sampleID_;}
+      inline const boost::circular_buffer<ConvexPolygon>& getKinematicConvexPolygons() const
+      {return kinematicConvexPolygons_;}
+
+      /// \brief Methods used to size the QP problem solvers and matrices vectors
+      int getMaximumNbOfSteps();
+      int getMaximumNbOfCopConstraints();
+      int getMaximumNbOfKinematicConstraints();
 
       void update();
 
-      unsigned int sampleToStep(unsigned int sampleNb) const;
+      int sampleToStep(int sampleNb) const;
       void computeConstantPart();
 
     private:
-      void xComputeSelectionMatrix();
-      void xComputeFeetPosDynamic();
-      void xComputeRotationMatrix();
+      void init();
+      void computeSelectionMatrix();
+      void computeFeetPosDynamic();
+      void computeRotationMatrix();
 
       HumanoidFootModel leftFootModel_, rightFootModel_;
 
-      unsigned int nbSamples_;
+      int nbSamples_;
       Scalar samplingPeriod_;
 
-      unsigned int nbPreviewedSteps_;
+      int nbPreviewedSteps_;
+      Scalar stepPeriod_;
 
       SelectionMatrices selectionMatrices_;
       LinearDynamic feetPosDynamic_;
       MatrixX rotationMatrix_;
       MatrixX rotationMatrixT_;
 
-      std::vector<ConvexPolygon> copConvexPolygonVec_;
 
-      unsigned int sampleID_;
+
+      /// \brief Circular buffer of the CoP convex polygons for each step in local frame.
+      ///        It contains nbPreviewedSteps_ + 1 elements and its maximum size is
+      boost::circular_buffer<ConvexPolygon> copConvexPolygons_;
+      /// \brief Circular buffer of the Kinematic convex polygons for each step in world frame.
+      ///        It is vector of size nbPreviewedSteps_ + 1
+      boost::circular_buffer<ConvexPolygon> kinematicConvexPolygons_;
   };
 
 }

@@ -18,31 +18,31 @@ namespace MPCWalkgen
     ,hipYawLowerBound_(0)
     ,maxHeight_(0)
     ,kinematicConvexPolygon_()
+    ,kinematicConvexPolygonInWorldFrame_()
   {}
 
   HumanoidFootModel::HumanoidFootModel(int nbSamples,
-                                       Scalar samplingPeriod,
-                                       int nbPreviewedSteps)
+                                       Scalar samplingPeriod)
     :nbSamples_(nbSamples)
     ,samplingPeriod_(samplingPeriod)
-    ,nbPreviewedSteps_(nbPreviewedSteps)
     ,kinematicLimits_()
     ,CopConvexPolygon_()
+    ,CopConvexPolygonInWorldFrame_()
   {
     assert(samplingPeriod>0);
     assert(nbSamples>0);
 
-    xInit();
+    init();
   }
 
   HumanoidFootModel::HumanoidFootModel()
     :nbSamples_(1)
     ,samplingPeriod_(1.0)
-    ,nbPreviewedSteps_(0)
     ,kinematicLimits_()
     ,CopConvexPolygon_()
+    ,CopConvexPolygonInWorldFrame_()
   {
-    xInit();
+    init();
   }
 
   HumanoidFootModel::~HumanoidFootModel(){}
@@ -61,9 +61,20 @@ namespace MPCWalkgen
     samplingPeriod_ = samplingPeriod;
   }
 
+  void HumanoidFootModel::updateStateX()
+  {
+    //TODO: Complete
+  }
 
+  void HumanoidFootModel::updateStateY()
+  {
+    //TODO: Complete
+  }
 
-
+  void HumanoidFootModel::updateStateZ()
+  {
+    //TODO: Complete
+  }
 
   void HumanoidFootModel::setHipYawUpperBound(
       Scalar hipYawUpperBound)
@@ -90,17 +101,40 @@ namespace MPCWalkgen
     kinematicLimits_.kinematicConvexPolygon_ = kinematicConvexPolygon;
   }
 
-  void HumanoidFootModel::xInit()
+  void HumanoidFootModel::init()
   {
-    //For now we only need to know the foot position, so the state vector size is 1
-    stateX_.setZero(1);
-    stateY_.setZero(1);
-    stateZ_.setZero(1);
-    stateYaw_.setZero(1);
+    //For now we only need to know the foot position, so the state vector size is 2
+    stateX_.setZero(2);
+    stateX_(1) = 1.0;
+    stateY_.setZero(2);
+    stateY_(1) = 1.0;
+    stateZ_.setZero(2);
+    stateZ_(1) = 1.0;
+    stateYaw_.setZero(2);
+    stateYaw_(1) = 1.0;
 
     isInContact_.resize(nbSamples_, true);
-    isSupportFoot_.resize(nbPreviewedSteps_, true);
   }
 
+  void HumanoidFootModel::interpolateFootTrajectory()
+  {
+    //TODO: Complete
+  }
+
+  void HumanoidFootModel::toWorldFrame(ConvexPolygon& convexPolygonInWF,
+                                        const ConvexPolygon& convexPolygonInLF)
+  {
+    //TODO: rotation
+
+    std::vector<Vector2> p(convexPolygonInLF.getNbVertices());
+
+    for(int i=0; i<convexPolygonInLF.getNbVertices(); ++i)
+    {
+      p[i](0) = convexPolygonInLF.getVertices()[i](0) + stateX_(0);
+      p[i](1) = convexPolygonInLF.getVertices()[i](1) + stateY_(0);
+    }
+
+    convexPolygonInWF = ConvexPolygon(p);
+  }
 }
 

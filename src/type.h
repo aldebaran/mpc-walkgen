@@ -3,7 +3,7 @@
 ///\file type.h
 ///\brief Some structures and typedefs
 ///\author Lafaye Jory
-///\author Martin de Gourcuff
+///\author de Gourcuff Martin
 ///\date 19/06/13
 ///
 ////////////////////////////////////////////////////////////////////////////////
@@ -24,6 +24,7 @@ namespace MPCWalkgen
   static const Scalar EPSILON = 0.0001;
   static const Scalar GRAVITY_NORM = 9.81;
   static const Vector3 GRAVITY_VECTOR = Vector3(0, 0, 9.81);
+  static const Scalar MAXIMUM_BOUND_VALUE = 10e10;
 
   /// \brief  Matrices relative to a linear dynamic of type : Y = U X + S x
   ///         Where X is the control variables and x the initial state
@@ -79,7 +80,7 @@ namespace MPCWalkgen
       {return p_;}
 
       /// \brief Get the number of vertices of the convex polygon
-      inline const unsigned int getNbVertices() const
+      inline const int getNbVertices() const
       {return p_.size();}
 
       inline Scalar getXSupBound() const
@@ -98,7 +99,7 @@ namespace MPCWalkgen
       inline const VectorX& getGeneralConstraintsConstantPart() const
       {return generalConstraintsConstantPart_;}
 
-      inline unsigned int getNbGeneralConstraints() const
+      inline int getNbGeneralConstraints() const
       {return generalConstraintsConstantPart_.rows();}
 
       //TODO: think about changing type and tools into something else. E.g. angleBetweenVecs
@@ -120,7 +121,7 @@ namespace MPCWalkgen
       /// \brief Return the next counter-clockwise element of the ConvexPolygon,
       ///        ptot[currentVerticeIndex] being the current convex polygon vertice and
       ///        lastVertice the one before.
-      static int getIndexOfSmallestAngleVertice(unsigned int currentVerticeIndex,
+      static int getIndexOfSmallestAngleVertice(int currentVerticeIndex,
                                                 const Vector2 &lastVertice,
                                                 const std::vector<Vector2> &ptot);
 
@@ -128,7 +129,7 @@ namespace MPCWalkgen
       /// \brief Compute Vectors generalConstraintsMatrixCoefsForX_,
       ///        generalConstraintsMatrixCoefsForY_, generalConstraintsConstantPart_,
       ///        and values of xInfBound_, yInfBound_, xSupBound_ and ySupBound_.
-      void xComputeBoundsAndGeneralConstraintValues();
+      void computeBoundsAndGeneralConstraintValues();
 
     private:
       /// \brief p_ is the set of vertices of the convex polygon

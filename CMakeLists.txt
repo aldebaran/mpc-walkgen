@@ -70,7 +70,7 @@ mpc-walkgen/api.h
 qi_sanitize_compile_flags(HIDDEN_SYMBOLS)
 
 qi_create_lib(mpc-walkgen SHARED ${mpc-walkgen_SRC} ${mpc-walkgen_PUBLIC_HEADERS})
-qi_use_lib(mpc-walkgen eigen3 QI)
+qi_use_lib(mpc-walkgen eigen3 QI boost)
 qi_use_lib(mpc-walkgen QPOASESfloat)
 qi_stage_lib(mpc-walkgen)
 

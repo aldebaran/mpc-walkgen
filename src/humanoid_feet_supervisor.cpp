@@ -13,8 +13,8 @@ namespace MPCWalkgen
 {
 
   void HumanoidFeetSupervisor::SelectionMatrices::reset(
-      unsigned int nbSamples,
-      unsigned int nbPreviewedSteps)
+      int nbSamples,
+      int nbPreviewedSteps)
   {
     assert(nbSamples>0);
     assert(nbPreviewedSteps>=0);
@@ -43,21 +43,18 @@ namespace MPCWalkgen
 
   HumanoidFeetSupervisor::HumanoidFeetSupervisor(const HumanoidFootModel& leftFoot,
                                                  const HumanoidFootModel& rightFoot,
-                                                 unsigned int nbSamples,
+                                                 int nbSamples,
                                                  Scalar samplingPeriod)
     :leftFootModel_(leftFoot)
     ,rightFootModel_(rightFoot)
     ,nbSamples_(nbSamples)
     ,samplingPeriod_(samplingPeriod)
     ,nbPreviewedSteps_(0)
-    ,copConvexPolygonVec_()
-    ,sampleID_(0)
+    ,stepPeriod_(samplingPeriod) //TODO: add it to constructor argument
+    ,copConvexPolygons_(1)
+    ,kinematicConvexPolygons_(1)
   {
-    //TODO: Complete
-
-    xComputeSelectionMatrix();
-    xComputeFeetPosDynamic();
-    xComputeRotationMatrix();
+    init();
   }
 
   HumanoidFeetSupervisor::HumanoidFeetSupervisor(const HumanoidFootModel& leftFoot,
@@ -67,14 +64,11 @@ namespace MPCWalkgen
     ,nbSamples_(1)
     ,samplingPeriod_(1.0)
     ,nbPreviewedSteps_(0)
-    ,copConvexPolygonVec_()
-    ,sampleID_(0)
+    ,stepPeriod_(1.0)
+    ,copConvexPolygons_(1)
+    ,kinematicConvexPolygons_(1)
   {
-    //TODO: Complete
-
-    xComputeSelectionMatrix();
-    xComputeFeetPosDynamic();
-    xComputeRotationMatrix();
+    init();
   }
 
   HumanoidFeetSupervisor::~HumanoidFeetSupervisor()
@@ -102,7 +96,8 @@ namespace MPCWalkgen
 
   void HumanoidFeetSupervisor::setStepPeriod(Scalar stepPeriod)
   {
-    //TODO: complete
+    assert(stepPeriod>0);
+    stepPeriod_ = stepPeriod;
   }
 
   void HumanoidFeetSupervisor::setLeftFootKinematicConvexPolygon(
@@ -243,28 +238,87 @@ namespace MPCWalkgen
   }
 
 
-  unsigned int HumanoidFeetSupervisor::sampleToStep(unsigned int sampleNb) const
+  int HumanoidFeetSupervisor::sampleToStep(int sampleNb) const
   {
     //TODO: Complete
     return 0;
   }
+
+  int HumanoidFeetSupervisor::getMaximumNbOfSteps()
+  {
+    return static_cast<int>(std::floor(nbSamples_*samplingPeriod_/stepPeriod_));
+  }
+
+  int HumanoidFeetSupervisor::getMaximumNbOfCopConstraints()
+  {
+    return std::max(leftFootModel_.getCopConvexPolygon().getNbVertices(),
+                    rightFootModel_.getCopConvexPolygon().getNbVertices());
+  }
+
+  int HumanoidFeetSupervisor::getMaximumNbOfKinematicConstraints()
+  {
+    return std::max(leftFootModel_.getKinematicConvexPolygon().getNbVertices(),
+                    rightFootModel_.getKinematicConvexPolygon().getNbVertices());
+  }
+
   void HumanoidFeetSupervisor::computeConstantPart()
   {
+    copConvexPolygons_.resize(static_cast<int>(stepPeriod_/samplingPeriod_));
+    kinematicConvexPolygons_.resize(static_cast<int>(stepPeriod_/samplingPeriod_));
     //TODO: Complete
   }
 
-  void HumanoidFeetSupervisor::xComputeSelectionMatrix()
+  void HumanoidFeetSupervisor::init()
+  {
+    int N1 = leftFootModel_.getCopConvexPolygon().getNbVertices();
+    int N2 = rightFootModel_.getCopConvexPolygon().getNbVertices();
+
+
+    // Here we initialize the CoP convex polygon vector. The first element is the double
+    // support convex polygon
+    std::vector<Vector2> vec(N1 + N2);
+
+    // We create a vector containing all vertices of both left and right CoP convex
+    // polygon. All of them are centered on their belonging foot.
+
+    // Inserting left cop polygon vertices
+    for(int i=0; i<N1; ++i)
+    {
+      vec[i] = leftFootModel_.getCopConvexPolygon().getVertices()[i];
+    }
+
+    // Inserting right cop polygon vertices in local frame, i.e. the frame attached to
+    // the left foot
+    for(int i=0; i<N2; ++i)
+    {
+      //TODO: Rotations
+      vec[i + N1] = rightFootModel_.getCopConvexPolygon().getVertices()[i]
+          + Vector2(rightFootModel_.getStateX()(0), rightFootModel_.getStateY()(0))
+          - Vector2(leftFootModel_.getStateX()(0), leftFootModel_.getStateY()(0));
+    }
+
+    copConvexPolygons_.push_back(ConvexPolygon(vec));
+
+    // Foot convex polygon vector initialization. The right foot will be the first to fly.
+    kinematicConvexPolygons_.push_back(leftFootModel_.getKinematicConvexPolygon());
+
+    computeSelectionMatrix();
+    computeFeetPosDynamic();
+    computeRotationMatrix();
+  }
+
+  void HumanoidFeetSupervisor::computeSelectionMatrix()
   {
     selectionMatrices_.reset(getNbSamples(), getNbPreviewedSteps());
     //TODO: complete
   }
 
-  void HumanoidFeetSupervisor::xComputeFeetPosDynamic()
+  void HumanoidFeetSupervisor::computeFeetPosDynamic()
   {
     feetPosDynamic_ = selectionMatrices_.toLinearDynamics();
   }
 
-  void HumanoidFeetSupervisor::xComputeRotationMatrix()
+  void HumanoidFeetSupervisor::computeRotationMatrix()
   {
     rotationMatrix_.setZero(2*getNbSamples(), 2*getNbSamples());
     rotationMatrixT_.setZero(2*getNbSamples(), 2*getNbSamples());

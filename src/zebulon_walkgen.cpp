@@ -402,7 +402,6 @@ bool ZebulonWalkgen::solve(Scalar feedBackPeriod)
     qpMatrix_.bl.segment(M1+M2, M3) = comConstraint_.getFunction(X_);
   }
 
-
   qpMatrix_.p  *= invObjNormFactor_;
   qpMatrix_.bu *= invCtrNormFactor_;
   qpMatrix_.bl *= invCtrNormFactor_;

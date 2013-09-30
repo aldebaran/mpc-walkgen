@@ -23,14 +23,14 @@ namespace MPCWalkgen{
           const HumanoidFeetSupervisor& feetSupervisor);
       ~HumanoidLipComJerkMinimizationObjective();
 
-      const MatrixX& getGradient(const VectorX& x0);
+      const VectorX& getGradient(const VectorX& x0);
       const MatrixX& getHessian();
 
     private:
       const LIPModel& lipModel_;
       const HumanoidFeetSupervisor& feetSupervisor_;
 
-      MatrixX gradient_;
+      VectorX gradient_;
       MatrixX hessian_;
   };
 }

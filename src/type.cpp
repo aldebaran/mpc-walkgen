@@ -34,32 +34,28 @@ namespace MPCWalkgen
   ///Convex Polygon
   ConvexPolygon::ConvexPolygon()
     :p_(0)
-    ,xSupBound_(std::numeric_limits<Scalar>::max())
-    ,xInfBound_(-std::numeric_limits<Scalar>::max())
-    ,ySupBound_(std::numeric_limits<Scalar>::max())
-    ,yInfBound_(-std::numeric_limits<Scalar>::max())
+    ,xSupBound_(MAXIMUM_BOUND_VALUE)
+    ,xInfBound_(-MAXIMUM_BOUND_VALUE)
+    ,ySupBound_(MAXIMUM_BOUND_VALUE)
+    ,yInfBound_(-MAXIMUM_BOUND_VALUE)
+    ,generalConstraintsMatrixCoefsForX_()
+    ,generalConstraintsMatrixCoefsForY_()
+    ,generalConstraintsConstantPart_()
   {
-    generalConstraintsMatrixCoefsForX_.setZero(1);
-    generalConstraintsMatrixCoefsForY_.setZero(1);
-    generalConstraintsConstantPart_.setConstant(1, std::numeric_limits<Scalar>::max());
-
-    xComputeBoundsAndGeneralConstraintValues();
+    computeBoundsAndGeneralConstraintValues();
   }
 
   ConvexPolygon::ConvexPolygon(std::vector<Vector2> p)
-    :p_(p)
-    ,xSupBound_(std::numeric_limits<Scalar>::max())
-    ,xInfBound_(-std::numeric_limits<Scalar>::max())
-    ,ySupBound_(std::numeric_limits<Scalar>::max())
-    ,yInfBound_(-std::numeric_limits<Scalar>::max())
+    :p_(extractVertices(p))
+    ,xSupBound_(MAXIMUM_BOUND_VALUE)
+    ,xInfBound_(-MAXIMUM_BOUND_VALUE)
+    ,ySupBound_(MAXIMUM_BOUND_VALUE)
+    ,yInfBound_(-MAXIMUM_BOUND_VALUE)
+    ,generalConstraintsMatrixCoefsForX_()
+    ,generalConstraintsMatrixCoefsForY_()
+    ,generalConstraintsConstantPart_()
   {
-    generalConstraintsMatrixCoefsForX_.setZero(1);
-    generalConstraintsMatrixCoefsForY_.setZero(1);
-    generalConstraintsConstantPart_.setConstant(1, std::numeric_limits<Scalar>::max());
-
-    p_ = extractVertices(p_);
-
-    xComputeBoundsAndGeneralConstraintValues();
+    computeBoundsAndGeneralConstraintValues();
   }
 
   ConvexPolygon::~ConvexPolygon(){}
@@ -67,11 +63,21 @@ namespace MPCWalkgen
   std::vector<Vector2> ConvexPolygon::extractVertices(
       const std::vector<Vector2>& points)
   {
+    std::vector<Vector2> p;
+
+    // Here we handle the degenerate case for which vector vertices is empty
+    if(points.empty())
+    {
+      return p;
+    }
+
+    p.reserve(points.size());
+
     // Adding the first vertex
     int index = getIndexOfLowestAndLeftmostVertice(points);
-    std::vector<Vector2> pout;
-    pout.reserve(points.size());
-    pout.push_back(points[index]);
+
+    // Adding the first point
+    p.push_back(points[index]);
 
     // Finding the index of the second vertex
     index = getIndexOfSmallestAngleVertice(index,
@@ -80,14 +86,17 @@ namespace MPCWalkgen
 
     // Adding the other vertices until we reach the first index, which
     // means the convex polygon has been completed
-    while(index!=getIndexOfLowestAndLeftmostVertice(points))
+    while(index != getIndexOfLowestAndLeftmostVertice(points))
     {
-      pout.push_back(points[index]);
-      index = getIndexOfSmallestAngleVertice(index, *(pout.end()-2), points);
+      assert(p.size() <= points.size());
+
+      p.push_back(points[index]);
+      index = getIndexOfSmallestAngleVertice(index, *(p.end()-2), points);
     }
 
-    return pout;
+    return p;
   }
+
 
 
   Scalar ConvexPolygon::angleBetweenVecs(const Vector2& vec1, const Vector2& vec2)
@@ -122,6 +131,8 @@ namespace MPCWalkgen
   {
     //Storing indexes of the vertices with the lowest value of Y coordinate
     std::vector<int> lowestVerticesIndexes;
+    lowestVerticesIndexes.reserve(p.size());
+
     lowestVerticesIndexes.push_back(0);
 
     for (size_t i=1; i<p.size(); ++i)
@@ -132,7 +143,7 @@ namespace MPCWalkgen
                                     lowestVerticesIndexes.end());
         lowestVerticesIndexes.push_back(i);
       }
-      else if(std::abs(p[i](1)==p[lowestVerticesIndexes[0]](1)) < EPSILON)
+      else if(std::abs(p[i](1)-p[lowestVerticesIndexes[0]](1)) < EPSILON)
       {
         lowestVerticesIndexes.push_back(i);
       }
@@ -150,24 +161,27 @@ namespace MPCWalkgen
           index = lowestVerticesIndexes[i];
         }
       }
+      assert(index < static_cast<int>(p.size()));
       return index;
     }
     else
     {
+      assert(lowestVerticesIndexes[0] < static_cast<int>(p.size()));
       return lowestVerticesIndexes[0];
     }
   }
 
 
 
-  int ConvexPolygon::getIndexOfSmallestAngleVertice(unsigned int currIndex,
+  int ConvexPolygon::getIndexOfSmallestAngleVertice(int currIndex,
                                                     const Vector2& lastVertice,
                                                     const std::vector<Vector2>& ptot)
   {
     //Creating vector of indexes of the candidate for the next vertex
     std::vector<int> indexesTab;
+    indexesTab.reserve(ptot.size() - 1);
 
-    //This if-else statement prevent from pushing back index 0 if currIndex=0
+    // We push back index 0 arbitrarily, unless currIndex=0
     if(currIndex!=0)
     {
       indexesTab.push_back(0);
@@ -179,7 +193,9 @@ namespace MPCWalkgen
 
     for (size_t i=1; i<ptot.size(); ++i)
     {
-      //We do not check the current point
+      // We do not check the current vertex. This if statement also avoids copies
+      // of the current vertex among ptot vector, i.e. we do not count the current
+      // vertex more than once
       if(!ptot[i].isApprox(ptot[currIndex], EPSILON))
       {
         if(angleBetweenVecs(ptot[currIndex] - lastVertice,
@@ -219,7 +235,7 @@ namespace MPCWalkgen
     }
   }
 
-  void ConvexPolygon::xComputeBoundsAndGeneralConstraintValues()
+  void ConvexPolygon::computeBoundsAndGeneralConstraintValues()
   {
     // We check whether or not the ith convex polygon side is parallel to axis X or Y.
     // If so, it is stored in bounds constraints vectors. If not, it is a general constraint.
@@ -227,9 +243,10 @@ namespace MPCWalkgen
     // Note that if two vertices are closer in norm than EPSILON, one of them is discarded
     // in extractVertices(). The constructor then ensures that such a case cannot happen
     // in this function.
-    for (size_t i=0; i<p_.size(); ++i)
+    int nbVertices = p_.size();
+    for (int i=0; i<nbVertices; ++i)
     {
-      Vector2 hullEdge = p_[(i+1)%p_.size()] - p_[i];
+      Vector2 hullEdge = p_[(i+1)%nbVertices] - p_[i];
 
       if(std::abs(hullEdge(0))<EPSILON)
       {
@@ -255,17 +272,18 @@ namespace MPCWalkgen
       }
       else
       {
-        unsigned int nbElements = generalConstraintsMatrixCoefsForX_.rows();
+        int nbElements = generalConstraintsMatrixCoefsForX_.rows();
         //TODO: template class to set _MaxRows for these 3 VectorX and to
         //avoid reallocations
         generalConstraintsMatrixCoefsForX_.conservativeResize(nbElements + 1);
         generalConstraintsMatrixCoefsForY_.conservativeResize(nbElements + 1);
         generalConstraintsConstantPart_.conservativeResize(nbElements + 1);
 
-        generalConstraintsMatrixCoefsForX_(nbElements) = p_[(i+1)%p_.size()](1) - p_[i](1);
-        generalConstraintsMatrixCoefsForY_(nbElements) = p_[i](0) - p_[(i+1)%p_.size()](0);
-        generalConstraintsConstantPart_(nbElements) = (p_[(i+1)%p_.size()](1) - p_[i](1))*p_[i](0) -
-            (p_[i](0) - p_[(i+1)%p_.size()](0))*p_[i](1);
+        generalConstraintsMatrixCoefsForX_(nbElements) = p_[(i+1)%nbVertices](1) - p_[i](1);
+        generalConstraintsMatrixCoefsForY_(nbElements) = p_[i](0) - p_[(i+1)%nbVertices](0);
+        generalConstraintsConstantPart_(nbElements) =
+            (p_[(i+1)%nbVertices](0) - p_[i](0))*p_[i](1) -
+            (p_[(i+1)%nbVertices](1) - p_[i](1))*p_[i](0);
       }
     }
   }
