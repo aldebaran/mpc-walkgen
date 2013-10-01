@@ -1,7 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 ///
 ///\file test-convex-ConvexPolygon-function.cpp
-///\brief Test of the convex polygons static functions defined in ConvexPolygon class
+///\brief Test of the convex polygons static functions defined in ConvexPolygon
+///       class
 ///\author de Gourcuff Martin
 ///\date 20/08/13
 ///
@@ -10,7 +11,7 @@
 #include <gtest/gtest.h>
 #include "../src/type.h"
 
-class ConvexConvexPolygonTest: public ::testing::Test
+class ConvexPolygonTest: public ::testing::Test
 {};
 
 
@@ -27,7 +28,7 @@ void createStandardConvexSet(std::vector<MPCWalkgen::Vector2>& p)
   p[4] = Vector2(-1.0, 1.0);
 }
 
-TEST_F(ConvexConvexPolygonTest, angleBetweenVecs)
+TEST_F(ConvexPolygonTest, angleBetweenVecs)
 {
   using namespace MPCWalkgen;
 
@@ -43,7 +44,7 @@ TEST_F(ConvexConvexPolygonTest, angleBetweenVecs)
   ASSERT_NEAR(ConvexPolygon::angleBetweenVecs(p[0], Vector2(2.0, 0.0)), 0.0, EPSILON);
 }
 
-TEST_F(ConvexConvexPolygonTest, geLowestAndLeftmostPointsIndex)
+TEST_F(ConvexPolygonTest, geLowestAndLeftmostPointsIndex)
 {
   using namespace MPCWalkgen;
 
@@ -58,7 +59,7 @@ TEST_F(ConvexConvexPolygonTest, geLowestAndLeftmostPointsIndex)
   ASSERT_EQ(ConvexPolygon::getIndexOfLowestAndLeftmostVertice(p), 1);
 }
 
-TEST_F(ConvexConvexPolygonTest, getIndexOfSmallestAngleVertice)
+TEST_F(ConvexPolygonTest, getIndexOfSmallestAngleVertice)
 {
   using namespace MPCWalkgen;
 
@@ -72,7 +73,7 @@ TEST_F(ConvexConvexPolygonTest, getIndexOfSmallestAngleVertice)
   ASSERT_EQ(ConvexPolygon::getIndexOfSmallestAngleVertice(2, p[1], p), 3);
 }
 
-TEST_F(ConvexConvexPolygonTest, getConvexConvexPolygon)
+TEST_F(ConvexPolygonTest, getConvexPolygon)
 {
   using namespace MPCWalkgen;
 
