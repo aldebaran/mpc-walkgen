@@ -90,7 +90,7 @@ TEST_F(ConvexPolygonTest, getConvexPolygon)
 
   std::vector<Vector2> convexSet
       = ConvexPolygon::extractVertices(p1);
-  ASSERT_EQ(convexSet.size(), 6);
+  ASSERT_EQ(convexSet.size(), static_cast<size_t>(6));
   ASSERT_EQ(convexSet[0], p1[2]);
   ASSERT_EQ(convexSet[1], p1[6]);
   ASSERT_EQ(convexSet[2], p1[4]);

@@ -28,6 +28,7 @@ namespace MPCWalkgen
     ,kinematicLimits_()
     ,CopConvexPolygon_()
     ,CopConvexPolygonInWorldFrame_()
+    ,interpolator_()
   {
     assert(samplingPeriod>0);
     assert(nbSamples>0);
@@ -61,19 +62,34 @@ namespace MPCWalkgen
     samplingPeriod_ = samplingPeriod;
   }
 
-  void HumanoidFootModel::updateStateX()
+  void HumanoidFootModel::updateStateX(const Vector3& obj,
+                                       Scalar T,
+                                       Scalar t)
   {
-    //TODO: Complete
+    interpolateTrajectory(stateX_,
+                          obj,
+                          T,
+                          t);
   }
 
-  void HumanoidFootModel::updateStateY()
+  void HumanoidFootModel::updateStateY(const Vector3& obj,
+                                       Scalar T,
+                                       Scalar t)
   {
-    //TODO: Complete
+    interpolateTrajectory(stateY_,
+                          obj,
+                          T,
+                          t);
   }
 
-  void HumanoidFootModel::updateStateZ()
+  void HumanoidFootModel::updateStateZ(const Vector3& obj,
+                                       Scalar T,
+                                       Scalar t)
   {
-    //TODO: Complete
+    interpolateTrajectory(stateZ_,
+                          obj,
+                          T,
+                          t);
   }
 
   void HumanoidFootModel::setHipYawUpperBound(
@@ -103,38 +119,39 @@ namespace MPCWalkgen
 
   void HumanoidFootModel::init()
   {
-    //For now we only need to know the foot position, so the state vector size is 2
-    stateX_.setZero(2);
-    stateX_(1) = 1.0;
-    stateY_.setZero(2);
-    stateY_(1) = 1.0;
-    stateZ_.setZero(2);
-    stateZ_(1) = 1.0;
-    stateYaw_.setZero(2);
-    stateYaw_(1) = 1.0;
+    stateX_.setZero(4);
+    stateX_(3) = 1.0;
+    stateY_.setZero(4);
+    stateY_(3) = 1.0;
+    stateZ_.setZero(4);
+    stateZ_(3) = 1.0;
+    stateYaw_.setZero(4);
+    stateYaw_(3) = 1.0;
 
     isInContact_.resize(nbSamples_, true);
+
+    factor_.setZero(12);
+    subFactor_.setZero(4);
   }
 
-  void HumanoidFootModel::interpolateFootTrajectory()
+  void HumanoidFootModel::interpolateTrajectory(VectorX& currentState,
+                                                const Vector3& objState,
+                                                Scalar T,
+                                                Scalar t)
   {
-    //TODO: Complete
-  }
+    interpolator_.computePolynomialNormalisedFactors(factor_,
+                                                     currentState.head<3>(),
+                                                     objState,
+                                                     T);
 
-  void HumanoidFootModel::toWorldFrame(ConvexPolygon& convexPolygonInWF,
-                                        const ConvexPolygon& convexPolygonInLF)
-  {
-    //TODO: rotation
+    interpolator_.selectFactors(subFactor_, factor_, t, T);
 
-    std::vector<Vector2> p(convexPolygonInLF.getNbVertices());
-
-    for(int i=0; i<convexPolygonInLF.getNbVertices(); ++i)
-    {
-      p[i](0) = convexPolygonInLF.getVertices()[i](0) + stateX_(0);
-      p[i](1) = convexPolygonInLF.getVertices()[i](1) + stateY_(0);
-    }
-
-    convexPolygonInWF = ConvexPolygon(p);
+    // Interpolated values of the state, its derivative and second derivative
+    // are computed here.
+    // Division by T is a consequence of the polynoms normalization
+    currentState(0) = Tools::polynomValue(subFactor_, t/T);
+    currentState(1) = Tools::dPolynomValue(subFactor_, t/T)/T;
+    currentState(2) = Tools::ddPolynomValue(subFactor_, t/T)/(T*T);
   }
 }
 

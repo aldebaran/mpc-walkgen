@@ -42,6 +42,7 @@ namespace MPCWalkgen
       ///        for constraint of the form infBound_ <= X <= supBound_
       void computeBoundsVectors(const VectorX &x0);
 
+    private:
       const LIPModel& lipModel_;
       const HumanoidFeetSupervisor& feetSupervisor_;
 

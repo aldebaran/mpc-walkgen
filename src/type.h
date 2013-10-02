@@ -52,8 +52,17 @@ namespace MPCWalkgen
   };
 
 
-  struct QPMatrices
+  class QPMatrices
   {
+    public:
+      /// \brief Normalize all QP matrices except xu and xl using two normalization
+      ///        factors computed from Q and A
+      void normalizeMatrices();
+      /// \brief If the smallest element m of mat is smaller than 1,
+      ///        this function returns 1/m. Otherwise it returns 1
+      static Scalar getNormalizationFactor(const MatrixX& mat);
+
+    public:
       MatrixX Q;
       VectorX p;
 
@@ -105,6 +114,7 @@ namespace MPCWalkgen
       //TODO: think about changing type and tools into something else. E.g. angleBetweenVecs
       //should be in tools, but tools depends of type... Also these static attributes are an
       //ugly solution but comfortable for now.
+
 
       /// \brief Return the set of vertices of the convex polygon of all vectors from Vec
       ///        The algorithm is similar to the gift-wrapping or Jarvis
@@ -201,6 +211,7 @@ namespace MPCWalkgen
       mutable VectorX b_;
       mutable VectorX abc_;
   };
+
 }
 
 #endif //MPC_WALKGEN_TYPE_H
