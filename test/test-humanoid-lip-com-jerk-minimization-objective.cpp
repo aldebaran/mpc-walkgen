@@ -32,12 +32,14 @@ TEST_F(HumanoidLipComJerkMinimizationTest, HessianAndGradientSize)
   int nbSamples = 3;
   Scalar samplingPeriod = 1.0;
   bool autoCompute = true;
-  HumanoidFootModel leftFoot(nbSamples, samplingPeriod),
-                    rightFoot(nbSamples, samplingPeriod);
-  HumanoidFeetSupervisor feetSupervisor(leftFoot,
-                                        rightFoot,
-                                        nbSamples,
+  VectorX variable;
+  variable.setZero(2*nbSamples);
+  Scalar feedbackPeriod = 0.5;
+
+  HumanoidFeetSupervisor feetSupervisor(nbSamples,
                                         samplingPeriod);
+  feetSupervisor.updateTimeline(variable, feedbackPeriod);
+
   LIPModel lip(nbSamples, samplingPeriod, autoCompute);
   HumanoidLipComJerkMinimizationObjective obj(lip, feetSupervisor);
 

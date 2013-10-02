@@ -14,7 +14,7 @@ namespace MPCWalkgen
 
   //TODO: MAke leftFootModel and RightFootModel disappear
   HumanoidWalkgen::HumanoidWalkgen()
-    :feetSupervisor_(leftFootModel_, rightFootModel_)
+    :feetSupervisor_()
     ,velTrackingObj_(lipModel_, feetSupervisor_)
     ,jerkMinObj_(lipModel_, feetSupervisor_)
     ,copCenteringObj_(lipModel_, feetSupervisor_)
@@ -189,31 +189,31 @@ namespace MPCWalkgen
 
   const VectorX& HumanoidWalkgen::getLeftFootStateX() const
   {
-    return leftFootModel_.getStateX();
+    return feetSupervisor_.getLeftFootStateX();
   }
 
   const VectorX& HumanoidWalkgen::getLeftFootStateY() const
   {
-    return leftFootModel_.getStateY();
+    return feetSupervisor_.getLeftFootStateY();
   }
 
   const VectorX& HumanoidWalkgen::getLeftFootStateZ() const
   {
-    return leftFootModel_.getStateZ();
+    return feetSupervisor_.getLeftFootStateZ();
   }
 
   const VectorX& HumanoidWalkgen::getRightFootStateX() const
   {
-    return rightFootModel_.getStateX();
+    return feetSupervisor_.getRightFootStateX();
   }
 
   const VectorX& HumanoidWalkgen::getRightFootStateY() const
   {
-    return rightFootModel_.getStateY();
+    return feetSupervisor_.getRightFootStateY();
   }
   const VectorX& HumanoidWalkgen::getRightFootStateZ() const
   {
-    return rightFootModel_.getStateZ();
+    return feetSupervisor_.getRightFootStateZ();
   }
 
   const VectorX& HumanoidWalkgen::getComStateX() const

@@ -86,13 +86,10 @@ namespace MPCWalkgen
   {
     nbGeneralConstraints_ = 0;
 
-
     for(int i = 0; i<lipModel_.getNbSamples(); ++i)
     {
-      //Step number at the ith sample
-      int numStepAtSample = feetSupervisor_.sampleToStep(i);
       nbGeneralConstraints_+=
-          feetSupervisor_.getCopConvexPolygons()[numStepAtSample].getNbGeneralConstraints();
+          feetSupervisor_.getCopConvexPolygon(i).getNbGeneralConstraints();
     }
   }
 
@@ -111,15 +108,11 @@ namespace MPCWalkgen
     int nbGeneralConstraintsAtCurrentSample(0);
     // Sum of general constraints numbers since first sample
     int nbGeneralConstraintsSinceFirstSample(0);
-    // Step number at ith sample (i being the iteration variable in next for loop)
-    int numStepAtSample(0);
 
     for(int i = 0; i<N; ++i)
     {
-      numStepAtSample = feetSupervisor_.sampleToStep(i);
-
       nbGeneralConstraintsAtCurrentSample =
-          feetSupervisor_.getCopConvexPolygons()[numStepAtSample]
+          feetSupervisor_.getCopConvexPolygon(i)
           .getNbGeneralConstraints();
 
       for(int j = 0; j<nbGeneralConstraintsAtCurrentSample; ++j)
@@ -127,15 +120,15 @@ namespace MPCWalkgen
        // Filling matrix A and vector b to create a general constraint of the form
        // AX + b <=0
         A_(nbGeneralConstraintsSinceFirstSample + j, i) =
-            feetSupervisor_.getCopConvexPolygons()[numStepAtSample]
+            feetSupervisor_.getCopConvexPolygon(i)
             .getGeneralConstraintsMatrixCoefsForX()(j);
 
         A_(nbGeneralConstraintsSinceFirstSample + j, i + N) =
-            feetSupervisor_.getCopConvexPolygons()[numStepAtSample]
+            feetSupervisor_.getCopConvexPolygon(i)
             .getGeneralConstraintsMatrixCoefsForY()(j);
 
         b_(nbGeneralConstraintsSinceFirstSample + j) =
-            feetSupervisor_.getCopConvexPolygons()[numStepAtSample]
+            feetSupervisor_.getCopConvexPolygon(i)
             .getGeneralConstraintsConstantPart()(j);
       }
 
@@ -149,25 +142,16 @@ namespace MPCWalkgen
 
     assert(x0.rows()==2*N);
 
-    int numStepAtSample(0);
-
     for(int i = 0; i<N; ++i)
     {
-
-      numStepAtSample = feetSupervisor_.sampleToStep(i);
-
       supBound_(i) =
-          feetSupervisor_.getCopConvexPolygons()[numStepAtSample]
-          .getXSupBound();
+          feetSupervisor_.getCopConvexPolygon(i).getXSupBound();
       supBound_(i + N) =
-          feetSupervisor_.getCopConvexPolygons()[numStepAtSample]
-          .getYSupBound();
+          feetSupervisor_.getCopConvexPolygon(i).getYSupBound();
       infBound_(i) =
-          feetSupervisor_.getCopConvexPolygons()[numStepAtSample]
-          .getXInfBound();
+          feetSupervisor_.getCopConvexPolygon(i).getXInfBound();
       infBound_(i + N) =
-          feetSupervisor_.getCopConvexPolygons()[numStepAtSample]
-          .getYInfBound();
+          feetSupervisor_.getCopConvexPolygon(i).getYInfBound();
     }
 
     // As we optimize a variation dX_ of the QP variable X_ (such that X_ = x0 + dX_),

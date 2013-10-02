@@ -60,11 +60,8 @@ TEST_F(HumanoidFootConstraintTest, sizeOfValues)
   int nbSamples = 3;
   Scalar samplingPeriod = 1.0;
   bool autoCompute = true;
-  HumanoidFootModel leftFoot(nbSamples, samplingPeriod),
-      rightFoot(nbSamples, samplingPeriod);
-  HumanoidFeetSupervisor feetSupervisor(leftFoot,
-                                        rightFoot,
-                                        nbSamples,
+
+  HumanoidFeetSupervisor feetSupervisor(nbSamples,
                                         samplingPeriod);
   LIPModel lip(nbSamples, samplingPeriod, autoCompute);
 

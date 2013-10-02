@@ -26,21 +26,23 @@ class HumanoidCopConstraintTest: public ::testing::Test
       int nbSamples = 3;
       Scalar samplingPeriod = 1.0;
       bool autoCompute = true;
-
-      HumanoidFootModel leftFoot(nbSamples, samplingPeriod),
-          rightFoot(nbSamples, samplingPeriod);
+      VectorX variable;
+      variable.setZero(2*nbSamples);
+      Scalar feedbackPeriod = 0.5;
 
       std::vector<Vector2> p(3);
       p[0] = Vector2(1.0, 1.0);
       p[1] = Vector2(-1.0, 1.0);
       p[2] = Vector2(1.0, -1.0);
-      leftFoot.setCopConvexPolygon(ConvexPolygon(p));
-      rightFoot.setCopConvexPolygon(ConvexPolygon(p));
 
-      HumanoidFeetSupervisor feetSupervisor(leftFoot,
-                                            rightFoot,
-                                            nbSamples,
+      HumanoidFeetSupervisor feetSupervisor(nbSamples,
                                             samplingPeriod);
+      feetSupervisor.setLeftFootCopConvexPolygon(ConvexPolygon(p));
+      feetSupervisor.setRightFootCopConvexPolygon(ConvexPolygon(p));
+
+
+      feetSupervisor.updateTimeline(variable, feedbackPeriod);
+
       LIPModel lip(nbSamples, samplingPeriod, autoCompute);
 
       HumanoidCopConstraint copCtr(lip, feetSupervisor);

@@ -66,30 +66,21 @@ namespace MPCWalkgen
                                        Scalar T,
                                        Scalar t)
   {
-    interpolateTrajectory(stateX_,
-                          obj,
-                          T,
-                          t);
+    interpolateTrajectory(stateX_, obj, T, t);
   }
 
   void HumanoidFootModel::updateStateY(const Vector3& obj,
                                        Scalar T,
                                        Scalar t)
   {
-    interpolateTrajectory(stateY_,
-                          obj,
-                          T,
-                          t);
+    interpolateTrajectory(stateY_, obj, T, t);
   }
 
   void HumanoidFootModel::updateStateZ(const Vector3& obj,
                                        Scalar T,
                                        Scalar t)
   {
-    interpolateTrajectory(stateZ_,
-                          obj,
-                          T,
-                          t);
+    interpolateTrajectory(stateZ_, obj, T, t);
   }
 
   void HumanoidFootModel::setHipYawUpperBound(
@@ -130,8 +121,9 @@ namespace MPCWalkgen
 
     isInContact_.resize(nbSamples_, true);
 
-    factor_.setZero(12);
-    subFactor_.setZero(4);
+    int nbOfPolynomCoefficient = 4;
+    factor_.setZero(3*nbOfPolynomCoefficient);
+    subFactor_.setZero(nbOfPolynomCoefficient);
   }
 
   void HumanoidFootModel::interpolateTrajectory(VectorX& currentState,

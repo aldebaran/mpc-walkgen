@@ -94,7 +94,6 @@ namespace MPCWalkgen
       void computeConstantPart();
 
     private:
-      const HumanoidFootModel leftFootModel_, rightFootModel_;
       LIPModel lipModel_;
       HumanoidFeetSupervisor feetSupervisor_;
 

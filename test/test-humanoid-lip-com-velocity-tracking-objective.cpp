@@ -17,16 +17,22 @@ class HumanoidLipComVelocityTrackingTest: public ::testing::Test{};
 
 TEST_F(HumanoidLipComVelocityTrackingTest, HessianAndGradientValue)
 {
-
-  /*
   using namespace MPCWalkgen;
 
-  HumanoidFootModel leftFoot, rightFoot;
-  LIPModel lip;
-  HumanoidLipComVelocityTrackingObjective obj(lip, leftFoot, rightFoot);
 
-  */
-  //TO BE COMPLETED
+  int nbSamples = 2;
+  Scalar samplingPeriod = 0.2;
+  Scalar stepPeriod = 0.4;
+
+  Scalar initDSLength = 1.0;
+
+  HumanoidFeetSupervisor feetSupervisor(nbSamples,
+                                        samplingPeriod);
+  feetSupervisor.setStepPeriod(stepPeriod);
+  feetSupervisor.setInitialDoubleSupportLength(initDSLength);
+  LIPModel lip;
+  //HumanoidLipComVelocityTrackingObjective obj(lip, leftFoot, rightFoot);
+
 }
 
 
@@ -40,12 +46,14 @@ TEST_F(HumanoidLipComVelocityTrackingTest, HessianAndGradientSize)
   int nbSamples = 3;
   Scalar samplingPeriod = 1.0;
   bool autoCompute = true;
-  HumanoidFootModel leftFoot(nbSamples, samplingPeriod),
-                    rightFoot(nbSamples, samplingPeriod);
-  HumanoidFeetSupervisor feetSupervisor(leftFoot,
-                                        rightFoot,
-                                        nbSamples,
+  VectorX variable;
+  variable.setZero(2*nbSamples);
+  Scalar feedbackPeriod = 0.5;
+
+  HumanoidFeetSupervisor feetSupervisor(nbSamples,
                                         samplingPeriod);
+  feetSupervisor.updateTimeline(variable, feedbackPeriod);
+
   LIPModel lip(nbSamples, samplingPeriod, autoCompute);
   HumanoidLipComVelocityTrackingObjective obj(lip, feetSupervisor);
 
