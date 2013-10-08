@@ -6,6 +6,7 @@ Weighting::Weighting()
 :velocityTracking(0.0)
 ,positionTracking(0.0)
 ,copCentering(0.0)
+,comCentering(0.0)
 ,jerkMinimization(0.0)
 ,tiltMinimization(0.0)
 {}
