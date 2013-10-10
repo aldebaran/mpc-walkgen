@@ -26,48 +26,89 @@ namespace MPCWalkgen
       LIPModel();
       ~LIPModel();
 
-      /// \brief compute all of the dynamics
+      /// \brief Compute all dynamics related to the LIP model.
+      ///        In humanoid,
       void computeDynamics();
-      void computeCopXDynamic();
-      void computeCopYDynamic();
-      void computeComPosDynamic();
-      void computeComVelDynamic();
-      void computeComAccDynamic();
+
+      void computeCopXDynamicVec();
+      void computeCopYDynamicVec();
+      void computeComPosDynamicVec();
+      void computeComVelDynamicVec();
+      void computeComAccDynamicVec();
       void computeComJerkDynamic();
 
       /// \brief Get the linear dynamic correspond to the CoP position X
       inline const LinearDynamic& getCopXLinearDynamic() const
-      {return copXDynamic_;}
-
+      {return copXDynamicVec_[nbFeedbackInOneSample_ - 1];}
 
       /// \brief Get the linear dynamic correspond to the CoP position Y
       inline const LinearDynamic& getCopYLinearDynamic() const
-      {return copYDynamic_;}
+      {return copYDynamicVec_[nbFeedbackInOneSample_ - 1];}
 
       /// \brief Get the linear dynamic correspond to the CoM position
       inline const LinearDynamic& getComPosLinearDynamic() const
-      {return comPosDynamic_;}
+      {return comPosDynamicVec_[nbFeedbackInOneSample_ - 1];}
 
       /// \brief Get the linear dynamic correspond to the CoM velocity
       inline const LinearDynamic& getComVelLinearDynamic() const
-      {return comVelDynamic_;}
-
+      {return comVelDynamicVec_[nbFeedbackInOneSample_ - 1];}
 
       /// \brief Get the linear dynamic correspond to the CoM acceleration
       inline const LinearDynamic& getComAccLinearDynamic() const
-      {return comAccDynamic_;}
+      {return comAccDynamicVec_[nbFeedbackInOneSample_ - 1];}
 
 
       /// \brief Get the linear dynamic correspond to the CoM jerk
       inline const LinearDynamic& getComJerkLinearDynamic() const
       {return comJerkDynamic_;}
 
+      /// \brief Those function also return the dynamics of the LIP model, but they allow
+      ///        to be synchronized with a timeline
+
+      inline const LinearDynamic& getCopXLinearDynamic(int index) const
+      {
+        assert(index<nbFeedbackInOneSample_);
+        return copXDynamicVec_[index];
+      }
+
+      inline const LinearDynamic& getCopYLinearDynamic(int index) const
+      {
+        assert(index<nbFeedbackInOneSample_);
+        return copYDynamicVec_[index];
+      }
+
+      inline const LinearDynamic& getComPosLinearDynamic(int index) const
+      {
+        assert(index<nbFeedbackInOneSample_);
+        return comPosDynamicVec_[index];
+      }
+
+      inline const LinearDynamic& getComVelLinearDynamic(int index) const
+      {
+        assert(index<nbFeedbackInOneSample_);
+        return comVelDynamicVec_[index];
+      }
+
+      inline const LinearDynamic& getComAccLinearDynamic(int index) const
+      {
+        assert(index<nbFeedbackInOneSample_);
+        return comAccDynamicVec_[index];
+      }
+
+      inline const LinearDynamic& getComJerkLinearDynamic(int index) const
+      {
+        assert(index<nbFeedbackInOneSample_);
+        return comJerkDynamic_;
+      }
+
+
       /// \brief Get the state of the CoM along the X coordinate
-      ///        It's a vector of size 4:
-      ///        (Position, Velocity, Acceleration, 1)
+      ///        It is a vector of size 3:
+      ///        (Position, Velocity, Acceleration)
       inline void setStateX(const VectorX& state)
       {
-        assert(state==state);assert(state.size()==4);assert(state(3)==1.0);
+        assert(state==state);
+        assert(state.size()==3);
         stateX_=state;
       }
 
@@ -76,11 +117,12 @@ namespace MPCWalkgen
       {return stateX_;}
 
       /// \brief Get the state of the CoM along the Y coordinate
-      ///        It's a vector of size 4:
-      ///        (Position, Velocity, Acceleration, 1)
+      ///        It is a vector of size 3:
+      ///        (Position, Velocity, Acceleration)
       inline void setStateY(const VectorX& state)
       {
-        assert(state==state);assert(state.size()==4);assert(state(3)==1.0);
+        assert(state==state);
+        assert(state.size()==3);
         stateY_=state;
       }
 
@@ -91,6 +133,21 @@ namespace MPCWalkgen
       /// \brief Get the state of the CoM along the Z coordinate
       inline const VectorX& getStateZ() const
       {return stateZ_;}
+
+      /// \brief Get the yaw state of the CoM around the Z axis
+      ///        It is a vector of size 3:
+      ///        (Position, Velocity, Acceleration)
+      inline void setStateYaw(const VectorX& state)
+      {
+        assert(state==state);
+        assert(state.size()==3);
+
+        stateYaw_=state;
+      }
+
+      /// \brief Get the state of the CoM around the Z coordinate
+      inline const VectorX& getStateYaw() const
+      {return stateYaw_;}
 
       /// \brief Set the number of samples for this dynamic
       void setNbSamples(int nbSamples);
@@ -105,12 +162,22 @@ namespace MPCWalkgen
       /// \brief Update the Y state of the CoM apply a constant jerk
       void updateStateY(Scalar jerk, Scalar feedBackPeriod);
 
+      /// \brief Update the Yaw state of the CoM considering a constant angular jerk
+      void updateStateYaw(Scalar jerk, Scalar feedBackPeriod);
+
       /// \brief Set the sampling period for each sample
       void setSamplingPeriod(Scalar samplingPeriod);
+
+      /// \brief Set the feedback period of the MPC that uses this LIP model
+      void setFeedbackPeriod(Scalar feedbackPeriod);
 
       /// \brief Get the sampling period for each sample
       inline Scalar getSamplingPeriod(void) const
       {return samplingPeriod_;}
+
+      /// \brief Get the feedback period of the MPC that uses this LIP model
+      inline Scalar getFeedbackPeriod() const
+      {return feedbackPeriod_;}
 
       /// \brief Set the CoM constant height
       void setComHeight(Scalar comHeight);
@@ -143,10 +210,13 @@ namespace MPCWalkgen
 
       int nbSamples_;
       Scalar samplingPeriod_;
+      Scalar feedbackPeriod_;
+      int nbFeedbackInOneSample_;
 
       VectorX stateX_;
       VectorX stateY_;
-      VectorX stateZ_; // For future case of use? Jory?
+      VectorX stateZ_;
+      VectorX stateYaw_;
 
       Scalar comHeight_;
       Vector3 gravity_;
@@ -156,9 +226,16 @@ namespace MPCWalkgen
       LinearDynamic comPosDynamic_;
       LinearDynamic comVelDynamic_;
       LinearDynamic comAccDynamic_;
-      LinearDynamic comJerkDynamic_;
       LinearDynamic copXDynamic_;
       LinearDynamic copYDynamic_;
+
+      std::vector<LinearDynamic> comPosDynamicVec_;
+      std::vector<LinearDynamic> comVelDynamicVec_;
+      std::vector<LinearDynamic> comAccDynamicVec_;
+      std::vector<LinearDynamic> copXDynamicVec_;
+      std::vector<LinearDynamic> copYDynamicVec_;
+
+      LinearDynamic comJerkDynamic_;
   };
 
 }

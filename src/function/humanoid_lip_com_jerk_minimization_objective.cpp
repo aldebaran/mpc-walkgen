@@ -31,7 +31,6 @@ namespace MPCWalkgen
 
     int N = lipModel_.getNbSamples();
     int M = feetSupervisor_.getNbPreviewedSteps();
-    int stateSize = lipModel_.getStateX().rows();
 
     const LinearDynamic& dynCopX = lipModel_.getCopXLinearDynamic();
     const LinearDynamic& dynCopY = lipModel_.getCopYLinearDynamic();
@@ -44,17 +43,13 @@ namespace MPCWalkgen
     tmp.block(2*N, 0, M, N) = feetSupervisor_.getFeetPosLinearDynamic().UT;
     tmp.block(2*N + M, N, M, N) = feetSupervisor_.getFeetPosLinearDynamic().UT;
 
-    MatrixX tmp2 = MatrixX::Zero(2*N, 2*stateSize);
-    tmp2.block(0, 0, N, stateSize)
-        = dynCopX.UTinv*dynCopX.Uinv*dynCopX.S;
-    tmp2.block(N, stateSize, N, stateSize)
-        = dynCopY.UTinv*dynCopY.Uinv*dynCopY.S;
+    VectorX tmp2 = VectorX::Zero(2*N);
+    tmp2.segment(0, N)
+        = dynCopX.UTinv*dynCopX.Uinv*(dynCopX.S*lipModel_.getStateX() + dynCopX.K);
+    tmp2.segment(N, N)
+        = dynCopY.UTinv*dynCopY.Uinv*(dynCopY.S*lipModel_.getStateY() + dynCopY.K);
 
-    VectorX tmp3 = VectorX::Zero(2*stateSize);
-    tmp3.segment(0, stateSize) = lipModel_.getStateX();
-    tmp3.segment(stateSize, stateSize) = lipModel_.getStateY();
-
-    gradient_ = tmp*tmp2*tmp3;
+    gradient_ = tmp*tmp2;
     gradient_ += getHessian()*x0;
     return gradient_;
   }

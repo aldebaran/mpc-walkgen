@@ -51,7 +51,6 @@ namespace MPCWalkgen
       Eigen::MatrixXi V;
       Eigen::MatrixXi VT;
       Eigen::MatrixXi V0;
-      Eigen::MatrixXi V0T;
   };
 
   class HumanoidFeetSupervisor

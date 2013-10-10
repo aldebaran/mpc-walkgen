@@ -27,8 +27,10 @@ namespace MPCWalkgen
                         nbSamples,
                         std::numeric_limits<Scalar>::quiet_NaN());
     }
+
     S.setZero(nbSamples, stateVectorSize);
-    ST.setZero(stateVectorSize, nbSamples);
+
+    K.setZero(nbSamples);
   }
 
 

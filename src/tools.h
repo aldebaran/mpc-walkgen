@@ -17,19 +17,29 @@ namespace MPCWalkgen
 {
   namespace Tools
   {
-
     class ConstantJerkDynamic
     {
       public:
-        static void computeCopDynamic(Scalar T, int N, LinearDynamic& dyn,
+        /// \brief These functions compute linear dynamics dyn relative to the CoP position
+        ///        or the LIP CoM position, velocity, acceleration or jerk.
+        ///        S is the remaining time before the next sample.
+        ///        T is the sampling period.
+        ///        N is the number of samples.
+
+        static void computeCopDynamic(Scalar S, Scalar T,
+                                      int N, LinearDynamic& dyn,
                                       Scalar comHeight, Scalar gravityX,
-                                      Scalar gravityY, Scalar mass, Scalar totalMass);
+                                      Scalar gravityZ, Scalar mass,
+                                      Scalar totalMass);
 
-        static void computePosDynamic(Scalar T, int N, LinearDynamic& dyn);
+        static void computePosDynamic(Scalar S, Scalar T,
+                                      int N, LinearDynamic& dyn);
 
-        static void computeVelDynamic(Scalar T, int N, LinearDynamic& dyn);
+        static void computeVelDynamic(Scalar S, Scalar T,
+                                      int N, LinearDynamic& dyn);
 
-        static void computeAccDynamic(Scalar T, int N, LinearDynamic& dyn);
+        static void computeAccDynamic(Scalar S, Scalar T,
+                                      int N, LinearDynamic& dyn);
 
         static void computeJerkDynamic(int N, LinearDynamic& dyn);
 

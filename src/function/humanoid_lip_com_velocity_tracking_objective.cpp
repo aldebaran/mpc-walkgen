@@ -41,10 +41,12 @@ namespace MPCWalkgen
     VectorX tmp2 = VectorX::Zero(2*N);
 
     tmp2.segment(0, N) = dynCopX.UTinv*dynComVel.UT*
-        ((dynComVel.S - dynComVel.U*dynCopX.Uinv*dynCopX.S)*lipModel_.getStateX()
+        (dynComVel.S*lipModel_.getStateX()
+         - dynComVel.U*dynCopX.Uinv*(dynCopX.S*lipModel_.getStateX() + dynCopX.K)
          - velRefInWorldFrame_.segment(0, N));
     tmp2.segment(N, N) = dynCopY.UTinv*dynComVel.UT*
-        ((dynComVel.S - dynComVel.U*dynCopY.Uinv*dynCopY.S)*lipModel_.getStateY()
+        (dynComVel.S*lipModel_.getStateY()
+         - dynComVel.U*dynCopY.Uinv*(dynCopY.S*lipModel_.getStateY() + dynCopY.K)
          - velRefInWorldFrame_.segment(N, N));
 
     MatrixX tmp = MatrixX::Zero(2*N + 2*M, 2*N);

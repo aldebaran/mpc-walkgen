@@ -32,10 +32,9 @@ TEST_F(ZebulonBasePositionTrackingTest, functionValue)
   obj.setPosRefInWorldFrame(velRef);
 
 
-  VectorX baseState(4);
+  VectorX baseState(3);
   baseState.fill(0);
   baseState(1) = -1.5;
-  baseState(3) = 1;
   m.setStateX(baseState);
   baseState(1) = 0.5;
   m.setStateY(baseState);

@@ -67,8 +67,8 @@ namespace MPCWalkgen{
       }
 
       /// \brief Set the state of the Foot along the X coordinate
-      ///        It is a vector of size 4:
-      ///        (Position, Velocity, Acceleration, 1)
+      ///        It is a vector of size 3:
+      ///        (Position, Velocity, Acceleration)
       inline void setStateX(const VectorX& state)
       {
         stateX_=state;
@@ -79,8 +79,8 @@ namespace MPCWalkgen{
       {return stateX_;}
 
       /// \brief Get the state of the Foot along the Y coordinate
-      ///        It is a vector of size 4:
-      ///        (Position, Velocity, Acceleration, 1)
+      ///        It is a vector of size 3:
+      ///        (Position, Velocity, Acceleration)
       inline void setStateY(const VectorX& state)
       {
         stateY_=state;
@@ -91,8 +91,8 @@ namespace MPCWalkgen{
       {return stateY_;}
 
       /// \brief Get the state of the Foot along the Z coordinate
-      ///        It is a vector of size 4:
-      ///        (Position, Velocity, Acceleration, 1)
+      ///        It is a vector of size 3:
+      ///        (Position, Velocity, Acceleration)
       inline void setStateZ(const VectorX& state)
       {
         stateZ_=state;
@@ -103,8 +103,8 @@ namespace MPCWalkgen{
       {return stateZ_;}
 
       /// \brief Get the state of the Foot around Yaw axis
-      ///        It is a vector of size 4:
-      ///        (Position, Velocity, Acceleration, 1)
+      ///        It is a vector of size 3:
+      ///        (Position, Velocity, Acceleration)
       inline void setStateYaw(const VectorX& state)
       {
         stateYaw_=state;

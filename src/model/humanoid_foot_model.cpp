@@ -110,14 +110,10 @@ namespace MPCWalkgen
 
   void HumanoidFootModel::init()
   {
-    stateX_.setZero(4);
-    stateX_(3) = 1.0;
-    stateY_.setZero(4);
-    stateY_(3) = 1.0;
-    stateZ_.setZero(4);
-    stateZ_(3) = 1.0;
-    stateYaw_.setZero(4);
-    stateYaw_(3) = 1.0;
+    stateX_.setZero(3);
+    stateY_.setZero(3);
+    stateZ_.setZero(3);
+    stateYaw_.setZero(3);
 
     isInContact_.resize(nbSamples_, true);
 
@@ -132,7 +128,7 @@ namespace MPCWalkgen
                                                 Scalar t)
   {
     interpolator_.computePolynomialNormalisedFactors(factor_,
-                                                     currentState.head<3>(),
+                                                     currentState,
                                                      objState,
                                                      T);
 

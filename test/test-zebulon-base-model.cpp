@@ -23,10 +23,7 @@ void checkLinearDynamicSize(const MPCWalkgen::LinearDynamic& dyn,
   ASSERT_EQ(dyn.UT.cols(), nbSamples);
 
   ASSERT_EQ(dyn.S.rows(), nbSamples);
-  ASSERT_EQ(dyn.S.cols(), 4);
-
-  ASSERT_EQ(dyn.ST.cols(), nbSamples);
-  ASSERT_EQ(dyn.ST.rows(), 4);
+  ASSERT_EQ(dyn.S.cols(), 3);
 }
 
 
@@ -57,11 +54,10 @@ TEST_F(ZebulonBaseModelTest, valuesOfMatrices)
   VectorX jerk(nbSamples);
   jerk(0) = 1.0;
 
-  VectorX init(4);
+  VectorX init(3);
   init(0)=2.0;
   init(1)=1.5;
   init(2)=-3.0;
-  init(3)=1.0;
 
   const LinearDynamic& dynPos = m.getBasePosLinearDynamic();
   Scalar pos = (dynPos.S * init + dynPos.U * jerk)(0);

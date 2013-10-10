@@ -26,11 +26,13 @@ namespace MPCWalkgen
   static const Vector3 GRAVITY_VECTOR = Vector3(0, 0, 9.81);
   static const Scalar MAXIMUM_BOUND_VALUE = 10e10;
 
-  /// \brief  Matrices relative to a linear dynamic of type : Y = U X + S x
+  /// \brief  Matrices relative to a linear dynamic of type : Y = U X + S x + K
   ///         Where X is the control variables and x the initial state
-  ///         ST and UT are S and T transpose, respectively.
-  ///         If U is square, Uinv and UTinv are its inverse and transpose
-  ///         inverse, respectively. If U is not square, these matrices are filles
+  ///         UT is U transpose.
+  ///         K is a constant which does not depend on the initial state. For now it is
+  ///         always a zero vector, except for dynamics related to the CoP.
+  ///         If U is square, Uinv and UTinv are its inverse and transpose inverse.
+  ///         inverse, respectively. If U is not square, these matrices are filled
   ///         with NaN values.
   ///         -nbSamples stands for Y's number of rows
   ///         -stateVectorSize stands for x's number of rows
@@ -48,7 +50,7 @@ namespace MPCWalkgen
       MatrixX Uinv;
       MatrixX UTinv;
       MatrixX S;
-      MatrixX ST;
+      VectorX K;
   };
 
 

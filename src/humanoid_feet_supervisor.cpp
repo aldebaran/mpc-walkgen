@@ -32,7 +32,6 @@ namespace MPCWalkgen
     V.setZero(nbSamples, nbPreviewedSteps);
     VT.setZero(nbPreviewedSteps, nbSamples);
     V0.setZero(nbSamples, 1);
-    V0T.setZero(1, nbSamples);
   }
 
   LinearDynamic SelectionMatrices::toLinearDynamics()
@@ -45,7 +44,6 @@ namespace MPCWalkgen
     output.U = V.cast<Scalar>();
     output.UT = VT.cast<Scalar>();
     output.S = V0.cast<Scalar>();
-    output.ST = V0T.cast<Scalar>();
 
     return output;
   }
@@ -191,8 +189,7 @@ namespace MPCWalkgen
   void HumanoidFeetSupervisor::setLeftFootStateX(const VectorX& state)
   {
     assert(state==state);
-    assert(state.size()==4);
-    assert(state(3)==1.0);
+    assert(state.size()==3);
     leftFootModel_.setStateX(state);
 
     computeConstantPart();
@@ -201,8 +198,7 @@ namespace MPCWalkgen
   void HumanoidFeetSupervisor::setLeftFootStateY(const VectorX& state)
   {
     assert(state==state);
-    assert(state.size()==4);
-    assert(state(3)==1.0);
+    assert(state.size()==3);
     leftFootModel_.setStateY(state);
 
     computeConstantPart();
@@ -211,8 +207,7 @@ namespace MPCWalkgen
   void HumanoidFeetSupervisor::setLeftFootStateZ(const VectorX& state)
   {
     assert(state==state);
-    assert(state.size()==4);
-    assert(state(3)==1.0);
+    assert(state.size()==3);
     leftFootModel_.setStateZ(state);
 
     computeConstantPart();
@@ -221,8 +216,7 @@ namespace MPCWalkgen
   void HumanoidFeetSupervisor::setRightFootStateX(const VectorX& state)
   {
     assert(state==state);
-    assert(state.size()==4);
-    assert(state(3)==1.0);
+    assert(state.size()==3);
     rightFootModel_.setStateX(state);
 
     computeConstantPart();
@@ -231,8 +225,7 @@ namespace MPCWalkgen
   void HumanoidFeetSupervisor::setRightFootStateY(const VectorX& state)
   {
     assert(state==state);
-    assert(state.size()==4);
-    assert(state(3)==1.0);
+    assert(state.size()==3);
     rightFootModel_.setStateY(state);
 
     computeConstantPart();
@@ -241,8 +234,7 @@ namespace MPCWalkgen
   void HumanoidFeetSupervisor::setRightFootStateZ(const VectorX& state)
   {
     assert(state==state);
-    assert(state.size()==4);
-    assert(state(3)==1.0);
+    assert(state.size()==3);
     rightFootModel_.setStateZ(state);
 
     computeConstantPart();
@@ -583,7 +575,6 @@ namespace MPCWalkgen
       if(move_)
       {
         //DS -> SS
-        //++nbPreviewedSteps_;
         setPhase(Phase::leftSS);
       }
       else
@@ -856,7 +847,6 @@ namespace MPCWalkgen
     }
 
     selectionMatrices_.VT = selectionMatrices_.V.transpose();
-    selectionMatrices_.V0T = selectionMatrices_.V0.transpose();
   }
 
   void HumanoidFeetSupervisor::computeFeetPosDynamic()
@@ -866,7 +856,6 @@ namespace MPCWalkgen
     for(int i=0; i<selectionMatrices_.V0.rows(); ++i)
     {
       assert(feetPosDynamic_.S(i)==selectionMatrices_.V0(i));
-      assert(feetPosDynamic_.ST(0, i)==selectionMatrices_.V0T(0, i));
       for(int j=0; j<selectionMatrices_.V.cols(); j++)
       {
         assert(feetPosDynamic_.U(i, j)==selectionMatrices_.V(i, j));

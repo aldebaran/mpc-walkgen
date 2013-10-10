@@ -126,6 +126,9 @@ void ZebulonWalkgenImpl::setBaseJerkLimit(Scalar limit)
   walkgen->setBaseJerkLimit(limit);
 }
 
+//Only the three first element of the state is considered. This is to
+//ensure compatibility with naoqi
+//TODO: Pass vectors of size 3 in Naoqi
 void ZebulonWalkgenImpl::setBaseStateX(const VectorX& state)
 {
   walkgen->setBaseStateX(state);

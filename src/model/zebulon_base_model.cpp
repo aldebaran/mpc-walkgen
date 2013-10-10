@@ -26,14 +26,10 @@ BaseModel::BaseModel(int nbSamples,
   assert(samplingPeriod>0);
   assert(nbSamples>0);
 
-  stateX_.setZero(4);
-  stateX_(3)=1.0;
-  stateY_.setZero(4);
-  stateY_(3)=1.0;
-  stateRoll_.setZero(4);
-  stateRoll_(3)=1.0;
-  statePitch_.setZero(4);
-  statePitch_(3)=1.0;
+  stateX_.setZero(3);
+  stateY_.setZero(3);
+  stateRoll_.setZero(3);
+  statePitch_.setZero(3);
   if (autoCompute_)
   {
     computeDynamics();
@@ -56,14 +52,10 @@ BaseModel::BaseModel()
   ,wheelToBaseDist_(0.0)
   ,angleWheelToBaseCom_(0.0)
 {
-  stateX_.setZero(4);
-  stateX_(3)=1.0;
-  stateY_.setZero(4);
-  stateY_(3)=1.0;
-  stateRoll_.setZero(4);
-  stateRoll_(3)=1.0;
-  statePitch_.setZero(4);
-  statePitch_(3)=1.0;
+  stateX_.setZero(3);
+  stateY_.setZero(3);
+  stateRoll_.setZero(3);
+  statePitch_.setZero(3);
   if (autoCompute_)
   {
     computeDynamics();
@@ -85,34 +77,39 @@ void BaseModel::computeDynamics()
 
 void BaseModel::computeCopXDynamic()
 {
-  Tools::ConstantJerkDynamic::computeCopDynamic(samplingPeriod_, nbSamples_,
-                                                copXDynamic_,  comHeight_,
-                                                gravity_(0), gravity_(2),
-                                                mass_, totalMass_);
+  Tools::ConstantJerkDynamic::computeCopDynamic(samplingPeriod_, samplingPeriod_,
+                                                nbSamples_, copXDynamic_,
+                                                comHeight_, gravity_(0),
+                                                gravity_(2), mass_,
+                                                totalMass_);
 }
 
 void BaseModel::computeCopYDynamic()
 {
-  Tools::ConstantJerkDynamic::computeCopDynamic(samplingPeriod_, nbSamples_,
-                                                copYDynamic_,  comHeight_,
-                                                gravity_(1), gravity_(2),
-                                                mass_, totalMass_);
+  Tools::ConstantJerkDynamic::computeCopDynamic(samplingPeriod_, samplingPeriod_,
+                                                nbSamples_, copYDynamic_,
+                                                comHeight_, gravity_(1),
+                                                gravity_(2), mass_,
+                                                totalMass_);
 }
 
 void BaseModel::computeBasePosDynamic()
 {
-  Tools::ConstantJerkDynamic::computePosDynamic(samplingPeriod_, nbSamples_, basePosDynamic_);
+  Tools::ConstantJerkDynamic::computePosDynamic(samplingPeriod_, samplingPeriod_,
+                                                nbSamples_, basePosDynamic_);
 
 }
 
 void BaseModel::computeBaseVelDynamic()
 {
-  Tools::ConstantJerkDynamic::computeVelDynamic(samplingPeriod_, nbSamples_, baseVelDynamic_);
+  Tools::ConstantJerkDynamic::computeVelDynamic(samplingPeriod_, samplingPeriod_,
+                                                nbSamples_, baseVelDynamic_);
 }
 
 void BaseModel::computeBaseAccDynamic()
 {
-  Tools::ConstantJerkDynamic::computeAccDynamic(samplingPeriod_, nbSamples_, baseAccDynamic_);
+  Tools::ConstantJerkDynamic::computeAccDynamic(samplingPeriod_, samplingPeriod_,
+                                                nbSamples_, baseAccDynamic_);
 }
 
 void BaseModel::computeBaseJerkDynamic()

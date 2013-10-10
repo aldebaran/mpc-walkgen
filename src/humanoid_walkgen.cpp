@@ -116,74 +116,65 @@ namespace MPCWalkgen
   void HumanoidWalkgen::setLeftFootStateX(const VectorX& state)
   {
     assert(state==state);
-    assert(state.size()==2);
-    assert(state(1)==1.0);
+    assert(state.size()==3);
     feetSupervisor_.setLeftFootStateX(state);
   }
 
   void HumanoidWalkgen::setLeftFootStateY(const VectorX& state)
   {
     assert(state==state);
-    assert(state.size()==2);
-    assert(state(1)==1.0);
+    assert(state.size()==3);
     feetSupervisor_.setLeftFootStateY(state);
   }
 
   void HumanoidWalkgen::setLeftFootStateZ(const VectorX& state)
   {
     assert(state==state);
-    assert(state.size()==2);
-    assert(state(1)==1.0);
+    assert(state.size()==3);
     feetSupervisor_.setLeftFootStateZ(state);
   }
 
   void HumanoidWalkgen::setRightFootStateX(const VectorX& state)
   {
     assert(state==state);
-    assert(state.size()==2);
-    assert(state(1)==1.0);
+    assert(state.size()==3);
     feetSupervisor_.setRightFootStateX(state);
   }
 
   void HumanoidWalkgen::setRightFootStateY(const VectorX& state)
   {
     assert(state==state);
-    assert(state.size()==2);
-    assert(state(1)==1.0);
+    assert(state.size()==3);
     feetSupervisor_.setRightFootStateY(state);
   }
 
   void HumanoidWalkgen::setRightFootStateZ(const VectorX& state)
   {
     assert(state==state);
-    assert(state.size()==2);
-    assert(state(1)==1.0);
+    assert(state.size()==3);
     feetSupervisor_.setRightFootStateZ(state);
   }
 
   void HumanoidWalkgen::setComStateX(const VectorX& state)
   {
     assert(state==state);
-    assert(state.size()==4);
-    assert(state(3)==1.0);
+    assert(state.size()==3);
     lipModel_.setStateX(state);
   }
 
   void HumanoidWalkgen::setComStateY(const VectorX& state)
   {
     assert(state==state);
-    assert(state.size()==4);
-    assert(state(3)==1.0);
+    assert(state.size()==3);
     lipModel_.setStateY(state);
   }
 
   void HumanoidWalkgen::setComStateZ(const VectorX& state)
   {
     assert(state==state);
-    assert(state.size()==4);
+    assert(state.size()==3);
     assert(state(1)==0.0);
     assert(state(2)==0.0);
-    assert(state(3)==1.0);
     lipModel_.setComHeight(state(0));
   }
 
@@ -440,6 +431,8 @@ namespace MPCWalkgen
     int N = lipModel_.getNbSamples();
     int M = feetSupervisor_.getNbPreviewedSteps();
 
+    const LinearDynamic& dynCopX = lipModel_.getCopXLinearDynamic();
+    const LinearDynamic& dynCopY = lipModel_.getCopYLinearDynamic();
     const MatrixX& footPosU = feetSupervisor_.getFeetPosLinearDynamic().U;
     const MatrixX& rot = feetSupervisor_.getRotationMatrixT();
 
@@ -451,11 +444,11 @@ namespace MPCWalkgen
     transformedX_.segment(0, N) += footPosU*X_.segment(2*N, M);
     transformedX_.segment(N, N) += footPosU*X_.segment(2*N + M, M);
 
-    transformedX_.segment(0, N) -= lipModel_.getCopXLinearDynamic().S*lipModel_.getStateX();
-    transformedX_.segment(N, N) -= lipModel_.getCopYLinearDynamic().S*lipModel_.getStateY();
+    transformedX_.segment(0, N) -= dynCopX.S*lipModel_.getStateX() + dynCopX.K;
+    transformedX_.segment(N, N) -= dynCopY.S*lipModel_.getStateY() + dynCopY.K;
 
-    transformedX_.segment(0, N) *= lipModel_.getCopXLinearDynamic().Uinv;
-    transformedX_.segment(N, N) *= lipModel_.getCopYLinearDynamic().Uinv;
+    transformedX_.segment(0, N) *= dynCopX.Uinv;
+    transformedX_.segment(N, N) *= dynCopY.Uinv;
   }
 
 }
