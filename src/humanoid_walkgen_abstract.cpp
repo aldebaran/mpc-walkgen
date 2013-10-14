@@ -19,8 +19,8 @@ namespace MPCWalkgen
   {}
 
   HumanoidWalkgenImpl::Config::Config()
-    :withCopConstraints(true)
-    ,withFeetConstraints(true)
+    :withCopConstraints(false)
+    ,withFeetConstraints(false)
   {}
 
   HumanoidWalkgenImpl::HumanoidWalkgenImpl()
@@ -52,6 +52,13 @@ namespace MPCWalkgen
     walkgen->setStepPeriod(stepPeriod);
   }
 
+  void HumanoidWalkgenImpl::setInitialDoubleSupportLength(
+      Scalar initialDoubleSupportLength)
+  {
+    walkgen->setInitialDoubleSupportLength(
+          initialDoubleSupportLength);
+  }
+
   void HumanoidWalkgenImpl::setLeftFootKinematicConvexPolygon(
       const std::vector<Vector2>& convexPolygon)
   {
@@ -76,9 +83,19 @@ namespace MPCWalkgen
     walkgen->setRightFootCopConvexPolygon(ConvexPolygon(convexPolygon));
   }
 
+  void HumanoidWalkgenImpl::enableMove(bool move)
+  {
+    walkgen->setMove(move);
+  }
+
   void HumanoidWalkgenImpl::setVelRefInWorldFrame(const VectorX& velRef)
   {
     walkgen->setVelRefInWorldFrame(velRef);
+  }
+
+  void HumanoidWalkgenImpl::setAngularVelRefInWorldFrame(const VectorX& angularVelRef)
+  {
+    walkgen->setAngularVelRefInWorldFrame(angularVelRef);
   }
 
   void HumanoidWalkgenImpl::setLeftFootStateX(const VectorX& state)

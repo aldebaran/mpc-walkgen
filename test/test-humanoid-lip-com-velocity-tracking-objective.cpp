@@ -55,6 +55,8 @@ TEST_F(HumanoidLipComVelocityTrackingTest, HessianAndGradientSize)
   feetSupervisor.updateTimeline(variable, feedbackPeriod);
 
   LIPModel lip(nbSamples, samplingPeriod, autoCompute);
+  lip.setFeedbackPeriod(feedbackPeriod);
+
   HumanoidLipComVelocityTrackingObjective obj(lip, feetSupervisor);
 
   VectorX jerkInit(2*nbSamples + 2*feetSupervisor.getNbPreviewedSteps());

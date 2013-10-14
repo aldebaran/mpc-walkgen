@@ -41,6 +41,8 @@ TEST_F(HumanoidLipComJerkMinimizationTest, HessianAndGradientSize)
   feetSupervisor.updateTimeline(variable, feedbackPeriod);
 
   LIPModel lip(nbSamples, samplingPeriod, autoCompute);
+  lip.setFeedbackPeriod(feedbackPeriod);
+
   HumanoidLipComJerkMinimizationObjective obj(lip, feetSupervisor);
 
   VectorX jerkInit(2*nbSamples + 2*feetSupervisor.getNbPreviewedSteps());

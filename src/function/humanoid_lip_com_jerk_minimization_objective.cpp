@@ -32,8 +32,13 @@ namespace MPCWalkgen
     int N = lipModel_.getNbSamples();
     int M = feetSupervisor_.getNbPreviewedSteps();
 
-    const LinearDynamic& dynCopX = lipModel_.getCopXLinearDynamic();
-    const LinearDynamic& dynCopY = lipModel_.getCopYLinearDynamic();
+    int nb = feetSupervisor_.getNbOfCallsBeforeNextSample() - 1;
+
+    const LinearDynamic& dynCopX = lipModel_.getCopXLinearDynamic(nb);
+    const LinearDynamic& dynCopY = lipModel_.getCopYLinearDynamic(nb);
+    const LinearDynamic& dynFeetPos = feetSupervisor_.getFeetPosLinearDynamic();
+
+    const MatrixX& weight = feetSupervisor_.getSampleWeightMatrix();
 
     //TODO: sparse matrices?
     // Ill change these tmp matrices after calculus optimization
@@ -44,10 +49,15 @@ namespace MPCWalkgen
     tmp.block(2*N + M, N, M, N) = feetSupervisor_.getFeetPosLinearDynamic().UT;
 
     VectorX tmp2 = VectorX::Zero(2*N);
-    tmp2.segment(0, N)
-        = dynCopX.UTinv*dynCopX.Uinv*(dynCopX.S*lipModel_.getStateX() + dynCopX.K);
-    tmp2.segment(N, N)
-        = dynCopY.UTinv*dynCopY.Uinv*(dynCopY.S*lipModel_.getStateY() + dynCopY.K);
+    tmp2.segment(0, N) = dynCopX.UTinv*weight*dynCopX.Uinv*dynFeetPos.S
+                         *feetSupervisor_.getSupportFootStateX()(0)
+                         - dynCopX.UTinv*weight*dynCopX.Uinv
+                         *(dynCopX.S*lipModel_.getStateX() + dynCopX.K);
+
+    tmp2.segment(N, N) = dynCopY.UTinv*weight*dynCopY.Uinv*dynFeetPos.S
+                         *feetSupervisor_.getSupportFootStateY()(0)
+                         - dynCopY.UTinv*weight*dynCopY.Uinv
+                         *(dynCopY.S*lipModel_.getStateY() + dynCopY.K);
 
     gradient_ = tmp*tmp2;
     gradient_ += getHessian()*x0;
@@ -61,8 +71,10 @@ namespace MPCWalkgen
     int N = lipModel_.getNbSamples();
     int M = feetSupervisor_.getNbPreviewedSteps();
 
-    const LinearDynamic& dynCopX = lipModel_.getCopXLinearDynamic();
-    const LinearDynamic& dynCopY = lipModel_.getCopYLinearDynamic();
+    int nb = feetSupervisor_.getNbOfCallsBeforeNextSample() - 1;
+
+    const LinearDynamic& dynCopX = lipModel_.getCopXLinearDynamic(nb);
+    const LinearDynamic& dynCopY = lipModel_.getCopYLinearDynamic(nb);
 
     MatrixX tmp = MatrixX::Zero(2*N, 2*N + 2*M);
 
@@ -71,8 +83,11 @@ namespace MPCWalkgen
     tmp.block(N, 2*N + M, N, M) = feetSupervisor_.getFeetPosLinearDynamic().U;
 
     MatrixX tmp2 = MatrixX::Zero(2*N, 2*N);
-    tmp2.block(0, 0, N, N) = dynCopX.UTinv*dynCopX.Uinv;
-    tmp2.block(N, N, N, N) = dynCopY.UTinv*dynCopY.Uinv;
+
+    const MatrixX& weight = feetSupervisor_.getSampleWeightMatrix();
+
+    tmp2.block(0, 0, N, N) = dynCopX.UTinv*weight*dynCopX.Uinv;
+    tmp2.block(N, N, N, N) = dynCopY.UTinv*weight*dynCopY.Uinv;
     hessian_.noalias() = tmp.transpose()*tmp2*tmp;
 
     return hessian_;

@@ -26,15 +26,14 @@ namespace MPCWalkgen{
       const VectorX& getGradient(const VectorX& x0);
       const MatrixX& getHessian();
 
-      /// \brief Set the base velocity reference in the world frame
+      /// \brief Set the torso velocity reference in the world frame
       ///        It is a vector of size 2*N, with N the number of samples
-      ///        of the LIP model:
       ///        (refX, refY)
       void setVelRefInWorldFrame(const VectorX& velRefInWorldFrame);
 
     private:
       const LIPModel& lipModel_;
-      const HumanoidFeetSupervisor& feetSupervisor_; //Const ref? See Seb
+      const HumanoidFeetSupervisor& feetSupervisor_;
 
       VectorX velRefInWorldFrame_;
 

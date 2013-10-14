@@ -24,36 +24,33 @@ namespace MPCWalkgen
     ,config_()
     ,maximumNbOfConstraints_(0)
     ,maximumNbOfSteps_(0)
+    ,move_(false)
+    ,firstCallSinceLastDS_(true)
   {
-    dX_.setZero(2*lipModel_.getNbSamples() + 2*feetSupervisor_.getNbPreviewedSteps());
-    X_.setZero(2*lipModel_.getNbSamples() + 2*feetSupervisor_.getNbPreviewedSteps());
+    int sizeVec = 2*lipModel_.getNbSamples() + 2*feetSupervisor_.getNbPreviewedSteps();
+    dX_.setZero(sizeVec);
+    X_.setZero(sizeVec);
 
     computeConstantPart();
   }
 
   HumanoidWalkgen::~HumanoidWalkgen(){}
 
-  void HumanoidWalkgen::setMaximumNbOfSteps(int maximumNbOfSteps)
-  {
-    assert(maximumNbOfSteps>0);
-
-    maximumNbOfSteps_ = maximumNbOfSteps;
-
-    computeConstantPart();
-  }
-
-
   void HumanoidWalkgen::setNbSamples(int nbSamples)
   {
     assert(nbSamples>0);
-    assert(static_cast<Scalar>(nbSamples)
-           *feetSupervisor_.getSamplingPeriod()/feetSupervisor_.getStepPeriod()
-           < maximumNbOfSteps_);
 
     lipModel_.setNbSamples(nbSamples);
     feetSupervisor_.setNbSamples(nbSamples);
 
     copConstraint_.computeConstantPart();
+
+    //TODO: change
+    // Updating QP variable sizes
+    dX_.setZero(2*lipModel_.getNbSamples() +
+                2*feetSupervisor_.getNbPreviewedSteps());
+    X_.setZero(2*feetSupervisor_.getNbSamples() +
+               2*feetSupervisor_.getNbPreviewedSteps());
 
     computeConstantPart();
   }
@@ -61,26 +58,26 @@ namespace MPCWalkgen
   void HumanoidWalkgen::setSamplingPeriod(Scalar samplingPeriod)
   {
     assert(samplingPeriod>=0);
-    assert(static_cast<Scalar>(feetSupervisor_.getNbSamples())
-           *samplingPeriod/feetSupervisor_.getStepPeriod()
-           < maximumNbOfSteps_);
 
     lipModel_.setSamplingPeriod(samplingPeriod);
     feetSupervisor_.setSamplingPeriod(samplingPeriod);
 
     copConstraint_.computeConstantPart();
-
-    computeConstantPart();
   }
 
   void HumanoidWalkgen::setStepPeriod(Scalar stepPeriod)
   {
     assert(stepPeriod>0.0);
-    assert(static_cast<Scalar>(feetSupervisor_.getNbSamples())
-           *feetSupervisor_.getSamplingPeriod()/stepPeriod
-           < maximumNbOfSteps_);
+    assert(stepPeriod - feetSupervisor_.getSamplingPeriod() + EPSILON > 0);
 
     feetSupervisor_.setStepPeriod(stepPeriod);
+  }
+
+  void HumanoidWalkgen::setInitialDoubleSupportLength(
+      Scalar initialDoubleSupportLength)
+  {
+    feetSupervisor_.setInitialDoubleSupportLength(
+          initialDoubleSupportLength);
   }
 
   void HumanoidWalkgen::setLeftFootKinematicConvexPolygon(const ConvexPolygon& convexPolygon)
@@ -108,6 +105,14 @@ namespace MPCWalkgen
     assert(velRef==velRef);
     assert(velRef.size()==2*lipModel_.getNbSamples());
     velTrackingObj_.setVelRefInWorldFrame(velRef);
+  }
+
+  void HumanoidWalkgen::setAngularVelRefInWorldFrame(const VectorX& angularVelRef)
+  {
+    assert(angularVelRef==angularVelRef);
+    assert(angularVelRef.size()==lipModel_.getNbSamples());
+    //TODO: complete
+    //velTrackingObj_.setAngularVelRefInWorldFrame(angularVelRef);
   }
 
 
@@ -178,62 +183,14 @@ namespace MPCWalkgen
     lipModel_.setComHeight(state(0));
   }
 
-  const VectorX& HumanoidWalkgen::getLeftFootStateX() const
+  void HumanoidWalkgen::setLeftFootMaxHeight(Scalar leftFootMaxHeight)
   {
-    return feetSupervisor_.getLeftFootStateX();
+    feetSupervisor_.setLeftFootMaxHeight(leftFootMaxHeight);
   }
 
-  const VectorX& HumanoidWalkgen::getLeftFootStateY() const
+  void HumanoidWalkgen::setRightFootMaxHeight(Scalar rightFootMaxHeight)
   {
-    return feetSupervisor_.getLeftFootStateY();
-  }
-
-  const VectorX& HumanoidWalkgen::getLeftFootStateZ() const
-  {
-    return feetSupervisor_.getLeftFootStateZ();
-  }
-
-  const VectorX& HumanoidWalkgen::getRightFootStateX() const
-  {
-    return feetSupervisor_.getRightFootStateX();
-  }
-
-  const VectorX& HumanoidWalkgen::getRightFootStateY() const
-  {
-    return feetSupervisor_.getRightFootStateY();
-  }
-  const VectorX& HumanoidWalkgen::getRightFootStateZ() const
-  {
-    return feetSupervisor_.getRightFootStateZ();
-  }
-
-  const VectorX& HumanoidWalkgen::getComStateX() const
-  {
-    return lipModel_.getStateX();
-  }
-
-  const VectorX& HumanoidWalkgen::getComStateY() const
-  {
-    return lipModel_.getStateY();
-  }
-
-  const VectorX& HumanoidWalkgen::getComStateZ() const
-  {
-    return lipModel_.getStateZ();
-  }
-
-  void HumanoidWalkgen::setLeftFootMaxHeight(
-      Scalar leftFootMaxHeight)
-  {
-    feetSupervisor_.setLeftFootMaxHeight(
-          leftFootMaxHeight);
-  }
-
-  void HumanoidWalkgen::setRightFootMaxHeight(
-      Scalar rightFootMaxHeight)
-  {
-    feetSupervisor_.setRightFootMaxHeight(
-          rightFootMaxHeight);
+    feetSupervisor_.setRightFootMaxHeight(rightFootMaxHeight);
   }
 
   void HumanoidWalkgen::setLeftFootYawUpperBound(Scalar leftFootYawUpperBound)
@@ -288,9 +245,8 @@ namespace MPCWalkgen
     assert(weighting_.velocityTracking >=0);
     assert(weighting_.copCentering >=0);
     assert(weighting_.jerkMinimization >=0);
-    weighting_ = weighting;
 
-    computeConstantPart();
+    weighting_ = weighting;
   }
 
   void HumanoidWalkgen::setConfig(const HumanoidWalkgenImpl::Config& config)
@@ -300,10 +256,28 @@ namespace MPCWalkgen
     computeConstantPart();
   }
 
-  //TODO: Compute normalization factors
+  void HumanoidWalkgen::setMove(bool move)
+  {
+    move_ = move;
+    feetSupervisor_.setMove(move);
+    if(feetSupervisor_.isInDS())
+    {
+      firstCallSinceLastDS_ = true;
+    }
+  }
+
   bool HumanoidWalkgen::solve(Scalar feedBackPeriod)
   {
+    //Updating the supervisor timeline
+    feetSupervisor_.updateTimeline(X_, feedBackPeriod);
+
+    if(std::abs(feedBackPeriod - lipModel_.getFeedbackPeriod()) > EPSILON)
+    {
+      lipModel_.setFeedbackPeriod(feedBackPeriod);
+    }
+
     assert(feedBackPeriod>0);
+    assert(feetSupervisor_.getNbSamples() == lipModel_.getNbSamples());
 
     int N = lipModel_.getNbSamples();
     int M = feetSupervisor_.getNbPreviewedSteps();
@@ -311,144 +285,203 @@ namespace MPCWalkgen
     int nbCtrCop = config_.withCopConstraints? copConstraint_.getNbConstraints() : 0;
     int nbCtrFoot = config_.withFeetConstraints? footConstraint_.getNbConstraints() : 0;
     int nbCtr = nbCtrCop + nbCtrFoot;
-    int index = M*maximumNbOfConstraints_ + nbCtr;
+    int index = M*(maximumNbOfConstraints_ + 1) + nbCtr;
 
-    assert(feetSupervisor_.getNbSamples() == lipModel_.getNbSamples());
+    // Filling the QP variable for the very beginning of the algorithm
+    if(firstCallSinceLastDS_)
+    {
+      Scalar copInitialPosXinWF =
+          getComStateX()(0) - getComStateZ()(0)*getComStateX()(2)/GRAVITY_NORM;
+      Scalar copInitialPosYinWF =
+          getComStateY()(0) - getComStateZ()(0)*getComStateY()(2)/GRAVITY_NORM;
 
-    //Setting matrix Q and vector p
+      const MatrixX& rot(feetSupervisor_.getRotationMatrix());
+
+      X_.segment(0, N) =
+          rot.block(0,0,N,N)*VectorX::Constant(N, copInitialPosXinWF - getLeftFootStateX()(0)) +
+          rot.block(0,N,N,N)*VectorX::Constant(N, copInitialPosYinWF - getLeftFootStateY()(0));
+
+      X_.segment(N, N) =
+          rot.block(N,0,N,N)*VectorX::Constant(N, copInitialPosXinWF - getLeftFootStateX()(0)) +
+          rot.block(N,N,N,N)*VectorX::Constant(N, copInitialPosYinWF - getLeftFootStateY()(0));
+
+      firstCallSinceLastDS_ = false;
+    }
+
+
+    // Choosing the QP Matrices with proper size
+    QPMatrices& qpMatrices = qpMatrixVec_[index];
+
+    qpMatrices.Q.fill(0.0);
+    qpMatrices.p.fill(0.0);
+    qpMatrices.A.fill(0.0);
+    qpMatrices.bl.fill(-MAXIMUM_BOUND_VALUE);
+    qpMatrices.bu.fill(MAXIMUM_BOUND_VALUE);
+    qpMatrices.xl.fill(-MAXIMUM_BOUND_VALUE);
+    qpMatrices.xu.fill(MAXIMUM_BOUND_VALUE);
+
+    // Setting matrix Q and vector p
     if (weighting_.velocityTracking>0.0)
     {
-      qpMatrixVec_[index].Q +=
+      qpMatrices.Q +=
           weighting_.velocityTracking*velTrackingObj_.getHessian();
 
-      qpMatrixVec_[index].p +=
+      qpMatrices.p +=
           weighting_.velocityTracking*velTrackingObj_.getGradient(X_);
     }
 
     if (weighting_.jerkMinimization>0.0)
     {
-      qpMatrixVec_[index].Q +=
+      qpMatrices.Q +=
           weighting_.jerkMinimization*jerkMinObj_.getHessian();
 
-      qpMatrixVec_[index].p +=
+      qpMatrices.p +=
           weighting_.jerkMinimization*jerkMinObj_.getGradient(X_);
     }
 
     if (weighting_.copCentering>0.0)
     {
-      qpMatrixVec_[index].Q +=
+      qpMatrices.Q +=
           weighting_.copCentering*copCenteringObj_.getHessian();
 
-      qpMatrixVec_[index].p +=
+      qpMatrices.p +=
           weighting_.copCentering*copCenteringObj_.getGradient(X_);
     }
 
-    //Setting matrix A, vector b and vectors xl and xu
+    //Setting matrix A, vector b, vector xl and vector xu
     if (config_.withCopConstraints)
     {
-      qpMatrixVec_[index].A.block(0, 0, nbCtrCop, sizeVec)
+      qpMatrices.A.block(0, 0, nbCtrCop, sizeVec)
           += copConstraint_.getGradient(X_.rows());
 
-      qpMatrixVec_[index].bu.segment(0 ,nbCtrCop).
-          cwiseMin(-copConstraint_.getFunction(X_));
-      qpMatrixVec_[index].xl.segment(0, 2*N).
-          cwiseMax(copConstraint_.getInfBounds(X_));
-      qpMatrixVec_[index].xu.segment(0, 2*N).
-          cwiseMin(copConstraint_.getSupBounds(X_));
+      qpMatrices.bu.segment(0 ,nbCtrCop) =
+          qpMatrices.bu.segment(0 ,nbCtrCop).cwiseMin(-copConstraint_.getFunction(X_));
+      qpMatrices.xl.segment(0, 2*N) =
+          qpMatrices.xl.segment(0, 2*N).cwiseMax(copConstraint_.getInfBounds(X_));
+      qpMatrices.xu.segment(0, 2*N) =
+          qpMatrices.xu.segment(0, 2*N).cwiseMin(copConstraint_.getSupBounds(X_));
     }
 
     if (config_.withFeetConstraints)
     {
-      qpMatrixVec_[index].A.block(nbCtrCop, sizeVec, nbCtrFoot, sizeVec)
+      qpMatrices.A.block(nbCtrCop, 0, nbCtrFoot, sizeVec)
           += footConstraint_.getGradient(X_.rows());
 
-      qpMatrixVec_[index].bu.segment(nbCtrCop, nbCtrFoot).
-          cwiseMin(-footConstraint_.getFunction(X_));
-      qpMatrixVec_[index].xl.segment(2*N, 2*M).
-          cwiseMax(footConstraint_.getInfBounds(X_));
-      qpMatrixVec_[index].xu.segment(2*N, 2*M).
-          cwiseMin(footConstraint_.getSupBounds(X_));
+      qpMatrices.bu.segment(nbCtrCop, nbCtrFoot) =
+          qpMatrices.bu.segment(nbCtrCop, nbCtrFoot).cwiseMin(-footConstraint_.getFunction(X_));
+      qpMatrices.xl.segment(2*N, 2*M) =
+          qpMatrices.xl.segment(2*N, 2*M).cwiseMax(footConstraint_.getInfBounds(X_));
+      qpMatrices.xu.segment(2*N, 2*M) =
+          qpMatrices.xu.segment(2*N, 2*M).cwiseMin(footConstraint_.getSupBounds(X_));
     }
 
+    //Normalization of the matrices. The smallest element value of the QP matrices is at least one.
+    qpMatrices.normalizeMatrices();
+
     //Setting matrix At
-    qpMatrixVec_[index].At = qpMatrixVec_[index].A.transpose();
+    qpMatrices.At = qpMatrices.A.transpose();
 
-    //Normalization
+    dX_.resize(sizeVec);
 
-    bool solutionFound = qpoasesSolverVec_[index].solve(qpMatrixVec_[index], dX_, true);
+    bool solutionFound = qpoasesSolverVec_[index].solve(qpMatrices, dX_, false);
+
     X_ += dX_;
 
     //Transforming solution
-    convertCopInLFtoJerkInWF();
+    convertCopInLFtoComJerk();
 
     //Updating states
     lipModel_.updateStateX(transformedX_(0), feedBackPeriod);
     lipModel_.updateStateY(transformedX_(N), feedBackPeriod);
 
-    //TODO: Updating feet supervisor
+    //Updating feet supervisor
+    feetSupervisor_.updateFeetStates(
+          transformedX_.segment(2*feetSupervisor_.getNbSamples(),
+                                2*feetSupervisor_.getNbPreviewedSteps()),
+          feedBackPeriod);
+
+
+    //display("/home/mdegourcuff/Bureau/Test_new_MPCWalkgen/QPSol.txt");
 
     return solutionFound;
   }
 
-
   void HumanoidWalkgen::computeConstantPart()
   {
-    maximumNbOfConstraints_ = feetSupervisor_.getMaximumNbOfCopConstraints()
-        + feetSupervisor_.getMaximumNbOfKinematicConstraints();
+    // Updating qpoasesSolverVec_ and qpMatrixVec_
+    maximumNbOfSteps_ = feetSupervisor_.getNbSamples();
+    if(config_.withCopConstraints)
+    {
+      maximumNbOfConstraints_ = feetSupervisor_.getMaximumNbOfCopConstraints()
+          *feetSupervisor_.getNbSamples();
+    }
+    if(config_.withFeetConstraints)
+    {
+      maximumNbOfConstraints_ += feetSupervisor_.getMaximumNbOfKinematicConstraints()
+          *maximumNbOfSteps_;
+    }
 
-    qpoasesSolverVec_.resize(maximumNbOfSteps_*maximumNbOfConstraints_);
-    qpMatrixVec_.resize(maximumNbOfSteps_*maximumNbOfConstraints_);
+    qpoasesSolverVec_.resize((maximumNbOfSteps_ + 1)*(maximumNbOfConstraints_ + 1));
+    qpMatrixVec_.resize((maximumNbOfSteps_ + 1)*(maximumNbOfConstraints_ + 1));
 
     int nbVariables = 2*lipModel_.getNbSamples();
 
-    for(int i=0; i<maximumNbOfSteps_; ++i)
+    for(int i=0; i<maximumNbOfSteps_ + 1; ++i)
     {
-      for(int j=0; j<maximumNbOfConstraints_; ++j)
+      for(int j=0; j<maximumNbOfConstraints_ + 1; ++j)
       {
         nbVariables = 2*lipModel_.getNbSamples() + 2*i;
 
-        qpoasesSolverVec_[i*maximumNbOfConstraints_ + j] = QPOasesSolver(nbVariables, j);
-        qpMatrixVec_[i*maximumNbOfConstraints_ + j].Q.setZero(nbVariables, nbVariables);
-        qpMatrixVec_[i*maximumNbOfConstraints_ + j].p.setZero(nbVariables);
+        qpoasesSolverVec_[i*(maximumNbOfConstraints_ + 1) + j] = QPOasesSolver(nbVariables, j);
+        qpMatrixVec_[i*(maximumNbOfConstraints_ + 1) + j].Q.setZero(nbVariables, nbVariables);
+        qpMatrixVec_[i*(maximumNbOfConstraints_ + 1) + j].p.setZero(nbVariables);
 
-        qpMatrixVec_[i*maximumNbOfConstraints_ + j].A.setZero(j, nbVariables);
-        qpMatrixVec_[i*maximumNbOfConstraints_ + j].bl.setConstant(j,
-                                                                   -MAXIMUM_BOUND_VALUE);
-        qpMatrixVec_[i*maximumNbOfConstraints_ + j].bu.setConstant(j,
-                                                                   MAXIMUM_BOUND_VALUE);
+        qpMatrixVec_[i*(maximumNbOfConstraints_ + 1) + j].A.setZero(j, nbVariables);
+        qpMatrixVec_[i*(maximumNbOfConstraints_ + 1) + j].bl.setConstant(j,
+                                                                         -MAXIMUM_BOUND_VALUE);
+        qpMatrixVec_[i*(maximumNbOfConstraints_ + 1) + j].bu.setConstant(j,
+                                                                         MAXIMUM_BOUND_VALUE);
 
-        qpMatrixVec_[i*maximumNbOfConstraints_ + j].xl.setConstant(nbVariables,
-                                                                   -MAXIMUM_BOUND_VALUE);
-        qpMatrixVec_[i*maximumNbOfConstraints_ + j].xu.setConstant(nbVariables,
-                                                                   MAXIMUM_BOUND_VALUE);
+        qpMatrixVec_[i*(maximumNbOfConstraints_ + 1) + j].xl.setConstant(nbVariables,
+                                                                         -MAXIMUM_BOUND_VALUE);
+        qpMatrixVec_[i*(maximumNbOfConstraints_ + 1) + j].xu.setConstant(nbVariables,
+                                                                         MAXIMUM_BOUND_VALUE);
       }
     }
   }
 
-
-  void HumanoidWalkgen::convertCopInLFtoJerkInWF()
+  void HumanoidWalkgen::convertCopInLFtoComJerk()
   {
     int N = lipModel_.getNbSamples();
     int M = feetSupervisor_.getNbPreviewedSteps();
 
-    const LinearDynamic& dynCopX = lipModel_.getCopXLinearDynamic();
-    const LinearDynamic& dynCopY = lipModel_.getCopYLinearDynamic();
-    const MatrixX& footPosU = feetSupervisor_.getFeetPosLinearDynamic().U;
-    const MatrixX& rot = feetSupervisor_.getRotationMatrixT();
+    transformedX_ = X_;
 
-    transformedX_.segment(0, N) = rot.block(0, 0, N, N)*X_.segment(0, N)
-        + rot.block(0, N, N, N)*X_.segment(N, N);
-    transformedX_.segment(N, N) = rot.block(0, N, N, N)*X_.segment(0, N)
-        + rot.block(N, N, N, N)*X_.segment(N, N);
+    int nb = feetSupervisor_.getNbOfCallsBeforeNextSample() - 1;
+
+    const MatrixX& footPosU = feetSupervisor_.getFeetPosLinearDynamic().U;
+    const MatrixX& footPosS = feetSupervisor_.getFeetPosLinearDynamic().S;
+    const LinearDynamic& dynCopX = lipModel_.getCopXLinearDynamic(nb);
+    const LinearDynamic& dynCopY = lipModel_.getCopYLinearDynamic(nb);
+    const MatrixX& rotT = feetSupervisor_.getRotationMatrixT();
+
+    transformedX_.segment(0, N) = rotT.block(0, 0, N, N)*X_.segment(0, N)
+        + rotT.block(0, N, N, N)*X_.segment(N, N);
+    transformedX_.segment(N, N) = rotT.block(0, N, N, N)*X_.segment(0, N)
+        + rotT.block(N, N, N, N)*X_.segment(N, N);
 
     transformedX_.segment(0, N) += footPosU*X_.segment(2*N, M);
     transformedX_.segment(N, N) += footPosU*X_.segment(2*N + M, M);
 
-    transformedX_.segment(0, N) -= dynCopX.S*lipModel_.getStateX() + dynCopX.K;
-    transformedX_.segment(N, N) -= dynCopY.S*lipModel_.getStateY() + dynCopY.K;
+    transformedX_.segment(0, N) += footPosS*feetSupervisor_.getSupportFootStateX()(0);
+    transformedX_.segment(N, N) += footPosS*feetSupervisor_.getSupportFootStateY()(0);
 
-    transformedX_.segment(0, N) *= dynCopX.Uinv;
-    transformedX_.segment(N, N) *= dynCopY.Uinv;
+    transformedX_.segment(0, N) -= dynCopX.S*getComStateX() + dynCopX.K;
+    transformedX_.segment(N, N) -= dynCopY.S*getComStateY() + dynCopY.K;
+
+    VectorX tmp = transformedX_;
+
+    transformedX_.segment(0, N) = dynCopX.Uinv*tmp.segment(0, N);
+    transformedX_.segment(N, N) = dynCopY.Uinv*tmp.segment(N, N);
   }
-
 }

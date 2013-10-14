@@ -32,11 +32,11 @@ namespace MPCWalkgen
       HumanoidWalkgen();
       ~HumanoidWalkgen();
 
-      void setMaximumNbOfSteps(int maximumNbOfSteps);
-
       void setNbSamples(int nbSamples);
       void setSamplingPeriod(Scalar samplingPeriod);
       void setStepPeriod(Scalar stepPeriod);
+
+      void setInitialDoubleSupportLength(Scalar initialDoubleSupportLength);
 
       void setLeftFootKinematicConvexPolygon(const ConvexPolygon& convexPolygon);
       void setRightFootKinematicConvexPolygon(const ConvexPolygon& convexPolygon);
@@ -44,6 +44,7 @@ namespace MPCWalkgen
       void setRightFootCopConvexPolygon(const ConvexPolygon& convexPolygon);
 
       void setVelRefInWorldFrame(const VectorX& velRef);
+      void setAngularVelRefInWorldFrame(const VectorX& angularVelRef);
 
       void setLeftFootStateX(const VectorX& state);
       void setLeftFootStateY(const VectorX& state);
@@ -54,16 +55,6 @@ namespace MPCWalkgen
       void setComStateX(const VectorX& state);
       void setComStateY(const VectorX& state);
       void setComStateZ(const VectorX& state);
-
-      const VectorX& getLeftFootStateX() const;
-      const VectorX& getLeftFootStateY() const;
-      const VectorX& getLeftFootStateZ() const;
-      const VectorX& getRightFootStateX() const;
-      const VectorX& getRightFootStateY() const;
-      const VectorX& getRightFootStateZ() const;
-      const VectorX& getComStateX() const;
-      const VectorX& getComStateY() const;
-      const VectorX& getComStateZ() const;
 
       void setLeftFootMaxHeight(Scalar leftFootMaxHeight);
       void setRightFootMaxHeight(Scalar rightFootMaxHeight);
@@ -84,18 +75,50 @@ namespace MPCWalkgen
       void setWeightings(const HumanoidWalkgenImpl::Weighting& weighting);
       void setConfig(const HumanoidWalkgenImpl::Config& config);
 
+      void setMove(bool move);
+
+      inline const VectorX& getLeftFootStateX() const
+      {return feetSupervisor_.getLeftFootStateX();}
+
+      inline const VectorX& getLeftFootStateY() const
+      {return feetSupervisor_.getLeftFootStateY();}
+
+      inline const VectorX& getLeftFootStateZ() const
+      {return feetSupervisor_.getLeftFootStateZ();}
+
+      inline const VectorX& getRightFootStateX() const
+      {return feetSupervisor_.getRightFootStateX();}
+
+      inline const VectorX& getRightFootStateY() const
+      {return feetSupervisor_.getRightFootStateY();}
+
+      inline const VectorX& getRightFootStateZ() const
+      {return feetSupervisor_.getRightFootStateZ();}
+
+      inline const VectorX& getComStateX() const
+      {return lipModel_.getStateX();}
+
+      inline const VectorX& getComStateY() const
+      {return lipModel_.getStateY();}
+
+      inline const VectorX& getComStateZ() const
+      {return lipModel_.getStateZ();}
+
       bool solve(Scalar feedBackPeriod);
 
     private:
-      /// \brief Convert CoP state in local frame into CoM jerk values in world frame
-      void convertCopInLFtoJerkInWF();
+      /// \brief Convert CoP state in local frame into CoM jerk values
+      void convertCopInLFtoComJerk();
+
       /// \brief Compute the constant parts of the QP matrices
-      //Useless
       void computeConstantPart();
 
+        void display(const std::string &filename) const;
+
     private:
-      LIPModel lipModel_;
+
       HumanoidFeetSupervisor feetSupervisor_;
+      LIPModel lipModel_;
 
       HumanoidLipComVelocityTrackingObjective velTrackingObj_;
       HumanoidLipComJerkMinimizationObjective jerkMinObj_;
@@ -104,7 +127,7 @@ namespace MPCWalkgen
       HumanoidCopConstraint copConstraint_;
       HumanoidFootConstraint footConstraint_;
 
-      /// \brief Vector containing all possible sizes of QPsolver
+      /// \brief A vector containing all possible sizes of QPsolver
       std::vector<QPOasesSolver> qpoasesSolverVec_;
 
       VectorX dX_;
@@ -129,7 +152,11 @@ namespace MPCWalkgen
 
       int maximumNbOfConstraints_;
       int maximumNbOfSteps_;
+
+      bool move_;
+      bool firstCallSinceLastDS_;
   };
+
 }
 
 

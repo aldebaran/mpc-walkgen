@@ -117,46 +117,40 @@ namespace MPCWalkgen
 
     for(int i = 0; i<M; ++i)
     {
-      nbGeneralConstraintsAtCurrentStep =
-          feetSupervisor_.getKinematicConvexPolygon(i).getNbGeneralConstraints();
+      const ConvexPolygon& cp = feetSupervisor_.getKinematicConvexPolygon(i);
+
+      nbGeneralConstraintsAtCurrentStep = cp.getNbGeneralConstraints();
 
       for(int j = 0; j<nbGeneralConstraintsAtCurrentStep; ++j)
       {
         // Filling matrix A and vector b to create a general constraint of the form
         // AX + b <=0
         A_(nbGeneralConstraintsSinceFirstStep + j, 2*N + i) =
-            feetSupervisor_.getKinematicConvexPolygon(i)
-            .getGeneralConstraintsMatrixCoefsForX()(j);
+            cp.getGeneralConstraintsMatrixCoefsForX()(j);
 
         A_(nbGeneralConstraintsSinceFirstStep + j, 2*N + M + i) =
-            feetSupervisor_.getKinematicConvexPolygon(i)
-            .getGeneralConstraintsMatrixCoefsForY()(j);
+            cp.getGeneralConstraintsMatrixCoefsForY()(j);
 
         b_(nbGeneralConstraintsSinceFirstStep + j) =
-            feetSupervisor_.getKinematicConvexPolygon(i)
-            .getGeneralConstraintsConstantPart()(j);
+            cp.getGeneralConstraintsConstantPart()(j);
 
         // This if-else statement adds the required terms to matrices A and b so that
         // constraints are expressed in world frame
         if(i==0)
         {
           b_(nbGeneralConstraintsSinceFirstStep + j) -=
-              feetSupervisor_.getKinematicConvexPolygon(i)
-              .getGeneralConstraintsMatrixCoefsForX()(j)
+              cp.getGeneralConstraintsMatrixCoefsForX()(j)
               *feetSupervisor_.getSupportFootStateX()(0)
-              + feetSupervisor_.getKinematicConvexPolygon(i)
-              .getGeneralConstraintsMatrixCoefsForY()(j)
+              + cp.getGeneralConstraintsMatrixCoefsForY()(j)
               *feetSupervisor_.getSupportFootStateY()(0);
         }
         else
         {
           A_(nbGeneralConstraintsSinceFirstStep + j, 2*N + i - 1) -=
-              feetSupervisor_.getKinematicConvexPolygon(i)
-              .getGeneralConstraintsMatrixCoefsForX()(j);
+              cp.getGeneralConstraintsMatrixCoefsForX()(j);
 
           A_(nbGeneralConstraintsSinceFirstStep + j, 2*N + i - 1 + M) -=
-              feetSupervisor_.getKinematicConvexPolygon(i)
-              .getGeneralConstraintsMatrixCoefsForY()(j);
+              cp.getGeneralConstraintsMatrixCoefsForY()(j);
         }
       }
 
@@ -175,10 +169,12 @@ namespace MPCWalkgen
 
     for(int i = 0; i<M; ++i)
     {
-      supBound_(i) = feetSupervisor_.getKinematicConvexPolygon(i).getXSupBound();
-      supBound_(i + M) = feetSupervisor_.getKinematicConvexPolygon(i).getYSupBound();
-      infBound_(i) = feetSupervisor_.getKinematicConvexPolygon(i).getXInfBound();
-      infBound_(i + M) = feetSupervisor_.getKinematicConvexPolygon(i).getYInfBound();
+      const ConvexPolygon& cp = feetSupervisor_.getKinematicConvexPolygon(i);
+
+      supBound_(i) = cp.getXSupBound();
+      supBound_(i + M) = cp.getYSupBound();
+      infBound_(i) = cp.getXInfBound();
+      infBound_(i + M) = cp.getYInfBound();
 
       // This if-else statement adds the required terms to vectors supBound_ and infBound_
       // so that constraints are expressed in world frame
@@ -202,6 +198,6 @@ namespace MPCWalkgen
     // the bound constraints need to be translated of x0 too.
     supBound_ -= x0;
     infBound_ -= x0;
-}
+  }
 
 }

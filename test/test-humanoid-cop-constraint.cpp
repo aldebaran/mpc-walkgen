@@ -44,6 +44,7 @@ class HumanoidCopConstraintTest: public ::testing::Test
       feetSupervisor.updateTimeline(variable, feedbackPeriod);
 
       LIPModel lip(nbSamples, samplingPeriod, autoCompute);
+      lip.setFeedbackPeriod(feedbackPeriod);
 
       HumanoidCopConstraint copCtr(lip, feetSupervisor);
 

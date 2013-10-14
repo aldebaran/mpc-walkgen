@@ -30,30 +30,46 @@ namespace MPCWalkgen
       const VectorX& x0)
   {
     assert(velRefInWorldFrame_.size()==2*lipModel_.getNbSamples());
+    assert(x0.rows() ==
+           2*feetSupervisor_.getNbSamples() + 2*feetSupervisor_.getNbPreviewedSteps());
 
     int N = lipModel_.getNbSamples();
     int M = feetSupervisor_.getNbPreviewedSteps();
 
-    const LinearDynamic& dynCopX = lipModel_.getCopXLinearDynamic();
-    const LinearDynamic& dynCopY = lipModel_.getCopYLinearDynamic();
-    const LinearDynamic& dynComVel = lipModel_.getComVelLinearDynamic();
+    int nb = feetSupervisor_.getNbOfCallsBeforeNextSample() - 1;
 
+    const LinearDynamic& dynCopX = lipModel_.getCopXLinearDynamic(nb);
+    const LinearDynamic& dynCopY = lipModel_.getCopYLinearDynamic(nb);
+    const LinearDynamic& dynComVel = lipModel_.getComVelLinearDynamic(nb);
+    const LinearDynamic& dynFeetPos = feetSupervisor_.getFeetPosLinearDynamic();
+
+    const MatrixX& weight = feetSupervisor_.getSampleWeightMatrix();
+
+    MatrixX tmp = MatrixX::Zero(2*N, 1); //I need a matrix here
     VectorX tmp2 = VectorX::Zero(2*N);
 
-    tmp2.segment(0, N) = dynCopX.UTinv*dynComVel.UT*
-        (dynComVel.S*lipModel_.getStateX()
-         - dynComVel.U*dynCopX.Uinv*(dynCopX.S*lipModel_.getStateX() + dynCopX.K)
-         - velRefInWorldFrame_.segment(0, N));
-    tmp2.segment(N, N) = dynCopY.UTinv*dynComVel.UT*
-        (dynComVel.S*lipModel_.getStateY()
-         - dynComVel.U*dynCopY.Uinv*(dynCopY.S*lipModel_.getStateY() + dynCopY.K)
-         - velRefInWorldFrame_.segment(N, N));
+    tmp2.segment(0, N) =
+        dynComVel.S*lipModel_.getStateX()
+        - dynComVel.U*dynCopX.Uinv*(dynCopX.S*lipModel_.getStateX() + dynCopX.K)
+        + dynComVel.U*dynCopX.Uinv*dynFeetPos.S*feetSupervisor_.getSupportFootStateX()(0)
+        - velRefInWorldFrame_.segment(0, N);
+    tmp.block(0, 0, N, 1) = weight*tmp2.block(0, 0, N, 1);
 
-    MatrixX tmp = MatrixX::Zero(2*N + 2*M, 2*N);
+    tmp2.segment(N, N) =
+        dynComVel.S*lipModel_.getStateY()
+        - dynComVel.U*dynCopY.Uinv*(dynCopY.S*lipModel_.getStateY() + dynCopY.K)
+        + dynComVel.U*dynCopY.Uinv*dynFeetPos.S*feetSupervisor_.getSupportFootStateY()(0)
+        - velRefInWorldFrame_.segment(N, N);
+    tmp.block(N, 0, N, 1) = weight*tmp2.block(N, 0, N, 1);
+
+    tmp2.segment(0, N) = dynCopX.UTinv*dynComVel.UT*tmp.block(0, 0, N, 1);
+    tmp2.segment(N, N) = dynCopY.UTinv*dynComVel.UT*tmp.block(N, 0, N, 1);
+
+    tmp.setZero(2*N + 2*M, 2*N);
 
     tmp.block(0, 0, 2*N, 2*N) = feetSupervisor_.getRotationMatrix();
-    tmp.block(2*N, 0, M, N) = feetSupervisor_.getFeetPosLinearDynamic().UT;
-    tmp.block(2*N + M, N, M, N) = feetSupervisor_.getFeetPosLinearDynamic().UT;
+    tmp.block(2*N, 0, M, N) = dynFeetPos.UT;
+    tmp.block(2*N + M, N, M, N) = dynFeetPos.UT;
 
     gradient_ = tmp*tmp2;
     gradient_ += getHessian()*x0;
@@ -68,20 +84,25 @@ namespace MPCWalkgen
     int N = lipModel_.getNbSamples();
     int M = feetSupervisor_.getNbPreviewedSteps();
 
-    const LinearDynamic& dynCopX = lipModel_.getCopXLinearDynamic();
-    const LinearDynamic& dynCopY = lipModel_.getCopYLinearDynamic();
-    const LinearDynamic& dynComVel = lipModel_.getComVelLinearDynamic();
+    int nb = feetSupervisor_.getNbOfCallsBeforeNextSample() - 1;
+
+    const LinearDynamic& dynCopX = lipModel_.getCopXLinearDynamic(nb);
+    const LinearDynamic& dynCopY = lipModel_.getCopYLinearDynamic(nb);
+    const LinearDynamic& dynComVel = lipModel_.getComVelLinearDynamic(nb);
+    const LinearDynamic& dynFeetPos = feetSupervisor_.getFeetPosLinearDynamic();
 
     MatrixX tmp = MatrixX::Zero(2*N, 2*N + 2*M);
 
     tmp.block(0, 0, 2*N, 2*N) = feetSupervisor_.getRotationMatrixT();
-    tmp.block(0, 2*N, N, M) = feetSupervisor_.getFeetPosLinearDynamic().U;
-    tmp.block(N, 2*N + M, N, M) = feetSupervisor_.getFeetPosLinearDynamic().U;
+    tmp.block(0, 2*N, N, M) = dynFeetPos.U;
+    tmp.block(N, 2*N + M, N, M) = dynFeetPos.U;
 
     MatrixX tmp2 = MatrixX::Zero(2*N, 2*N);
 
-    tmp2.block(0, 0, N, N) = dynCopX.UTinv*dynComVel.UT*dynComVel.U*dynCopX.Uinv;
-    tmp2.block(N, N, N, N) = dynCopY.UTinv*dynComVel.UT*dynComVel.U*dynCopY.Uinv;
+    const MatrixX& weight = feetSupervisor_.getSampleWeightMatrix();
+
+    tmp2.block(0, 0, N, N) = dynCopX.UTinv*dynComVel.UT*weight*dynComVel.U*dynCopX.Uinv;
+    tmp2.block(N, N, N, N) = dynCopY.UTinv*dynComVel.UT*weight*dynComVel.U*dynCopY.Uinv;
 
     hessian_ = tmp.transpose()*tmp2*tmp;
 

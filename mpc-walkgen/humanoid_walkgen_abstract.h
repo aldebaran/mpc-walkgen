@@ -54,6 +54,9 @@ namespace MPCWalkgen
       ///  the QP sampling period
       void setStepPeriod(Scalar stepPeriod);
 
+      /// \brief Set the duration of the initial double support
+      void setInitialDoubleSupportLength(Scalar initialDoubleSupportLength);
+
       ///  \brief Set the convex polygon of the positions that left and right foot can reach
       ///   according to their kinematic constraints (in local frame)
       void setLeftFootKinematicConvexPolygon(
@@ -67,8 +70,12 @@ namespace MPCWalkgen
       void setRightFootCopConvexPolygon(
           const std::vector<Vector2>& convexPolygon);
 
+      /// \brief Enable robot walk
+      void enableMove(bool move);
       /// \brief Set the velocity reference in world frame
       void setVelRefInWorldFrame(const VectorX& velRef);
+      /// \brief Set the angular velocity reference around Z axis in world frame
+      void setAngularVelRefInWorldFrame(const VectorX& angularVelRef);
 
 
       /// \brief Getters and setters for both feet and CoM position, velocity
@@ -97,7 +104,6 @@ namespace MPCWalkgen
       void setLeftFootMaxHeight(Scalar leftFootMaxHeight);
       void setRightFootMaxHeight(Scalar rightFootMaxHeight);
 
-
       /// \brief Set upper and lower bounds for left and right foot yaw angles
       void setLeftFootYawUpperBound(Scalar leftFootYawUpperBound);
       void setLeftFootYawLowerBound(Scalar leftFootYawLowerBound);
@@ -109,8 +115,6 @@ namespace MPCWalkgen
       /// \brief Set upper bound for left and right foot angular acceleration around yaw axis
       void setLeftFootYawAccelerationUpperBound(Scalar leftFootYawAccelerationUpperBound);
       void setRightFootYawAccelerationUpperBound(Scalar rightFootYawAccelerationUpperBound);
-
-
 
       //TODO: doc
       void setWeightings(const Weighting& weighting);

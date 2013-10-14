@@ -111,25 +111,22 @@ namespace MPCWalkgen
 
     for(int i = 0; i<N; ++i)
     {
-      nbGeneralConstraintsAtCurrentSample =
-          feetSupervisor_.getCopConvexPolygon(i)
-          .getNbGeneralConstraints();
+      const ConvexPolygon& cp = feetSupervisor_.getCopConvexPolygon(i);
+
+      nbGeneralConstraintsAtCurrentSample = cp.getNbGeneralConstraints();
 
       for(int j = 0; j<nbGeneralConstraintsAtCurrentSample; ++j)
       {
-       // Filling matrix A and vector b to create a general constraint of the form
-       // AX + b <=0
+        // Filling matrix A and vector b to create a general constraint of the form
+        // AX + b <=0
         A_(nbGeneralConstraintsSinceFirstSample + j, i) =
-            feetSupervisor_.getCopConvexPolygon(i)
-            .getGeneralConstraintsMatrixCoefsForX()(j);
+            cp.getGeneralConstraintsMatrixCoefsForX()(j);
 
         A_(nbGeneralConstraintsSinceFirstSample + j, i + N) =
-            feetSupervisor_.getCopConvexPolygon(i)
-            .getGeneralConstraintsMatrixCoefsForY()(j);
+            cp.getGeneralConstraintsMatrixCoefsForY()(j);
 
         b_(nbGeneralConstraintsSinceFirstSample + j) =
-            feetSupervisor_.getCopConvexPolygon(i)
-            .getGeneralConstraintsConstantPart()(j);
+            cp.getGeneralConstraintsConstantPart()(j);
       }
 
       nbGeneralConstraintsSinceFirstSample += nbGeneralConstraintsAtCurrentSample;
@@ -144,14 +141,12 @@ namespace MPCWalkgen
 
     for(int i = 0; i<N; ++i)
     {
-      supBound_(i) =
-          feetSupervisor_.getCopConvexPolygon(i).getXSupBound();
-      supBound_(i + N) =
-          feetSupervisor_.getCopConvexPolygon(i).getYSupBound();
-      infBound_(i) =
-          feetSupervisor_.getCopConvexPolygon(i).getXInfBound();
-      infBound_(i + N) =
-          feetSupervisor_.getCopConvexPolygon(i).getYInfBound();
+      const ConvexPolygon& cp = feetSupervisor_.getCopConvexPolygon(i);
+
+      supBound_(i) = cp.getXSupBound();
+      supBound_(i + N) = cp.getYSupBound();
+      infBound_(i) = cp.getXInfBound();
+      infBound_(i + N) = cp.getYInfBound();
     }
 
     // As we optimize a variation dX_ of the QP variable X_ (such that X_ = x0 + dX_),

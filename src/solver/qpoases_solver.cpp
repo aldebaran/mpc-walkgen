@@ -58,8 +58,8 @@ bool QPOasesSolver::solve(const QPMatrices& m, VectorX& sol,
   else
   {
     ret = qp_.init(m.Q.data(), m.p.data(), m.At.data(),
-                                       m.xl.data(), m.xu.data(), m.bl.data(), m.bu.data(),
-                                       ittMax, 0);
+                   m.xl.data(), m.xu.data(), m.bl.data(), m.bu.data(),
+                   ittMax, 0);
     qpIsInitialized_ = true;
   }
   qp_.getPrimalSolution(sol.data());
