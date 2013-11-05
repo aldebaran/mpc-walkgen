@@ -41,10 +41,12 @@ const VectorX& CopConstraint::getFunction(const VectorX& x0)
     const LinearDynamic& dynCopXBase = baseModel_.getCopXLinearDynamic();
     const LinearDynamic& dynCopYBase = baseModel_.getCopYLinearDynamic();
 
-    tmp_.segment(0, N).noalias() = dynCopXCom.S * lipModel_.getStateX();
-    tmp_.segment(0, N).noalias() += (dynCopXBase.S-dynBasePos.S) * baseModel_.getStateX();
-    tmp_.segment(N, N).noalias() = dynCopYCom.S * lipModel_.getStateY() ;
-    tmp_.segment(N, N).noalias() += (dynCopYBase.S-dynBasePos.S) * baseModel_.getStateY();
+    tmp_.segment(0, N).noalias() = dynCopXCom.S * lipModel_.getStateX() + dynCopXCom.K;
+    tmp_.segment(0, N).noalias() +=
+        (dynCopXBase.S-dynBasePos.S) * baseModel_.getStateX() + dynCopXBase.K;
+    tmp_.segment(N, N).noalias() = dynCopYCom.S * lipModel_.getStateY() + dynCopYCom.K;
+    tmp_.segment(N, N).noalias() +=
+        (dynCopYBase.S-dynBasePos.S) * baseModel_.getStateY() + dynCopYBase.K;
 
     function_.noalias() = -b_;
     function_.noalias() -= getGradient()*x0;
@@ -55,9 +57,9 @@ const VectorX& CopConstraint::getFunction(const VectorX& x0)
     const LinearDynamic& dynCopX = lipModel_.getCopXLinearDynamic();
     const LinearDynamic& dynCopY = lipModel_.getCopYLinearDynamic();
 
-    tmp_.segment(0, N).noalias() = dynCopX.S * lipModel_.getStateX();
+    tmp_.segment(0, N).noalias() = dynCopX.S * lipModel_.getStateX() + dynCopX.K;
     tmp_.segment(0, N).noalias() -= dynBasePos.S * baseModel_.getStateX();
-    tmp_.segment(N, N).noalias() = dynCopY.S * lipModel_.getStateY() ;
+    tmp_.segment(N, N).noalias() = dynCopY.S * lipModel_.getStateY() + dynCopY.K;
     tmp_.segment(N, N).noalias() -= dynBasePos.S * baseModel_.getStateY();
 
     function_.noalias() = -b_;

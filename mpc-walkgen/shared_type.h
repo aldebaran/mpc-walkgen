@@ -24,7 +24,7 @@ namespace MPCWalkgen
   typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> VectorX;
   typedef Eigen::Matrix<Scalar, 3, 1> Vector3;
   typedef Eigen::Matrix<Scalar, 2, 1> Vector2;
-
+  typedef Eigen::Matrix<Scalar, 4, 1> Vector4;
 
   //Weighting and config will be moved inside zebulon_walkgen_abstract (as a Humanoid version
   //already exist in humanoid_walkgen_abstract)

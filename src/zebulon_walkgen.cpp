@@ -240,8 +240,7 @@ void ZebulonWalkgen::setBaseJerkLimit(Scalar limit)
 void ZebulonWalkgen::setBaseStateX(const VectorX& state)
 {
   assert(state==state);
-  assert(state.size()==4);
-  assert(state(3)==1.0);
+  assert(state.size()==3);
 
   baseModel_.setStateX(state);
 }
@@ -249,8 +248,7 @@ void ZebulonWalkgen::setBaseStateX(const VectorX& state)
 void ZebulonWalkgen::setBaseStateY(const VectorX& state)
 {
   assert(state==state);
-  assert(state.size()==4);
-  assert(state(3)==1.0);
+  assert(state.size()==3);
 
   baseModel_.setStateY(state);
 }
@@ -258,8 +256,7 @@ void ZebulonWalkgen::setBaseStateY(const VectorX& state)
 void ZebulonWalkgen::setBaseStateRoll(const VectorX& state)
 {
   assert(state==state);
-  assert(state.size()==4);
-  assert(state(3)==1.0);
+  assert(state.size()==3);
 
   baseModel_.setStateRoll(state);
 }
@@ -267,8 +264,7 @@ void ZebulonWalkgen::setBaseStateRoll(const VectorX& state)
 void ZebulonWalkgen::setBaseStatePitch(const VectorX& state)
 {
   assert(state==state);
-  assert(state.size()==4);
-  assert(state(3)==1.0);
+  assert(state.size()==3);
 
   baseModel_.setStatePitch(state);
 }
@@ -276,8 +272,7 @@ void ZebulonWalkgen::setBaseStatePitch(const VectorX& state)
 void ZebulonWalkgen::setComStateX(const VectorX& state)
 {
   assert(state==state);
-  assert(state.size()==4);
-  assert(state(3)==1.0);
+  assert(state.size()==3);
 
   lipModel_.setStateX(state);
 }
@@ -285,8 +280,7 @@ void ZebulonWalkgen::setComStateX(const VectorX& state)
 void ZebulonWalkgen::setComStateY(const VectorX& state)
 {
   assert(state==state);
-  assert(state.size()==4);
-  assert(state(3)==1.0);
+  assert(state.size()==3);
 
   lipModel_.setStateY(state);
 }
@@ -401,7 +395,6 @@ bool ZebulonWalkgen::solve(Scalar feedBackPeriod)
   {
     qpMatrix_.bl.segment(M1+M2, M3) = comConstraint_.getFunction(X_);
   }
-
 
   qpMatrix_.p  *= invObjNormFactor_;
   qpMatrix_.bu *= invCtrNormFactor_;

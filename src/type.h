@@ -3,7 +3,7 @@
 ///\file type.h
 ///\brief Some structures and typedefs
 ///\author Lafaye Jory
-///\author Martin de Gourcuff
+///\author de Gourcuff Martin
 ///\date 19/06/13
 ///
 ////////////////////////////////////////////////////////////////////////////////
@@ -24,12 +24,15 @@ namespace MPCWalkgen
   static const Scalar EPSILON = 0.0001;
   static const Scalar GRAVITY_NORM = 9.81;
   static const Vector3 GRAVITY_VECTOR = Vector3(0, 0, 9.81);
+  static const Scalar MAXIMUM_BOUND_VALUE = 10e10;
 
-  /// \brief  Matrices relative to a linear dynamic of type : Y = U X + S x
+  /// \brief  Matrices relative to a linear dynamic of type : Y = U X + S x + K
   ///         Where X is the control variables and x the initial state
-  ///         ST and UT are S and T transpose, respectively.
-  ///         If U is square, Uinv and UTinv are its inverse and transpose
-  ///         inverse, respectively. If U is not square, these matrices are filles
+  ///         UT is U transpose.
+  ///         K is a constant which does not depend on the initial state. For now it is
+  ///         always a zero vector, except for dynamics related to the CoP.
+  ///         If U is square, Uinv and UTinv are its inverse and transpose inverse.
+  ///         inverse, respectively. If U is not square, these matrices are filled
   ///         with NaN values.
   ///         -nbSamples stands for Y's number of rows
   ///         -stateVectorSize stands for x's number of rows
@@ -47,12 +50,21 @@ namespace MPCWalkgen
       MatrixX Uinv;
       MatrixX UTinv;
       MatrixX S;
-      MatrixX ST;
+      VectorX K;
   };
 
 
-  struct QPMatrices
+  class QPMatrices
   {
+    public:
+      /// \brief Normalize all QP matrices except xu and xl using two normalization
+      ///        factors computed from Q and A
+      void normalizeMatrices();
+      /// \brief If the smallest element m of mat is smaller than 1,
+      ///        this function returns 1/m. Otherwise it returns 1
+      static Scalar getNormalizationFactor(const MatrixX& mat);
+
+    public:
       MatrixX Q;
       VectorX p;
 
@@ -79,7 +91,7 @@ namespace MPCWalkgen
       {return p_;}
 
       /// \brief Get the number of vertices of the convex polygon
-      inline const unsigned int getNbVertices() const
+      inline const int getNbVertices() const
       {return p_.size();}
 
       inline Scalar getXSupBound() const
@@ -98,12 +110,13 @@ namespace MPCWalkgen
       inline const VectorX& getGeneralConstraintsConstantPart() const
       {return generalConstraintsConstantPart_;}
 
-      inline unsigned int getNbGeneralConstraints() const
+      inline int getNbGeneralConstraints() const
       {return generalConstraintsConstantPart_.rows();}
 
       //TODO: think about changing type and tools into something else. E.g. angleBetweenVecs
       //should be in tools, but tools depends of type... Also these static attributes are an
       //ugly solution but comfortable for now.
+
 
       /// \brief Return the set of vertices of the convex polygon of all vectors from Vec
       ///        The algorithm is similar to the gift-wrapping or Jarvis
@@ -120,7 +133,7 @@ namespace MPCWalkgen
       /// \brief Return the next counter-clockwise element of the ConvexPolygon,
       ///        ptot[currentVerticeIndex] being the current convex polygon vertice and
       ///        lastVertice the one before.
-      static int getIndexOfSmallestAngleVertice(unsigned int currentVerticeIndex,
+      static int getIndexOfSmallestAngleVertice(int currentVerticeIndex,
                                                 const Vector2 &lastVertice,
                                                 const std::vector<Vector2> &ptot);
 
@@ -128,7 +141,7 @@ namespace MPCWalkgen
       /// \brief Compute Vectors generalConstraintsMatrixCoefsForX_,
       ///        generalConstraintsMatrixCoefsForY_, generalConstraintsConstantPart_,
       ///        and values of xInfBound_, yInfBound_, xSupBound_ and ySupBound_.
-      void xComputeBoundsAndGeneralConstraintValues();
+      void computeBoundsAndGeneralConstraintValues();
 
     private:
       /// \brief p_ is the set of vertices of the convex polygon
@@ -162,6 +175,43 @@ namespace MPCWalkgen
       VectorX generalConstraintsMatrixCoefsForY_;
       VectorX generalConstraintsConstantPart_;
 
+  };
+
+  class Interpolator
+  {
+    public:
+      Interpolator();
+      ~Interpolator();
+
+      /// \brief Computes normalised spline factors for each of its three polynoms
+      ///        (of degree three). Constraints are at both ends of the spline,
+      ///        and at the two junction between the three polynoms
+      void computePolynomialNormalisedFactors(VectorX &factor,
+                                              const Vector3 & initialstate,
+                                              const Vector3 & finalState,
+                                              Scalar T ) const;
+
+      /// \brief select the proper 4 factors corresponding to one of the three polynoms in a
+      ///        normalised spline of degree three
+      void selectFactors(Vector4 & subfactor,
+                         const VectorX & factor,
+                         Scalar t,
+                         Scalar T) const;
+    private:
+      /// \brief We have a cubic spline of three polynoms with 3 constraints
+      ///        (position, velocity and acceleration) on both edges of the spline,
+      ///        and 3 constraints (position velocity and acceleration) for each junctions
+      ///        between the three polynoms. The spline is normalised, and the junction are
+      ///        set at x=1/3 and x=2/3. We have then 2*3 + 2*3 = 12 equations
+      ///        (one per constraint), and 12 factor (4 for each polynom) to compute.
+      ///        As we have 3 constraints at x=0 for the first polynom, one can easily compute
+      ///        the three first factors. The 9 left factors can be obtained from the 9
+      ///        equations corresponding to the 9 left constraints. This set of 9 linear
+      ///        equations can be written as a matricial equation AX = b_. AinvNorm_ is
+      ///        then the inverse of matrix A.
+      MatrixX AinvNorm_;
+      mutable VectorX b_;
+      mutable VectorX abc_;
   };
 
 }

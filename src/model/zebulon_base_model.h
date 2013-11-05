@@ -68,7 +68,8 @@ namespace MPCWalkgen
     ///        (Position, Velocity, Acceleration, 1)
     inline void setStateX(const VectorX& state)
     {
-      assert(state==state);assert(state.size()==4);assert(state(3)==1.0);
+      assert(state==state);
+      assert(state.size()==3);
       stateX_ = state;
     }
 
@@ -82,7 +83,8 @@ namespace MPCWalkgen
     ///        (Position, Velocity, Acceleration, 1)
     inline void setStateY(const VectorX& state)
     {
-      assert(state==state);assert(state.size()==4);assert(state(3)==1.0);
+      assert(state==state);
+      assert(state.size()==3);
       stateY_ = state;
     }
 
@@ -96,7 +98,8 @@ namespace MPCWalkgen
     ///        (Position, Velocity, Acceleration, 1)
     inline void setStateRoll(const VectorX& state)
     {
-      assert(state==state);assert(state.size()==4);assert(state(3)==1.0);
+      assert(state==state);
+      assert(state.size()==3);
       stateRoll_ = state;
     }
 
@@ -109,7 +112,8 @@ namespace MPCWalkgen
     ///        (Position, Velocity, Acceleration, 1)
     inline void setStatePitch(const VectorX& state)
     {
-      assert(state==state);assert(state.size()==4);assert(state(3)==1.0);
+      assert(state==state);
+      assert(state.size()==3);
       statePitch_ = state;
     }
 

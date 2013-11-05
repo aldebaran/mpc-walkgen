@@ -18,31 +18,32 @@ namespace MPCWalkgen
     ,hipYawLowerBound_(0)
     ,maxHeight_(0)
     ,kinematicConvexPolygon_()
+    ,kinematicConvexPolygonInWorldFrame_()
   {}
 
   HumanoidFootModel::HumanoidFootModel(int nbSamples,
-                                       Scalar samplingPeriod,
-                                       int nbPreviewedSteps)
+                                       Scalar samplingPeriod)
     :nbSamples_(nbSamples)
     ,samplingPeriod_(samplingPeriod)
-    ,nbPreviewedSteps_(nbPreviewedSteps)
     ,kinematicLimits_()
     ,CopConvexPolygon_()
+    ,CopConvexPolygonInWorldFrame_()
+    ,interpolator_()
   {
     assert(samplingPeriod>0);
     assert(nbSamples>0);
 
-    xInit();
+    init();
   }
 
   HumanoidFootModel::HumanoidFootModel()
     :nbSamples_(1)
     ,samplingPeriod_(1.0)
-    ,nbPreviewedSteps_(0)
     ,kinematicLimits_()
     ,CopConvexPolygon_()
+    ,CopConvexPolygonInWorldFrame_()
   {
-    xInit();
+    init();
   }
 
   HumanoidFootModel::~HumanoidFootModel(){}
@@ -61,9 +62,26 @@ namespace MPCWalkgen
     samplingPeriod_ = samplingPeriod;
   }
 
+  void HumanoidFootModel::updateStateX(const Vector3& obj,
+                                       Scalar T,
+                                       Scalar t)
+  {
+    interpolateTrajectory(stateX_, obj, T, t);
+  }
 
+  void HumanoidFootModel::updateStateY(const Vector3& obj,
+                                       Scalar T,
+                                       Scalar t)
+  {
+    interpolateTrajectory(stateY_, obj, T, t);
+  }
 
-
+  void HumanoidFootModel::updateStateZ(const Vector3& obj,
+                                       Scalar T,
+                                       Scalar t)
+  {
+    interpolateTrajectory(stateZ_, obj, T, t);
+  }
 
   void HumanoidFootModel::setHipYawUpperBound(
       Scalar hipYawUpperBound)
@@ -90,17 +108,38 @@ namespace MPCWalkgen
     kinematicLimits_.kinematicConvexPolygon_ = kinematicConvexPolygon;
   }
 
-  void HumanoidFootModel::xInit()
+  void HumanoidFootModel::init()
   {
-    //For now we only need to know the foot position, so the state vector size is 1
-    stateX_.setZero(1);
-    stateY_.setZero(1);
-    stateZ_.setZero(1);
-    stateYaw_.setZero(1);
+    stateX_.setZero(3);
+    stateY_.setZero(3);
+    stateZ_.setZero(3);
+    stateYaw_.setZero(3);
 
     isInContact_.resize(nbSamples_, true);
-    isSupportFoot_.resize(nbPreviewedSteps_, true);
+
+    int nbOfPolynomCoefficient = 4;
+    factor_.setZero(3*nbOfPolynomCoefficient);
+    subFactor_.setZero(nbOfPolynomCoefficient);
   }
 
+  void HumanoidFootModel::interpolateTrajectory(VectorX& currentState,
+                                                const Vector3& objState,
+                                                Scalar T,
+                                                Scalar t)
+  {
+    interpolator_.computePolynomialNormalisedFactors(factor_,
+                                                     currentState,
+                                                     objState,
+                                                     T);
+
+    interpolator_.selectFactors(subFactor_, factor_, t, T);
+
+    // Interpolated values of the state, its derivative and second derivative
+    // are computed here.
+    // Division by T is a consequence of the polynoms normalization
+    currentState(0) = Tools::polynomValue(subFactor_, t/T);
+    currentState(1) = Tools::dPolynomValue(subFactor_, t/T)/T;
+    currentState(2) = Tools::ddPolynomValue(subFactor_, t/T)/(T*T);
+  }
 }
 

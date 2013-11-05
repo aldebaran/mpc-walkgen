@@ -165,3 +165,10 @@ qi_create_gtest(test-convex-polygon-function
 ../src/type.cpp
   TIMEOUT 1
 )
+
+qi_create_gtest(test-interpolation-function
+  SRC ./test-interpolation-function.cpp
+../src/type.cpp
+../src/tools.cpp
+  TIMEOUT 1
+)

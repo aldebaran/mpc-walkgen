@@ -30,6 +30,10 @@ const MatrixX& TiltMinimizationObjective::getGradient(const VectorX& x0)
   //Temporary parameters. Need to be changes with an implementation of the new equations
   Scalar factorTheta  = 350.0;
   Scalar factoracc    = 10.0;
+  if (M_<EPSILON){
+    factorTheta  = 88.0;
+    factoracc    = 2.5;
+  }
 
   Scalar factorRoll = baseModel_.getStateRoll()(0)*factorTheta
                + baseModel_.getStateRoll()(2)*factoracc;
@@ -82,6 +86,9 @@ void TiltMinimizationObjective::computeConstantPart()
 
   m_          = lipModel_.getMass();
   M_          = baseModel_.getMass();
+  if (M_<EPSILON){
+    M_ = m_;
+  }
   L_          = baseModel_.getWheelToBaseDistance();
   theta0_     = baseModel_.getAngleWheelToBaseCom();
   hc_         = lipModel_.getComHeight();

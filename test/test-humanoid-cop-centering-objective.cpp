@@ -23,13 +23,9 @@ TEST_F(HumanoidCopCenteringTest, HessianAndGradientValue)
 
   int nbSamples = 3;
   Scalar samplingPeriod = 1.0;
-  int nbPreviewedSteps = 0;
   bool autoCompute = true;
-  HumanoidFootModel leftFoot(nbSamples, samplingPeriod, nbPreviewedSteps),
-                    rightFoot(nbSamples, samplingPeriod, nbPreviewedSteps);
-  HumanoidFeetSupervisor feetSupervisor(leftFoot,
-                                        rightFoot,
-                                        nbSamples,
+
+  HumanoidFeetSupervisor feetSupervisor(nbSamples,
                                         samplingPeriod);
   LIPModel lip(nbSamples, samplingPeriod, autoCompute);
   HumanoidCopCenteringObjective obj(lip, feetSupervisor);
@@ -58,13 +54,9 @@ TEST_F(HumanoidCopCenteringTest, HessianAndGradientSize)
 
   int nbSamples = 3;
   Scalar samplingPeriod = 1.0;
-  int nbPreviewedSteps = 0;
   bool autoCompute = true;
-  HumanoidFootModel leftFoot(nbSamples, samplingPeriod, nbPreviewedSteps),
-                    rightFoot(nbSamples, samplingPeriod, nbPreviewedSteps);
-  HumanoidFeetSupervisor feetSupervisor(leftFoot,
-                                        rightFoot,
-                                        nbSamples,
+
+  HumanoidFeetSupervisor feetSupervisor(nbSamples,
                                         samplingPeriod);
   LIPModel lip(nbSamples, samplingPeriod, autoCompute);
   HumanoidCopCenteringObjective obj(lip, feetSupervisor);

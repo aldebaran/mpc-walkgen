@@ -44,25 +44,25 @@ const MatrixX& CopCenteringObjective::getGradient(const VectorX& x0)
     const LinearDynamic& dynCopYBase = baseModel_.getCopYLinearDynamic();
 
     tmp_.noalias() = -copRefInLocalFrame_.segment(0, N);
-    tmp_.noalias() += dynCopXCom.S*lipModel_.getStateX();
-    tmp_.noalias() += (dynCopXBase.S-dynBasePos.S)*baseModel_.getStateX();
+    tmp_.noalias() += dynCopXCom.S*lipModel_.getStateX() + dynCopXCom.K;
+    tmp_.noalias() += (dynCopXBase.S-dynBasePos.S)*baseModel_.getStateX() + dynCopXBase.K;
     gradient_.block(0, 0, N, 1).noalias() += dynCopXCom.UT*tmp_;
 
 
     tmp_.noalias() = -copRefInLocalFrame_.segment(N, N);
-    tmp_.noalias() += dynCopYCom.S*lipModel_.getStateY();
-    tmp_.noalias() += (dynCopYBase.S-dynBasePos.S)*baseModel_.getStateY();
+    tmp_.noalias() += dynCopYCom.S*lipModel_.getStateY() + dynCopYCom.K;
+    tmp_.noalias() += (dynCopYBase.S-dynBasePos.S)*baseModel_.getStateY() + dynCopYBase.K;
     gradient_.block(N, 0, N, 1).noalias() += dynCopYCom.UT*tmp_;
 
     tmp_.noalias() = -copRefInLocalFrame_.segment(0, N);
-    tmp_.noalias() += dynCopXCom.S*lipModel_.getStateX();
-    tmp_.noalias() += (dynCopXBase.S-dynBasePos.S)*baseModel_.getStateX();
+    tmp_.noalias() += dynCopXCom.S*lipModel_.getStateX() + dynCopXCom.K;
+    tmp_.noalias() += (dynCopXBase.S-dynBasePos.S)*baseModel_.getStateX() + dynCopXBase.K;
     gradient_.block(2*N, 0, N, 1).noalias() += (dynCopXBase.UT-dynBasePos.UT)*tmp_;
 
 
     tmp_.noalias() = -copRefInLocalFrame_.segment(N, N);
-    tmp_.noalias() += dynCopYCom.S*lipModel_.getStateY();
-    tmp_.noalias() += (dynCopYBase.S-dynBasePos.S)*baseModel_.getStateY();
+    tmp_.noalias() += dynCopYCom.S*lipModel_.getStateY() + dynCopYCom.K;
+    tmp_.noalias() += (dynCopYBase.S-dynBasePos.S)*baseModel_.getStateY() + dynCopYBase.K;
     gradient_.block(3*N, 0, N, 1).noalias() += (dynCopYBase.UT-dynBasePos.UT)*tmp_;
 
   }
@@ -72,24 +72,24 @@ const MatrixX& CopCenteringObjective::getGradient(const VectorX& x0)
     const LinearDynamic& dynCopY = lipModel_.getCopYLinearDynamic();
 
     tmp_.noalias() = -copRefInLocalFrame_.segment(0, N);
-    tmp_.noalias() += dynCopX.S*lipModel_.getStateX();
+    tmp_.noalias() += dynCopX.S*lipModel_.getStateX() + dynCopX.K;
     tmp_.noalias() -= dynBasePos.S*baseModel_.getStateX();
     gradient_.block(0, 0, N, 1).noalias() += dynCopX.UT*tmp_;
 
 
     tmp_.noalias() = -copRefInLocalFrame_.segment(N, N);
-    tmp_.noalias() += dynCopY.S*lipModel_.getStateY();
+    tmp_.noalias() += dynCopY.S*lipModel_.getStateY() + dynCopY.K;
     tmp_.noalias() -= dynBasePos.S*baseModel_.getStateY();
     gradient_.block(N, 0, N, 1).noalias() += dynCopY.UT*tmp_;
 
     tmp_.noalias() = copRefInLocalFrame_.segment(0, N);
-    tmp_.noalias() -= dynCopX.S*lipModel_.getStateX();
+    tmp_.noalias() -= dynCopX.S*lipModel_.getStateX() + dynCopX.K;
     tmp_.noalias() += dynBasePos.S*baseModel_.getStateX();
     gradient_.block(2*N, 0, N, 1).noalias() += dynBasePos.UT*tmp_;
 
 
     tmp_.noalias() = copRefInLocalFrame_.segment(N, N);
-    tmp_.noalias() -= dynCopY.S*lipModel_.getStateY();
+    tmp_.noalias() -= dynCopY.S*lipModel_.getStateY() + dynCopY.K;
     tmp_.noalias() += dynBasePos.S*baseModel_.getStateY();
     gradient_.block(3*N, 0, N, 1).noalias() += dynBasePos.UT*tmp_;
   }

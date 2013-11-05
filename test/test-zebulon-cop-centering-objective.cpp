@@ -36,18 +36,16 @@ TEST_F(ZebulonCopCenteringTest, functionValue)
   obj.setCopRefInLocalFrame(copRef);
 
 
-  VectorX baseState(4);
+  VectorX baseState(3);
   baseState.fill(0.0);
   baseState(0) = -1.5;
-  baseState(3) = 1.0;
   m2.setStateX(baseState);
   baseState(0) = 0.25;
   m2.setStateY(baseState);
 
-  VectorX comState(4);
+  VectorX comState(3);
   comState.fill(0.0);
   comState(0) = -1.0;
-  comState(3) = 1.0;
   m1.setStateX(comState);
   comState(0) = 0.5;
   m1.setStateY(comState);

@@ -124,7 +124,7 @@ TEST_F(ZebulonCopConstraintTest, sizeOfvalues)
 
   CopConstraint ctr(m1, m2);
 
-  size_t M = m2.getCopSupportConvexPolygon().getNbVertices();
+  int M = m2.getCopSupportConvexPolygon().getNbVertices();
 
   VectorX jerkInit(4*nbSamples);
   jerkInit.fill(0.0);

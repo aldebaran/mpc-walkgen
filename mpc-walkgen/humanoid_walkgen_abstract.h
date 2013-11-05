@@ -54,6 +54,9 @@ namespace MPCWalkgen
       ///  the QP sampling period
       void setStepPeriod(Scalar stepPeriod);
 
+      /// \brief Set the duration of the initial double support
+      void setInitialDoubleSupportLength(Scalar initialDoubleSupportLength);
+
       ///  \brief Set the convex polygon of the positions that left and right foot can reach
       ///   according to their kinematic constraints (in local frame)
       void setLeftFootKinematicConvexPolygon(
@@ -67,8 +70,12 @@ namespace MPCWalkgen
       void setRightFootCopConvexPolygon(
           const std::vector<Vector2>& convexPolygon);
 
+      /// \brief Enable robot walk
+      void enableMove(bool move);
       /// \brief Set the velocity reference in world frame
       void setVelRefInWorldFrame(const VectorX& velRef);
+      /// \brief Set the angular velocity reference around Z axis in world frame
+      void setAngularVelRefInWorldFrame(const VectorX& angularVelRef);
 
 
       /// \brief Getters and setters for both feet and CoM position, velocity
@@ -97,7 +104,6 @@ namespace MPCWalkgen
       void setLeftFootMaxHeight(Scalar leftFootMaxHeight);
       void setRightFootMaxHeight(Scalar rightFootMaxHeight);
 
-
       /// \brief Set upper and lower bounds for left and right foot yaw angles
       void setLeftFootYawUpperBound(Scalar leftFootYawUpperBound);
       void setLeftFootYawLowerBound(Scalar leftFootYawLowerBound);
@@ -110,17 +116,19 @@ namespace MPCWalkgen
       void setLeftFootYawAccelerationUpperBound(Scalar leftFootYawAccelerationUpperBound);
       void setRightFootYawAccelerationUpperBound(Scalar rightFootYawAccelerationUpperBound);
 
-
-
       //TODO: doc
       void setWeightings(const Weighting& weighting);
       void setConfig(const Config& config);
 
       //TODO: more doc
-      /// \brief solve the given QP problem
+      /// \brief solve the given QP problem of the form:
+      ///        1/2*xT.H.x + xT.g
+      ///        under the following constraints:
+      ///        bl <= A.x <= bu
+      ///        xl <= x <= xu
       /// \param feedBackPeriod: in seconds, the time between each call
-      /// of the MPC. This is also the period waited for before new samples are
-      /// sent to the actuators
+      ///        of the MPC. This is also the period waited for before
+      ///        new samples are sent to the actuators
       void solve(Scalar feedBackPeriod);
 
     private:

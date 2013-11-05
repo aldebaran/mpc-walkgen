@@ -11,18 +11,18 @@
 #ifndef MPC_WALKGEN_HUMANOID_FOOT_MODEL_H
 #define MPC_WALKGEN_HUMANOID_FOOT_MODEL_H
 
-#include "../type.h"
+#include "../tools.h"
 
 namespace MPCWalkgen{
   class HumanoidFootModel
   {
     public:
+
       /// \brief Structure to store every kinematic limit the foot is
       ///        constraint to.
       struct  KinematicLimits
       {
           KinematicLimits();
-
           Scalar hipYawUpperBound_;
           Scalar hipYawSpeedUpperBound_;
           Scalar hipYawAccelerationUpperBound_;
@@ -30,11 +30,11 @@ namespace MPCWalkgen{
           Scalar maxHeight_;
 
           ConvexPolygon kinematicConvexPolygon_;
+          ConvexPolygon kinematicConvexPolygonInWorldFrame_;
       };
 
       HumanoidFootModel(int nbSamples,
-                        Scalar samplingPeriod,
-                        int nbPreviewedSteps);
+                        Scalar samplingPeriod);
       HumanoidFootModel();
 
 
@@ -54,25 +54,21 @@ namespace MPCWalkgen{
       inline Scalar getSamplingPeriod() const
       {return samplingPeriod_;}
 
-      /// \brief Get the number of previewed steps for which this foor
-      ///        will be the support foot
-      inline int getNbPreviewedSteps() const
-      {return nbPreviewedSteps_;}
-
+      //TODO: doc weird
       /// \brief Get the simple support convex polygon in which the CoP
-      ///        must remain
+      ///        must remain in the foot frame
       inline const ConvexPolygon& getCopConvexPolygon() const
       {return CopConvexPolygon_;}
 
-      /// \brief Get the simple support convex polygon
+      /// \brief Set the simple support convex polygon in the foot frame
       inline void setCopConvexPolygon(const ConvexPolygon& CopConvexPolygon)
       {
         CopConvexPolygon_=CopConvexPolygon;
       }
 
-      /// \brief Get the state of the Foot along the X coordinate
-      ///        It is a vector of size 4:
-      ///        (Position, Velocity, Acceleration, 1)
+      /// \brief Set the state of the Foot along the X coordinate
+      ///        It is a vector of size 3:
+      ///        (Position, Velocity, Acceleration)
       inline void setStateX(const VectorX& state)
       {
         stateX_=state;
@@ -83,8 +79,8 @@ namespace MPCWalkgen{
       {return stateX_;}
 
       /// \brief Get the state of the Foot along the Y coordinate
-      ///        It is a vector of size 4:
-      ///        (Position, Velocity, Acceleration, 1)
+      ///        It is a vector of size 3:
+      ///        (Position, Velocity, Acceleration)
       inline void setStateY(const VectorX& state)
       {
         stateY_=state;
@@ -95,8 +91,8 @@ namespace MPCWalkgen{
       {return stateY_;}
 
       /// \brief Get the state of the Foot along the Z coordinate
-      ///        It is a vector of size 4:
-      ///        (Position, Velocity, Acceleration, 1)
+      ///        It is a vector of size 3:
+      ///        (Position, Velocity, Acceleration)
       inline void setStateZ(const VectorX& state)
       {
         stateZ_=state;
@@ -107,8 +103,8 @@ namespace MPCWalkgen{
       {return stateZ_;}
 
       /// \brief Get the state of the Foot around Yaw axis
-      ///        It is a vector of size 4:
-      ///        (Position, Velocity, Acceleration, 1)
+      ///        It is a vector of size 3:
+      ///        (Position, Velocity, Acceleration)
       inline void setStateYaw(const VectorX& state)
       {
         stateYaw_=state;
@@ -118,31 +114,45 @@ namespace MPCWalkgen{
       inline const VectorX& getStateYaw() const
       {return stateYaw_;}
 
+
+      /// \brief Each time an update function is called, a 3-polynom spline
+      ///        is interpolated between the current state along axis X, Y or Z
+      ///        (depending of the update function that was called) and obj. The
+      ///        interpolation interval is T, and the update value is computed at t.
+
+      /// \brief Update the state of the Foot along the X coordinate.
+      void updateStateX(const Vector3& obj,
+                        Scalar T,
+                        Scalar t);
+
+      /// \brief Update the state of the Foot along the X coordinate
+      void updateStateY(const Vector3& obj,
+                        Scalar T,
+                        Scalar t);
+
+      /// \brief Update the state of the Foot along the X coordinate
+      void updateStateZ(const Vector3& obj,
+                        Scalar T,
+                        Scalar t);
+
       /// \brief True if the foot touch the ground at the ith sample
-      inline bool isInContact(int i) const
+      inline bool isInContact(int nbSample) const
       {
-        assert(i>=0);
-        return isInContact_[i];
+        assert(nbSample>=0 && nbSample<nbSamples_);
+        return isInContact_[nbSample];
       }
 
-      /// \brief True if the foot is the support foot  at the ith sample
-      inline bool isSupportFoot(int i) const
-      {
-        assert(i>=0);
-        return isSupportFoot_[i];
-      }
 
       /// \brief Setters for the kinematic limits of the foot
-      void setHipYawUpperBound(
-          Scalar hipYawUpperBound);
-      void setHipYawSpeedUpperBound(
-          Scalar hipYawSpeedUpperBound);
+      void setHipYawUpperBound(Scalar hipYawUpperBound);
+      void setHipYawSpeedUpperBound(Scalar hipYawSpeedUpperBound);
       void setHipYawAccelerationUpperBound(
           Scalar hipYawAccelerationUpperBound);
-      void setHipYawLowerBound(
-          Scalar hipYawLowerBound);
-      void setMaxHeight(
-          Scalar maxHeight);
+      void setHipYawLowerBound(Scalar hipYawLowerBound);
+      void setMaxHeight(Scalar maxHeight);
+
+      inline Scalar getMaxHeight()
+      {return kinematicLimits_.maxHeight_;}
 
       /// \brief Set the convex polygon of the reachable positions by the foot
       void setKinematicConvexPolygon(const ConvexPolygon& kinematicConvexPolygon);
@@ -151,13 +161,18 @@ namespace MPCWalkgen{
       {return kinematicLimits_.kinematicConvexPolygon_;}
 
     private:
-      /// \brief constructors initialization instruction
-      void xInit();
+      /// \brief Constructors initialization instruction
+      void init();
+      /// \brief Interpolate trajectory between  currentState and objstate, using interpolator_.
+      ///        Then update currentState
+      void interpolateTrajectory(VectorX &currentState,
+                                 const Vector3& objState,
+                                 Scalar T,
+                                 Scalar t);
 
     private:
       int nbSamples_;
       Scalar samplingPeriod_;
-      int nbPreviewedSteps_;
 
       VectorX stateX_;
       VectorX stateY_;
@@ -167,11 +182,15 @@ namespace MPCWalkgen{
       KinematicLimits kinematicLimits_;
 
       ConvexPolygon CopConvexPolygon_;
+      ConvexPolygon CopConvexPolygonInWorldFrame_;
 
       /// \brief Vector of size nbSamples_
       std::vector<bool> isInContact_;
-      /// \brief Vector of size nbPreviewedSteps_
-      std::vector<bool> isSupportFoot_;
+
+      /// \brief parameters related to foot trajectory interpolation
+      Interpolator interpolator_;
+      VectorX factor_;
+      Vector4 subFactor_;
   };
 }
 

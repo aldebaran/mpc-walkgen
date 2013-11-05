@@ -7,23 +7,23 @@ using namespace MPCWalkgen;
 LIPModel::LIPModel(int nbSamples,
                    Scalar samplingPeriod,
                    bool autoCompute)
-:autoCompute_(autoCompute)
-,useLipModel2_(false)
-,nbSamples_(nbSamples)
-,samplingPeriod_(samplingPeriod)
-,comHeight_(1.0)
-,gravity_(GRAVITY_VECTOR)
-,mass_(1.0)
-,totalMass_(1.0)
+  :autoCompute_(autoCompute)
+  ,useLipModel2_(false)
+  ,nbSamples_(nbSamples)
+  ,samplingPeriod_(samplingPeriod)
+  ,feedbackPeriod_(samplingPeriod_)
+  ,comHeight_(1.0)
+  ,gravity_(GRAVITY_VECTOR)
+  ,mass_(1.0)
+  ,totalMass_(1.0)
 {
 
-  stateX_.setZero(4);
-  stateX_(3)=1.0;
-  stateY_.setZero(4);
-  stateY_(3)=1.0;
-  stateZ_.setZero(4);
+  stateX_.setZero(3);
+  stateY_.setZero(3);
+  stateZ_.setZero(3);
   stateZ_(0) = comHeight_;
-  stateZ_(3) = 1.0;
+  stateYaw_.setZero(3);
+
   if (autoCompute_)
   {
     computeDynamics();
@@ -31,23 +31,23 @@ LIPModel::LIPModel(int nbSamples,
 }
 
 LIPModel::LIPModel()
-:autoCompute_(true)
-,useLipModel2_(false)
-,nbSamples_(1)
-,samplingPeriod_(1.0)
-,comHeight_(1.0)
-,gravity_(GRAVITY_VECTOR)
-,mass_(1.0)
-,totalMass_(1.0)
+  :autoCompute_(true)
+  ,useLipModel2_(false)
+  ,nbSamples_(1)
+  ,samplingPeriod_(1.0)
+  ,feedbackPeriod_(samplingPeriod_)
+  ,comHeight_(1.0)
+  ,gravity_(GRAVITY_VECTOR)
+  ,mass_(1.0)
+  ,totalMass_(1.0)
 {
 
-  stateX_.setZero(4);
-  stateX_(3)=1.0;
-  stateY_.setZero(4);
-  stateY_(3)=1.0;
-  stateZ_.setZero(4);
+  stateX_.setZero(3);
+  stateY_.setZero(3);
+  stateZ_.setZero(3);
   stateZ_(0) = comHeight_;
-  stateZ_(3) = 1.0;
+  stateYaw_.setZero(3);
+
   if (autoCompute_)
   {
     computeDynamics();
@@ -58,43 +58,78 @@ LIPModel::~LIPModel(){}
 
 void LIPModel::computeDynamics()
 {
-  computeCopXDynamic();
-  computeCopYDynamic();
-  computeComPosDynamic();
-  computeComVelDynamic();
-  computeComAccDynamic();
+  nbFeedbackInOneSample_ = static_cast<int>((samplingPeriod_ + EPSILON)/feedbackPeriod_);
+
+  computeCopXDynamicVec();
+  computeCopYDynamicVec();
+  computeComPosDynamicVec();
+  computeComVelDynamicVec();
+  computeComAccDynamicVec();
   computeComJerkDynamic();
 }
 
-void LIPModel::computeCopXDynamic()
+void LIPModel::computeCopXDynamicVec()
 {
-    Tools::ConstantJerkDynamic::computeCopDynamic(samplingPeriod_, nbSamples_,
-                                                  copXDynamic_,  comHeight_,
+  copXDynamicVec_.resize(nbFeedbackInOneSample_);
+
+  for (int i=0; i<nbFeedbackInOneSample_; ++i)
+  {
+    Tools::ConstantJerkDynamic::computeCopDynamic(static_cast<int>(i + 1)*feedbackPeriod_,
+                                                  samplingPeriod_, nbSamples_,
+                                                  copXDynamicVec_[i],  comHeight_,
                                                   gravity_(0), gravity_(2),
                                                   mass_, totalMass_);
+  }
 }
 
-void LIPModel::computeCopYDynamic()
+void LIPModel::computeCopYDynamicVec()
 {
-    Tools::ConstantJerkDynamic::computeCopDynamic(samplingPeriod_, nbSamples_,
-                                                  copYDynamic_,  comHeight_,
+  copYDynamicVec_.resize(nbFeedbackInOneSample_);
+
+  for (int i=0; i<nbFeedbackInOneSample_; ++i)
+  {
+    Tools::ConstantJerkDynamic::computeCopDynamic(static_cast<int>(i + 1)*feedbackPeriod_,
+                                                  samplingPeriod_, nbSamples_,
+                                                  copYDynamicVec_[i],  comHeight_,
                                                   gravity_(1), gravity_(2),
                                                   mass_, totalMass_);
+  }
 }
 
-void LIPModel::computeComPosDynamic()
+void LIPModel::computeComPosDynamicVec()
 {
-  Tools::ConstantJerkDynamic::computePosDynamic(samplingPeriod_, nbSamples_, comPosDynamic_);
+  comPosDynamicVec_.resize(nbFeedbackInOneSample_);
+
+  for (int i=0; i<nbFeedbackInOneSample_; ++i)
+  {
+    Tools::ConstantJerkDynamic::computePosDynamic(static_cast<int>(i + 1)*feedbackPeriod_,
+                                                  samplingPeriod_, nbSamples_,
+                                                  comPosDynamicVec_[i]);
+  }
 }
 
-void LIPModel::computeComVelDynamic()
+void LIPModel::computeComVelDynamicVec()
 {
-  Tools::ConstantJerkDynamic::computeVelDynamic(samplingPeriod_, nbSamples_, comVelDynamic_);
+  comVelDynamicVec_.resize(nbFeedbackInOneSample_);
+
+  for (int i=0; i<nbFeedbackInOneSample_; ++i)
+  {
+    Tools::ConstantJerkDynamic::computeVelDynamic(static_cast<int>(i + 1)*feedbackPeriod_,
+                                                  samplingPeriod_, nbSamples_,
+                                                  comVelDynamicVec_[i]);
+  }
 }
 
-void LIPModel::computeComAccDynamic()
+void LIPModel::computeComAccDynamicVec()
 {
-  Tools::ConstantJerkDynamic::computeAccDynamic(samplingPeriod_, nbSamples_, comAccDynamic_);
+  comAccDynamicVec_.resize(nbFeedbackInOneSample_);
+
+  for (int i=0; i<nbFeedbackInOneSample_; ++i)
+  {
+    Tools::ConstantJerkDynamic::computeAccDynamic(static_cast<int>(i + 1)*feedbackPeriod_,
+                                                  samplingPeriod_, nbSamples_,
+                                                  comAccDynamicVec_[i]);
+  }
 }
 
 void LIPModel::computeComJerkDynamic()
@@ -126,12 +161,17 @@ void LIPModel::updateStateY(Scalar jerk, Scalar feedBackPeriod)
   Tools::ConstantJerkDynamic::updateState(jerk, feedBackPeriod, stateY_);
 }
 
+void LIPModel::updateStateYaw(Scalar jerk, Scalar feedBackPeriod)
+{
+  Tools::ConstantJerkDynamic::updateState(jerk, feedBackPeriod, stateYaw_);
+}
 
 void LIPModel::setSamplingPeriod(Scalar samplingPeriod)
 {
   assert(samplingPeriod>0);
 
   samplingPeriod_ = samplingPeriod;
+  feedbackPeriod_ = samplingPeriod;
 
   if (autoCompute_)
   {
@@ -148,8 +188,8 @@ void LIPModel::setComHeight(Scalar comHeight)
 
   if (autoCompute_)
   {
-    computeCopXDynamic();
-    computeCopYDynamic();
+    computeCopXDynamicVec();
+    computeCopYDynamicVec();
   }
 }
 
@@ -162,8 +202,8 @@ void LIPModel::setGravity(const Vector3& gravity)
 
   if (autoCompute_)
   {
-    computeCopXDynamic();
-    computeCopYDynamic();
+    computeCopXDynamicVec();
+    computeCopYDynamicVec();
   }
 }
 
@@ -175,8 +215,8 @@ void LIPModel::setMass(Scalar mass)
 
   if (autoCompute_)
   {
-    computeCopXDynamic();
-    computeCopYDynamic();
+    computeCopXDynamicVec();
+    computeCopYDynamicVec();
   }
 }
 
@@ -188,7 +228,18 @@ void LIPModel::setTotalMass(Scalar mass)
 
   if (autoCompute_)
   {
-    computeCopXDynamic();
-    computeCopYDynamic();
+    computeCopXDynamicVec();
+    computeCopYDynamicVec();
+  }
+}
+
+void LIPModel::setFeedbackPeriod(Scalar feedbackPeriod)
+{
+  assert(feedbackPeriod>=0);
+  feedbackPeriod_ = feedbackPeriod;
+
+  if (autoCompute_)
+  {
+    computeDynamics();
   }
 }
