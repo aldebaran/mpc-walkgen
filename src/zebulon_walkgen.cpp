@@ -213,7 +213,13 @@ void ZebulonWalkgen::setCopRefInLocalFrame(const VectorX& copRef)
   assert(copRef==copRef);
   assert(copRef.size()==lipModel_.getNbSamples()*2);
   copCenteringObj_.setCopRefInLocalFrame(copRef);
-  comCenteringObj_.setComRefInLocalFrame(copRef);
+}
+
+void ZebulonWalkgen::setComRefInLocalFrame(const VectorX& comRef)
+{
+  assert(comRef==comRef);
+  assert(comRef.size()==lipModel_.getNbSamples()*2);
+  comCenteringObj_.setComRefInLocalFrame(comRef);
 }
 
 void ZebulonWalkgen::setBaseVelLimit(Scalar limit)
