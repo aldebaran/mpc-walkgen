@@ -5,8 +5,9 @@ project(mpc-walkgen)
 enable_testing()
 find_package(qibuild)
 
-qi_add_optional_package(QPOASES)
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
+
+add_subdirectory(qpsolver)
 
 SET(mpc-walkgen_SRC
 src/model/zebulon_base_model.h
@@ -43,8 +44,8 @@ src/function/humanoid_cop_constraint.h
 src/function/humanoid_cop_constraint.cpp
 src/function/humanoid_foot_constraint.h
 src/function/humanoid_foot_constraint.cpp
-src/solver/qpoases_solver.h
-src/solver/qpoases_solver.cpp
+src/qpsolverfactory.h
+src/qpsolverfactory.cpp
 src/type.h
 src/type.cpp
 src/tools.h
@@ -69,9 +70,12 @@ mpc-walkgen/api.h
 
 qi_sanitize_compile_flags(HIDDEN_SYMBOLS)
 
-qi_create_lib(mpc-walkgen SHARED ${mpc-walkgen_SRC} ${mpc-walkgen_PUBLIC_HEADERS})
-qi_use_lib(mpc-walkgen eigen3 QI boost)
-qi_use_lib(mpc-walkgen QPOASESfloat)
+qi_create_lib(mpc-walkgen SHARED ${mpc-walkgen_PUBLIC_HEADERS} ${mpc-walkgen_SRC} )
+qi_use_lib(mpc-walkgen
+           eigen3 QI boost
+           mpc-walkgen_qpsolver
+           mpc-walkgen_qpsolver_qpoases_double
+           mpc-walkgen_qpsolver_qpoases_float)
 qi_stage_lib(mpc-walkgen)
 
 qi_install_header(${mpc-walkgen_PUBLIC_HEADERS} SUBFOLDER mpc-walkgen)
