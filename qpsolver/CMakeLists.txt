@@ -15,7 +15,8 @@ qi_sanitize_compile_flags(HIDDEN_SYMBOLS)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 qi_stage_header_only_lib(mpc-walkgen_qpsolver
-  INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}")
+  INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
+  DEPENDS EIGEN3)
 
 set(_mpc-walkgen_qpsolver_headers
   mpc-walkgen/qpsolver.h)
@@ -45,9 +46,17 @@ foreach(_scalar "double" "float")
     set_target_properties(mpc-walkgen_qpsolver_qpoases_${_scalar}
       PROPERTIES COMPILE_FLAGS "${_qpoases_flags_${_scalar}}")
   endif()
-
+  # mpc-walkgen_qpsolver_qpoases_${_scalar} is a shared lib which depends on
+  # the static lib ${_qpoases_name_${_scalar}}.
+  # However, people using mpc-walkgen_qpsolver_qpoases_${_scalar} should not
+  # not link with ${_qpoases_name_${_scalar}}.
+  # Since qi_stage_lib exports all the dependencies by default we need to
+  # explicitly list the "public" dpendencies.
+  set(_public_deps qi mpc-walkgen_qpsolver)
+  set(_private_deps ${_qpoases_name_${_scalar}})
   qi_use_lib(mpc-walkgen_qpsolver_qpoases_${_scalar}
-    qi mpc-walkgen_qpsolver eigen3 ${_qpoases_name_${_scalar}})
-
-  qi_stage_lib(mpc-walkgen_qpsolver_qpoases_${_scalar})
+    ${_public_deps}
+    ${_private_deps})
+  qi_stage_lib(mpc-walkgen_qpsolver_qpoases_${_scalar}
+    DEPENDS ${_public_deps})
 endforeach()
