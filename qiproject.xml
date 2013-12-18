@@ -1,5 +1,4 @@
 <project name="mpc-walkgen">
-  <depends buildtime="true" runtime="false" names="qpoases"/>
   <!-- Add your project dependencies here -->
-  <depends buildtime="true" runtime="true" names="libqi gtest"/>
+  <depends buildtime="true" runtime="true" names="libqi gtest qpoases"/>
 </project>

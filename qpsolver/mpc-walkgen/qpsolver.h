@@ -48,6 +48,7 @@ namespace MPCWalkgen
   {
 
   public:
+    virtual ~QPSolver() {}
     virtual bool solve(const QPMatrices<Scalar>& m,
                        typename QPMatrices<Scalar>::VectorX& sol,
                        bool useWarmStart = false) = 0;

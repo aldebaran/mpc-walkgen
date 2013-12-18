@@ -29,6 +29,9 @@ set(_qpoases_name_float "qpOASESfloat")
 set(_qpoases_flags_double "")
 set(_qpoases_flags_float "-DQPOASES_REAL_IS_FLOAT")
 
+set(_qpoases_is_shared_double FALSE)
+set(_qpoases_is_shared_float TRUE)
+
 foreach(_scalar "double" "float")
   set(_mpc-walkgen_qpsolver_qpoases_${_scalar}_headers
     mpc-walkgen/qpsolver_qpoases_${_scalar}.h)
@@ -47,13 +50,19 @@ foreach(_scalar "double" "float")
       PROPERTIES COMPILE_FLAGS "${_qpoases_flags_${_scalar}}")
   endif()
   # mpc-walkgen_qpsolver_qpoases_${_scalar} is a shared lib which depends on
-  # the static lib ${_qpoases_name_${_scalar}}.
-  # However, people using mpc-walkgen_qpsolver_qpoases_${_scalar} should not
-  # not link with ${_qpoases_name_${_scalar}}.
+  # the lib ${_qpoases_name_${_scalar}} which is sometimes shared, sometimes
+  # static.
+  # People using mpc-walkgen_qpsolver_qpoases_${_scalar} should not link
+  # with ${_qpoases_name_${_scalar}} when it is static.
   # Since qi_stage_lib exports all the dependencies by default we need to
-  # explicitly list the "public" dpendencies.
+  # explicitly list the "public" dependencies.
   set(_public_deps qi mpc-walkgen_qpsolver)
-  set(_private_deps ${_qpoases_name_${_scalar}})
+  set(_private_deps)
+  if(_qpoases_is_shared_${_scalar})
+    list(APPEND _public_deps ${_qpoases_name_${_scalar}})
+  else()
+    list(APPEND _private_deps ${_qpoases_name_${_scalar}})
+  endif()
   qi_use_lib(mpc-walkgen_qpsolver_qpoases_${_scalar}
     ${_public_deps}
     ${_private_deps})
