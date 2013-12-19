@@ -1,10 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 ///
-///\file	qpsolver_qpoases_double.h
-///\brief	Factory for qpoases solver, compiled with double
+///\file qpsolver_qpoases_double.h
+///\brief Factory for qpoases solver, compiled with double
 ///\author Barthelemy Sebastien
-///\version	1.0
-///\date	10/12/13
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -22,4 +20,4 @@ namespace MPCWalkgen
   QPSolver<float> *makeQPSolverFloat(int nbVar, int nbCtr);
 }
 
-#endif //MPC_WALKGEN_QPSOLVER_QPOASES_FLOAT_H
+#endif

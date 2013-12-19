@@ -3,28 +3,28 @@
 ///\file test-humanoid-foot-constraint.cpp
 ///\brief Test of the foot constraint function
 ///\author de Gourcuff Martin
-///\date 14/08/13
+///\author Barthelemy Sebastien
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <gtest/gtest.h>
-#include "../src/humanoid_feet_supervisor.h"
-#include "../src/model/lip_model.h"
-#include "../src/function/humanoid_foot_constraint.h"
+#include "mpc_walkgen_gtest.h"
+#include <mpc-walkgen/humanoid_feet_supervisor.h>
+#include <mpc-walkgen/model/lip_model.h>
+#include <mpc-walkgen/function/humanoid_foot_constraint.h>
 
 class HumanoidFootConstraintTest: public ::testing::Test{};
 
 
-
-TEST_F(HumanoidFootConstraintTest, functionValue)
+TYPED_TEST(MpcWalkgenTest, functionValue)
 {
 
   //TODO: Complete with steps
   /*
   using namespace MPCWalkgen;
+  TEMPLATE_TYPEDEF(TypeParam)
 
   int nbSamples = 3;
-  Scalar samplingPeriod = 1.0;
+  TypeParam samplingPeriod = 1.0;
   bool autoCompute = true;
   HumanoidFootModel leftFoot(nbSamples, samplingPeriod),
       rightFoot(nbSamples, samplingPeriod);
@@ -53,20 +53,21 @@ TEST_F(HumanoidFootConstraintTest, functionValue)
 }
 
 
-TEST_F(HumanoidFootConstraintTest, sizeOfValues)
+TYPED_TEST(MpcWalkgenTest, sizeOfValues)
 {
   using namespace MPCWalkgen;
+  TEMPLATE_TYPEDEF(TypeParam)
 
   int nbSamples = 3;
-  Scalar samplingPeriod = 1.0;
+  TypeParam samplingPeriod = 1.0;
   bool autoCompute = true;
 
-  HumanoidFeetSupervisor feetSupervisor(nbSamples,
+  HumanoidFeetSupervisor<TypeParam> feetSupervisor(nbSamples,
                                         samplingPeriod);
-  LIPModel lip(nbSamples, samplingPeriod, autoCompute);
+  LIPModel<TypeParam> lip(nbSamples, samplingPeriod, autoCompute);
 
 
-  HumanoidFootConstraint copCtr(lip, feetSupervisor);
+  HumanoidFootConstraint<TypeParam> copCtr(lip, feetSupervisor);
   VectorX x0 = VectorX::Zero(6);
 
   ASSERT_EQ(copCtr.getFunction(x0).rows(), 0);

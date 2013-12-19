@@ -1,10 +1,21 @@
-#include "zebulon_base_position_tracking_objective.h"
+////////////////////////////////////////////////////////////////////////////////
+///
+///\author Lafaye Jory
+///\author Barthelemy Sebastien
+///
+////////////////////////////////////////////////////////////////////////////////
+
+#include <mpc-walkgen/function/zebulon_base_position_tracking_objective.h>
+#include "../macro.h"
 
 using namespace MPCWalkgen;
 
-BasePositionTrackingObjective::BasePositionTrackingObjective(const BaseModel& baseModel)
+template <typename Scalar>
+BasePositionTrackingObjective<Scalar>
+::BasePositionTrackingObjective(const BaseModel<Scalar>& baseModel)
 :baseModel_(baseModel)
 ,function_(1)
+,tmp_(1)
 {
   posRefInWorldFrame_.setZero(2*baseModel_.getNbSamples());
 
@@ -16,14 +27,17 @@ BasePositionTrackingObjective::BasePositionTrackingObjective(const BaseModel& ba
 }
 
 
-BasePositionTrackingObjective::~BasePositionTrackingObjective(){}
+template <typename Scalar>
+BasePositionTrackingObjective<Scalar>::~BasePositionTrackingObjective(){}
 
-const MatrixX& BasePositionTrackingObjective::getGradient(const VectorX& x0)
+template <typename Scalar>
+const typename
+Type<Scalar>::MatrixX& BasePositionTrackingObjective<Scalar>::getGradient(const VectorX& x0)
 {
   assert(posRefInWorldFrame_.size()==x0.size());
   assert(posRefInWorldFrame_.size()==baseModel_.getNbSamples()*2);
 
-  const LinearDynamic& dyn = baseModel_.getBasePosLinearDynamic();
+  const LinearDynamic<Scalar>& dyn = baseModel_.getBasePosLinearDynamic();
 
   int N = baseModel_.getNbSamples();
 
@@ -40,12 +54,14 @@ const MatrixX& BasePositionTrackingObjective::getGradient(const VectorX& x0)
   return gradient_;
 }
 
-const MatrixX& BasePositionTrackingObjective::getHessian()
+template <typename Scalar>
+const typename Type<Scalar>::MatrixX& BasePositionTrackingObjective<Scalar>::getHessian()
 {
   return hessian_;
 }
 
-void BasePositionTrackingObjective::setPosRefInWorldFrame(const VectorX& posRefInWorldFrame)
+template <typename Scalar>
+void BasePositionTrackingObjective<Scalar>::setPosRefInWorldFrame(const VectorX& posRefInWorldFrame)
 {
   assert(posRefInWorldFrame.size()==baseModel_.getNbSamples()*2);
   assert(posRefInWorldFrame==posRefInWorldFrame);
@@ -54,9 +70,10 @@ void BasePositionTrackingObjective::setPosRefInWorldFrame(const VectorX& posRefI
 }
 
 
-void BasePositionTrackingObjective::computeConstantPart()
+template <typename Scalar>
+void BasePositionTrackingObjective<Scalar>::computeConstantPart()
 {
-  const LinearDynamic& dyn = baseModel_.getBasePosLinearDynamic();
+  const LinearDynamic<Scalar>& dyn = baseModel_.getBasePosLinearDynamic();
 
   int N = baseModel_.getNbSamples();
 
@@ -68,3 +85,5 @@ void BasePositionTrackingObjective::computeConstantPart()
 
   tmp_.resize(N);
 }
+
+MPC_WALKGEN_INSTANTIATE_CLASS_TEMPLATE(BasePositionTrackingObjective);

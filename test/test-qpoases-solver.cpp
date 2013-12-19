@@ -3,7 +3,7 @@
 ///\file test-qpoases-solver.cpp
 ///\brief Test the QPOases solver
 ///\author Lafaye Jory
-///\date 20/07/13
+///\author Barthelemy Sebastien
 ///
 /// The purpose of this test is to
 /// * check the QPSolvers return the expected results
@@ -14,18 +14,20 @@
 
 #include <gtest/gtest.h>
 #include <boost/scoped_ptr.hpp>
-#include "../src/type.h"
-#include "../src/qpsolverfactory.h"
+#include <mpc-walkgen/constant.h>
+#include <mpc-walkgen/qpsolverfactory.h>
 
 #define QPOASES_REAL_IS_FLOAT
 #include <QProblem.hpp>
 
 template <typename Scalar_>
-class QPSolverTest: public ::testing::Test{};
+class QPSolverTest: public ::testing::Test {};
 
 typedef ::testing::Types<float, double> MyTypes;
 
 TYPED_TEST_CASE(QPSolverTest, MyTypes);
+
+using namespace MPCWalkgen;
 
 
 TYPED_TEST(QPSolverTest, testSolver)
@@ -65,8 +67,8 @@ TYPED_TEST(QPSolverTest, testSolver)
 
   qp->solve(m, x);
 
-  ASSERT_NEAR(x(0), -1, EPSILON);
-  ASSERT_NEAR(x(1), 1, EPSILON);
+  ASSERT_NEAR(x(0), -1, Constant<TypeParam>::EPSILON);
+  ASSERT_NEAR(x(1), 1, Constant<TypeParam>::EPSILON);
 }
 
 
@@ -111,8 +113,8 @@ TYPED_TEST(QPSolverTest, testSolverWithConstraint)
 
   qp->solve(m, x);
 
-  ASSERT_NEAR(x(0), -2.0f, EPSILON);
-  ASSERT_NEAR(x(1), 1.8f, EPSILON);
+  ASSERT_NEAR(x(0), -2.0f, Constant<TypeParam>::EPSILON);
+  ASSERT_NEAR(x(1), 1.8f, Constant<TypeParam>::EPSILON);
 }
 
 
@@ -167,6 +169,6 @@ TEST(QPOasesTest, testSolverWithConstraint)
               ittMax,
               NULL);
   qpRaw->getPrimalSolution(x.data());
-  ASSERT_NEAR(x(0), -2.0f, EPSILON);
-  ASSERT_NEAR(x(1), 1.8f, EPSILON);
+  ASSERT_NEAR(x(0), -2.0f, Constant<float>::EPSILON);
+  ASSERT_NEAR(x(1), 1.8f, Constant<float>::EPSILON);
 }

@@ -1,7 +1,7 @@
 mpc-walkgen
 ===========
 
-This software provides ...
+This software provides...
 
 Setup
 -----
@@ -19,100 +19,54 @@ have to be available on your machine.
  - Libraries
    - boost (>=1.40)
    - eigen (>=3.0.0)
-   - lssol (optional)
-   - qpoases (version 2.0 or 3.0beta, optional)
-
- At least one of the two solvers (lssol or qpoases) must be installed.
+   - qpoases (version 2.0, compiled twice for both float and double, with
+     special care taken to avoid symbol collisions)
 
 ### Compile
 
-There are two ways of compiling and installing the project.
-- one based on cmake and the jrl-cmakemodules
-- one based on qibuild (the project generation tool provided there:
-    https://github.com/aldebaran/qibuild)
+The project is installed and built thanks to qibuild
+(https://github.com/aldebaran/qibuild).
 
-First, verify that the folder cmake (in the root folder of mpc-walkgen) is not
-empty. If it is, you just have to update the submodules. Do
-> git submodule init
-> git submodule update
-
-### Compile based on jrl-cmakemodules
-
-To compile this package, it is recommended to create a separate build
-directory:
-
-    mkdir _build
-    cd _build
-    cmake [OPTIONS] ..
-    make install
-
-Please note that CMake produces a `CMakeCache.txt` file which should
-be deleted to reconfigure a package from scratch.
-
-### Compile based on qibuild
-
-once you have qibuild installed, simply run
+Once you have qibuild installed, simply run
 
     qibuild configure
     qibuild make
 
-### Installation of qpOASES.
+Design choices
+--------------
 
-qpOASES is an open-source C++ implementation of the online active set strategy.
-It is available at http://www.kuleuven.be/optec/software/qpOASES
+### API
 
-Once installed, please run the unit test test-qpoases to ensure the solver has
-been installed correctly.
+At some stage, the lib might be split in two in order to separate the humanoid
+and zebulon parts (the public and currently secret parts).
+The common pieces used by these two might go in a third "common" library.
 
-mpc-walkgen build-system will look for qpOASES at standard locations (such as
-/usr/local). If you chose some custom place (for instance, say you built the
-2.0 version in its source tree located at /home/seb/src/qpOASES-2.0), you
-can tell it to cmake by setting the following options:
-
-    cd mpc-walkgen/_build
-    cmake .. \
-      -DQPOASES_INCLUDE_DIRS=/home/seb/src/qpOASES-2.0/INCLUDE \
-      -DQPOASES_LIBRARIES=/home/seb/src/qpOASES-2.0/SRC/libqpOASES.a
+In this spirit it was decided that most fo the header could be kept public
 
 
-altrenatively, you can create a file named qpoases-config.cmake with content
-adapted from:
+### Template instantiations
 
-    set(QPOASES_INCLUDE_DIRS "/home/seb/src/qpOASES-2.0/INCLUDE"
-        CACHE PATH "")
-    set(QPOASES_LIBRARIES   /home/seb/src/qpOASES-2.0/SRC/libqpOASES.a  -lblas -llapack
-        CACHE PATH "")
-    set(QPOASES_VERSION "2.0" CACHE INTERNAL "" FORCE)
+Just like Eigen, mpc-walkgen is templated by a scalar type. However unlike
+Eigen, mpc-walkgen is not a head-only library. Its algorithms are not
+implemented in headers the user includes, but in a shared library the
+user links with.
 
-and put somewhere cmake will find it such as in /usr/local/lib/cmake/QPOASES
-or indicate its path using 
-    cmake -DQPOASES_DIR=/home/seb/src/qpOASES-2.0 ..
+This means:
 
-/!\ PLEASE note that they are no quotes "" for the variables QPOASES_INCLUDE_DIRS 
-and QPOASES_LIBRARIES (they are list). The following formulation is equivalent: 
-    set(QPOASES_LIBRARIES   "/home/seb/src/qpOASES-2.0/SRC/libqpOASES.a;-lblas;-llapack"
-        CACHE PATH "")
+* the algorithms are not implemented in (public) headers but in (private)
+  cpp files.
 
-Some examples can be found in mpc-walkgen/share/qpoases/
+* the templates are not instantiated in the user code but in the mpc-walkgen
+  library (there are explicit instantiation for float and double in each cpp
+  files)
 
-### Installation of lssol.
+* the user code will be compiled faster (no need to instantiate mpc-walkgen
+  templates in it)
 
-Lssol is a software package for solving constrained linear least-squares
-problems and convex quadratic programs.
-It is distributed by Standford Business Software Inc.
-http://www.sbsi-sol-optimize.com/asp/sol_product_lssol.htm
+* the user code can be compile in debug while using mpc-walkgen compiled in
+  release
 
-In order to link the lssol libraries with this project, it is necessary
-to install manually two extra files, located in share/lssol:
-- The header lssol.h, that defines methods to call lssol routines.
-  (the install should be {include_folder}/lssol/lssol.h
-
-- The config file lssol.pc, that defines the compilation flags and link flags
-  required. It is mandatory to customize it according to your installation.
-  Please add the path to this file into your environment variable
-  PKG_CONFIG_PATH
-
-Once these steps done, you should be able to compile and link with lssol.
-Please run the unit test test-lssol to verify that the solver has been installed
-correctly.
+* the user cannot extend mpc-walkgen to support scalar types besides float
+  and double. (Note that we currently have no QP solver for other scalar types
+  anyway.)
 

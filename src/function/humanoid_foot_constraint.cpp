@@ -3,22 +3,25 @@
 ///\file humanoid_foot_constraint.cpp
 ///\brief Implement the foot constraints
 ///\author de Gourcuff Martin
-///\date 12/07/13
+///\author Barthelemy Sebastien
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "humanoid_foot_constraint.h"
+#include <mpc-walkgen/function/humanoid_foot_constraint.h>
+#include <mpc-walkgen/constant.h>
+#include "../macro.h"
 
 namespace MPCWalkgen
 {
-  HumanoidFootConstraint::HumanoidFootConstraint(const LIPModel& lipModel,
-                                                 const HumanoidFeetSupervisor& feetSupervisor)
+  template <typename Scalar>
+  HumanoidFootConstraint<Scalar>::HumanoidFootConstraint(const LIPModel<Scalar>& lipModel,
+                                               const HumanoidFeetSupervisor<Scalar>& feetSupervisor)
     :lipModel_(lipModel)
     ,feetSupervisor_(feetSupervisor)
     ,nbGeneralConstraints_(0)
   {
     assert(std::abs(feetSupervisor_.getSamplingPeriod()
-                    - lipModel_.getSamplingPeriod())<EPSILON);
+                    - lipModel_.getSamplingPeriod())<Constant<Scalar>::EPSILON);
     assert(feetSupervisor_.getNbSamples() == lipModel_.getNbSamples());
 
     function_.setZero(1);
@@ -31,17 +34,21 @@ namespace MPCWalkgen
     b_.setZero(1);
   }
 
-  HumanoidFootConstraint::~HumanoidFootConstraint()
+  template <typename Scalar>
+  HumanoidFootConstraint<Scalar>::~HumanoidFootConstraint()
   {}
 
 
-  int HumanoidFootConstraint::getNbConstraints()
+  template <typename Scalar>
+  int HumanoidFootConstraint<Scalar>::getNbConstraints()
   {
     computeNbGeneralConstraints();
     return nbGeneralConstraints_;
   }
 
-  const VectorX& HumanoidFootConstraint::getFunction(const VectorX& x0)
+  template <typename Scalar>
+  const typename
+  Type<Scalar>::VectorX& HumanoidFootConstraint<Scalar>::getFunction(const VectorX& x0)
   {
     assert(feetSupervisor_.getNbSamples() == lipModel_.getNbSamples());
     assert(x0.rows() ==
@@ -54,7 +61,9 @@ namespace MPCWalkgen
     return function_;
   }
 
-  const MatrixX& HumanoidFootConstraint::getGradient(int sizeVec)
+  template <typename Scalar>
+  const typename
+  Type<Scalar>::MatrixX& HumanoidFootConstraint<Scalar>::getGradient(int sizeVec)
   {
     assert(feetSupervisor_.getNbSamples() == lipModel_.getNbSamples());
     assert(sizeVec ==
@@ -66,7 +75,9 @@ namespace MPCWalkgen
     return gradient_;
   }
 
-  const VectorX& HumanoidFootConstraint::getSupBounds(const VectorX& x0)
+  template <typename Scalar>
+  const typename
+  Type<Scalar>::VectorX& HumanoidFootConstraint<Scalar>::getSupBounds(const VectorX& x0)
   {
     assert(x0.rows() ==
            2*lipModel_.getNbSamples() + 2*feetSupervisor_.getNbPreviewedSteps());
@@ -77,7 +88,9 @@ namespace MPCWalkgen
     return supBound_;
   }
 
-  const VectorX& HumanoidFootConstraint::getInfBounds(const VectorX& x0)
+  template <typename Scalar>
+  const typename
+  Type<Scalar>::VectorX& HumanoidFootConstraint<Scalar>::getInfBounds(const VectorX& x0)
   {
     assert(x0.rows() ==
            2*lipModel_.getNbSamples() + 2*feetSupervisor_.getNbPreviewedSteps());
@@ -88,7 +101,8 @@ namespace MPCWalkgen
     return infBound_;
   }
 
-  void HumanoidFootConstraint::computeNbGeneralConstraints()
+  template <typename Scalar>
+  void HumanoidFootConstraint<Scalar>::computeNbGeneralConstraints()
   {
     nbGeneralConstraints_ = 0;
     for(int i = 0; i<feetSupervisor_.getNbPreviewedSteps(); ++i)
@@ -99,7 +113,8 @@ namespace MPCWalkgen
   }
 
 
-  void HumanoidFootConstraint::computeGeneralConstraintsMatrices(int sizeVec)
+  template <typename Scalar>
+  void HumanoidFootConstraint<Scalar>::computeGeneralConstraintsMatrices(int sizeVec)
   {
     computeNbGeneralConstraints();
 
@@ -107,7 +122,7 @@ namespace MPCWalkgen
     int M = feetSupervisor_.getNbPreviewedSteps();
 
     A_.setZero(nbGeneralConstraints_,sizeVec);
-    b_.setConstant(nbGeneralConstraints_, MAXIMUM_BOUND_VALUE);
+    b_.setConstant(nbGeneralConstraints_, Constant<Scalar>::MAXIMUM_BOUND_VALUE);
 
 
     //Number of general constraints at current step
@@ -117,7 +132,7 @@ namespace MPCWalkgen
 
     for(int i = 0; i<M; ++i)
     {
-      const ConvexPolygon& cp = feetSupervisor_.getKinematicConvexPolygon(i);
+      const ConvexPolygon<Scalar>& cp = feetSupervisor_.getKinematicConvexPolygon(i);
 
       nbGeneralConstraintsAtCurrentStep = cp.getNbGeneralConstraints();
 
@@ -158,18 +173,19 @@ namespace MPCWalkgen
     }
   }
 
-  void HumanoidFootConstraint::computeBoundsVectors(const VectorX& x0)
+  template <typename Scalar>
+  void HumanoidFootConstraint<Scalar>::computeBoundsVectors(const VectorX& x0)
   {
     int M = feetSupervisor_.getNbPreviewedSteps();
 
     assert(x0.rows()==2*M);
 
-    supBound_.setConstant(2*M, MAXIMUM_BOUND_VALUE);
-    infBound_.setConstant(2*M, -MAXIMUM_BOUND_VALUE);
+    supBound_.setConstant(2*M, Constant<Scalar>::MAXIMUM_BOUND_VALUE);
+    infBound_.setConstant(2*M, -Constant<Scalar>::MAXIMUM_BOUND_VALUE);
 
     for(int i = 0; i<M; ++i)
     {
-      const ConvexPolygon& cp = feetSupervisor_.getKinematicConvexPolygon(i);
+      const ConvexPolygon<Scalar>& cp = feetSupervisor_.getKinematicConvexPolygon(i);
 
       supBound_(i) = cp.getXSupBound();
       supBound_(i + M) = cp.getYSupBound();
@@ -200,4 +216,5 @@ namespace MPCWalkgen
     infBound_ -= x0;
   }
 
+  MPC_WALKGEN_INSTANTIATE_CLASS_TEMPLATE(HumanoidFootConstraint);
 }

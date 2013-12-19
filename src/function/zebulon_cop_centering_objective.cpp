@@ -1,9 +1,19 @@
-#include "zebulon_cop_centering_objective.h"
+////////////////////////////////////////////////////////////////////////////////
+///
+///\author Lafaye Jory
+///\author Barthelemy Sebastien
+///
+////////////////////////////////////////////////////////////////////////////////
+
+#include <mpc-walkgen/function/zebulon_cop_centering_objective.h>
+#include <mpc-walkgen/constant.h>
+#include "../macro.h"
 
 using namespace MPCWalkgen;
 
-CopCenteringObjective::CopCenteringObjective(const LIPModel& lipModel,
-                                             const BaseModel& baseModel)
+template <typename Scalar>
+CopCenteringObjective<Scalar>::CopCenteringObjective(const LIPModel<Scalar>& lipModel,
+                                                     const BaseModel<Scalar>& baseModel)
 :lipModel_(lipModel)
 ,baseModel_(baseModel)
 ,function_(1)
@@ -20,28 +30,31 @@ CopCenteringObjective::CopCenteringObjective(const LIPModel& lipModel,
 }
 
 
-CopCenteringObjective::~CopCenteringObjective(){}
+template <typename Scalar>
+CopCenteringObjective<Scalar>::~CopCenteringObjective(){}
 
-const MatrixX& CopCenteringObjective::getGradient(const VectorX& x0)
+template <typename Scalar>
+const typename Type<Scalar>::MatrixX& CopCenteringObjective<Scalar>::getGradient(const VectorX& x0)
 {
   assert(copRefInLocalFrame_.size()*2==x0.size());
   assert(copRefInLocalFrame_.size()==baseModel_.getNbSamples()*2);
   assert(baseModel_.getNbSamples() == lipModel_.getNbSamples());
   assert(baseModel_.getSamplingPeriod() == lipModel_.getSamplingPeriod());
 
-  const LinearDynamic& dynBasePos = baseModel_.getBasePosLinearDynamic();
+  const LinearDynamic<Scalar>& dynBasePos = baseModel_.getBasePosLinearDynamic();
 
 
   int N = lipModel_.getNbSamples();
 
   gradient_.noalias() = getHessian()*x0;
 
-  if (baseModel_.getMass()>EPSILON)
+  const LinearDynamic<Scalar>& dynCopXCom = lipModel_.getCopXLinearDynamic();
+  const LinearDynamic<Scalar>& dynCopYCom = lipModel_.getCopYLinearDynamic();
+
+  if (baseModel_.getMass()>Constant<Scalar>::EPSILON)
   {
-    const LinearDynamic& dynCopXCom = lipModel_.getCopXLinearDynamic();
-    const LinearDynamic& dynCopYCom = lipModel_.getCopYLinearDynamic();
-    const LinearDynamic& dynCopXBase = baseModel_.getCopXLinearDynamic();
-    const LinearDynamic& dynCopYBase = baseModel_.getCopYLinearDynamic();
+    const LinearDynamic<Scalar>& dynCopXBase = baseModel_.getCopXLinearDynamic();
+    const LinearDynamic<Scalar>& dynCopYBase = baseModel_.getCopYLinearDynamic();
 
     tmp_.noalias() = -copRefInLocalFrame_.segment(0, N);
     tmp_.noalias() += dynCopXCom.S*lipModel_.getStateX() + dynCopXCom.K;
@@ -68,28 +81,26 @@ const MatrixX& CopCenteringObjective::getGradient(const VectorX& x0)
   }
   else
   {
-    const LinearDynamic& dynCopX = lipModel_.getCopXLinearDynamic();
-    const LinearDynamic& dynCopY = lipModel_.getCopYLinearDynamic();
 
     tmp_.noalias() = -copRefInLocalFrame_.segment(0, N);
-    tmp_.noalias() += dynCopX.S*lipModel_.getStateX() + dynCopX.K;
+    tmp_.noalias() += dynCopXCom.S*lipModel_.getStateX() + dynCopXCom.K;
     tmp_.noalias() -= dynBasePos.S*baseModel_.getStateX();
-    gradient_.block(0, 0, N, 1).noalias() += dynCopX.UT*tmp_;
+    gradient_.block(0, 0, N, 1).noalias() += dynCopXCom.UT*tmp_;
 
 
     tmp_.noalias() = -copRefInLocalFrame_.segment(N, N);
-    tmp_.noalias() += dynCopY.S*lipModel_.getStateY() + dynCopY.K;
+    tmp_.noalias() += dynCopYCom.S*lipModel_.getStateY() + dynCopYCom.K;
     tmp_.noalias() -= dynBasePos.S*baseModel_.getStateY();
-    gradient_.block(N, 0, N, 1).noalias() += dynCopY.UT*tmp_;
+    gradient_.block(N, 0, N, 1).noalias() += dynCopYCom.UT*tmp_;
 
     tmp_.noalias() = copRefInLocalFrame_.segment(0, N);
-    tmp_.noalias() -= dynCopX.S*lipModel_.getStateX() + dynCopX.K;
+    tmp_.noalias() -= dynCopXCom.S*lipModel_.getStateX() + dynCopXCom.K;
     tmp_.noalias() += dynBasePos.S*baseModel_.getStateX();
     gradient_.block(2*N, 0, N, 1).noalias() += dynBasePos.UT*tmp_;
 
 
     tmp_.noalias() = copRefInLocalFrame_.segment(N, N);
-    tmp_.noalias() -= dynCopY.S*lipModel_.getStateY() + dynCopY.K;
+    tmp_.noalias() -= dynCopYCom.S*lipModel_.getStateY() + dynCopYCom.K;
     tmp_.noalias() += dynBasePos.S*baseModel_.getStateY();
     gradient_.block(3*N, 0, N, 1).noalias() += dynBasePos.UT*tmp_;
   }
@@ -97,7 +108,8 @@ const MatrixX& CopCenteringObjective::getGradient(const VectorX& x0)
   return gradient_;
 }
 
-const MatrixX& CopCenteringObjective::getHessian()
+template <typename Scalar>
+const typename Type<Scalar>::MatrixX& CopCenteringObjective<Scalar>::getHessian()
 {
   assert(baseModel_.getNbSamples() == lipModel_.getNbSamples());
   assert(baseModel_.getSamplingPeriod() == lipModel_.getSamplingPeriod());
@@ -105,7 +117,8 @@ const MatrixX& CopCenteringObjective::getHessian()
   return hessian_;
 }
 
-void CopCenteringObjective::setCopRefInLocalFrame(const VectorX& copRefInWorldFrame)
+template <typename Scalar>
+void CopCenteringObjective<Scalar>::setCopRefInLocalFrame(const VectorX& copRefInWorldFrame)
 {
   assert(copRefInWorldFrame.size() == lipModel_.getNbSamples()*2);
   assert(baseModel_.getNbSamples() == lipModel_.getNbSamples());
@@ -115,22 +128,25 @@ void CopCenteringObjective::setCopRefInLocalFrame(const VectorX& copRefInWorldFr
   copRefInLocalFrame_ = copRefInWorldFrame;
 }
 
-void CopCenteringObjective::computeConstantPart()
+template <typename Scalar>
+void CopCenteringObjective<Scalar>::computeConstantPart()
 {
   assert(baseModel_.getNbSamples() == lipModel_.getNbSamples());
   assert(baseModel_.getSamplingPeriod() == lipModel_.getSamplingPeriod());
 
-  const LinearDynamic& dynBasePos = baseModel_.getBasePosLinearDynamic();
+  const LinearDynamic<Scalar>& dynBasePos = baseModel_.getBasePosLinearDynamic();
   int N = lipModel_.getNbSamples();
 
-  if (baseModel_.getMass()>EPSILON)
-  {
-    const LinearDynamic& dynCopXCom = lipModel_.getCopXLinearDynamic();
-    const LinearDynamic& dynCopYCom = lipModel_.getCopYLinearDynamic();
-    const LinearDynamic& dynCopXBase = baseModel_.getCopXLinearDynamic();
-    const LinearDynamic& dynCopYBase = baseModel_.getCopYLinearDynamic();
+  const LinearDynamic<Scalar>& dynCopXCom = lipModel_.getCopXLinearDynamic();
+  const LinearDynamic<Scalar>& dynCopYCom = lipModel_.getCopYLinearDynamic();
 
-    hessian_.setZero(4*N, 4*N);
+  hessian_.setZero(4*N, 4*N);
+
+  if (baseModel_.getMass()>Constant<Scalar>::EPSILON)
+  {
+    const LinearDynamic<Scalar>& dynCopXBase = baseModel_.getCopXLinearDynamic();
+    const LinearDynamic<Scalar>& dynCopYBase = baseModel_.getCopYLinearDynamic();
+
     hessian_.block(0, 0, N, N) = dynCopXCom.UT*dynCopXCom.U;
     hessian_.block(N, N, N, N) = dynCopYCom.UT*dynCopYCom.U;
 
@@ -145,22 +161,20 @@ void CopCenteringObjective::computeConstantPart()
   }
   else
   {
-    const LinearDynamic& dynCopX = lipModel_.getCopXLinearDynamic();
-    const LinearDynamic& dynCopY = lipModel_.getCopYLinearDynamic();
-
-    hessian_.setZero(4*N, 4*N);
-    hessian_.block(0, 0, N, N) = dynCopX.UT*dynCopX.U;
-    hessian_.block(N, N, N, N) = dynCopY.UT*dynCopY.U;
+    hessian_.block(0, 0, N, N) = dynCopXCom.UT*dynCopXCom.U;
+    hessian_.block(N, N, N, N) = dynCopYCom.UT*dynCopYCom.U;
 
     hessian_.block(2*N, 2*N, N, N) = dynBasePos.UT*dynBasePos.U;
     hessian_.block(3*N, 3*N, N, N) = dynBasePos.UT*dynBasePos.U;
 
-    hessian_.block(2*N, 0, N, N) = -dynBasePos.UT*dynCopX.U;
-    hessian_.block(3*N, N, N, N) = -dynBasePos.UT*dynCopY.U;
+    hessian_.block(2*N, 0, N, N) = -dynBasePos.UT*dynCopXCom.U;
+    hessian_.block(3*N, N, N, N) = -dynBasePos.UT*dynCopYCom.U;
 
-    hessian_.block(0, 2*N, N, N) = -dynCopX.UT*dynBasePos.U;
-    hessian_.block(N, 3*N, N, N) = -dynCopY.UT*dynBasePos.U;
+    hessian_.block(0, 2*N, N, N) = -dynCopXCom.UT*dynBasePos.U;
+    hessian_.block(N, 3*N, N, N) = -dynCopYCom.UT*dynBasePos.U;
   }
 
   tmp_.resize(N);
 }
+
+MPC_WALKGEN_INSTANTIATE_CLASS_TEMPLATE(CopCenteringObjective);

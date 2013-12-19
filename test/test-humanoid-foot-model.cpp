@@ -3,20 +3,18 @@
 ///\file test-humanoid-foot-model.cpp
 ///\brief Test of the humanoid foot function
 ///\author de Gourcuff Martin
-///\date 12/08/13
+///\author Barthelemy Sebastien
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <gtest/gtest.h>
-#include "../src/model/humanoid_foot_model.h"
+#include "mpc_walkgen_gtest.h"
+#include <mpc-walkgen/model/humanoid_foot_model.h>
 
-class HumanoidFootModelTest: public ::testing::Test{};
+using namespace MPCWalkgen;
 
-TEST_F(HumanoidFootModelTest, interpolateFootTrajectory)
+TYPED_TEST(MpcWalkgenTest, smoke)
 {
-  using namespace MPCWalkgen;
-
-  //To be completed
+  HumanoidFootModel<TypeParam> foo(10, 1.f);
 }
 
 

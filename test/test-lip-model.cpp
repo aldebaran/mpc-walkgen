@@ -3,40 +3,23 @@
 ///\file test-lip-model.cpp
 ///\brief Test the LIP model
 ///\author Lafaye Jory
-///\date 20/07/13
+///\author Barthelemy Sebastien
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <gtest/gtest.h>
-#include "../src/model/lip_model.h"
+#include "mpc_walkgen_gtest.h"
+#include <mpc-walkgen/model/lip_model.h>
 
-
-class lipModelTest: public ::testing::Test{};
-
-
-void checkLinearDynamicSize(const MPCWalkgen::LinearDynamic& dyn, MPCWalkgen::Scalar nbSamples)
-{
-  ASSERT_EQ(dyn.U.rows(), nbSamples);
-  ASSERT_EQ(dyn.U.cols(), nbSamples);
-
-  ASSERT_EQ(dyn.UT.rows(), nbSamples);
-  ASSERT_EQ(dyn.UT.cols(), nbSamples);
-
-  ASSERT_EQ(dyn.S.rows(), nbSamples);
-  ASSERT_EQ(dyn.S.cols(), 3);
-
-  ASSERT_EQ(dyn.K.rows(), nbSamples);
-}
-
-TEST_F(lipModelTest, sizeOfMatrices)
+TYPED_TEST(MpcWalkgenTest, sizeOfMatrices)
 {
   using namespace MPCWalkgen;
+  TEMPLATE_TYPEDEF(TypeParam);
 
   int nbSamples = 10;
-  Scalar samplingPeriod = 1.0;
+  TypeParam samplingPeriod = 1.0;
   bool autoCompute = true;
-  Scalar feebackPeriod = 0.25;
-  LIPModel m(nbSamples, samplingPeriod, autoCompute);
+  TypeParam feebackPeriod = 0.25;
+  LIPModel<TypeParam> m(nbSamples, samplingPeriod, autoCompute);
   m.setFeedbackPeriod(feebackPeriod);
 
   checkLinearDynamicSize(m.getComPosLinearDynamic(), nbSamples);
@@ -47,7 +30,7 @@ TEST_F(lipModelTest, sizeOfMatrices)
   checkLinearDynamicSize(m.getCopYLinearDynamic(), nbSamples);
 
 
-  for(int i=0; i<static_cast<int>((samplingPeriod + EPSILON)/feebackPeriod); ++i)
+  for(int i=0; i<static_cast<int>((samplingPeriod + Constant<TypeParam>::EPSILON)/feebackPeriod); ++i)
   {
     checkLinearDynamicSize(m.getComPosLinearDynamic(i), nbSamples);
     checkLinearDynamicSize(m.getComVelLinearDynamic(i), nbSamples);
@@ -58,17 +41,18 @@ TEST_F(lipModelTest, sizeOfMatrices)
   }
 }
 
-TEST_F(lipModelTest, valuesOfMatrices)
+TYPED_TEST(MpcWalkgenTest, valuesOfMatrices)
 {
   using namespace MPCWalkgen;
+  TEMPLATE_TYPEDEF(TypeParam);
 
   int nbSamples = 1;
-  Scalar samplingPeriod = 2.0;
+  TypeParam samplingPeriod = 2.0f;
   bool autoCompute = true;
-  Scalar feebackPeriod = 0.25;
-  Scalar comHeight = 0.45;
+  TypeParam feebackPeriod = 0.25f;
+  TypeParam comHeight = 0.45f;
   Vector3 gravity(1.0, -1.0, 9.0);
-  LIPModel m(nbSamples, samplingPeriod, autoCompute);
+  LIPModel<TypeParam> m(nbSamples, samplingPeriod, autoCompute);
 
   m.setSamplingPeriod(samplingPeriod);
   m.setComHeight(comHeight);
@@ -83,28 +67,28 @@ TEST_F(lipModelTest, valuesOfMatrices)
   init(1)=1.5;
   init(2)=-3.0;
 
-  const LinearDynamic& dynPos = m.getComPosLinearDynamic();
-  Scalar pos = (dynPos.S * init + dynPos.K + dynPos.U * jerk)(0);
-  ASSERT_NEAR(pos, 0.333333333, EPSILON);
+  const LinearDynamic<TypeParam>& dynPos = m.getComPosLinearDynamic();
+  TypeParam pos = (dynPos.S * init + dynPos.K + dynPos.U * jerk)(0);
+  ASSERT_NEAR(pos, 0.333333333, Constant<TypeParam>::EPSILON);
 
-  const LinearDynamic& dynVel = m.getComVelLinearDynamic();
-  Scalar vel = (dynVel.S * init + dynVel.K + dynVel.U * jerk)(0);
-  ASSERT_NEAR(vel, -2.5, EPSILON);
+  const LinearDynamic<TypeParam>& dynVel = m.getComVelLinearDynamic();
+  TypeParam vel = (dynVel.S * init + dynVel.K + dynVel.U * jerk)(0);
+  ASSERT_NEAR(vel, -2.5, Constant<TypeParam>::EPSILON);
 
-  const LinearDynamic& dynAcc = m.getComAccLinearDynamic();
-  Scalar acc = (dynAcc.S * init + dynAcc.K + dynAcc.U * jerk)(0);
-  ASSERT_NEAR(acc, -1.0, EPSILON);
+  const LinearDynamic<TypeParam>& dynAcc = m.getComAccLinearDynamic();
+  TypeParam acc = (dynAcc.S * init + dynAcc.K + dynAcc.U * jerk)(0);
+  ASSERT_NEAR(acc, -1.0, Constant<TypeParam>::EPSILON);
 
-  const LinearDynamic& dynJerk = m.getComJerkLinearDynamic();
-  Scalar j = (dynJerk.S * init + dynJerk.K + dynJerk.U * jerk)(0);
-  ASSERT_NEAR(j, 1.0, EPSILON);
+  const LinearDynamic<TypeParam>& dynJerk = m.getComJerkLinearDynamic();
+  TypeParam j = (dynJerk.S * init + dynJerk.K + dynJerk.U * jerk)(0);
+  ASSERT_NEAR(j, 1.0, Constant<TypeParam>::EPSILON);
 
-  const LinearDynamic& dynCopX = m.getCopXLinearDynamic();
-  Scalar copX = (dynCopX.S * init + dynCopX.K + dynCopX.U * jerk)(0);
-  ASSERT_NEAR(copX, 0.333333333, EPSILON);
+  const LinearDynamic<TypeParam>& dynCopX = m.getCopXLinearDynamic();
+  TypeParam copX = (dynCopX.S * init + dynCopX.K + dynCopX.U * jerk)(0);
+  ASSERT_NEAR(copX, 0.333333333, Constant<TypeParam>::EPSILON);
 
-  const LinearDynamic& dynCopY = m.getCopYLinearDynamic();
-  Scalar copY = (dynCopY.S * init + dynCopY.K + dynCopY.U * jerk)(0);
-  ASSERT_NEAR(copY, 0.433333333, EPSILON);
+  const LinearDynamic<TypeParam>& dynCopY = m.getCopYLinearDynamic();
+  TypeParam copY = (dynCopY.S * init + dynCopY.K + dynCopY.U * jerk)(0);
+  ASSERT_NEAR(copY, 0.433333333, Constant<TypeParam>::EPSILON);
 }
 

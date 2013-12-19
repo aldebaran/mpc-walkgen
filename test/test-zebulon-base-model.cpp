@@ -3,53 +3,39 @@
 ///\file test-zebulon-base-model.cpp
 ///\brief Test the Zebulon base model
 ///\author Lafaye Jory
-///\date 20/07/13
+///\author Barthelemy Sebastien
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <gtest/gtest.h>
-#include "../src/model/zebulon_base_model.h"
+#include "mpc_walkgen_gtest.h"
+#include <mpc-walkgen/model/zebulon_base_model.h>
 
-class ZebulonBaseModelTest: public ::testing::Test{};
+using namespace MPCWalkgen;
 
-
-void checkLinearDynamicSize(const MPCWalkgen::LinearDynamic& dyn,
-                            MPCWalkgen::Scalar nbSamples)
-{
-  ASSERT_EQ(dyn.U.rows(), nbSamples);
-  ASSERT_EQ(dyn.U.cols(), nbSamples);
-
-  ASSERT_EQ(dyn.UT.rows(), nbSamples);
-  ASSERT_EQ(dyn.UT.cols(), nbSamples);
-
-  ASSERT_EQ(dyn.S.rows(), nbSamples);
-  ASSERT_EQ(dyn.S.cols(), 3);
-}
-
-
-TEST_F(ZebulonBaseModelTest, sizeOfMatrices)
+TYPED_TEST(MpcWalkgenTest, sizeOfMatrices)
 {
   using namespace MPCWalkgen;
 
   int nbSamples = 10;
-  Scalar samplingPeriod = 1.0;
+  TypeParam samplingPeriod = 1.0;
   bool autoCompute = true;
-  BaseModel m(nbSamples, samplingPeriod, autoCompute);
+  BaseModel<TypeParam> m(nbSamples, samplingPeriod, autoCompute);
 
-  checkLinearDynamicSize(m.getBasePosLinearDynamic(), nbSamples);
-  checkLinearDynamicSize(m.getBaseVelLinearDynamic(), nbSamples);
-  checkLinearDynamicSize(m.getBaseAccLinearDynamic(), nbSamples);
-  checkLinearDynamicSize(m.getBaseJerkLinearDynamic(), nbSamples);
+  checkLinearDynamicSize<TypeParam>(m.getBasePosLinearDynamic(), nbSamples);
+  checkLinearDynamicSize<TypeParam>(m.getBaseVelLinearDynamic(), nbSamples);
+  checkLinearDynamicSize<TypeParam>(m.getBaseAccLinearDynamic(), nbSamples);
+  checkLinearDynamicSize<TypeParam>(m.getBaseJerkLinearDynamic(), nbSamples);
 }
 
-TEST_F(ZebulonBaseModelTest, valuesOfMatrices)
+TYPED_TEST(MpcWalkgenTest, valuesOfMatrices)
 {
   using namespace MPCWalkgen;
+  TEMPLATE_TYPEDEF(TypeParam);
 
   int nbSamples = 1;
-  Scalar samplingPeriod = 2.0;
+  TypeParam samplingPeriod = 2.0;
   bool autoCompute = true;
-  BaseModel m(nbSamples, samplingPeriod, autoCompute);
+  BaseModel<TypeParam> m(nbSamples, samplingPeriod, autoCompute);
 
   VectorX jerk(nbSamples);
   jerk(0) = 1.0;
@@ -59,20 +45,20 @@ TEST_F(ZebulonBaseModelTest, valuesOfMatrices)
   init(1)=1.5;
   init(2)=-3.0;
 
-  const LinearDynamic& dynPos = m.getBasePosLinearDynamic();
-  Scalar pos = (dynPos.S * init + dynPos.U * jerk)(0);
-  ASSERT_NEAR(pos, 0.333333333, EPSILON);
+  const LinearDynamic<TypeParam>& dynPos = m.getBasePosLinearDynamic();
+  TypeParam pos = (dynPos.S * init + dynPos.U * jerk)(0);
+  ASSERT_NEAR(pos, 0.333333333, Constant<TypeParam>::EPSILON);
 
-  const LinearDynamic& dynVel = m.getBaseVelLinearDynamic();
-  Scalar vel = (dynVel.S * init + dynVel.U * jerk)(0);
-  ASSERT_NEAR(vel, -2.5, EPSILON);
+  const LinearDynamic<TypeParam>& dynVel = m.getBaseVelLinearDynamic();
+  TypeParam vel = (dynVel.S * init + dynVel.U * jerk)(0);
+  ASSERT_NEAR(vel, -2.5, Constant<TypeParam>::EPSILON);
 
-  const LinearDynamic& dynAcc = m.getBaseAccLinearDynamic();
-  Scalar acc = (dynAcc.S * init + dynAcc.U * jerk)(0);
-  ASSERT_NEAR(acc, -1.0, EPSILON);
+  const LinearDynamic<TypeParam>& dynAcc = m.getBaseAccLinearDynamic();
+  TypeParam acc = (dynAcc.S * init + dynAcc.U * jerk)(0);
+  ASSERT_NEAR(acc, -1.0, Constant<TypeParam>::EPSILON);
 
-  const LinearDynamic& dynJerk = m.getBaseJerkLinearDynamic();
-  Scalar j = (dynJerk.S * init + dynJerk.U * jerk)(0);
-  ASSERT_NEAR(j, 1.0, EPSILON);
+  const LinearDynamic<TypeParam>& dynJerk = m.getBaseJerkLinearDynamic();
+  TypeParam j = (dynJerk.S * init + dynJerk.U * jerk)(0);
+  ASSERT_NEAR(j, 1.0, Constant<TypeParam>::EPSILON);
 }
 
