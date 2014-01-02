@@ -23,7 +23,8 @@
 #include "function/zebulon_cop_constraint.h"
 #include "function/zebulon_com_constraint.h"
 #include "function/zebulon_base_motion_constraint.h"
-#include "solver/qpoases_solver.h"
+#include "qpsolverfactory.h"
+#include <boost/scoped_ptr.hpp>
 
 namespace MPCWalkgen
 {
@@ -49,6 +50,7 @@ namespace MPCWalkgen
     void setVelRefInWorldFrame(const VectorX& velRef);
     void setPosRefInWorldFrame(const VectorX& posRef);
     void setCopRefInLocalFrame(const VectorX& copRef);
+    void setComRefInLocalFrame(const VectorX& comRef);
 
     void setBaseVelLimit(Scalar limit);
     void setBaseAccLimit(Scalar limit);
@@ -90,7 +92,7 @@ namespace MPCWalkgen
     ComConstraint comConstraint_;
     BaseMotionConstraint baseMotionConstraint_;
 
-    QPOasesSolver qpoasesSolver_;
+    boost::scoped_ptr< QPSolver<Scalar> > qpoasesSolver_;
 
     Weighting weighting_;
     Config config_;
@@ -99,7 +101,7 @@ namespace MPCWalkgen
     VectorX X_;
     VectorX B_;
 
-    QPMatrices qpMatrix_;
+    QPMatrices<Scalar> qpMatrix_;
 
     Scalar invObjNormFactor_;
     Scalar invCtrNormFactor_;

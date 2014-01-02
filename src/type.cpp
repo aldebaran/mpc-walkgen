@@ -33,40 +33,6 @@ namespace MPCWalkgen
     K.setZero(nbSamples);
   }
 
-
-
-  ///QPMatrices
-  void QPMatrices::normalizeMatrices()
-  {
-    Scalar objFactor = getNormalizationFactor(Q);
-    Scalar ctrFactor = getNormalizationFactor(A);
-
-    Q *= objFactor;
-    p *= objFactor;
-
-    A *= ctrFactor;
-    bu *= ctrFactor;
-    bl *= ctrFactor;
-  }
-
-  Scalar QPMatrices::getNormalizationFactor(const MatrixX& mat)
-  {
-    Scalar normalizationFactor = 1.0;
-    for(int i=0; i<mat.rows(); ++i)
-    {
-      for(int j=0; j<mat.cols(); ++j)
-      {
-        Scalar v = std::abs(mat(i, j));
-        if (v>EPSILON && v<normalizationFactor)
-        {
-          normalizationFactor = v;
-        }
-      }
-    }
-
-    return 1.0/normalizationFactor;
-  }
-
   ///Convex Polygon
   ConvexPolygon::ConvexPolygon()
     :p_(0)

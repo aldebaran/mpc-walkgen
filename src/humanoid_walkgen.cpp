@@ -310,7 +310,7 @@ namespace MPCWalkgen
 
 
     // Choosing the QP Matrices with proper size
-    QPMatrices& qpMatrices = qpMatrixVec_[index];
+    QPMatrices<Scalar>& qpMatrices = qpMatrixVec_[index];
 
     qpMatrices.Q.fill(0.0);
     qpMatrices.p.fill(0.0);
@@ -376,7 +376,7 @@ namespace MPCWalkgen
     }
 
     //Normalization of the matrices. The smallest element value of the QP matrices is at least one.
-    qpMatrices.normalizeMatrices();
+    qpMatrices.normalizeMatrices(EPSILON);
 
     //Setting matrix At
     qpMatrices.At = qpMatrices.A.transpose();
@@ -421,7 +421,7 @@ namespace MPCWalkgen
           *maximumNbOfSteps_;
     }
 
-    qpoasesSolverVec_.resize((maximumNbOfSteps_ + 1)*(maximumNbOfConstraints_ + 1));
+    qpoasesSolverVec_.reserve((maximumNbOfSteps_ + 1)*(maximumNbOfConstraints_ + 1));
     qpMatrixVec_.resize((maximumNbOfSteps_ + 1)*(maximumNbOfConstraints_ + 1));
 
     int nbVariables = 2*lipModel_.getNbSamples();
@@ -432,7 +432,7 @@ namespace MPCWalkgen
       {
         nbVariables = 2*lipModel_.getNbSamples() + 2*i;
 
-        qpoasesSolverVec_[i*(maximumNbOfConstraints_ + 1) + j] = QPOasesSolver(nbVariables, j);
+        qpoasesSolverVec_.push_back(makeQPSolver<Scalar>(nbVariables, j));
         qpMatrixVec_[i*(maximumNbOfConstraints_ + 1) + j].Q.setZero(nbVariables, nbVariables);
         qpMatrixVec_[i*(maximumNbOfConstraints_ + 1) + j].p.setZero(nbVariables);
 

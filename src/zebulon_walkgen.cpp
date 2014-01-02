@@ -13,7 +13,7 @@ ZebulonWalkgen::ZebulonWalkgen()
 ,copConstraint_(lipModel_, baseModel_)
 ,comConstraint_(lipModel_, baseModel_)
 ,baseMotionConstraint_(baseModel_)
-,qpoasesSolver_(1, 1)
+,qpoasesSolver_(makeQPSolver<Scalar>(1, 1))
 ,invObjNormFactor_(1.0)
 ,invCtrNormFactor_(1.0)
 {
@@ -213,7 +213,13 @@ void ZebulonWalkgen::setCopRefInLocalFrame(const VectorX& copRef)
   assert(copRef==copRef);
   assert(copRef.size()==lipModel_.getNbSamples()*2);
   copCenteringObj_.setCopRefInLocalFrame(copRef);
-  comCenteringObj_.setComRefInLocalFrame(copRef);
+}
+
+void ZebulonWalkgen::setComRefInLocalFrame(const VectorX& comRef)
+{
+  assert(comRef==comRef);
+  assert(comRef.size()==lipModel_.getNbSamples()*2);
+  comCenteringObj_.setComRefInLocalFrame(comRef);
 }
 
 void ZebulonWalkgen::setBaseVelLimit(Scalar limit)
@@ -400,7 +406,7 @@ bool ZebulonWalkgen::solve(Scalar feedBackPeriod)
   qpMatrix_.bu *= invCtrNormFactor_;
   qpMatrix_.bl *= invCtrNormFactor_;
 
-  bool solutionFound = qpoasesSolver_.solve(qpMatrix_, dX_, true);
+  bool solutionFound = qpoasesSolver_->solve(qpMatrix_, dX_, true);
   X_ += dX_;
 
   lipModel_.updateStateX(X_(0), feedBackPeriod);
@@ -474,7 +480,7 @@ void ZebulonWalkgen::computeConstantPart()
     assert(baseMotionConstraint_.getGradient().rows() == M2);
   }
 
-  qpoasesSolver_ = QPOasesSolver(4*N, M);
+  qpoasesSolver_.reset(makeQPSolver<Scalar>(4*N, M));
 
   qpMatrix_.Q.setZero(4*N, 4*N);
   qpMatrix_.p.setZero(4*N, 1);

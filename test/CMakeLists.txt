@@ -148,8 +148,14 @@ qi_create_gtest(test-zebulon-base-motion-constraint
 
 qi_create_gtest(test-qpoases-solver
   SRC ./test-qpoases-solver.cpp
-      ../src/solver/qpoases_solver.cpp
-  DEPENDS QPOASESfloat
+      ../src/qpsolverfactory.h
+      ../src/qpsolverfactory.cpp
+      ../src/type.h
+  DEPENDS mpc-walkgen_qpsolver
+          mpc-walkgen_qpsolver_qpoases_double
+          mpc-walkgen_qpsolver_qpoases_float
+          qpOASESfloat
+          boost
   TIMEOUT 1
 )
 

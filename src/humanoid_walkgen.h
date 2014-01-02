@@ -20,8 +20,9 @@
 #include "function/humanoid_cop_centering_objective.h"
 #include "function/humanoid_cop_constraint.h"
 #include "function/humanoid_foot_constraint.h"
-#include "solver/qpoases_solver.h"
+#include "qpsolverfactory.h"
 #include <mpc-walkgen/humanoid_walkgen_abstract.h>
+#include <boost/ptr_container/ptr_vector.hpp>
 
 namespace MPCWalkgen
 {
@@ -128,7 +129,7 @@ namespace MPCWalkgen
       HumanoidFootConstraint footConstraint_;
 
       /// \brief A vector containing all possible sizes of QPsolver
-      std::vector<QPOasesSolver> qpoasesSolverVec_;
+      boost::ptr_vector< QPSolver<Scalar> > qpoasesSolverVec_;
 
       VectorX dX_;
       /// \brief Solution of the QP problem: CoP position in local frame and
@@ -145,7 +146,7 @@ namespace MPCWalkgen
       ///        bl <= A.x <= bu
       ///        xl <= x <= xu
       ///        Here we use a vector containing all possible sizes of QPMatrices
-      std::vector<QPMatrices> qpMatrixVec_;
+      std::vector< QPMatrices<Scalar> > qpMatrixVec_;
 
       HumanoidWalkgenImpl::Weighting weighting_;
       HumanoidWalkgenImpl::Config config_;

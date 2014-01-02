@@ -53,29 +53,6 @@ namespace MPCWalkgen
       VectorX K;
   };
 
-
-  class QPMatrices
-  {
-    public:
-      /// \brief Normalize all QP matrices except xu and xl using two normalization
-      ///        factors computed from Q and A
-      void normalizeMatrices();
-      /// \brief If the smallest element m of mat is smaller than 1,
-      ///        this function returns 1/m. Otherwise it returns 1
-      static Scalar getNormalizationFactor(const MatrixX& mat);
-
-    public:
-      MatrixX Q;
-      VectorX p;
-
-      MatrixX A;
-      MatrixX At;
-      VectorX bu;
-      VectorX bl;
-      VectorX xl;
-      VectorX xu;
-  };
-
   /// \brief  Define a 2D convex polygon bounded by a set p of vertices
   class ConvexPolygon
   {

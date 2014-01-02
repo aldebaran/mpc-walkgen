@@ -111,6 +111,11 @@ void ZebulonWalkgenImpl::setCopRefInLocalFrame(const VectorX& copRef)
   walkgen->setCopRefInLocalFrame(copRef);
 }
 
+void ZebulonWalkgenImpl::setComRefInLocalFrame(const VectorX& comRef)
+{
+  walkgen->setComRefInLocalFrame(comRef);
+}
+
 void ZebulonWalkgenImpl::setBaseVelLimit(Scalar limit)
 {
   walkgen->setBaseVelLimit(limit);

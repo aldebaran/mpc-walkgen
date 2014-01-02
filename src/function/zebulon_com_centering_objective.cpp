@@ -107,14 +107,14 @@ void ComCenteringObjective::updateGravityShift()
   comShiftInLocalFrame_ = comRefInLocalFrame_ + gravityShift_;
 }
 
-void ComCenteringObjective::setComRefInLocalFrame(const VectorX& copRefInWorldFrame)
+void ComCenteringObjective::setComRefInLocalFrame(const VectorX& comRefInWorldFrame)
 {
-  assert(copRefInWorldFrame.size() == lipModel_.getNbSamples()*2);
+  assert(comRefInWorldFrame.size() == lipModel_.getNbSamples()*2);
   assert(baseModel_.getNbSamples() == lipModel_.getNbSamples());
   assert(baseModel_.getSamplingPeriod() == lipModel_.getSamplingPeriod());
-  assert(copRefInWorldFrame==copRefInWorldFrame);
+  assert(comRefInWorldFrame==comRefInWorldFrame);
 
-  comRefInLocalFrame_ = copRefInWorldFrame;
+  comRefInLocalFrame_ = comRefInWorldFrame;
   comShiftInLocalFrame_ = comRefInLocalFrame_ + gravityShift_;
 }
 
