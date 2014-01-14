@@ -66,6 +66,14 @@ foreach(_scalar "double" "float")
   qi_use_lib(mpc-walkgen_qpsolver_qpoases_${_scalar}
     ${_public_deps}
     ${_private_deps})
+  # qi_stage_lib(... DEPENDS ...) expects a flat the list of all the public
+  # dependencies, so let find the dependencies of our dependencies...
+  set(_full_public_deps)
+  foreach(_public_dep ${_public_deps})
+    string(TOUPPER ${_public_dep} _public_dep_upper)
+    list(APPEND _full_public_deps ${_public_dep_upper})
+    list(APPEND _full_public_deps ${${_public_dep_upper}_DEPENDS})
+  endforeach()
   qi_stage_lib(mpc-walkgen_qpsolver_qpoases_${_scalar}
-    DEPENDS ${_public_deps})
+    DEPENDS ${_full_public_deps})
 endforeach()
