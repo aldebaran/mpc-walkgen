@@ -151,11 +151,8 @@ qi_create_gtest(test-qpoases-solver
       ../src/qpsolverfactory.h
       ../src/qpsolverfactory.cpp
       ../src/type.h
-  DEPENDS mpc-walkgen_qpsolver
-          mpc-walkgen_qpsolver_qpoases_double
-          mpc-walkgen_qpsolver_qpoases_float
+  DEPENDS mpc-walkgen
           qpOASESfloat
-          boost
   TIMEOUT 1
 )
 
