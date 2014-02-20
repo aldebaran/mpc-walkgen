@@ -1,8 +1,17 @@
-#include "zebulon_base_motion_constraint.h"
+////////////////////////////////////////////////////////////////////////////////
+///
+///\author Lafaye Jory
+///\author Barthelemy Sebastien
+///
+////////////////////////////////////////////////////////////////////////////////
+
+#include <mpc-walkgen/function/zebulon_base_motion_constraint.h>
+#include "../macro.h"
 
 using namespace MPCWalkgen;
 
-BaseMotionConstraint::BaseMotionConstraint(const BaseModel& baseModel)
+template <typename Scalar>
+BaseMotionConstraint<Scalar>::BaseMotionConstraint(const BaseModel<Scalar>& baseModel)
 :baseModel_(baseModel)
 ,functionInf_(1)
 ,functionSup_(1)
@@ -18,9 +27,12 @@ BaseMotionConstraint::BaseMotionConstraint(const BaseModel& baseModel)
 }
 
 
-BaseMotionConstraint::~BaseMotionConstraint(){}
+template <typename Scalar>
+BaseMotionConstraint<Scalar>::~BaseMotionConstraint(){}
 
-const VectorX& BaseMotionConstraint::getFunctionInf(const VectorX& x0)
+template <typename Scalar>
+const typename
+Type<Scalar>::VectorX& BaseMotionConstraint<Scalar>::getFunctionInf(const VectorX& x0)
 {
   assert(baseModel_.getNbSamples()*2==x0.size());
 
@@ -31,7 +43,9 @@ const VectorX& BaseMotionConstraint::getFunctionInf(const VectorX& x0)
   return functionInf_;
 }
 
-const VectorX& BaseMotionConstraint::getFunctionSup(const VectorX& x0)
+template <typename Scalar>
+const typename
+Type<Scalar>::VectorX& BaseMotionConstraint<Scalar>::getFunctionSup(const VectorX& x0)
 {
   assert(baseModel_.getNbSamples()*2==x0.size());
 
@@ -42,13 +56,14 @@ const VectorX& BaseMotionConstraint::getFunctionSup(const VectorX& x0)
   return functionSup_;
 }
 
-void BaseMotionConstraint::computeFunction(const VectorX& x0, VectorX& func,
+template <typename Scalar>
+void BaseMotionConstraint<Scalar>::computeFunction(const VectorX& x0, VectorX& func,
                                            Scalar velLimit, Scalar accLimit)
 {
   int N = baseModel_.getNbSamples();
 
-  const LinearDynamic& dynBaseVel = baseModel_.getBaseVelLinearDynamic();
-  const LinearDynamic& dynBaseAcc = baseModel_.getBaseAccLinearDynamic();
+  const LinearDynamic<Scalar>& dynBaseVel = baseModel_.getBaseVelLinearDynamic();
+  const LinearDynamic<Scalar>& dynBaseAcc = baseModel_.getBaseAccLinearDynamic();
 
   tmp_.fill(velLimit);
   tmp2_.fill(accLimit);
@@ -68,20 +83,23 @@ void BaseMotionConstraint::computeFunction(const VectorX& x0, VectorX& func,
 
 }
 
-const MatrixX& BaseMotionConstraint::getGradient()
+template <typename Scalar>
+const typename Type<Scalar>::MatrixX& BaseMotionConstraint<Scalar>::getGradient()
 {
   return gradient_;
 }
 
-int BaseMotionConstraint::getNbConstraints()
+template <typename Scalar>
+int BaseMotionConstraint<Scalar>::getNbConstraints()
 {
   return baseModel_.getNbSamples()*4;
 }
 
-void BaseMotionConstraint::computeConstantPart()
+template <typename Scalar>
+void BaseMotionConstraint<Scalar>::computeConstantPart()
 {
-  const LinearDynamic& dynBaseVel = baseModel_.getBaseVelLinearDynamic();
-  const LinearDynamic& dynBaseAcc = baseModel_.getBaseVelLinearDynamic();
+  const LinearDynamic<Scalar>& dynBaseVel = baseModel_.getBaseVelLinearDynamic();
+  const LinearDynamic<Scalar>& dynBaseAcc = baseModel_.getBaseVelLinearDynamic();
 
   int N = baseModel_.getNbSamples();
   int M = getNbConstraints();
@@ -95,3 +113,5 @@ void BaseMotionConstraint::computeConstantPart()
   tmp_.resize(N);
   tmp2_.resize(N);
 }
+
+MPC_WALKGEN_INSTANTIATE_CLASS_TEMPLATE(BaseMotionConstraint);

@@ -3,26 +3,30 @@
 ///\file humanoid_feet_supervisor.h
 ///\brief Implement the supervisor that manage the FSM
 ///\author de Gourcuff Martin
-///\date 22/08/13
+///\author Barthelemy Sebastien
 ///
 ////////////////////////////////////////////////////////////////////////////////
-
-#include "humanoid_feet_supervisor.h"
+#include <mpc-walkgen/humanoid_feet_supervisor.h>
+#include <mpc-walkgen/constant.h>
+#include "macro.h"
 
 namespace MPCWalkgen
 {
-  Phase::Phase()
+  template <typename Scalar>
+  Phase<Scalar>::Phase()
     :phaseType_(DS)
     ,duration_(0.0)
   {}
 
-  Phase::Phase(PhaseType phaseType,
+  template <typename Scalar>
+  Phase<Scalar>::Phase(PhaseType phaseType,
                Scalar duration)
     :phaseType_(phaseType)
     ,duration_(duration)
   {}
 
-  void SelectionMatrices::reset(
+  template <typename Scalar>
+  void SelectionMatrices<Scalar>::reset(
       int nbSamples,
       int nbPreviewedSteps)
   {
@@ -34,9 +38,10 @@ namespace MPCWalkgen
     V0.setZero(nbSamples, 1);
   }
 
-  LinearDynamic SelectionMatrices::toLinearDynamics()
+  template <typename Scalar>
+  LinearDynamic<Scalar> SelectionMatrices<Scalar>::toLinearDynamics()
   {
-    LinearDynamic output;
+    LinearDynamic<Scalar> output;
 
     output.reset(V0.rows(), V0.cols(), V.cols());
 
@@ -51,7 +56,8 @@ namespace MPCWalkgen
 
   // By default, the step period is set to 2 sampling periods, as the
   // transitional DS period already last one sampling period.
-  HumanoidFeetSupervisor::HumanoidFeetSupervisor(int nbSamples,
+  template <typename Scalar>
+  HumanoidFeetSupervisor<Scalar>::HumanoidFeetSupervisor(int nbSamples,
                                                  Scalar samplingPeriod)
     :nbSamples_(nbSamples)
     ,samplingPeriod_(samplingPeriod)
@@ -60,40 +66,43 @@ namespace MPCWalkgen
     ,rightFootModel_(nbSamples_, samplingPeriod_)
     ,copDSConvexPolygon_()
     ,nbPreviewedSteps_(0)
-    ,stepPeriod_(2.0*samplingPeriod_)
+    ,stepPeriod_(2*samplingPeriod_)
     ,DSPeriod_(stepPeriod_)
     ,timeToNextPhase_(DSPeriod_)
-    ,phaseTimer_(0.0)
-    ,horizonTimer_(0.0)
+    ,phaseTimer_(0)
+    ,horizonTimer_(0)
     ,move_(false)
-    ,phase_(Phase::DS, DSPeriod_)
+    ,phase_(Phase<Scalar>::DS, DSPeriod_)
   {
     init();
   }
 
-  HumanoidFeetSupervisor::HumanoidFeetSupervisor()
+  template <typename Scalar>
+  HumanoidFeetSupervisor<Scalar>::HumanoidFeetSupervisor()
     :nbSamples_(1)
-    ,samplingPeriod_(1.0)
+    ,samplingPeriod_(1)
     ,feedbackPeriod_(samplingPeriod_)
     ,leftFootModel_(nbSamples_, samplingPeriod_)
     ,rightFootModel_(nbSamples_, samplingPeriod_)
     ,copDSConvexPolygon_()
     ,nbPreviewedSteps_(0)
-    ,stepPeriod_(2.0*samplingPeriod_)
+    ,stepPeriod_(2*samplingPeriod_)
     ,DSPeriod_(stepPeriod_)
     ,timeToNextPhase_(DSPeriod_)
-    ,phaseTimer_(0.0)
-    ,horizonTimer_(0.0)
+    ,phaseTimer_(0)
+    ,horizonTimer_(0)
     ,move_(false)
-    ,phase_(Phase::DS, DSPeriod_)
+    ,phase_(Phase<Scalar>::DS, DSPeriod_)
   {
     init();
   }
 
-  HumanoidFeetSupervisor::~HumanoidFeetSupervisor()
+  template <typename Scalar>
+  HumanoidFeetSupervisor<Scalar>::~HumanoidFeetSupervisor()
   {}
 
-  void HumanoidFeetSupervisor::setNbSamples(int nbSamples)
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::setNbSamples(int nbSamples)
   {
     assert(nbSamples>0);
 
@@ -104,7 +113,8 @@ namespace MPCWalkgen
     computeConstantPart();
   }
 
-  void HumanoidFeetSupervisor::setSamplingPeriod(Scalar samplingPeriod)
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::setSamplingPeriod(Scalar samplingPeriod)
   {
     assert(samplingPeriod>=0);
 
@@ -117,7 +127,8 @@ namespace MPCWalkgen
     computeConstantPart();
   }
 
-  void HumanoidFeetSupervisor::setStepPeriod(Scalar stepPeriod)
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::setStepPeriod(Scalar stepPeriod)
   {
     assert(stepPeriod>0);
 
@@ -134,16 +145,17 @@ namespace MPCWalkgen
     computeConstantPart();
   }
 
-  void HumanoidFeetSupervisor::setInitialDoubleSupportLength(
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::setInitialDoubleSupportLength(
       Scalar initialDoubleSupportLength)
   {
     //TODO: assert pour être sur que ce soit un multiple de samplingperiod?
 
     if(isInDS())
     {
-      if(initialDoubleSupportLength < DSPeriod_ - EPSILON)
+      if(initialDoubleSupportLength < DSPeriod_ - Constant<Scalar>::EPSILON)
       {
-        assert(timeToNextPhase_ + EPSILON > DSPeriod_ - initialDoubleSupportLength);
+        assert(timeToNextPhase_+Constant<Scalar>::EPSILON > DSPeriod_ - initialDoubleSupportLength);
       }
       timeToNextPhase_ +=  initialDoubleSupportLength - DSPeriod_;
       timeline_.front().duration_ +=  initialDoubleSupportLength - DSPeriod_;
@@ -154,39 +166,44 @@ namespace MPCWalkgen
     computeConstantPart();
   }
 
-  void HumanoidFeetSupervisor::setLeftFootKinematicConvexPolygon(
-      const ConvexPolygon& convexPolygon)
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::setLeftFootKinematicConvexPolygon(
+      const ConvexPolygon<Scalar>& convexPolygon)
   {
     leftFootModel_.setKinematicConvexPolygon(convexPolygon);
 
     computeConstantPart();
   }
 
-  void HumanoidFeetSupervisor::setRightFootKinematicConvexPolygon(
-      const ConvexPolygon &convexPolygon)
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::setRightFootKinematicConvexPolygon(
+      const ConvexPolygon<Scalar> &convexPolygon)
   {
     rightFootModel_.setKinematicConvexPolygon(convexPolygon);
 
     computeConstantPart();
   }
 
-  void HumanoidFeetSupervisor::setLeftFootCopConvexPolygon(
-      const ConvexPolygon& convexPolygon)
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::setLeftFootCopConvexPolygon(
+      const ConvexPolygon<Scalar>& convexPolygon)
   {
     leftFootModel_.setCopConvexPolygon(convexPolygon);
 
     computeConstantPart();
   }
 
-  void HumanoidFeetSupervisor::setRightFootCopConvexPolygon(
-      const ConvexPolygon& convexPolygon)
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::setRightFootCopConvexPolygon(
+      const ConvexPolygon<Scalar>& convexPolygon)
   {
     rightFootModel_.setCopConvexPolygon(convexPolygon);
 
     computeConstantPart();
   }
 
-  void HumanoidFeetSupervisor::setLeftFootStateX(const VectorX& state)
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::setLeftFootStateX(const VectorX& state)
   {
     assert(state==state);
     assert(state.size()==3);
@@ -195,7 +212,8 @@ namespace MPCWalkgen
     computeConstantPart();
   }
 
-  void HumanoidFeetSupervisor::setLeftFootStateY(const VectorX& state)
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::setLeftFootStateY(const VectorX& state)
   {
     assert(state==state);
     assert(state.size()==3);
@@ -204,7 +222,8 @@ namespace MPCWalkgen
     computeConstantPart();
   }
 
-  void HumanoidFeetSupervisor::setLeftFootStateZ(const VectorX& state)
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::setLeftFootStateZ(const VectorX& state)
   {
     assert(state==state);
     assert(state.size()==3);
@@ -213,7 +232,8 @@ namespace MPCWalkgen
     computeConstantPart();
   }
 
-  void HumanoidFeetSupervisor::setRightFootStateX(const VectorX& state)
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::setRightFootStateX(const VectorX& state)
   {
     assert(state==state);
     assert(state.size()==3);
@@ -222,7 +242,8 @@ namespace MPCWalkgen
     computeConstantPart();
   }
 
-  void HumanoidFeetSupervisor::setRightFootStateY(const VectorX& state)
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::setRightFootStateY(const VectorX& state)
   {
     assert(state==state);
     assert(state.size()==3);
@@ -231,7 +252,8 @@ namespace MPCWalkgen
     computeConstantPart();
   }
 
-  void HumanoidFeetSupervisor::setRightFootStateZ(const VectorX& state)
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::setRightFootStateZ(const VectorX& state)
   {
     assert(state==state);
     assert(state.size()==3);
@@ -240,78 +262,94 @@ namespace MPCWalkgen
     computeConstantPart();
   }
 
-  void HumanoidFeetSupervisor::setLeftFootMaxHeight(
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::setLeftFootMaxHeight(
       Scalar leftFootMaxHeight)
   {
     leftFootModel_.setMaxHeight(
           leftFootMaxHeight);
   }
 
-  void HumanoidFeetSupervisor::setRightFootMaxHeight(
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::setRightFootMaxHeight(
       Scalar rightFootMaxHeight)
   {
     rightFootModel_.setMaxHeight(
           rightFootMaxHeight);
   }
 
-  void HumanoidFeetSupervisor::setLeftFootYawUpperBound(
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::setLeftFootYawUpperBound(
       Scalar leftFootYawUpperBound)
   {
     leftFootModel_.setHipYawUpperBound(
           leftFootYawUpperBound);
   }
-  void HumanoidFeetSupervisor::setLeftFootYawLowerBound(
+
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::setLeftFootYawLowerBound(
       Scalar leftFootYawLowerBound)
   {
     leftFootModel_.setHipYawLowerBound(
           leftFootYawLowerBound);
   }
-  void HumanoidFeetSupervisor::setRightFootYawUpperBound(
+
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::setRightFootYawUpperBound(
       Scalar rightFootYawUpperBound)
   {
     rightFootModel_.setHipYawUpperBound(
           rightFootYawUpperBound);
   }
-  void HumanoidFeetSupervisor::setRightFootYawLowerBound(
+
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::setRightFootYawLowerBound(
       Scalar rightFootYawLowerBound)
   {
     rightFootModel_.setHipYawLowerBound(
           rightFootYawLowerBound);
   }
 
-  void HumanoidFeetSupervisor::setLeftFootYawSpeedUpperBound(
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::setLeftFootYawSpeedUpperBound(
       Scalar leftFootYawSpeedUpperBound)
   {
     leftFootModel_.setHipYawSpeedUpperBound(
           leftFootYawSpeedUpperBound);
   }
-  void HumanoidFeetSupervisor::setRightFootYawSpeedUpperBound(
+
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::setRightFootYawSpeedUpperBound(
       Scalar rightFootYawSpeedUpperBound)
   {
     rightFootModel_.setHipYawSpeedUpperBound(
           rightFootYawSpeedUpperBound);
   }
 
-  void HumanoidFeetSupervisor::setLeftFootYawAccelerationUpperBound(
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::setLeftFootYawAccelerationUpperBound(
       Scalar leftFootYawAccelerationUpperBound)
   {
     leftFootModel_.setHipYawAccelerationUpperBound(
           leftFootYawAccelerationUpperBound);
   }
-  void HumanoidFeetSupervisor::setRightFootYawAccelerationUpperBound(
+
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::setRightFootYawAccelerationUpperBound(
       Scalar rightFootYawAccelerationUpperBound)
   {
     rightFootModel_.setHipYawAccelerationUpperBound(
           rightFootYawAccelerationUpperBound);
   }
 
-
-  void HumanoidFeetSupervisor::setMove(bool move)
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::setMove(bool move)
   {
     move_ = move;
   }
 
-  int HumanoidFeetSupervisor::getMaximumNbOfCopConstraints()
+  template <typename Scalar>
+  int HumanoidFeetSupervisor<Scalar>::getMaximumNbOfCopConstraints()
   {
     // The maximum of constraints is reached when CoP convex polygons of both feet
     // are merged into one double support cop polygon.
@@ -320,31 +358,38 @@ namespace MPCWalkgen
                     0);
   }
 
-  int HumanoidFeetSupervisor::getMaximumNbOfKinematicConstraints()
+  template <typename Scalar>
+  int HumanoidFeetSupervisor<Scalar>::getMaximumNbOfKinematicConstraints()
   {
     return std::max(leftFootModel_.getKinematicConvexPolygon().getNbVertices(),
                     rightFootModel_.getKinematicConvexPolygon().getNbVertices());
   }
 
-  const ConvexPolygon& HumanoidFeetSupervisor::getCopConvexPolygon(int sampleIndex) const
+  template <typename Scalar>
+  const ConvexPolygon<Scalar>&
+  HumanoidFeetSupervisor<Scalar>::getCopConvexPolygon(int sampleIndex) const
   {
     switch (timeline_[phaseIndexFromSample_(sampleIndex)].phaseType_)
     {
-    case Phase::DS:
+    case Phase<Scalar>::DS:
       computeDSCopConvexPolygon();
       return copDSConvexPolygon_;
 
-    case Phase::leftSS:
+    case Phase<Scalar>::leftSS:
       return leftFootModel_.getCopConvexPolygon();
 
-    case Phase::rightSS:
+    case Phase<Scalar>::rightSS:
       return rightFootModel_.getCopConvexPolygon();
     }
 
     std::abort();
+    // avoid a compiler warning
+    return leftFootModel_.getCopConvexPolygon();
   }
 
-  const ConvexPolygon& HumanoidFeetSupervisor::getKinematicConvexPolygon(int stepIndex) const
+  template <typename Scalar>
+  const ConvexPolygon<Scalar>&
+  HumanoidFeetSupervisor<Scalar>::getKinematicConvexPolygon(int stepIndex) const
   {
     assert(stepIndex<nbPreviewedSteps_);
     // In double support, the first previewed step is actually the third element of the timeline,
@@ -356,22 +401,24 @@ namespace MPCWalkgen
 
     switch (timeline_[stepIndex].phaseType_)
     {
-    case Phase::leftSS:
+    case Phase<Scalar>::leftSS:
       return leftFootModel_.getKinematicConvexPolygon();
 
-    case Phase::rightSS:
+    case Phase<Scalar>::rightSS:
       return rightFootModel_.getKinematicConvexPolygon();
 
-    case Phase::DS:; // avoid a compiler warning
+    case Phase<Scalar>::DS:; // avoid a compiler warning
     }
-
     std::abort();
+    // avoid a compiler warning
+    return leftFootModel_.getKinematicConvexPolygon();
   }
 
   //TODO: change for getSupportFootStateXAtPhase(int phaseIndex)?
-  const VectorX& HumanoidFeetSupervisor::getSupportFootStateX() const
+  template <typename Scalar>
+  const typename Type<Scalar>::VectorX& HumanoidFeetSupervisor<Scalar>::getSupportFootStateX() const
   {
-    if(timeline_.front().phaseType_ == Phase::rightSS)
+    if(timeline_.front().phaseType_ == Phase<Scalar>::rightSS)
     {
       return rightFootModel_.getStateX();
     }
@@ -383,10 +430,10 @@ namespace MPCWalkgen
     return leftFootModel_.getStateX();
   }
 
-
-  const VectorX& HumanoidFeetSupervisor::getSupportFootStateY() const
+  template <typename Scalar>
+  const typename Type<Scalar>::VectorX& HumanoidFeetSupervisor<Scalar>::getSupportFootStateY() const
   {
-    if(timeline_.front().phaseType_ == Phase::rightSS)
+    if(timeline_.front().phaseType_ == Phase<Scalar>::rightSS)
     {
       return rightFootModel_.getStateY();
     }
@@ -398,21 +445,23 @@ namespace MPCWalkgen
     return leftFootModel_.getStateY();
   }
 
-  const int HumanoidFeetSupervisor::getNbOfCallsBeforeNextSample() const
+  template <typename Scalar>
+  int HumanoidFeetSupervisor<Scalar>::getNbOfCallsBeforeNextSample() const
   {
     Scalar timeToNextSample = timeToNextPhase_;
 
-    while(timeToNextSample > samplingPeriod_ + EPSILON)
+    while(timeToNextSample > samplingPeriod_ + Constant<Scalar>::EPSILON)
     {
       timeToNextSample -= samplingPeriod_;
     }
 
-    return static_cast<int>((timeToNextSample + EPSILON)/feedbackPeriod_);
+    return static_cast<int>((timeToNextSample + Constant<Scalar>::EPSILON)/feedbackPeriod_);
   }
 
-  bool HumanoidFeetSupervisor::isInDS() const
+  template <typename Scalar>
+  bool HumanoidFeetSupervisor<Scalar>::isInDS() const
   {
-    if(timeline_.front().phaseType_ == Phase::DS)
+    if(timeline_.front().phaseType_ == Phase<Scalar>::DS)
     {
       return true;
     }
@@ -420,7 +469,8 @@ namespace MPCWalkgen
     return false;
   }
 
-  void HumanoidFeetSupervisor::updateTimeline(VectorX& variable,
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::updateTimeline(VectorX& variable,
                                               Scalar feedBackPeriod)
   {
     assert(timeline_.size()>0);
@@ -428,7 +478,7 @@ namespace MPCWalkgen
     feedbackPeriod_ = feedBackPeriod;
 
     // Check if the current phase needs to change
-    if(timeToNextPhase_ < EPSILON)
+    if(timeToNextPhase_ < Constant<Scalar>::EPSILON)
     {
       if(!isInDS())
       {
@@ -448,9 +498,9 @@ namespace MPCWalkgen
     phaseTimer_ = timeToNextPhase_;
     horizonTimer_ = nbSamples_*samplingPeriod_;
 
-    while(horizonTimer_ > -EPSILON)
+    while(horizonTimer_ > -Constant<Scalar>::EPSILON)
     {
-      if(phaseTimer_ < EPSILON)
+      if(phaseTimer_ < Constant<Scalar>::EPSILON)
       {
         processFSM(timeline_[phaseIndex]);
 
@@ -459,7 +509,7 @@ namespace MPCWalkgen
         if(phaseIndex == static_cast<int>(timeline_.size()) - 1)
         {
           timeline_.set_capacity(timeline_.capacity() + 1);
-          timeline_.push_back(Phase(phase_));
+          timeline_.push_back(Phase<Scalar>(phase_));
         }
         else
         {
@@ -479,7 +529,7 @@ namespace MPCWalkgen
       // When the user set move_ to false this checks if the QP variable size must be reduce.
       if(!move_ && (variable.rows() > 2*nbSamples_ + 2))
       {
-        variable(2*nbSamples_ + 1) = variable(variable.rows()/2.0 + nbSamples_);
+        variable(2*nbSamples_ + 1) = variable(variable.rows()/2 + nbSamples_);
         variable.conservativeResize(2*nbSamples_ + 2);
       }
 
@@ -499,7 +549,8 @@ namespace MPCWalkgen
     computeRotationMatrix();
   }
 
-  void HumanoidFeetSupervisor::updateFeetStates(const VectorX& stepVec,
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::updateFeetStates(const VectorX& stepVec,
                                                 Scalar feedBackPeriod)
   {
     stepVec_ = stepVec;
@@ -508,17 +559,17 @@ namespace MPCWalkgen
     // This "if" statement checks if we are in a transitional double support
     // or in double support. If so, there is no update to do.
     if(!isInDS() &&
-       (timeToNextPhase_ < flyingTime + EPSILON))
+       (timeToNextPhase_ < flyingTime + Constant<Scalar>::EPSILON))
     {
-      HumanoidFootModel* flyingFoot;
+      HumanoidFootModel<Scalar>* flyingFoot;
 
       switch (timeline_.front().phaseType_)
       {
-      case Phase::leftSS:
+      case Phase<Scalar>::leftSS:
         flyingFoot = &rightFootModel_;
         break;
 
-      case Phase::rightSS:
+      case Phase<Scalar>::rightSS:
         flyingFoot = &leftFootModel_;
         break;
 
@@ -536,7 +587,7 @@ namespace MPCWalkgen
                                feedBackPeriod);
 
       //Updating Z state for the flying foot, depending whether the foot is going up or down
-      if(timeToNextPhase_ < flyingTime/2.0 + EPSILON)
+      if(timeToNextPhase_ < flyingTime*0.5f + Constant<Scalar>::EPSILON)
       {
         flyingFoot->updateStateZ(Vector3::Zero(),
                                  timeToNextPhase_,
@@ -545,7 +596,7 @@ namespace MPCWalkgen
       else
       {
         flyingFoot->updateStateZ(Vector3(flyingFoot->getMaxHeight(), 0, 0),
-                                 timeToNextPhase_ - flyingTime/2.0,
+                                 timeToNextPhase_ - flyingTime*0.5f,
                                  feedBackPeriod);
       }
     }
@@ -554,33 +605,35 @@ namespace MPCWalkgen
     timeToNextPhase_ -= feedBackPeriod;
   }
 
-  void HumanoidFeetSupervisor::computeConstantPart()
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::computeConstantPart()
   {
     //USELESS?
   }
 
-
-  void HumanoidFeetSupervisor::init()
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::init()
   {
     timeline_.set_capacity(1);
-    setPhase(Phase::DS);
-    timeline_.push_back(Phase(phase_));
+    setPhase(Phase<Scalar>::DS);
+    timeline_.push_back(Phase<Scalar>(phase_));
   }
 
-  void HumanoidFeetSupervisor::processFSM(const Phase& lastPhase)
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::processFSM(const Phase<Scalar>& lastPhase)
   {
     // FSM of the walking generator
-    if (lastPhase.phaseType_ == Phase::DS)
+    if (lastPhase.phaseType_ == Phase<Scalar>::DS)
     {
       if(move_)
       {
         //DS -> SS
-        setPhase(Phase::leftSS);
+        setPhase(Phase<Scalar>::leftSS);
       }
       else
       {
         //DS -> DS
-        setPhase(Phase::DS);
+        setPhase(Phase<Scalar>::DS);
       }
     }
     else
@@ -590,37 +643,38 @@ namespace MPCWalkgen
       if(!move_)
       {
         //SS -> DS
-        setPhase(Phase::DS);
+        setPhase(Phase<Scalar>::DS);
       }
       else
       {
         //SS -> SS
-        if(lastPhase.phaseType_ == Phase::leftSS)
+        if(lastPhase.phaseType_ == Phase<Scalar>::leftSS)
         {
-          setPhase(Phase::rightSS);
+          setPhase(Phase<Scalar>::rightSS);
         }
         else
         {
-          setPhase(Phase::leftSS);
+          setPhase(Phase<Scalar>::leftSS);
         }
       }
     }
   }
 
-  void HumanoidFeetSupervisor::setPhase(Phase::PhaseType phaseType)
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::setPhase(typename Phase<Scalar>::PhaseType phaseType)
   {
     switch (phaseType)
     {
-    case Phase::DS:
-      phase_.phaseType_ = Phase::DS;
+    case Phase<Scalar>::DS:
+      phase_.phaseType_ = Phase<Scalar>::DS;
       phase_.duration_ = DSPeriod_;
       break;
-    case Phase::leftSS:
-      phase_.phaseType_ = Phase::leftSS;
+    case Phase<Scalar>::leftSS:
+      phase_.phaseType_ = Phase<Scalar>::leftSS;
       phase_.duration_ = stepPeriod_;
       break;
-    case Phase::rightSS:
-      phase_.phaseType_ = Phase::rightSS;
+    case Phase<Scalar>::rightSS:
+      phase_.phaseType_ = Phase<Scalar>::rightSS;
       phase_.duration_ = stepPeriod_;
       break;
     default:
@@ -629,11 +683,12 @@ namespace MPCWalkgen
     }
   }
 
-  void HumanoidFeetSupervisor::shortenStepVec(VectorX& variable) const
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::shortenStepVec(VectorX& variable) const
   {
     assert(variable.rows()%2 == 0);
 
-    int newNbOfSteps = variable.rows()/2.0 - nbSamples_ - 1;
+    int newNbOfSteps = variable.rows()/2 - nbSamples_ - 1;
     VectorX save = variable;
 
 
@@ -645,12 +700,12 @@ namespace MPCWalkgen
         save.segment(nbSamples_ + save.rows()/2 + 1,  newNbOfSteps);
   }
 
-
-  void HumanoidFeetSupervisor::enlargeStepVec(VectorX& variable) const
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::enlargeStepVec(VectorX& variable) const
   {
     assert(variable.rows()%2 == 0);
 
-    int newNbOfSteps = variable.rows()/2.0 - nbSamples_ + 1;
+    const int newNbOfSteps = variable.rows()/2 - nbSamples_ + 1;
     VectorX save = variable;
 
     // Here X_ is too short, so we add a new footstep position.
@@ -660,16 +715,16 @@ namespace MPCWalkgen
     // the last footsteps CP
     // Since the polygon is convex, this method ensures that the new foostep will respect
     // the constraints
-    int newSize = 2*nbSamples_ + 2*newNbOfSteps;
+    const int newSize = 2*nbSamples_ + 2*newNbOfSteps;
 
     variable.conservativeResize(newSize);
 
     variable.segment(2*nbSamples_ + newNbOfSteps, newNbOfSteps - 1) =
         save.segment(save.rows()/2 + nbSamples_, newNbOfSteps - 1);
 
-    const ConvexPolygon& kinCP = getKinematicConvexPolygon(newNbOfSteps - 1);
+    const ConvexPolygon<Scalar>& kinCP = getKinematicConvexPolygon(newNbOfSteps - 1);
 
-    std::vector<Vector2> p = kinCP.getVertices();
+    const vectorOfVector2& p = kinCP.getVertices();
 
     assert(p.size()>0);
 
@@ -704,22 +759,23 @@ namespace MPCWalkgen
     if(isInDS() && (nbPreviewedSteps_==1))
     {
       variable(2*nbSamples_ + newNbOfSteps - 1) =
-          getLeftFootStateX()(0) + (rightmostPointX + leftmostPointX)/2.0;
+          getLeftFootStateX()(0) + (rightmostPointX + leftmostPointX)/2;
 
       variable(newSize - 1) =
-          getLeftFootStateY()(0) + (lowestPointY + highestPointY)/2.0;
+          getLeftFootStateY()(0) + (lowestPointY + highestPointY)/2;
     }
     else
     {
       variable(2*nbSamples_ + newNbOfSteps - 1) =
-          variable(2*nbSamples_ + newNbOfSteps - 2) + (rightmostPointX + leftmostPointX)/2.0;
+          variable(2*nbSamples_ + newNbOfSteps - 2) + (rightmostPointX + leftmostPointX)/2;
 
       variable(newSize - 1) =
-          variable(newSize - 2) + (lowestPointY + highestPointY)/2.0;
+          variable(newSize - 2) + (lowestPointY + highestPointY)/2;
     }
   }
 
-  void HumanoidFeetSupervisor::computeDSCopConvexPolygon() const
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::computeDSCopConvexPolygon() const
   {
     int N1 = leftFootModel_.getCopConvexPolygon().getNbVertices();
     int N2 = rightFootModel_.getCopConvexPolygon().getNbVertices();
@@ -734,7 +790,7 @@ namespace MPCWalkgen
 
     if(!isInDS() && !move_)
     {
-      if(timeline_[0].phaseType_ == Phase::leftSS)
+      if(timeline_[0].phaseType_ == Phase<Scalar>::leftSS)
       {
         rightFootPos(0) = stepVec_(0);
         rightFootPos(1) = stepVec_(nbPreviewedSteps_);
@@ -749,7 +805,7 @@ namespace MPCWalkgen
     }
     else if(isInDS() && !move_)
     {
-      translationVec = (rightFootPos + leftFootPos)/2.0;
+      translationVec = (rightFootPos + leftFootPos)/2;
     }
 
 
@@ -770,14 +826,15 @@ namespace MPCWalkgen
           - translationVec;
     }
 
-    copDSConvexPolygon_ = ConvexPolygon(copDSpoints_);
+    copDSConvexPolygon_ = ConvexPolygon<Scalar>(copDSpoints_);
   }
 
-  void HumanoidFeetSupervisor::computeSampleWeightMatrix()
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::computeSampleWeightMatrix()
   {
     Scalar timeToNextSample = timeToNextPhase_;
 
-    while(timeToNextSample > samplingPeriod_ + EPSILON)
+    while(timeToNextSample > samplingPeriod_ + Constant<Scalar>::EPSILON)
     {
       timeToNextSample -= samplingPeriod_;
     }
@@ -788,13 +845,13 @@ namespace MPCWalkgen
     sampleWeightMatrix_(0, 0) = timeToNextSample/samplingPeriod_;
     // The last sample weight is only here for esthetic purposes
     sampleWeightMatrix_(nbSamples_-1, nbSamples_-1) =
-        1.05 - sampleWeightMatrix_(0, 0);
+        1.05f - sampleWeightMatrix_(0, 0);
   }
 
-  void HumanoidFeetSupervisor::computeSelectionMatrix()
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::computeSelectionMatrix()
   {
     selectionMatrices_.reset(nbSamples_, nbPreviewedSteps_);
-    //selectionMatrices_.V0.fill(1.0); //DEBUG
 
     phaseIndexFromSample_.setZero(nbSamples_);
 
@@ -802,7 +859,7 @@ namespace MPCWalkgen
     int row = 0;
     phaseTimer_ = timeToNextPhase_;
 
-    while ((phaseTimer_ > samplingPeriod_ + EPSILON) && (row < nbSamples_))
+    while ((phaseTimer_ > samplingPeriod_ + Constant<Scalar>::EPSILON) && (row < nbSamples_))
     {
       selectionMatrices_.V0(row) = 1;
       phaseTimer_ -= samplingPeriod_;
@@ -814,11 +871,11 @@ namespace MPCWalkgen
     int phaseIndex = 1;
     horizonTimer_ = nbSamples_*samplingPeriod_ - timeToNextPhase_;
 
-    while(horizonTimer_ > -EPSILON)
+    while(horizonTimer_ > -Constant<Scalar>::EPSILON)
     {
       phaseTimer_ = timeline_[phaseIndex].duration_;
 
-      while((phaseTimer_ > EPSILON) && (row < nbSamples_))
+      while((phaseTimer_ > Constant<Scalar>::EPSILON) && (row < nbSamples_))
       {
         // Check for the special case where the timeline second element does not
         // count for a step because we are in double support
@@ -849,7 +906,8 @@ namespace MPCWalkgen
     selectionMatrices_.VT = selectionMatrices_.V.transpose();
   }
 
-  void HumanoidFeetSupervisor::computeFeetPosDynamic()
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::computeFeetPosDynamic()
   {
     feetPosDynamic_ = selectionMatrices_.toLinearDynamics();
 
@@ -864,7 +922,8 @@ namespace MPCWalkgen
     }
   }
 
-  void HumanoidFeetSupervisor::computeRotationMatrix()
+  template <typename Scalar>
+  void HumanoidFeetSupervisor<Scalar>::computeRotationMatrix()
   {
     rotationMatrix_.setZero(2*nbSamples_, 2*nbSamples_);
 
@@ -877,4 +936,6 @@ namespace MPCWalkgen
 
     rotationMatrixT_ = rotationMatrix_.transpose();
   }
+
+  MPC_WALKGEN_INSTANTIATE_CLASS_TEMPLATE(HumanoidFeetSupervisor);
 }

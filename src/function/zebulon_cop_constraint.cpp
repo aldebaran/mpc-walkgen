@@ -1,9 +1,19 @@
-#include "zebulon_cop_constraint.h"
+////////////////////////////////////////////////////////////////////////////////
+///
+///\author Lafaye Jory
+///\author Barthelemy Sebastien
+///
+////////////////////////////////////////////////////////////////////////////////
+
+#include <mpc-walkgen/function/zebulon_cop_constraint.h>
+#include <mpc-walkgen/constant.h>
+#include "../macro.h"
 
 using namespace MPCWalkgen;
 
-CopConstraint::CopConstraint(const LIPModel& lipModel,
-                             const BaseModel& baseModel)
+template <typename Scalar>
+CopConstraint<Scalar>::CopConstraint(const LIPModel<Scalar>& lipModel,
+                                     const BaseModel<Scalar>& baseModel)
 :lipModel_(lipModel)
 ,baseModel_(baseModel)
 ,function_(1)
@@ -23,23 +33,26 @@ CopConstraint::CopConstraint(const LIPModel& lipModel,
 }
 
 
-CopConstraint::~CopConstraint(){}
+template <typename Scalar>
+CopConstraint<Scalar>::~CopConstraint(){}
 
-const VectorX& CopConstraint::getFunction(const VectorX& x0)
+template <typename Scalar>
+const typename Type<Scalar>::VectorX& CopConstraint<Scalar>::getFunction(const VectorX& x0)
 {
   assert(baseModel_.getNbSamples()*4==x0.size());
   assert(baseModel_.getNbSamples() == lipModel_.getNbSamples());
   assert(baseModel_.getSamplingPeriod() == lipModel_.getSamplingPeriod());
 
-  const LinearDynamic& dynBasePos = baseModel_.getBasePosLinearDynamic();
+  const LinearDynamic<Scalar>& dynBasePos = baseModel_.getBasePosLinearDynamic();
   int N = lipModel_.getNbSamples();
 
-  if (baseModel_.getMass()>EPSILON)
+  const LinearDynamic<Scalar>& dynCopXCom = lipModel_.getCopXLinearDynamic();
+  const LinearDynamic<Scalar>& dynCopYCom = lipModel_.getCopYLinearDynamic();
+
+  if (baseModel_.getMass()>Constant<Scalar>::EPSILON)
   {
-    const LinearDynamic& dynCopXCom = lipModel_.getCopXLinearDynamic();
-    const LinearDynamic& dynCopYCom = lipModel_.getCopYLinearDynamic();
-    const LinearDynamic& dynCopXBase = baseModel_.getCopXLinearDynamic();
-    const LinearDynamic& dynCopYBase = baseModel_.getCopYLinearDynamic();
+    const LinearDynamic<Scalar>& dynCopXBase = baseModel_.getCopXLinearDynamic();
+    const LinearDynamic<Scalar>& dynCopYBase = baseModel_.getCopYLinearDynamic();
 
     tmp_.segment(0, N).noalias() = dynCopXCom.S * lipModel_.getStateX() + dynCopXCom.K;
     tmp_.segment(0, N).noalias() +=
@@ -47,30 +60,24 @@ const VectorX& CopConstraint::getFunction(const VectorX& x0)
     tmp_.segment(N, N).noalias() = dynCopYCom.S * lipModel_.getStateY() + dynCopYCom.K;
     tmp_.segment(N, N).noalias() +=
         (dynCopYBase.S-dynBasePos.S) * baseModel_.getStateY() + dynCopYBase.K;
-
-    function_.noalias() = -b_;
-    function_.noalias() -= getGradient()*x0;
-    function_.noalias() -= A_*tmp_;
   }
   else
   {
-    const LinearDynamic& dynCopX = lipModel_.getCopXLinearDynamic();
-    const LinearDynamic& dynCopY = lipModel_.getCopYLinearDynamic();
-
-    tmp_.segment(0, N).noalias() = dynCopX.S * lipModel_.getStateX() + dynCopX.K;
+    tmp_.segment(0, N).noalias() = dynCopXCom.S * lipModel_.getStateX() + dynCopXCom.K;
     tmp_.segment(0, N).noalias() -= dynBasePos.S * baseModel_.getStateX();
-    tmp_.segment(N, N).noalias() = dynCopY.S * lipModel_.getStateY() + dynCopY.K;
+    tmp_.segment(N, N).noalias() = dynCopYCom.S * lipModel_.getStateY() + dynCopYCom.K;
     tmp_.segment(N, N).noalias() -= dynBasePos.S * baseModel_.getStateY();
-
-    function_.noalias() = -b_;
-    function_.noalias() -= getGradient()*x0;
-    function_.noalias() -= A_*tmp_;
   }
+
+  function_.noalias() = -b_;
+  function_.noalias() -= getGradient()*x0;
+  function_.noalias() -= A_*tmp_;
 
   return function_;
 }
 
-const MatrixX& CopConstraint::getGradient()
+template <typename Scalar>
+const typename Type<Scalar>::MatrixX& CopConstraint<Scalar>::getGradient()
 {
   assert(baseModel_.getNbSamples() == lipModel_.getNbSamples());
   assert(baseModel_.getSamplingPeriod() == lipModel_.getSamplingPeriod());
@@ -78,64 +85,61 @@ const MatrixX& CopConstraint::getGradient()
   return gradient_;
 }
 
-int CopConstraint::getNbConstraints()
+template <typename Scalar>
+int CopConstraint<Scalar>::getNbConstraints()
 {
   assert(baseModel_.getNbSamples() == lipModel_.getNbSamples());
 
   return baseModel_.getNbSamples()*baseModel_.getCopSupportConvexPolygon().getNbVertices();
 }
 
-void CopConstraint::computeConstantPart()
+template <typename Scalar>
+void CopConstraint<Scalar>::computeConstantPart()
 {
   assert(baseModel_.getNbSamples() == lipModel_.getNbSamples());
   assert(baseModel_.getSamplingPeriod() == lipModel_.getSamplingPeriod());
 
   computeconstraintMatrices();
 
-  const LinearDynamic& dynBasePos = baseModel_.getBasePosLinearDynamic();
+  const LinearDynamic<Scalar>& dynBasePos = baseModel_.getBasePosLinearDynamic();
 
   int N = lipModel_.getNbSamples();
 
-  if (baseModel_.getMass()>EPSILON)
-  {
-    const LinearDynamic& dynCopXCom = lipModel_.getCopXLinearDynamic();
-    const LinearDynamic& dynCopYCom = lipModel_.getCopYLinearDynamic();
-    const LinearDynamic& dynCopXBase = baseModel_.getCopXLinearDynamic();
-    const LinearDynamic& dynCopYBase = baseModel_.getCopYLinearDynamic();
+  const LinearDynamic<Scalar>& dynCopXCom = lipModel_.getCopXLinearDynamic();
+  const LinearDynamic<Scalar>& dynCopYCom = lipModel_.getCopYLinearDynamic();
 
-    MatrixX tmp(2*N, 4*N);
-    tmp.fill(0.0);
+  MatrixX tmp(2*N, 4*N);
+  tmp.fill(0.0);
+
+  if (baseModel_.getMass()>Constant<Scalar>::EPSILON)
+  {
+    const LinearDynamic<Scalar>& dynCopXBase = baseModel_.getCopXLinearDynamic();
+    const LinearDynamic<Scalar>& dynCopYBase = baseModel_.getCopYLinearDynamic();
+
     tmp.block(0, 0, N, N) = dynCopXCom.U;
     tmp.block(N, N, N, N) = dynCopYCom.U;
     tmp.block(0, 2*N, N, N) = (dynCopXBase.U-dynBasePos.U);
     tmp.block(N, 3*N, N, N) = (dynCopYBase.U-dynBasePos.U);
-
-    gradient_ = A_ * tmp;
   }
   else
   {
-    const LinearDynamic& dynCopX = lipModel_.getCopXLinearDynamic();
-    const LinearDynamic& dynCopY = lipModel_.getCopYLinearDynamic();
-
-    MatrixX tmp(2*N, 4*N);
-    tmp.fill(0.0);
-    tmp.block(0, 0, N, N) = dynCopX.U;
-    tmp.block(N, N, N, N) = dynCopY.U;
+    tmp.block(0, 0, N, N) = dynCopXCom.U;
+    tmp.block(N, N, N, N) = dynCopYCom.U;
     tmp.block(0, 2*N, N, N) = -dynBasePos.U;
     tmp.block(N, 3*N, N, N) = -dynBasePos.U;
-
-    gradient_ = A_ * tmp;
   }
 
+  gradient_ = A_ * tmp;
 
   tmp_.resize(2*N);
 
 }
 
-void CopConstraint::computeconstraintMatrices()
+template <typename Scalar>
+void CopConstraint<Scalar>::computeconstraintMatrices()
 {
   int N = lipModel_.getNbSamples();
-  const ConvexPolygon& supportConvexPolygon = baseModel_.getCopSupportConvexPolygon();
+  const ConvexPolygon<Scalar>& supportConvexPolygon = baseModel_.getCopSupportConvexPolygon();
   int M = supportConvexPolygon.getNbVertices();
 
   A_.setZero(M*N, 2*N);
@@ -155,3 +159,5 @@ void CopConstraint::computeconstraintMatrices()
   }
 
 }
+
+MPC_WALKGEN_INSTANTIATE_CLASS_TEMPLATE(CopConstraint);

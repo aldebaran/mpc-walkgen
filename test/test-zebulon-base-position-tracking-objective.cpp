@@ -3,24 +3,21 @@
 ///\file test-zebulon-base-position-tracking-objective.cpp
 ///\brief Test the Zebulon base position tracking objective function
 ///\author Lafaye Jory
-///\date 20/07/13
+///\author Barthelemy Sebastien
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <gtest/gtest.h>
-#include "../src/model/zebulon_base_model.h"
-#include "../src/function/zebulon_base_position_tracking_objective.h"
+#include "mpc_walkgen_gtest.h"
+#include <mpc-walkgen/model/zebulon_base_model.h>
+#include <mpc-walkgen/function/zebulon_base_position_tracking_objective.h>
 
-class ZebulonBasePositionTrackingTest: public ::testing::Test{};
-
-
-
-TEST_F(ZebulonBasePositionTrackingTest, functionValue)
+TYPED_TEST(MpcWalkgenTest, functionValue)
 {
   using namespace MPCWalkgen;
+  TEMPLATE_TYPEDEF(TypeParam)
 
-  BaseModel m;
-  BasePositionTrackingObjective obj(m);
+  BaseModel<TypeParam> m;
+  BasePositionTrackingObjective<TypeParam> obj(m);
 
   VectorX jerkInit(2);
   jerkInit(0) = 1.0;
@@ -39,27 +36,28 @@ TEST_F(ZebulonBasePositionTrackingTest, functionValue)
   baseState(1) = 0.5;
   m.setStateY(baseState);
 
-  ASSERT_NEAR(obj.getGradient(jerkInit)(0,0), -0.555555, EPSILON);
-  ASSERT_NEAR(obj.getGradient(jerkInit)(1,0), -0.222222, EPSILON);
+  ASSERT_NEAR(obj.getGradient(jerkInit)(0,0), -0.555555, Constant<TypeParam>::EPSILON);
+  ASSERT_NEAR(obj.getGradient(jerkInit)(1,0), -0.222222, Constant<TypeParam>::EPSILON);
 
 
-  ASSERT_NEAR(obj.getHessian()(0,0), 0.0277777, EPSILON);
-  ASSERT_NEAR(obj.getHessian()(1,1), 0.0277777, EPSILON);
-  ASSERT_NEAR(obj.getHessian()(0,1), 0.0, EPSILON);
-  ASSERT_NEAR(obj.getHessian()(1,0), 0.0, EPSILON);
+  ASSERT_NEAR(obj.getHessian()(0,0), 0.0277777, Constant<TypeParam>::EPSILON);
+  ASSERT_NEAR(obj.getHessian()(1,1), 0.0277777, Constant<TypeParam>::EPSILON);
+  ASSERT_NEAR(obj.getHessian()(0,1), 0.0, Constant<TypeParam>::EPSILON);
+  ASSERT_NEAR(obj.getHessian()(1,0), 0.0, Constant<TypeParam>::EPSILON);
 
 }
 
 
-TEST_F(ZebulonBasePositionTrackingTest, sizeOfvalues)
+TYPED_TEST(MpcWalkgenTest, sizeOfvalues)
 {
   using namespace MPCWalkgen;
+  TEMPLATE_TYPEDEF(TypeParam)
 
   int nbSamples = 3;
-  Scalar samplingPeriod = 1.0;
+  TypeParam samplingPeriod = 1.0;
   bool autoCompute = true;
-  BaseModel m(nbSamples, samplingPeriod, autoCompute);
-  BasePositionTrackingObjective obj(m);
+  BaseModel<TypeParam> m(nbSamples, samplingPeriod, autoCompute);
+  BasePositionTrackingObjective<TypeParam> obj(m);
 
   VectorX jerkInit(2*nbSamples);
   jerkInit.fill(0.0);
@@ -68,5 +66,4 @@ TEST_F(ZebulonBasePositionTrackingTest, sizeOfvalues)
   ASSERT_EQ(obj.getHessian().cols(), 2*nbSamples);
   ASSERT_EQ(obj.getGradient(jerkInit).rows(), 2*nbSamples);
   ASSERT_EQ(obj.getGradient(jerkInit).cols(), 1);
-
 }

@@ -1,27 +1,36 @@
-#include "zebulon_base_model.h"
+////////////////////////////////////////////////////////////////////////////////
+///
+///\author Lafaye Jory
+///\author Barthelemy Sebastien
+///
+////////////////////////////////////////////////////////////////////////////////
+
+#include <mpc-walkgen/model/zebulon_base_model.h>
 #include <cmath>
-#include "../tools.h"
+#include <mpc-walkgen/tools.h>
+#include <mpc-walkgen/constant.h>
+#include "../macro.h"
 
 using namespace MPCWalkgen;
 
-
-BaseModel::BaseModel(int nbSamples,
+template <typename Scalar>
+BaseModel<Scalar>::BaseModel(int nbSamples,
                      Scalar samplingPeriod,
                      bool autoCompute)
   :autoCompute_(autoCompute)
   ,nbSamples_(nbSamples)
   ,samplingPeriod_(samplingPeriod)
   ,comHeight_(0.0)
-  ,gravity_(GRAVITY_VECTOR)
+  ,gravity_(Constant<Scalar>::GRAVITY_VECTOR)
   ,mass_(0.0)
   ,totalMass_(1.0)
   ,velocityLimit_(1.0)
   ,accelerationLimit_(1.0)
   ,jerkLimit_(1.0)
+  ,tiltContactPointX_(0.0)
+  ,tiltContactPointY_(0.0)
   ,copSupportConvexPolygon_()
   ,comSupportConvexPolygon_()
-  ,wheelToBaseDist_(0.0)
-  ,angleWheelToBaseCom_(0.0)
 {
   assert(samplingPeriod>0);
   assert(nbSamples>0);
@@ -30,18 +39,20 @@ BaseModel::BaseModel(int nbSamples,
   stateY_.setZero(3);
   stateRoll_.setZero(3);
   statePitch_.setZero(3);
+  stateYaw_.setZero(3);
   if (autoCompute_)
   {
     computeDynamics();
   }
 }
 
-BaseModel::BaseModel()
+template <typename Scalar>
+BaseModel<Scalar>::BaseModel()
   :autoCompute_(true)
   ,nbSamples_(1)
   ,samplingPeriod_(1.0)
   ,comHeight_(0.0)
-  ,gravity_(GRAVITY_VECTOR)
+  ,gravity_(Constant<Scalar>::GRAVITY_VECTOR)
   ,mass_(0.0)
   ,totalMass_(1.0)
   ,velocityLimit_(1.0)
@@ -49,22 +60,23 @@ BaseModel::BaseModel()
   ,jerkLimit_(1.0)
   ,copSupportConvexPolygon_()
   ,comSupportConvexPolygon_()
-  ,wheelToBaseDist_(0.0)
-  ,angleWheelToBaseCom_(0.0)
 {
   stateX_.setZero(3);
   stateY_.setZero(3);
   stateRoll_.setZero(3);
   statePitch_.setZero(3);
+  stateYaw_.setZero(3);
   if (autoCompute_)
   {
     computeDynamics();
   }
 }
 
-BaseModel::~BaseModel(){}
+template <typename Scalar>
+BaseModel<Scalar>::~BaseModel(){}
 
-void BaseModel::computeDynamics()
+template <typename Scalar>
+void BaseModel<Scalar>::computeDynamics()
 {
   computeBasePosDynamic();
   computeBaseVelDynamic();
@@ -72,53 +84,69 @@ void BaseModel::computeDynamics()
   computeBaseJerkDynamic();
   computeCopXDynamic();
   computeCopYDynamic();
+  computeTiltDynamic();
 }
 
 
-void BaseModel::computeCopXDynamic()
+template <typename Scalar>
+void BaseModel<Scalar>::computeTiltDynamic()
 {
-  Tools::ConstantJerkDynamic::computeCopDynamic(samplingPeriod_, samplingPeriod_,
+  Tools::ConstantJerkDynamic<Scalar>::computeOrder2PosDynamic(samplingPeriod_, samplingPeriod_,
+                                                nbSamples_, baseTiltAngleDynamic_);
+  Tools::ConstantJerkDynamic<Scalar>::computeOrder2VelDynamic(samplingPeriod_, samplingPeriod_,
+                                                nbSamples_, baseTiltAngularVelDynamic_);
+}
+
+template <typename Scalar>
+void BaseModel<Scalar>::computeCopXDynamic()
+{
+  Tools::ConstantJerkDynamic<Scalar>::computeCopDynamic(samplingPeriod_, samplingPeriod_,
                                                 nbSamples_, copXDynamic_,
                                                 comHeight_, gravity_(0),
                                                 gravity_(2), mass_,
                                                 totalMass_);
 }
 
-void BaseModel::computeCopYDynamic()
+template <typename Scalar>
+void BaseModel<Scalar>::computeCopYDynamic()
 {
-  Tools::ConstantJerkDynamic::computeCopDynamic(samplingPeriod_, samplingPeriod_,
+  Tools::ConstantJerkDynamic<Scalar>::computeCopDynamic(samplingPeriod_, samplingPeriod_,
                                                 nbSamples_, copYDynamic_,
                                                 comHeight_, gravity_(1),
                                                 gravity_(2), mass_,
                                                 totalMass_);
 }
 
-void BaseModel::computeBasePosDynamic()
+template <typename Scalar>
+void BaseModel<Scalar>::computeBasePosDynamic()
 {
-  Tools::ConstantJerkDynamic::computePosDynamic(samplingPeriod_, samplingPeriod_,
+  Tools::ConstantJerkDynamic<Scalar>::computePosDynamic(samplingPeriod_, samplingPeriod_,
                                                 nbSamples_, basePosDynamic_);
 
 }
 
-void BaseModel::computeBaseVelDynamic()
+template <typename Scalar>
+void BaseModel<Scalar>::computeBaseVelDynamic()
 {
-  Tools::ConstantJerkDynamic::computeVelDynamic(samplingPeriod_, samplingPeriod_,
+  Tools::ConstantJerkDynamic<Scalar>::computeVelDynamic(samplingPeriod_, samplingPeriod_,
                                                 nbSamples_, baseVelDynamic_);
 }
 
-void BaseModel::computeBaseAccDynamic()
+template <typename Scalar>
+void BaseModel<Scalar>::computeBaseAccDynamic()
 {
-  Tools::ConstantJerkDynamic::computeAccDynamic(samplingPeriod_, samplingPeriod_,
+  Tools::ConstantJerkDynamic<Scalar>::computeAccDynamic(samplingPeriod_, samplingPeriod_,
                                                 nbSamples_, baseAccDynamic_);
 }
 
-void BaseModel::computeBaseJerkDynamic()
+template <typename Scalar>
+void BaseModel<Scalar>::computeBaseJerkDynamic()
 {
-  Tools::ConstantJerkDynamic::computeJerkDynamic(nbSamples_, baseJerkDynamic_);
+  Tools::ConstantJerkDynamic<Scalar>::computeJerkDynamic(nbSamples_, baseJerkDynamic_);
 }
 
-
-void BaseModel::setNbSamples(int nbSamples)
+template <typename Scalar>
+void BaseModel<Scalar>::setNbSamples(int nbSamples)
 {
   assert(nbSamples>0);
 
@@ -130,17 +158,20 @@ void BaseModel::setNbSamples(int nbSamples)
   }
 }
 
-void BaseModel::updateStateX(Scalar jerk, Scalar feedBackPeriod)
+template <typename Scalar>
+void BaseModel<Scalar>::updateStateX(Scalar jerk, Scalar feedBackPeriod)
 {
-  Tools::ConstantJerkDynamic::updateState(jerk, feedBackPeriod, stateX_);
+  Tools::ConstantJerkDynamic<Scalar>::updateState(jerk, feedBackPeriod, stateX_);
 }
 
-void BaseModel::updateStateY(Scalar jerk, Scalar feedBackPeriod)
+template <typename Scalar>
+void BaseModel<Scalar>::updateStateY(Scalar jerk, Scalar feedBackPeriod)
 {
-  Tools::ConstantJerkDynamic::updateState(jerk, feedBackPeriod, stateY_);
+  Tools::ConstantJerkDynamic<Scalar>::updateState(jerk, feedBackPeriod, stateY_);
 }
 
-void BaseModel::setSamplingPeriod(Scalar samplingPeriod)
+template <typename Scalar>
+void BaseModel<Scalar>::setSamplingPeriod(Scalar samplingPeriod)
 {
   assert(samplingPeriod>0);
 
@@ -152,8 +183,8 @@ void BaseModel::setSamplingPeriod(Scalar samplingPeriod)
   }
 }
 
-
-void BaseModel::setComHeight(Scalar comHeight)
+template <typename Scalar>
+void BaseModel<Scalar>::setComHeight(Scalar comHeight)
 {
   assert(comHeight==comHeight);
 
@@ -166,10 +197,11 @@ void BaseModel::setComHeight(Scalar comHeight)
   }
 }
 
-void BaseModel::setGravity(const Vector3& gravity)
+template <typename Scalar>
+void BaseModel<Scalar>::setGravity(const Vector3& gravity)
 {
   assert(gravity==gravity);
-  assert(std::abs(gravity_(2))>EPSILON);
+  assert(std::abs(gravity_(2))>Constant<Scalar>::EPSILON);
 
   gravity_ = gravity;
 
@@ -180,9 +212,11 @@ void BaseModel::setGravity(const Vector3& gravity)
   }
 }
 
-void BaseModel::setMass(Scalar mass)
+template <typename Scalar>
+void BaseModel<Scalar>::setMass(Scalar mass)
 {
   assert(mass==mass);
+  assert(mass>0.);
 
   mass_ = mass;
 
@@ -193,10 +227,12 @@ void BaseModel::setMass(Scalar mass)
   }
 }
 
-void BaseModel::setTotalMass(Scalar mass)
+template <typename Scalar>
+void BaseModel<Scalar>::setTotalMass(Scalar mass)
 {
   assert(mass==mass);
   assert(mass>=mass_);
+  assert(mass>0.);
   totalMass_ = mass;
 
   if (autoCompute_)
@@ -205,3 +241,6 @@ void BaseModel::setTotalMass(Scalar mass)
     computeCopYDynamic();
   }
 }
+
+MPC_WALKGEN_INSTANTIATE_CLASS_TEMPLATE(BaseModel);
+

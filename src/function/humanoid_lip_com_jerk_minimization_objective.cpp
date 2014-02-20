@@ -3,17 +3,19 @@
 ///\file humanoid_lip_com_jerk_minimization_objective.cpp
 ///\brief Implement the LIP CoM jerk minimization objective
 ///\author de Gourcuff Martin
-///\date 12/07/13
+///\author Barthelemy Sebastien
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "humanoid_lip_com_jerk_minimization_objective.h"
+#include <mpc-walkgen/function/humanoid_lip_com_jerk_minimization_objective.h>
+#include "../macro.h"
 
 namespace MPCWalkgen
 {
-  HumanoidLipComJerkMinimizationObjective::HumanoidLipComJerkMinimizationObjective(
-      const LIPModel& lipModel,
-      const HumanoidFeetSupervisor& feetSupervisor)
+  template <typename Scalar>
+  HumanoidLipComJerkMinimizationObjective<Scalar>::HumanoidLipComJerkMinimizationObjective(
+      const LIPModel<Scalar>& lipModel,
+      const HumanoidFeetSupervisor<Scalar>& feetSupervisor)
     :lipModel_(lipModel)
     ,feetSupervisor_(feetSupervisor)
   {
@@ -23,9 +25,12 @@ namespace MPCWalkgen
     hessian_.setZero(1, 1);
   }
 
-  HumanoidLipComJerkMinimizationObjective::~HumanoidLipComJerkMinimizationObjective(){}
+  template <typename Scalar>
+  HumanoidLipComJerkMinimizationObjective<Scalar>::~HumanoidLipComJerkMinimizationObjective(){}
 
-  const VectorX& HumanoidLipComJerkMinimizationObjective::getGradient(const VectorX& x0)
+  template <typename Scalar>
+  const typename Type<Scalar>::VectorX&
+  HumanoidLipComJerkMinimizationObjective<Scalar>::getGradient(const VectorX& x0)
   {
     assert(x0.rows() == 2*lipModel_.getNbSamples() + 2*feetSupervisor_.getNbPreviewedSteps());
 
@@ -34,9 +39,9 @@ namespace MPCWalkgen
 
     int nb = feetSupervisor_.getNbOfCallsBeforeNextSample() - 1;
 
-    const LinearDynamic& dynCopX = lipModel_.getCopXLinearDynamic(nb);
-    const LinearDynamic& dynCopY = lipModel_.getCopYLinearDynamic(nb);
-    const LinearDynamic& dynFeetPos = feetSupervisor_.getFeetPosLinearDynamic();
+    const LinearDynamic<Scalar>& dynCopX = lipModel_.getCopXLinearDynamic(nb);
+    const LinearDynamic<Scalar>& dynCopY = lipModel_.getCopYLinearDynamic(nb);
+    const LinearDynamic<Scalar>& dynFeetPos = feetSupervisor_.getFeetPosLinearDynamic();
 
     const MatrixX& weight = feetSupervisor_.getSampleWeightMatrix();
 
@@ -64,7 +69,9 @@ namespace MPCWalkgen
     return gradient_;
   }
 
-  const MatrixX& HumanoidLipComJerkMinimizationObjective::getHessian()
+  template <typename Scalar>
+  const typename
+  Type<Scalar>::MatrixX& HumanoidLipComJerkMinimizationObjective<Scalar>::getHessian()
   {
     assert(feetSupervisor_.getNbSamples() == lipModel_.getNbSamples());;
 
@@ -73,8 +80,8 @@ namespace MPCWalkgen
 
     int nb = feetSupervisor_.getNbOfCallsBeforeNextSample() - 1;
 
-    const LinearDynamic& dynCopX = lipModel_.getCopXLinearDynamic(nb);
-    const LinearDynamic& dynCopY = lipModel_.getCopYLinearDynamic(nb);
+    const LinearDynamic<Scalar>& dynCopX = lipModel_.getCopXLinearDynamic(nb);
+    const LinearDynamic<Scalar>& dynCopY = lipModel_.getCopYLinearDynamic(nb);
 
     MatrixX tmp = MatrixX::Zero(2*N, 2*N + 2*M);
 
@@ -92,4 +99,6 @@ namespace MPCWalkgen
 
     return hessian_;
   }
+
+  MPC_WALKGEN_INSTANTIATE_CLASS_TEMPLATE(HumanoidLipComJerkMinimizationObjective);
 }

@@ -1,10 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 ///
-///\file	qpsolver.h
-///\brief	Interface template for a QP solver
+///\file qpsolver.h
+///\brief Interface template for a QP solver
 ///\author Lafaye Jory
-///\version	1.0
-///\date	19/06/13
+///\author Barthelemy Sebastien
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -88,7 +87,7 @@ Scalar QPMatrices<Scalar>::getNormalizationFactor(const MatrixX& mat,
     }
   }
 
-  return 1.0/normalizationFactor;
+  return 1/normalizationFactor;
 }
 }
-#endif //MPC_WALKGEN_QPSOLVER_H
+#endif

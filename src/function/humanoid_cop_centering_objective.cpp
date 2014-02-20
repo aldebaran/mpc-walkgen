@@ -3,18 +3,19 @@
 ///\file humanoid_cop_centering_objective.cpp
 ///\brief Implement the CoP centering objective
 ///\author de Gourcuff Martin
-///\date 12/07/13
+///\author Barthelemy Sebastien
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "humanoid_cop_centering_objective.h"
-
+#include <mpc-walkgen/function/humanoid_cop_centering_objective.h>
+#include "../macro.h"
 
 namespace MPCWalkgen
 {
-  HumanoidCopCenteringObjective::HumanoidCopCenteringObjective
-  (const LIPModel& lipModel,
-   const HumanoidFeetSupervisor& feetSupervisor)
+  template <typename Scalar>
+  HumanoidCopCenteringObjective<Scalar>::HumanoidCopCenteringObjective
+  (const LIPModel<Scalar>& lipModel,
+   const HumanoidFeetSupervisor<Scalar>& feetSupervisor)
     :lipModel_(lipModel)
     ,feetSupervisor_(feetSupervisor)
   {
@@ -22,9 +23,12 @@ namespace MPCWalkgen
     hessian_.setZero(1, 1);
   }
 
-  HumanoidCopCenteringObjective::~HumanoidCopCenteringObjective(){}
+  template <typename Scalar>
+  HumanoidCopCenteringObjective<Scalar>::~HumanoidCopCenteringObjective(){}
 
-  const VectorX& HumanoidCopCenteringObjective::getGradient(const VectorX& x0)
+  template <typename Scalar>
+  const typename
+  Type<Scalar>::VectorX& HumanoidCopCenteringObjective<Scalar>::getGradient(const VectorX& x0)
   {
     assert(feetSupervisor_.getNbSamples() == lipModel_.getNbSamples());
     assert(x0.rows() == 2*lipModel_.getNbSamples() + 2*feetSupervisor_.getNbPreviewedSteps());
@@ -34,7 +38,8 @@ namespace MPCWalkgen
     return gradient_;
   }
 
-  const MatrixX& HumanoidCopCenteringObjective::getHessian()
+  template <typename Scalar>
+  const typename Type<Scalar>::MatrixX& HumanoidCopCenteringObjective<Scalar>::getHessian()
   {
     int N = lipModel_.getNbSamples();
     int M = feetSupervisor_.getNbPreviewedSteps();
@@ -44,4 +49,6 @@ namespace MPCWalkgen
 
     return hessian_;
   }
+
+  MPC_WALKGEN_INSTANTIATE_CLASS_TEMPLATE(HumanoidCopCenteringObjective);
 }

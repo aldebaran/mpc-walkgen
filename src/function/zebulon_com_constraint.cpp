@@ -1,9 +1,18 @@
-#include "zebulon_com_constraint.h"
+////////////////////////////////////////////////////////////////////////////////
+///
+///\author Lafaye Jory
+///\author Barthelemy Sebastien
+///
+////////////////////////////////////////////////////////////////////////////////
+
+#include <mpc-walkgen/function/zebulon_com_constraint.h>
+#include "../macro.h"
 
 using namespace MPCWalkgen;
 
-ComConstraint::ComConstraint(const LIPModel& lipModel,
-                             const BaseModel& baseModel)
+template <typename Scalar>
+ComConstraint<Scalar>::ComConstraint(const LIPModel<Scalar>& lipModel,
+                                     const BaseModel<Scalar>& baseModel)
 :lipModel_(lipModel)
 ,baseModel_(baseModel)
 ,function_(1)
@@ -23,16 +32,18 @@ ComConstraint::ComConstraint(const LIPModel& lipModel,
 }
 
 
-ComConstraint::~ComConstraint(){}
+template <typename Scalar>
+ComConstraint<Scalar>::~ComConstraint(){}
 
-const VectorX& ComConstraint::getFunction(const VectorX& x0)
+template <typename Scalar>
+const typename Type<Scalar>::VectorX& ComConstraint<Scalar>::getFunction(const VectorX& x0)
 {
   assert(baseModel_.getNbSamples()*4==x0.size());
   assert(baseModel_.getNbSamples() == lipModel_.getNbSamples());
   assert(baseModel_.getSamplingPeriod() == lipModel_.getSamplingPeriod());
 
-  const LinearDynamic& dynBasePos = baseModel_.getBasePosLinearDynamic();
-  const LinearDynamic& dynCom = lipModel_.getComPosLinearDynamic();
+  const LinearDynamic<Scalar>& dynBasePos = baseModel_.getBasePosLinearDynamic();
+  const LinearDynamic<Scalar>& dynCom = lipModel_.getComPosLinearDynamic();
 
   int N = lipModel_.getNbSamples();
 
@@ -48,7 +59,8 @@ const VectorX& ComConstraint::getFunction(const VectorX& x0)
   return function_;
 }
 
-const MatrixX& ComConstraint::getGradient()
+template <typename Scalar>
+const typename Type<Scalar>::MatrixX& ComConstraint<Scalar>::getGradient()
 {
   assert(baseModel_.getNbSamples() == lipModel_.getNbSamples());
   assert(baseModel_.getSamplingPeriod() == lipModel_.getSamplingPeriod());
@@ -56,22 +68,24 @@ const MatrixX& ComConstraint::getGradient()
   return gradient_;
 }
 
-int ComConstraint::getNbConstraints()
+template <typename Scalar>
+int ComConstraint<Scalar>::getNbConstraints()
 {
   assert(baseModel_.getNbSamples() == lipModel_.getNbSamples());
 
   return baseModel_.getNbSamples()*baseModel_.getComSupportConvexPolygon().getNbVertices();
 }
 
-void ComConstraint::computeConstantPart()
+template <typename Scalar>
+void ComConstraint<Scalar>::computeConstantPart()
 {
   assert(baseModel_.getNbSamples() == lipModel_.getNbSamples());
   assert(baseModel_.getSamplingPeriod() == lipModel_.getSamplingPeriod());
 
   computeconstraintMatrices();
 
-  const LinearDynamic& dynBasePos = baseModel_.getBasePosLinearDynamic();
-  const LinearDynamic& dynCom = lipModel_.getComPosLinearDynamic();
+  const LinearDynamic<Scalar>& dynBasePos = baseModel_.getBasePosLinearDynamic();
+  const LinearDynamic<Scalar>& dynCom = lipModel_.getComPosLinearDynamic();
 
   int N = lipModel_.getNbSamples();
 
@@ -89,10 +103,11 @@ void ComConstraint::computeConstantPart()
 
 }
 
-void ComConstraint::computeconstraintMatrices()
+template <typename Scalar>
+void ComConstraint<Scalar>::computeconstraintMatrices()
 {
   int N = lipModel_.getNbSamples();
-  const ConvexPolygon& supportConvexPolygon = baseModel_.getComSupportConvexPolygon();
+  const ConvexPolygon<Scalar>& supportConvexPolygon = baseModel_.getComSupportConvexPolygon();
   int M = supportConvexPolygon.getNbVertices();
 
   A_.setZero(M*N, 2*N);
@@ -110,5 +125,6 @@ void ComConstraint::computeconstraintMatrices()
       b_(i*N+j) = -p1(1)*(p2(0)-p1(0)) + p1(0)*(p2(1)-p1(1));
     }
   }
-
 }
+
+MPC_WALKGEN_INSTANTIATE_CLASS_TEMPLATE(ComConstraint);

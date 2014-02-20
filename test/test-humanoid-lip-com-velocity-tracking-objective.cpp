@@ -3,65 +3,62 @@
 ///\file test-humanoid-lip-com-velocity-tracking-objective.cpp
 ///\brief Test of the LIP CoM velocity tracking objective function
 ///\author de Gourcuff Martin
-///\date 12/08/13
+///\author Barthelemy Sebastien
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <gtest/gtest.h>
-#include "../src/humanoid_feet_supervisor.h"
-#include "../src/model/lip_model.h"
-#include "../src/function/humanoid_lip_com_velocity_tracking_objective.h"
+#include "mpc_walkgen_gtest.h"
+#include <mpc-walkgen/humanoid_feet_supervisor.h>
+#include <mpc-walkgen/function/humanoid_lip_com_velocity_tracking_objective.h>
 
+using namespace MPCWalkgen;
 
-class HumanoidLipComVelocityTrackingTest: public ::testing::Test{};
-
-TEST_F(HumanoidLipComVelocityTrackingTest, HessianAndGradientValue)
+TYPED_TEST(MpcWalkgenTest, HessianAndGradientValue)
 {
   using namespace MPCWalkgen;
 
 
   int nbSamples = 2;
-  Scalar samplingPeriod = 0.2;
-  Scalar stepPeriod = 0.4;
+  TypeParam samplingPeriod = 0.2f;
+  TypeParam stepPeriod = 0.4f;
 
-  Scalar initDSLength = 1.0;
+  TypeParam initDSLength = 1.0f;
 
-  HumanoidFeetSupervisor feetSupervisor(nbSamples,
+  HumanoidFeetSupervisor<TypeParam> feetSupervisor(nbSamples,
                                         samplingPeriod);
   feetSupervisor.setStepPeriod(stepPeriod);
   feetSupervisor.setInitialDoubleSupportLength(initDSLength);
-  LIPModel lip;
+  LIPModel<TypeParam> lip;
   //HumanoidLipComVelocityTrackingObjective obj(lip, leftFoot, rightFoot);
 
 }
 
 
-TEST_F(HumanoidLipComVelocityTrackingTest, HessianAndGradientSize)
+TYPED_TEST(MpcWalkgenTest, HessianAndGradientSize)
 {
 
   using namespace MPCWalkgen;
-
+  TEMPLATE_TYPEDEF(TypeParam);
   //TODO: Add footSteps
 
   int nbSamples = 3;
-  Scalar samplingPeriod = 1.0;
+  TypeParam samplingPeriod = 1.0f;
   bool autoCompute = true;
   VectorX variable;
   variable.setZero(2*nbSamples);
-  Scalar feedbackPeriod = 0.5;
+  TypeParam feedbackPeriod = 0.5f;
 
-  HumanoidFeetSupervisor feetSupervisor(nbSamples,
+  HumanoidFeetSupervisor<TypeParam> feetSupervisor(nbSamples,
                                         samplingPeriod);
   feetSupervisor.updateTimeline(variable, feedbackPeriod);
 
-  LIPModel lip(nbSamples, samplingPeriod, autoCompute);
+  LIPModel<TypeParam> lip(nbSamples, samplingPeriod, autoCompute);
   lip.setFeedbackPeriod(feedbackPeriod);
 
-  HumanoidLipComVelocityTrackingObjective obj(lip, feetSupervisor);
+  HumanoidLipComVelocityTrackingObjective<TypeParam> obj(lip, feetSupervisor);
 
   VectorX jerkInit(2*nbSamples + 2*feetSupervisor.getNbPreviewedSteps());
   jerkInit.fill(0.0);
-
 
   ASSERT_EQ(obj.getHessian().rows(), 6);
   ASSERT_EQ(obj.getHessian().cols(), 6);

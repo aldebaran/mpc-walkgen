@@ -1,123 +1,243 @@
-#include <mpc-walkgen/zebulon_walkgen_abstract.h>
+#include <mpc-walkgen/zebulon_walkgen.h>
 #include <iostream>
 #include <qi/os.hpp>
+#include <iomanip>
 
 using namespace MPCWalkgen;
+typedef double Real;
+
+void updatePsi(ZebulonWalkgen<Real>& walkgen, Type<Real>::VectorX& psi)
+{
+  Real b = walkgen.getBaseStateY()(0);
+  Real c = walkgen.getComStateY()(0);
+  Real ddb = walkgen.getBaseStateY()(2);
+  Real ddc = walkgen.getComStateY()(2);
+
+  Real g = 9.81;
+  Real m = 13.5;
+  Real M = 16.5;
+  Real h = 0.73;
+  Real L = 0.13;
+
+  Real T = 0.02;
+
+  psi(0) += psi(1)*T+psi(2)*T*T/2;
+  psi(1) += psi(2)*T;
+  psi(2) = (g*(m*h+M*L)*psi(0)-m*g*(c-b)+M*L*ddb+m*h*ddc+M*g*0.24)/(m*h*h+M*L*L);
+;
+
+  if (psi(0)>-0.01)
+  {
+    psi(0) = 0.0;
+  }
+  static bool touch = false;
+  if (psi(0)>=0.0 || touch){
+    psi.fill(0.0);
+    touch = true;
+    ZebulonWalkgenWeighting<Real> weighting;
+    weighting.copCentering = 10.0;
+    weighting.comCentering = 100.0;
+    weighting.velocityTracking = 10.0;
+    weighting.positionTracking = 0.0;
+    weighting.jerkMinimization = 0.00001;
+    weighting.tiltMinimization = 0.0;
+    weighting.tiltVelMinimization = 0.0;
+    walkgen.setWeightings(weighting);
+    ZebulonWalkgenConfig<Real> config;
+    config.withBaseMotionConstraints = false;
+    config.withComConstraints = false;
+    config.withCopConstraints = true;
+    walkgen.setConfig(config);
+  }
+
+}
 
 int main(void)
 {
 
   int nbSamples = 10;
 
-  ZebulonWalkgenImpl walkgen;
+  ZebulonWalkgen<Real> walkgen;
 
   walkgen.setNbSamples(nbSamples);
-  walkgen.setSamplingPeriod(0.16);
-  walkgen.setComBodyHeight(0.76);
+  walkgen.setSamplingPeriod(0.2);
+  walkgen.setComBodyHeight(0.73);
   walkgen.setComBaseHeight(0.13);
-  walkgen.setBodyMass(12.5);
-  walkgen.setBaseMass(17.5);
+  walkgen.setBodyMass(13.5);
+  walkgen.setBaseMass(16.5);
+  walkgen.setTiltContactPointOnTheGroundInLocalFrameX(0.0);
+  walkgen.setTiltContactPointOnTheGroundInLocalFrameY(0.15);
 
-  Scalar copLimitMin = 0.01*.2;
-  Scalar copLimitMax = 0.015*.2;
-  std::vector<Vector3> p(8);
-  p[0] = Vector3(copLimitMin, copLimitMin, 0.0);
-  p[1] = Vector3(0.0, copLimitMax, 0.0);
-  p[2] = Vector3(-copLimitMin, copLimitMin, 0.0);
-  p[3] = Vector3(-copLimitMax, 0.0, 0.0);
-  p[4] = Vector3(-copLimitMin, -copLimitMin, 0.0);
-  p[5] = Vector3(0.0, -copLimitMax, 0.0);
-  p[6] = Vector3(copLimitMin, -copLimitMin, 0.0);
-  p[7] = Vector3(copLimitMax, 0.0, 0.0);
+  Real copLimitMin = 0.1;
+  Real copLimitMax = 0.15;
+  Type<Real>::vectorOfVector3 p(8);
+  p[0] = Type<Real>::Vector3(copLimitMin, copLimitMin, 0.0);
+  p[1] = Type<Real>::Vector3(0.0, copLimitMax, 0.0);
+  p[2] = Type<Real>::Vector3(-copLimitMin, copLimitMin, 0.0);
+  p[3] = Type<Real>::Vector3(-copLimitMax, 0.0, 0.0);
+  p[4] = Type<Real>::Vector3(-copLimitMin, -copLimitMin, 0.0);
+  p[5] = Type<Real>::Vector3(0.0, -copLimitMax, 0.0);
+  p[6] = Type<Real>::Vector3(copLimitMin, -copLimitMin, 0.0);
+  p[7] = Type<Real>::Vector3(copLimitMax, 0.0, 0.0);
   walkgen.setBaseCopHull(p);
   walkgen.setBaseComHull(p);
 
-  Weighting weighting;
-  weighting.copCentering = 1.0;
-  weighting.velocityTracking = 0.01;
-  weighting.positionTracking = 0.01;
+  ZebulonWalkgenWeighting<Real> weighting;
+  weighting.copCentering = 10.0;
+  weighting.comCentering = 100.0;
+  weighting.velocityTracking = 100.0;
+  weighting.positionTracking = 0.0;
   weighting.jerkMinimization = 0.00001;
-  weighting.tiltMinimization = 100.0;
+  weighting.tiltMinimization = 0.0;
+  weighting.tiltVelMinimization = 0.0;
+/*
+  weighting.copCentering = 0.0;
+  weighting.comCentering = 0.1;
+  weighting.velocityTracking = 0.1;
+  weighting.positionTracking = 0.0;
+  weighting.jerkMinimization = 0.001;
+  weighting.tiltMinimization = 10.0;
+*/
   walkgen.setWeightings(weighting);
 
-  Config config;
-  config.withBaseMotionConstraints = true;
-  config.withComConstraints = true;
-  config.withCopConstraints = false;
+  ZebulonWalkgenConfig<Real> config;
+  config.withBaseMotionConstraints = false;
+  config.withComConstraints = false;
+  config.withCopConstraints = true;
   walkgen.setConfig(config);
 
-  VectorX velRef(2*nbSamples);
+  Type<Real>::VectorX velRef(2*nbSamples);
   velRef.segment(0, nbSamples).fill(0.0);
   velRef.segment(nbSamples, nbSamples).fill(0.0);
   walkgen.setVelRefInWorldFrame(velRef);
 
-  VectorX posRef(2*nbSamples);
+  Type<Real>::VectorX posRef(2*nbSamples);
   posRef.fill(0.0);
   walkgen.setPosRefInWorldFrame(posRef);
 
-  VectorX copRef(2*nbSamples);
+  Type<Real>::VectorX copRef(2*nbSamples);
   copRef.segment(0, nbSamples).fill(0.0);
   copRef.segment(nbSamples, nbSamples).fill(0.0);
   walkgen.setCopRefInLocalFrame(copRef);
 
-  VectorX baseState(4);
+  Type<Real>::VectorX baseState(3);
   baseState(0) = 0.0;
   baseState(1) = 0.0;
   baseState(2) = 0.0;
-  baseState(3) = 1.0;
   walkgen.setBaseStateX(baseState);
 
-  walkgen.setBaseVelLimit(2.0);
-  walkgen.setBaseAccLimit(2.0);
-  walkgen.setBaseJerkLimit(10.0);
+  walkgen.setBaseVelLimit(3.0);
+  walkgen.setBaseAccLimit(4.0);
+  walkgen.setBaseJerkLimit(160.0);
 
-  Scalar samplingFeedback = 0.02;
-  Scalar f = 1.0;
-  for(Scalar t=0.0; t<6.0*f; t+=samplingFeedback)
+  Real samplingFeedback = 0.02;
+
+  baseState(0) = 0.0;
+  baseState(1) = 0.0;
+  baseState(2) = 0.0;
+
+    std::cout << std::setw(12) << std::setprecision(4) << "time"
+              << "     ||"
+              << std::setw(12) << std::setprecision(4) << "angle"
+              << std::setw(12) << std::setprecision(4) << "vel angle"
+              << std::setw(12) << std::setprecision(4) << "acc angle"
+              << "     ||"
+              << std::setw(12) << std::setprecision(4) << "acc base"
+              << std::setw(12) << std::setprecision(4) << "acc com"
+              << "     ||"
+              << std::setw(12) << std::setprecision(4) << "vel base"
+              << std::setw(12) << std::setprecision(4) << "vel com"
+              << "     ||"
+              << std::setw(12) << std::setprecision(4) << "pos base"
+              << std::setw(12) << std::setprecision(4) <<"pos com"
+              << "     ||"
+              << std::setw(12) << std::setprecision(4) << "delta base com"
+              << std::endl
+              << "_________________________________________________________"
+              << "_________________________________________________________"
+              << "_________________________________________________________"
+              << std::endl;
+  for(Real t=4.0f; t<7.4f; t+=samplingFeedback)
   {
-    Scalar ddt=0.0;
-    if (t<0.5*f)
-    {
-      ddt = 0.0;
+
+
+    Real acc = -5.5;
+    if (t>=5.0f && t<5.022f){
+      std::cout << "!!!!!!!!!!!!!!!!!! TILT !!!!!!!!!!!!!!!!" << std::endl;
+
+
+      baseState(0) = acc*0.02*0.02*6*6;
+      baseState(1) = acc*0.02*6;
+      baseState(2) = acc;
+
     }
-    else if (t<1.0*f)
-    {
-      ddt = 4.0;
+    if (t>=5.02f && t<5.22f){
+      baseState(0) += acc*0.02*0.02;
+      baseState(1) += acc*0.02;
+      baseState(2) = acc;
     }
-    else if (t<3.0*f)
-    {
-      ddt = -2.0;
-    }
-    else if (t<3.5*f)
-    {
-      ddt = 4.0;
-    }
-    else
-    {
-      ddt = 0.0;
+    if (t>=5.22f && t<5.24f){
+      std::cout << "!!!!!!!!!!!!!!!!!! end TILT !!!!!!!!!!!!!!!!" << std::endl;
+      ZebulonWalkgenWeighting<Real> weighting;
+      weighting.copCentering = 0.0;
+      weighting.comCentering = 100.0;
+      weighting.velocityTracking = 0.001;
+      weighting.positionTracking = 0.0;
+      weighting.jerkMinimization = 0.001;
+      weighting.tiltMinimization = 10.0;
+      weighting.tiltVelMinimization = 10.0;
+      walkgen.setWeightings(weighting);
+      ZebulonWalkgenConfig<Real> config;
+      config.withBaseMotionConstraints = false;
+      config.withComConstraints = false;
+      config.withCopConstraints = false;
+      walkgen.setConfig(config);
     }
 
-    VectorX baseState(4);
-    baseState(0) = 0.0;
-    baseState(1) = 0.0;
-    baseState(2) = ddt;
-    baseState(3) = 1.0;
-    walkgen.setBaseStateRoll(baseState);
+
+    walkgen.setBaseStatePitch(baseState);
 
     qi::os::timeval t1, t2;
     qi::os::gettimeofday(&t1);
 
-    walkgen.solve(samplingFeedback);
+    bool s = walkgen.solve(samplingFeedback);
 
     qi::os::gettimeofday(&t2);
-    double total =
-      (static_cast<double>(t2.tv_sec-t1.tv_sec)
-       +0.000001*static_cast<double>((t2.tv_usec-t1.tv_usec)))
-      /static_cast<double>(1);
+    //double total =
+    //  (static_cast<double>(t2.tv_sec-t1.tv_sec)
+    //   +0.000001*static_cast<double>((t2.tv_usec-t1.tv_usec)))
+    //  /static_cast<double>(1);
 
-    std::cout << ddt << "\t\t" << walkgen.getBaseStateX()(2) << "\t\t" <<walkgen.getComStateX()(2)
-              << "\t\t"  << walkgen.getBaseStateX()(0) << "\t\t" <<walkgen.getComStateX()(0)
+    if (t<5.0f){
+        baseState.fill(0.0);
+    }else{
+      if (t>=5.24){
+        updatePsi(walkgen, baseState);
+      }
+    }
+    std::cout << std::setw(12) << std::setprecision(3) << t
+              << "     ||"
+              << std::setw(12) << std::setprecision(3) << baseState(0)
+              << std::setw(12) << std::setprecision(3) << baseState(1)
+              << std::setw(12) << std::setprecision(3) << baseState(2)
+              << "     ||"
+              << std::setw(12) << std::setprecision(3) << walkgen.getBaseStateY()(2)
+              << std::setw(12) << std::setprecision(3) << walkgen.getComStateY()(2)
+              << "     ||"
+              << std::setw(12) << std::setprecision(3) << walkgen.getBaseStateY()(1)
+              << std::setw(12) << std::setprecision(3) << walkgen.getComStateY()(1)
+              << "     ||"
+              << std::setw(12) << std::setprecision(3) << walkgen.getBaseStateY()(0)
+              << std::setw(12) << std::setprecision(3) << walkgen.getComStateY()(0)
+              << "     ||"
+              << std::setw(12) << std::setprecision(3) << walkgen.getComStateY()(0)
+                                                       -  walkgen.getBaseStateY()(0)
               << std::endl;
+    if (!s)
+    {
+      break;
+    }
+
     //std::cout << "Solving time : " << floor(1000000*total)/1000 << " ms" << std::endl;
   }
 

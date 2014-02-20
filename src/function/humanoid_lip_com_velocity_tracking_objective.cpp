@@ -3,17 +3,19 @@
 ///\file humanoid_lip_com_velocity_tracking_objective.cpp
 ///\brief Implement the LIP CoM velocity tracking objective
 ///\author de Gourcuff Martin
-///\date 12/07/13
+///\author Barthelemy Sebastien
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "humanoid_lip_com_velocity_tracking_objective.h"
+#include <mpc-walkgen/function/humanoid_lip_com_velocity_tracking_objective.h>
+#include "../macro.h"
 
 namespace MPCWalkgen
 {
-  HumanoidLipComVelocityTrackingObjective::HumanoidLipComVelocityTrackingObjective(
-      const LIPModel& lipModel,
-      const HumanoidFeetSupervisor &feetSupervisor)
+  template <typename Scalar>
+  HumanoidLipComVelocityTrackingObjective<Scalar>::HumanoidLipComVelocityTrackingObjective(
+      const LIPModel<Scalar>& lipModel,
+      const HumanoidFeetSupervisor<Scalar> &feetSupervisor)
     :lipModel_(lipModel)
     ,feetSupervisor_(feetSupervisor)
   {
@@ -24,10 +26,12 @@ namespace MPCWalkgen
     hessian_.setZero(1, 1);
   }
 
-  HumanoidLipComVelocityTrackingObjective::~HumanoidLipComVelocityTrackingObjective(){}
+  template <typename Scalar>
+  HumanoidLipComVelocityTrackingObjective<Scalar>::~HumanoidLipComVelocityTrackingObjective(){}
 
-  const VectorX& HumanoidLipComVelocityTrackingObjective::getGradient(
-      const VectorX& x0)
+  template <typename Scalar>
+  const typename Type<Scalar>::VectorX&
+  HumanoidLipComVelocityTrackingObjective<Scalar>::getGradient(const VectorX& x0)
   {
     assert(velRefInWorldFrame_.size()==2*lipModel_.getNbSamples());
     assert(x0.rows() ==
@@ -38,10 +42,10 @@ namespace MPCWalkgen
 
     int nb = feetSupervisor_.getNbOfCallsBeforeNextSample() - 1;
 
-    const LinearDynamic& dynCopX = lipModel_.getCopXLinearDynamic(nb);
-    const LinearDynamic& dynCopY = lipModel_.getCopYLinearDynamic(nb);
-    const LinearDynamic& dynComVel = lipModel_.getComVelLinearDynamic(nb);
-    const LinearDynamic& dynFeetPos = feetSupervisor_.getFeetPosLinearDynamic();
+    const LinearDynamic<Scalar>& dynCopX = lipModel_.getCopXLinearDynamic(nb);
+    const LinearDynamic<Scalar>& dynCopY = lipModel_.getCopYLinearDynamic(nb);
+    const LinearDynamic<Scalar>& dynComVel = lipModel_.getComVelLinearDynamic(nb);
+    const LinearDynamic<Scalar>& dynFeetPos = feetSupervisor_.getFeetPosLinearDynamic();
 
     const MatrixX& weight = feetSupervisor_.getSampleWeightMatrix();
 
@@ -77,7 +81,9 @@ namespace MPCWalkgen
     return gradient_;
   }
 
-  const MatrixX& HumanoidLipComVelocityTrackingObjective::getHessian()
+  template <typename Scalar>
+  const typename
+  Type<Scalar>::MatrixX& HumanoidLipComVelocityTrackingObjective<Scalar>::getHessian()
   {
     assert(feetSupervisor_.getNbSamples() == lipModel_.getNbSamples());
 
@@ -86,10 +92,10 @@ namespace MPCWalkgen
 
     int nb = feetSupervisor_.getNbOfCallsBeforeNextSample() - 1;
 
-    const LinearDynamic& dynCopX = lipModel_.getCopXLinearDynamic(nb);
-    const LinearDynamic& dynCopY = lipModel_.getCopYLinearDynamic(nb);
-    const LinearDynamic& dynComVel = lipModel_.getComVelLinearDynamic(nb);
-    const LinearDynamic& dynFeetPos = feetSupervisor_.getFeetPosLinearDynamic();
+    const LinearDynamic<Scalar>& dynCopX = lipModel_.getCopXLinearDynamic(nb);
+    const LinearDynamic<Scalar>& dynCopY = lipModel_.getCopYLinearDynamic(nb);
+    const LinearDynamic<Scalar>& dynComVel = lipModel_.getComVelLinearDynamic(nb);
+    const LinearDynamic<Scalar>& dynFeetPos = feetSupervisor_.getFeetPosLinearDynamic();
 
     MatrixX tmp = MatrixX::Zero(2*N, 2*N + 2*M);
 
@@ -109,7 +115,8 @@ namespace MPCWalkgen
     return hessian_;
   }
 
-  void HumanoidLipComVelocityTrackingObjective::setVelRefInWorldFrame(
+  template <typename Scalar>
+  void HumanoidLipComVelocityTrackingObjective<Scalar>::setVelRefInWorldFrame(
       const VectorX& velRefInWorldFrame)
   {
     assert(velRefInWorldFrame.size()==2*lipModel_.getNbSamples());
@@ -117,4 +124,6 @@ namespace MPCWalkgen
 
     velRefInWorldFrame_ = velRefInWorldFrame;
   }
+
+  MPC_WALKGEN_INSTANTIATE_CLASS_TEMPLATE(HumanoidLipComVelocityTrackingObjective);
 }

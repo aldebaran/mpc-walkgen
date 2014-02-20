@@ -1,10 +1,21 @@
-#include "zebulon_base_velocity_tracking_objective.h"
+////////////////////////////////////////////////////////////////////////////////
+///
+///\author Lafaye Jory
+///\author Barthelemy Sebastien
+///
+////////////////////////////////////////////////////////////////////////////////
+
+#include <mpc-walkgen/function/zebulon_base_velocity_tracking_objective.h>
+#include "../macro.h"
 
 using namespace MPCWalkgen;
 
-BaseVelocityTrackingObjective::BaseVelocityTrackingObjective(const BaseModel& baseModel)
+template <typename Scalar>
+BaseVelocityTrackingObjective<Scalar>
+::BaseVelocityTrackingObjective(const BaseModel<Scalar>& baseModel)
 :baseModel_(baseModel)
 ,function_(1)
+,tmp_(1)
 {
   velRefInWorldFrame_.setZero(2*baseModel_.getNbSamples());
 
@@ -16,14 +27,17 @@ BaseVelocityTrackingObjective::BaseVelocityTrackingObjective(const BaseModel& ba
 }
 
 
-BaseVelocityTrackingObjective::~BaseVelocityTrackingObjective(){}
+template <typename Scalar>
+BaseVelocityTrackingObjective<Scalar>::~BaseVelocityTrackingObjective(){}
 
-const MatrixX& BaseVelocityTrackingObjective::getGradient(const VectorX& x0)
+template <typename Scalar>
+const typename
+Type<Scalar>::MatrixX& BaseVelocityTrackingObjective<Scalar>::getGradient(const VectorX& x0)
 {
   assert(velRefInWorldFrame_.size()==x0.size());
   assert(velRefInWorldFrame_.size()==baseModel_.getNbSamples()*2);
 
-  const LinearDynamic& dyn = baseModel_.getBaseVelLinearDynamic();
+  const LinearDynamic<Scalar>& dyn = baseModel_.getBaseVelLinearDynamic();
 
   int N = baseModel_.getNbSamples();
 
@@ -42,12 +56,14 @@ const MatrixX& BaseVelocityTrackingObjective::getGradient(const VectorX& x0)
   return gradient_;
 }
 
-const MatrixX& BaseVelocityTrackingObjective::getHessian()
+template <typename Scalar>
+const typename Type<Scalar>::MatrixX& BaseVelocityTrackingObjective<Scalar>::getHessian()
 {
   return hessian_;
 }
 
-void BaseVelocityTrackingObjective::setVelRefInWorldFrame(const VectorX& velRefInWorldFrame)
+template <typename Scalar>
+void BaseVelocityTrackingObjective<Scalar>::setVelRefInWorldFrame(const VectorX& velRefInWorldFrame)
 {
   assert(velRefInWorldFrame.size()==baseModel_.getNbSamples()*2);
   assert(velRefInWorldFrame==velRefInWorldFrame);
@@ -55,9 +71,10 @@ void BaseVelocityTrackingObjective::setVelRefInWorldFrame(const VectorX& velRefI
   velRefInWorldFrame_ = velRefInWorldFrame;
 }
 
-void BaseVelocityTrackingObjective::computeConstantPart()
+template <typename Scalar>
+void BaseVelocityTrackingObjective<Scalar>::computeConstantPart()
 {
-  const LinearDynamic& dyn = baseModel_.getBaseVelLinearDynamic();
+  const LinearDynamic<Scalar>& dyn = baseModel_.getBaseVelLinearDynamic();
 
   int N = baseModel_.getNbSamples();
 
@@ -68,3 +85,5 @@ void BaseVelocityTrackingObjective::computeConstantPart()
   hessian_.block(N, 0, N, N).fill(0.0);
   tmp_.resize(N);
 }
+
+MPC_WALKGEN_INSTANTIATE_CLASS_TEMPLATE(BaseVelocityTrackingObjective);

@@ -1,10 +1,21 @@
-#include "lip_model.h"
+////////////////////////////////////////////////////////////////////////////////
+///
+///\author Lafaye Jory
+///\author Barthelemy Sebastien
+///
+////////////////////////////////////////////////////////////////////////////////
+
+#include <mpc-walkgen/model/lip_model.h>
+#include <mpc-walkgen/tools.h>
+#include <mpc-walkgen/constant.h>
 #include <cmath>
-#include "../tools.h"
+#include <cassert>
+#include "../macro.h"
 
 using namespace MPCWalkgen;
 
-LIPModel::LIPModel(int nbSamples,
+template <typename Scalar>
+LIPModel<Scalar>::LIPModel(int nbSamples,
                    Scalar samplingPeriod,
                    bool autoCompute)
   :autoCompute_(autoCompute)
@@ -13,7 +24,7 @@ LIPModel::LIPModel(int nbSamples,
   ,samplingPeriod_(samplingPeriod)
   ,feedbackPeriod_(samplingPeriod_)
   ,comHeight_(1.0)
-  ,gravity_(GRAVITY_VECTOR)
+  ,gravity_(Constant<Scalar>::GRAVITY_VECTOR)
   ,mass_(1.0)
   ,totalMass_(1.0)
 {
@@ -30,14 +41,15 @@ LIPModel::LIPModel(int nbSamples,
   }
 }
 
-LIPModel::LIPModel()
+template <typename Scalar>
+LIPModel<Scalar>::LIPModel()
   :autoCompute_(true)
   ,useLipModel2_(false)
   ,nbSamples_(1)
   ,samplingPeriod_(1.0)
   ,feedbackPeriod_(samplingPeriod_)
   ,comHeight_(1.0)
-  ,gravity_(GRAVITY_VECTOR)
+  ,gravity_(Constant<Scalar>::GRAVITY_VECTOR)
   ,mass_(1.0)
   ,totalMass_(1.0)
 {
@@ -54,11 +66,14 @@ LIPModel::LIPModel()
   }
 }
 
-LIPModel::~LIPModel(){}
+template <typename Scalar>
+LIPModel<Scalar>::~LIPModel(){}
 
-void LIPModel::computeDynamics()
+template <typename Scalar>
+void LIPModel<Scalar>::computeDynamics()
 {
-  nbFeedbackInOneSample_ = static_cast<int>((samplingPeriod_ + EPSILON)/feedbackPeriod_);
+  nbFeedbackInOneSample_ = static_cast<int>(
+      (samplingPeriod_ + Constant<Scalar>::EPSILON)/feedbackPeriod_);
 
   computeCopXDynamicVec();
   computeCopYDynamicVec();
@@ -68,13 +83,14 @@ void LIPModel::computeDynamics()
   computeComJerkDynamic();
 }
 
-void LIPModel::computeCopXDynamicVec()
+template <typename Scalar>
+void LIPModel<Scalar>::computeCopXDynamicVec()
 {
   copXDynamicVec_.resize(nbFeedbackInOneSample_);
 
   for (int i=0; i<nbFeedbackInOneSample_; ++i)
   {
-    Tools::ConstantJerkDynamic::computeCopDynamic(static_cast<int>(i + 1)*feedbackPeriod_,
+    Tools::ConstantJerkDynamic<Scalar>::computeCopDynamic(static_cast<Scalar>(i + 1)*feedbackPeriod_,
                                                   samplingPeriod_, nbSamples_,
                                                   copXDynamicVec_[i],  comHeight_,
                                                   gravity_(0), gravity_(2),
@@ -82,13 +98,14 @@ void LIPModel::computeCopXDynamicVec()
   }
 }
 
-void LIPModel::computeCopYDynamicVec()
+template <typename Scalar>
+void LIPModel<Scalar>::computeCopYDynamicVec()
 {
   copYDynamicVec_.resize(nbFeedbackInOneSample_);
 
   for (int i=0; i<nbFeedbackInOneSample_; ++i)
   {
-    Tools::ConstantJerkDynamic::computeCopDynamic(static_cast<int>(i + 1)*feedbackPeriod_,
+    Tools::ConstantJerkDynamic<Scalar>::computeCopDynamic(static_cast<Scalar>(i + 1)*feedbackPeriod_,
                                                   samplingPeriod_, nbSamples_,
                                                   copYDynamicVec_[i],  comHeight_,
                                                   gravity_(1), gravity_(2),
@@ -96,50 +113,55 @@ void LIPModel::computeCopYDynamicVec()
   }
 }
 
-void LIPModel::computeComPosDynamicVec()
+template <typename Scalar>
+void LIPModel<Scalar>::computeComPosDynamicVec()
 {
   comPosDynamicVec_.resize(nbFeedbackInOneSample_);
 
   for (int i=0; i<nbFeedbackInOneSample_; ++i)
   {
-    Tools::ConstantJerkDynamic::computePosDynamic(static_cast<int>(i + 1)*feedbackPeriod_,
+    Tools::ConstantJerkDynamic<Scalar>::computePosDynamic(static_cast<Scalar>(i + 1)*feedbackPeriod_,
                                                   samplingPeriod_, nbSamples_,
                                                   comPosDynamicVec_[i]);
   }
 }
 
-void LIPModel::computeComVelDynamicVec()
+template <typename Scalar>
+void LIPModel<Scalar>::computeComVelDynamicVec()
 {
   comVelDynamicVec_.resize(nbFeedbackInOneSample_);
 
   for (int i=0; i<nbFeedbackInOneSample_; ++i)
   {
-    Tools::ConstantJerkDynamic::computeVelDynamic(static_cast<int>(i + 1)*feedbackPeriod_,
+    Tools::ConstantJerkDynamic<Scalar>::computeVelDynamic(static_cast<Scalar>(i + 1)*feedbackPeriod_,
                                                   samplingPeriod_, nbSamples_,
                                                   comVelDynamicVec_[i]);
   }
 }
 
-void LIPModel::computeComAccDynamicVec()
+template <typename Scalar>
+void LIPModel<Scalar>::computeComAccDynamicVec()
 {
   comAccDynamicVec_.resize(nbFeedbackInOneSample_);
 
   for (int i=0; i<nbFeedbackInOneSample_; ++i)
   {
-    Tools::ConstantJerkDynamic::computeAccDynamic(static_cast<int>(i + 1)*feedbackPeriod_,
+    Tools::ConstantJerkDynamic<Scalar>::computeAccDynamic(static_cast<Scalar>(i + 1)*feedbackPeriod_,
                                                   samplingPeriod_, nbSamples_,
                                                   comAccDynamicVec_[i]);
   }
 }
 
-void LIPModel::computeComJerkDynamic()
+template <typename Scalar>
+void LIPModel<Scalar>::computeComJerkDynamic()
 {
   assert(nbSamples_>0);
 
-  Tools::ConstantJerkDynamic::computeJerkDynamic(nbSamples_, comJerkDynamic_);
+  Tools::ConstantJerkDynamic<Scalar>::computeJerkDynamic(nbSamples_, comJerkDynamic_);
 }
 
-void LIPModel::setNbSamples(int nbSamples)
+template <typename Scalar>
+void LIPModel<Scalar>::setNbSamples(int nbSamples)
 {
   assert(nbSamples>0);
 
@@ -151,22 +173,26 @@ void LIPModel::setNbSamples(int nbSamples)
   }
 }
 
-void LIPModel::updateStateX(Scalar jerk, Scalar feedBackPeriod)
+template <typename Scalar>
+void LIPModel<Scalar>::updateStateX(Scalar jerk, Scalar feedBackPeriod)
 {
-  Tools::ConstantJerkDynamic::updateState(jerk, feedBackPeriod, stateX_);
+  Tools::ConstantJerkDynamic<Scalar>::updateState(jerk, feedBackPeriod, stateX_);
 }
 
-void LIPModel::updateStateY(Scalar jerk, Scalar feedBackPeriod)
+template <typename Scalar>
+void LIPModel<Scalar>::updateStateY(Scalar jerk, Scalar feedBackPeriod)
 {
-  Tools::ConstantJerkDynamic::updateState(jerk, feedBackPeriod, stateY_);
+  Tools::ConstantJerkDynamic<Scalar>::updateState(jerk, feedBackPeriod, stateY_);
 }
 
-void LIPModel::updateStateYaw(Scalar jerk, Scalar feedBackPeriod)
+template <typename Scalar>
+void LIPModel<Scalar>::updateStateYaw(Scalar jerk, Scalar feedBackPeriod)
 {
-  Tools::ConstantJerkDynamic::updateState(jerk, feedBackPeriod, stateYaw_);
+  Tools::ConstantJerkDynamic<Scalar>::updateState(jerk, feedBackPeriod, stateYaw_);
 }
 
-void LIPModel::setSamplingPeriod(Scalar samplingPeriod)
+template <typename Scalar>
+void LIPModel<Scalar>::setSamplingPeriod(Scalar samplingPeriod)
 {
   assert(samplingPeriod>0);
 
@@ -179,7 +205,8 @@ void LIPModel::setSamplingPeriod(Scalar samplingPeriod)
   }
 }
 
-void LIPModel::setComHeight(Scalar comHeight)
+template <typename Scalar>
+void LIPModel<Scalar>::setComHeight(Scalar comHeight)
 {
   assert(comHeight==comHeight);
 
@@ -193,10 +220,11 @@ void LIPModel::setComHeight(Scalar comHeight)
   }
 }
 
-void LIPModel::setGravity(const Vector3& gravity)
+template <typename Scalar>
+void LIPModel<Scalar>::setGravity(const Vector3& gravity)
 {
   assert(gravity==gravity);
-  assert(std::abs(gravity_(2))>EPSILON);
+  assert(std::abs(gravity_(2))>Constant<Scalar>::EPSILON);
 
   gravity_ = gravity;
 
@@ -207,7 +235,8 @@ void LIPModel::setGravity(const Vector3& gravity)
   }
 }
 
-void LIPModel::setMass(Scalar mass)
+template <typename Scalar>
+void LIPModel<Scalar>::setMass(Scalar mass)
 {
   assert(mass==mass);
 
@@ -220,7 +249,8 @@ void LIPModel::setMass(Scalar mass)
   }
 }
 
-void LIPModel::setTotalMass(Scalar mass)
+template <typename Scalar>
+void LIPModel<Scalar>::setTotalMass(Scalar mass)
 {
   assert(mass==mass);
   assert(mass>=mass_);
@@ -233,7 +263,8 @@ void LIPModel::setTotalMass(Scalar mass)
   }
 }
 
-void LIPModel::setFeedbackPeriod(Scalar feedbackPeriod)
+template <typename Scalar>
+void LIPModel<Scalar>::setFeedbackPeriod(Scalar feedbackPeriod)
 {
   assert(feedbackPeriod>=0);
   feedbackPeriod_ = feedbackPeriod;
@@ -243,3 +274,5 @@ void LIPModel::setFeedbackPeriod(Scalar feedbackPeriod)
     computeDynamics();
   }
 }
+
+MPC_WALKGEN_INSTANTIATE_CLASS_TEMPLATE(LIPModel);

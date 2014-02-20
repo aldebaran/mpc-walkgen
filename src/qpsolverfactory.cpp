@@ -1,4 +1,11 @@
-#include "qpsolverfactory.h"
+////////////////////////////////////////////////////////////////////////////////
+///
+///\author Lafaye Jory
+///\author Barthelemy Sebastien
+///
+////////////////////////////////////////////////////////////////////////////////
+
+#include <mpc-walkgen/qpsolverfactory.h>
 #include <mpc-walkgen/qpsolver_qpoases_float.h>
 #include <mpc-walkgen/qpsolver_qpoases_double.h>
 

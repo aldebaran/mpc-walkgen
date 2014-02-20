@@ -1,12 +1,22 @@
-#include "zebulon_com_centering_objective.h"
+////////////////////////////////////////////////////////////////////////////////
+///
+///\author Lafaye Jory
+///\author Barthelemy Sebastien
+///
+////////////////////////////////////////////////////////////////////////////////
+
+#include <mpc-walkgen/function/zebulon_com_centering_objective.h>
+#include "../macro.h"
 
 using namespace MPCWalkgen;
 
-ComCenteringObjective::ComCenteringObjective(const LIPModel& lipModel,
-                                             const BaseModel& baseModel)
+template <typename Scalar>
+ComCenteringObjective<Scalar>::ComCenteringObjective(const LIPModel<Scalar>& lipModel,
+                                                     const BaseModel<Scalar>& baseModel)
 :lipModel_(lipModel)
 ,baseModel_(baseModel)
 ,function_(1)
+,tmp_(1)
 {
   assert(baseModel_.getNbSamples() == lipModel_.getNbSamples());
   assert(baseModel_.getSamplingPeriod() == lipModel_.getSamplingPeriod());
@@ -23,9 +33,11 @@ ComCenteringObjective::ComCenteringObjective(const LIPModel& lipModel,
 }
 
 
-ComCenteringObjective::~ComCenteringObjective(){}
+template <typename Scalar>
+ComCenteringObjective<Scalar>::~ComCenteringObjective(){}
 
-void ComCenteringObjective::setNbSamples(int nbSamples)
+template <typename Scalar>
+void ComCenteringObjective<Scalar>::setNbSamples(int nbSamples)
 {
   assert(nbSamples>0);
   comRefInLocalFrame_.setZero(2*nbSamples);
@@ -33,7 +45,8 @@ void ComCenteringObjective::setNbSamples(int nbSamples)
   gravityShift_.setZero(2*nbSamples);
 }
 
-const MatrixX& ComCenteringObjective::getGradient(const VectorX& x0)
+template <typename Scalar>
+const typename Type<Scalar>::MatrixX& ComCenteringObjective<Scalar>::getGradient(const VectorX& x0)
 {
   assert(comShiftInLocalFrame_.size()==comRefInLocalFrame_.size());
   assert(comShiftInLocalFrame_.size()==gravityShift_.size());
@@ -42,8 +55,8 @@ const MatrixX& ComCenteringObjective::getGradient(const VectorX& x0)
   assert(baseModel_.getNbSamples() == lipModel_.getNbSamples());
   assert(baseModel_.getSamplingPeriod() == lipModel_.getSamplingPeriod());
 
-  const LinearDynamic& dynBasePos = baseModel_.getBasePosLinearDynamic();
-  const LinearDynamic& dynCom = lipModel_.getComPosLinearDynamic();
+  const LinearDynamic<Scalar>& dynBasePos = baseModel_.getBasePosLinearDynamic();
+  const LinearDynamic<Scalar>& dynCom = lipModel_.getComPosLinearDynamic();
 
 
   int N = lipModel_.getNbSamples();
@@ -75,7 +88,8 @@ const MatrixX& ComCenteringObjective::getGradient(const VectorX& x0)
   return gradient_;
 }
 
-const MatrixX& ComCenteringObjective::getHessian()
+template <typename Scalar>
+const typename Type<Scalar>::MatrixX& ComCenteringObjective<Scalar>::getHessian()
 {
   assert(baseModel_.getNbSamples() == lipModel_.getNbSamples());
   assert(baseModel_.getSamplingPeriod() == lipModel_.getSamplingPeriod());
@@ -83,7 +97,8 @@ const MatrixX& ComCenteringObjective::getHessian()
   return hessian_;
 }
 
-void ComCenteringObjective::updateGravityShift()
+template <typename Scalar>
+void ComCenteringObjective<Scalar>::updateGravityShift()
 {
   assert(baseModel_.getNbSamples() == lipModel_.getNbSamples());
   assert(baseModel_.getSamplingPeriod() == lipModel_.getSamplingPeriod());
@@ -107,7 +122,8 @@ void ComCenteringObjective::updateGravityShift()
   comShiftInLocalFrame_ = comRefInLocalFrame_ + gravityShift_;
 }
 
-void ComCenteringObjective::setComRefInLocalFrame(const VectorX& comRefInWorldFrame)
+template <typename Scalar>
+void ComCenteringObjective<Scalar>::setComRefInLocalFrame(const VectorX& comRefInWorldFrame)
 {
   assert(comRefInWorldFrame.size() == lipModel_.getNbSamples()*2);
   assert(baseModel_.getNbSamples() == lipModel_.getNbSamples());
@@ -118,13 +134,14 @@ void ComCenteringObjective::setComRefInLocalFrame(const VectorX& comRefInWorldFr
   comShiftInLocalFrame_ = comRefInLocalFrame_ + gravityShift_;
 }
 
-void ComCenteringObjective::computeConstantPart()
+template <typename Scalar>
+void ComCenteringObjective<Scalar>::computeConstantPart()
 {
   assert(baseModel_.getNbSamples() == lipModel_.getNbSamples());
   assert(baseModel_.getSamplingPeriod() == lipModel_.getSamplingPeriod());
 
-  const LinearDynamic& dynBasePos = baseModel_.getBasePosLinearDynamic();
-  const LinearDynamic& dynCom = lipModel_.getComPosLinearDynamic();
+  const LinearDynamic<Scalar>& dynBasePos = baseModel_.getBasePosLinearDynamic();
+  const LinearDynamic<Scalar>& dynCom = lipModel_.getComPosLinearDynamic();
 
   int N = lipModel_.getNbSamples();
 
@@ -144,3 +161,5 @@ void ComCenteringObjective::computeConstantPart()
 
   tmp_.resize(N);
 }
+
+MPC_WALKGEN_INSTANTIATE_CLASS_TEMPLATE(ComCenteringObjective);
