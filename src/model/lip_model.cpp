@@ -275,4 +275,7 @@ void LIPModel<Scalar>::setFeedbackPeriod(Scalar feedbackPeriod)
   }
 }
 
-MPC_WALKGEN_INSTANTIATE_CLASS_TEMPLATE(LIPModel);
+namespace MPCWalkgen
+{
+  MPC_WALKGEN_INSTANTIATE_CLASS_TEMPLATE(LIPModel);
+}

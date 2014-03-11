@@ -86,4 +86,7 @@ void BasePositionTrackingObjective<Scalar>::computeConstantPart()
   tmp_.resize(N);
 }
 
-MPC_WALKGEN_INSTANTIATE_CLASS_TEMPLATE(BasePositionTrackingObjective);
+namespace MPCWalkgen
+{
+  MPC_WALKGEN_INSTANTIATE_CLASS_TEMPLATE(BasePositionTrackingObjective);
+}

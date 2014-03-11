@@ -127,4 +127,7 @@ void ComConstraint<Scalar>::computeconstraintMatrices()
   }
 }
 
-MPC_WALKGEN_INSTANTIATE_CLASS_TEMPLATE(ComConstraint);
+namespace MPCWalkgen
+{
+  MPC_WALKGEN_INSTANTIATE_CLASS_TEMPLATE(ComConstraint);
+}

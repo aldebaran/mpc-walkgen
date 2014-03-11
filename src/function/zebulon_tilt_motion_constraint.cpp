@@ -92,4 +92,7 @@ void TiltMotionConstraint<Scalar>::computeConstantPart()
   gradient_.block(N, 3*N, N, N) = -dynBaseVel.U*std::cos(theta);
 }
 
-MPC_WALKGEN_INSTANTIATE_CLASS_TEMPLATE(TiltMotionConstraint);
+namespace MPCWalkgen
+{
+  MPC_WALKGEN_INSTANTIATE_CLASS_TEMPLATE(TiltMotionConstraint);
+}
