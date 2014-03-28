@@ -176,4 +176,7 @@ void TiltMinimizationObjective<Scalar>::computeConstantPart()
   hessian_.block(N, 3*N, N, N) = dynC_.UT*dynB_.U;
 }
 
-MPC_WALKGEN_INSTANTIATE_CLASS_TEMPLATE(TiltMinimizationObjective);
+namespace MPCWalkgen
+{
+  MPC_WALKGEN_INSTANTIATE_CLASS_TEMPLATE(TiltMinimizationObjective);
+}

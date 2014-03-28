@@ -60,4 +60,7 @@ void JerkMinimizationObjective<Scalar>::computeConstantPart()
   hessian_ = MatrixX::Identity(N*4, N*4);
 }
 
-MPC_WALKGEN_INSTANTIATE_CLASS_TEMPLATE(JerkMinimizationObjective);
+namespace MPCWalkgen
+{
+  MPC_WALKGEN_INSTANTIATE_CLASS_TEMPLATE(JerkMinimizationObjective);
+}

@@ -160,4 +160,7 @@ void CopConstraint<Scalar>::computeconstraintMatrices()
 
 }
 
-MPC_WALKGEN_INSTANTIATE_CLASS_TEMPLATE(CopConstraint);
+namespace MPCWalkgen
+{
+  MPC_WALKGEN_INSTANTIATE_CLASS_TEMPLATE(CopConstraint);
+}

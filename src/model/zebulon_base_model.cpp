@@ -242,5 +242,7 @@ void BaseModel<Scalar>::setTotalMass(Scalar mass)
   }
 }
 
-MPC_WALKGEN_INSTANTIATE_CLASS_TEMPLATE(BaseModel);
-
+namespace MPCWalkgen
+{
+  MPC_WALKGEN_INSTANTIATE_CLASS_TEMPLATE(BaseModel);
+}

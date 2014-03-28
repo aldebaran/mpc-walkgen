@@ -177,4 +177,7 @@ void CopCenteringObjective<Scalar>::computeConstantPart()
   tmp_.resize(N);
 }
 
-MPC_WALKGEN_INSTANTIATE_CLASS_TEMPLATE(CopCenteringObjective);
+namespace MPCWalkgen
+{
+  MPC_WALKGEN_INSTANTIATE_CLASS_TEMPLATE(CopCenteringObjective);
+}
