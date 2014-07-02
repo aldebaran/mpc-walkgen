@@ -99,7 +99,7 @@ template <typename Scalar>
 void BaseMotionConstraint<Scalar>::computeConstantPart()
 {
   const LinearDynamic<Scalar>& dynBaseVel = baseModel_.getBaseVelLinearDynamic();
-  const LinearDynamic<Scalar>& dynBaseAcc = baseModel_.getBaseVelLinearDynamic();
+  const LinearDynamic<Scalar>& dynBaseAcc = baseModel_.getBaseAccLinearDynamic();
 
   int N = baseModel_.getNbSamples();
   int M = getNbConstraints();

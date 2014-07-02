@@ -48,10 +48,20 @@ mpc-walkgen/model/zebulon_base_model.h
 mpc-walkgen/zebulon_walkgen.h
 mpc-walkgen/zebulon_walkgen_type.h
 )
+SET(mpc-walkgen_trajectory_PUBLIC_HEADERS
+mpc-walkgen/function/trajectory_motion_constraint.h
+mpc-walkgen/function/trajectory_velocity_tracking_objective.h
+mpc-walkgen/function/trajectory_position_tracking_objective.h
+mpc-walkgen/function/trajectory_jerk_minimization_objective.h
+mpc-walkgen/model/no_dynamic_model.h
+mpc-walkgen/trajectory_walkgen.h
+mpc-walkgen/trajectory_walkgen_type.h
+)
 SET(mpc-walkgen_PUBLIC_HEADERS
 ${mpc-walkgen_common_PUBLIC_HEADERS}
 ${mpc-walkgen_humanoid_PUBLIC_HEADERS}
-${mpc-walkgen_zebulon_PUBLIC_HEADERS})
+${mpc-walkgen_zebulon_PUBLIC_HEADERS}
+${mpc-walkgen_trajectory_PUBLIC_HEADERS})
 
 
 SET(mpc-walkgen_SRC
@@ -85,6 +95,13 @@ src/function/zebulon_tilt_motion_constraint.cpp
 src/function/zebulon_tilt_velocity_minimization_objective.cpp
 src/model/zebulon_base_model.cpp
 src/zebulon_walkgen.cpp
+
+src/function/trajectory_position_tracking_objective.cpp
+src/function/trajectory_velocity_tracking_objective.cpp
+src/function/trajectory_motion_constraint.cpp
+src/function/trajectory_jerk_minimization_objective.cpp
+src/model/no_dynamic_model.cpp
+src/trajectory_walkgen.cpp
 )
 
 qi_create_lib(mpc-walkgen SHARED

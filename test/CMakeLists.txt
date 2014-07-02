@@ -80,6 +80,12 @@ qi_create_bin(zebulon-walkgen-bin
   NO_INSTALL
 )
 
+qi_create_bin(trajectory-walkgen-bin
+  SRC ./trajectory-walkgen-bin.cpp
+  DEPENDS mpc-walkgen
+  NO_INSTALL
+)
+
 qi_create_bin(humanoid-walkgen-bin
   SRC ./humanoid-walkgen-bin.cpp
   DEPENDS mpc-walkgen
