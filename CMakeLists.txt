@@ -8,6 +8,10 @@ find_package(qibuild)
 qi_sanitize_compile_flags(HIDDEN_SYMBOLS)
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 
+if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DEIGEN_INITIALIZE_MATRICES_BY_NAN=1")
+endif()
+
 add_subdirectory(qpsolver)
 
 SET(mpc-walkgen_common_PUBLIC_HEADERS

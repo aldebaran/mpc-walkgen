@@ -74,6 +74,12 @@ qi_create_gtest(test-zebulon-base-motion-constraint
   TIMEOUT 1
 )
 
+qi_create_gtest(test-zebulon-tilt-motion-constraint
+  SRC ./test-zebulon-tilt-motion-constraint.cpp
+  DEPENDS mpc-walkgen
+  TIMEOUT 1
+)
+
 qi_create_bin(zebulon-walkgen-bin
   SRC ./zebulon-walkgen-bin.cpp
   DEPENDS mpc-walkgen
