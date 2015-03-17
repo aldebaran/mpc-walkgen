@@ -85,7 +85,7 @@ void TiltMotionConstraint<Scalar>::computeConstantPart()
   int M = getNbConstraints();
   Scalar theta = baseModel_.getStateYaw()(0);
 
-  gradient_.resize(M, 4*N);
+  gradient_.setZero(M, 4*N);
   gradient_.block(0, 0, N, N) = dynComVel.U*std::sin(theta);
   gradient_.block(0, N, N, N) = -dynComVel.U*std::cos(theta);
   gradient_.block(N, 2*N, N, N) = dynBaseVel.U*std::sin(theta);
