@@ -256,6 +256,34 @@ void ZebulonWalkgen<Scalar>::setComRefInLocalFrame(const VectorX& comRef)
 }
 
 template <typename Scalar>
+void ZebulonWalkgen<Scalar>::setComAndCopRefInWorldFrame(const VectorX& comPosRefInWorldFrame,
+                                                         const VectorX& comAccRefInWorldFrame,
+                                                         const VectorX& basePosRefInWorldFrame,
+                                                         const VectorX& baseAccRefInWorldFrame)
+{
+#ifndef NDEBUG
+  // Only used in following asserts
+  const int refSize = 2 * lipModel_.getNbSamples();
+#endif
+  assert(comPosRefInWorldFrame==comPosRefInWorldFrame);
+  assert(basePosRefInWorldFrame==basePosRefInWorldFrame);
+  assert(comPosRefInWorldFrame.size()==refSize);
+  assert(basePosRefInWorldFrame.size()==refSize);
+  assert(comAccRefInWorldFrame==comAccRefInWorldFrame);
+  assert(baseAccRefInWorldFrame==baseAccRefInWorldFrame);
+  assert(comAccRefInWorldFrame.size()==refSize);
+  assert(baseAccRefInWorldFrame.size()==refSize);
+
+  comCenteringObj_.setComRefInLocalFrame(comPosRefInWorldFrame-basePosRefInWorldFrame);
+  copCenteringObj_.setCopRefInWorldFrame(comPosRefInWorldFrame, comAccRefInWorldFrame,
+                                         basePosRefInWorldFrame, baseAccRefInWorldFrame);
+
+}
+
+
+
+
+template <typename Scalar>
 void ZebulonWalkgen<Scalar>::setBaseVelLimit(Scalar limit)
 {
   assert(limit>=0);

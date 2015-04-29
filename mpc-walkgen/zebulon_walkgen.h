@@ -69,6 +69,10 @@ namespace MPCWalkgen
     void setPosRefInWorldFrame(const VectorX& posRef);
     void setCopRefInLocalFrame(const VectorX& copRef);
     void setComRefInLocalFrame(const VectorX& comRef);
+    void setComAndCopRefInWorldFrame(const VectorX& comPosRefInWorldFrame,
+                                     const VectorX& comAccRefInWorldFrame,
+                                     const VectorX& basePosRefInWorldFrame,
+                                     const VectorX& baseAccRefInWorldFrame);
 
     void setBaseVelLimit(Scalar limit);
     void setBaseAccLimit(Scalar limit);

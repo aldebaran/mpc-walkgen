@@ -39,7 +39,11 @@ namespace MPCWalkgen
     ///        It's a vector of size 2*N, where N is the number of samples
     ///        of the lip/base model:
     ///        (refX, refY)
-    void setCopRefInLocalFrame(const VectorX& copRefInWorldFrame);
+    void setCopRefInLocalFrame(const VectorX& copRefInLocalFrame);
+    void setCopRefInWorldFrame(const VectorX& comPosRefInWorldFrame,
+                               const VectorX& comAccRefInWorldFrame,
+                               const VectorX& basePosRefInWorldFrame,
+                               const VectorX& baseAccRefInWorldFrame);
 
     void computeConstantPart();
 
@@ -53,7 +57,9 @@ namespace MPCWalkgen
     MatrixX gradient_;
     MatrixX hessian_;
 
-    VectorX tmp_;
+    // Temporary computation variables
+    VectorX copRef_;
+    VectorX constantGravity_;
   };
 
 }

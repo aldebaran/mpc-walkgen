@@ -56,53 +56,59 @@ const typename Type<Scalar>::MatrixX& CopCenteringObjective<Scalar>::getGradient
     const LinearDynamic<Scalar>& dynCopXBase = baseModel_.getCopXLinearDynamic();
     const LinearDynamic<Scalar>& dynCopYBase = baseModel_.getCopYLinearDynamic();
 
-    tmp_.noalias() = -copRefInLocalFrame_.segment(0, N);
-    tmp_.noalias() += dynCopXCom.S*lipModel_.getStateX() + dynCopXCom.K;
-    tmp_.noalias() += (dynCopXBase.S-dynBasePos.S)*baseModel_.getStateX() + dynCopXBase.K;
-    gradient_.block(0, 0, N, 1).noalias() += dynCopXCom.UT*tmp_;
+    copRef_.noalias() = -copRefInLocalFrame_.segment(0, N);
+    copRef_.noalias() += dynCopXCom.S*lipModel_.getStateX() + dynCopXCom.K;
+    copRef_.noalias() += (dynCopXBase.S-dynBasePos.S)*baseModel_.getStateX() +
+                         dynCopXBase.K;
+    gradient_.block(0, 0, N, 1).noalias() += dynCopXCom.UT*copRef_;
 
 
-    tmp_.noalias() = -copRefInLocalFrame_.segment(N, N);
-    tmp_.noalias() += dynCopYCom.S*lipModel_.getStateY() + dynCopYCom.K;
-    tmp_.noalias() += (dynCopYBase.S-dynBasePos.S)*baseModel_.getStateY() + dynCopYBase.K;
-    gradient_.block(N, 0, N, 1).noalias() += dynCopYCom.UT*tmp_;
+    copRef_.noalias() = -copRefInLocalFrame_.segment(N, N);
+    copRef_.noalias() += dynCopYCom.S*lipModel_.getStateY() + dynCopYCom.K;
+    copRef_.noalias() += (dynCopYBase.S-dynBasePos.S)*baseModel_.getStateY() +
+                         dynCopYBase.K;
+    gradient_.block(N, 0, N, 1).noalias() += dynCopYCom.UT*copRef_;
 
-    tmp_.noalias() = -copRefInLocalFrame_.segment(0, N);
-    tmp_.noalias() += dynCopXCom.S*lipModel_.getStateX() + dynCopXCom.K;
-    tmp_.noalias() += (dynCopXBase.S-dynBasePos.S)*baseModel_.getStateX() + dynCopXBase.K;
-    gradient_.block(2*N, 0, N, 1).noalias() += (dynCopXBase.UT-dynBasePos.UT)*tmp_;
+    copRef_.noalias() = -copRefInLocalFrame_.segment(0, N);
+    copRef_.noalias() += dynCopXCom.S*lipModel_.getStateX() + dynCopXCom.K;
+    copRef_.noalias() += (dynCopXBase.S-dynBasePos.S)*baseModel_.getStateX() +
+                         dynCopXBase.K;
+    gradient_.block(2*N, 0, N, 1).noalias() +=
+        (dynCopXBase.UT-dynBasePos.UT)*copRef_;
 
 
-    tmp_.noalias() = -copRefInLocalFrame_.segment(N, N);
-    tmp_.noalias() += dynCopYCom.S*lipModel_.getStateY() + dynCopYCom.K;
-    tmp_.noalias() += (dynCopYBase.S-dynBasePos.S)*baseModel_.getStateY() + dynCopYBase.K;
-    gradient_.block(3*N, 0, N, 1).noalias() += (dynCopYBase.UT-dynBasePos.UT)*tmp_;
+    copRef_.noalias() = -copRefInLocalFrame_.segment(N, N);
+    copRef_.noalias() += dynCopYCom.S*lipModel_.getStateY() + dynCopYCom.K;
+    copRef_.noalias() += (dynCopYBase.S-dynBasePos.S)*baseModel_.getStateY() +
+                         dynCopYBase.K;
+    gradient_.block(3*N, 0, N, 1).noalias() +=
+        (dynCopYBase.UT-dynBasePos.UT)*copRef_;
 
   }
   else
   {
 
-    tmp_.noalias() = -copRefInLocalFrame_.segment(0, N);
-    tmp_.noalias() += dynCopXCom.S*lipModel_.getStateX() + dynCopXCom.K;
-    tmp_.noalias() -= dynBasePos.S*baseModel_.getStateX();
-    gradient_.block(0, 0, N, 1).noalias() += dynCopXCom.UT*tmp_;
+    copRef_.noalias() = -copRefInLocalFrame_.segment(0, N);
+    copRef_.noalias() += dynCopXCom.S*lipModel_.getStateX() + dynCopXCom.K;
+    copRef_.noalias() -= dynBasePos.S*baseModel_.getStateX();
+    gradient_.block(0, 0, N, 1).noalias() += dynCopXCom.UT*copRef_;
 
 
-    tmp_.noalias() = -copRefInLocalFrame_.segment(N, N);
-    tmp_.noalias() += dynCopYCom.S*lipModel_.getStateY() + dynCopYCom.K;
-    tmp_.noalias() -= dynBasePos.S*baseModel_.getStateY();
-    gradient_.block(N, 0, N, 1).noalias() += dynCopYCom.UT*tmp_;
+    copRef_.noalias() = -copRefInLocalFrame_.segment(N, N);
+    copRef_.noalias() += dynCopYCom.S*lipModel_.getStateY() + dynCopYCom.K;
+    copRef_.noalias() -= dynBasePos.S*baseModel_.getStateY();
+    gradient_.block(N, 0, N, 1).noalias() += dynCopYCom.UT*copRef_;
 
-    tmp_.noalias() = copRefInLocalFrame_.segment(0, N);
-    tmp_.noalias() -= dynCopXCom.S*lipModel_.getStateX() + dynCopXCom.K;
-    tmp_.noalias() += dynBasePos.S*baseModel_.getStateX();
-    gradient_.block(2*N, 0, N, 1).noalias() += dynBasePos.UT*tmp_;
+    copRef_.noalias() = copRefInLocalFrame_.segment(0, N);
+    copRef_.noalias() -= dynCopXCom.S*lipModel_.getStateX() + dynCopXCom.K;
+    copRef_.noalias() += dynBasePos.S*baseModel_.getStateX();
+    gradient_.block(2*N, 0, N, 1).noalias() += dynBasePos.UT*copRef_;
 
 
-    tmp_.noalias() = copRefInLocalFrame_.segment(N, N);
-    tmp_.noalias() -= dynCopYCom.S*lipModel_.getStateY() + dynCopYCom.K;
-    tmp_.noalias() += dynBasePos.S*baseModel_.getStateY();
-    gradient_.block(3*N, 0, N, 1).noalias() += dynBasePos.UT*tmp_;
+    copRef_.noalias() = copRefInLocalFrame_.segment(N, N);
+    copRef_.noalias() -= dynCopYCom.S*lipModel_.getStateY() + dynCopYCom.K;
+    copRef_.noalias() += dynBasePos.S*baseModel_.getStateY();
+    gradient_.block(3*N, 0, N, 1).noalias() += dynBasePos.UT*copRef_;
   }
 
   return gradient_;
@@ -118,14 +124,60 @@ const typename Type<Scalar>::MatrixX& CopCenteringObjective<Scalar>::getHessian(
 }
 
 template <typename Scalar>
-void CopCenteringObjective<Scalar>::setCopRefInLocalFrame(const VectorX& copRefInWorldFrame)
+void CopCenteringObjective<Scalar>::setCopRefInLocalFrame(const VectorX& copRefInLocalFrame)
 {
-  assert(copRefInWorldFrame.size() == lipModel_.getNbSamples()*2);
+  assert(copRefInLocalFrame.size() == lipModel_.getNbSamples()*2);
   assert(baseModel_.getNbSamples() == lipModel_.getNbSamples());
   assert(baseModel_.getSamplingPeriod() == lipModel_.getSamplingPeriod());
-  assert(copRefInWorldFrame==copRefInWorldFrame);
+  assert(copRefInLocalFrame==copRefInLocalFrame);
 
-  copRefInLocalFrame_ = copRefInWorldFrame;
+  copRefInLocalFrame_ = copRefInLocalFrame;
+}
+
+template <typename Scalar>
+void CopCenteringObjective<Scalar>::setCopRefInWorldFrame(
+    const VectorX& comPosRefInWorldFrame,
+    const VectorX& comAccRefInWorldFrame,
+    const VectorX& basePosRefInWorldFrame,
+    const VectorX& baseAccRefInWorldFrame)
+{
+  const int N = lipModel_.getNbSamples();
+#ifndef NDEBUG
+  // Only used in following asserts
+  const int refSize = 2 * N;
+#endif
+  assert(comPosRefInWorldFrame==comPosRefInWorldFrame);
+  assert(comAccRefInWorldFrame==comAccRefInWorldFrame);
+  assert(basePosRefInWorldFrame==basePosRefInWorldFrame);
+  assert(baseAccRefInWorldFrame==baseAccRefInWorldFrame);
+  assert(comPosRefInWorldFrame.size() == refSize);
+  assert(comAccRefInWorldFrame.size() == refSize);
+  assert(basePosRefInWorldFrame.size() == refSize);
+  assert(baseAccRefInWorldFrame.size() == refSize);
+  assert(baseModel_.getNbSamples() == N);
+  assert(baseModel_.getSamplingPeriod() == lipModel_.getSamplingPeriod());
+
+  Scalar mb = baseModel_.getMass();
+  Scalar mc = lipModel_.getMass();
+  Scalar hb = baseModel_.getComHeight();
+  Scalar hc = lipModel_.getComHeight();
+
+
+  const Vector3& g = lipModel_.getGravity();
+
+  constantGravity_.segment(0, N).fill(g[0]);
+  constantGravity_.segment(N, N).fill(g[1]);
+
+  //Compute the CoP reference of a double masses model
+
+  // (total mass) x gravity_z is always non null
+  assert(std::abs((mb + mc) * g[2]) > 1e-6f);
+
+  copRefInLocalFrame_ = ( mb*g[2]*basePosRefInWorldFrame - mb*hb*baseAccRefInWorldFrame
+                        + mc*g[2]*comPosRefInWorldFrame - mc*hc*comAccRefInWorldFrame
+                        + (mb*hb+mc*hc)*constantGravity_) / ((mb+mc)*g[2])
+
+                        - basePosRefInWorldFrame; //In local Frame
 }
 
 template <typename Scalar>
@@ -174,7 +226,8 @@ void CopCenteringObjective<Scalar>::computeConstantPart()
     hessian_.block(N, 3*N, N, N) = -dynCopYCom.UT*dynBasePos.U;
   }
 
-  tmp_.resize(N);
+  copRef_.resize(N);
+  constantGravity_.resize(2*N);
 }
 
 namespace MPCWalkgen
