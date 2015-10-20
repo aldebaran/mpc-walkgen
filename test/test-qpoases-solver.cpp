@@ -37,8 +37,8 @@ TYPED_TEST(QPSolverTest, testSolver)
   boost::scoped_ptr< QPSolver<TypeParam> > qp(makeQPSolver<TypeParam>(2, 0));
   QPMatrices<TypeParam> m;
 
-  typename QPMatrices<TypeParam>::MatrixX Q(2, 2);
-  typename QPMatrices<TypeParam>::MatrixX A(0, 2);
+  typename QPMatrices<TypeParam>::MatrixXrm Q(2, 2);
+  typename QPMatrices<TypeParam>::MatrixXrm A(0, 2);
   typename QPMatrices<TypeParam>::VectorX p(2);
   typename QPMatrices<TypeParam>::VectorX b(0, 1);
   typename QPMatrices<TypeParam>::VectorX bl(0, 1);
@@ -59,7 +59,6 @@ TYPED_TEST(QPSolverTest, testSolver)
   m.Q = Q;
   m.p = p;
   m.A = A;
-  m.At = A.transpose();
   m.bl = bl;
   m.bu = b;
   m.xl = xl;
@@ -79,8 +78,8 @@ TYPED_TEST(QPSolverTest, testSolverWithConstraint)
   boost::scoped_ptr< QPSolver<TypeParam> > qp(makeQPSolver<TypeParam>(2, 1));
   QPMatrices<TypeParam> m;
 
-  typename QPMatrices<TypeParam>::MatrixX Q(2, 2);
-  typename QPMatrices<TypeParam>::MatrixX A(1, 2);
+  typename QPMatrices<TypeParam>::MatrixXrm Q(2, 2);
+  typename QPMatrices<TypeParam>::MatrixXrm A(1, 2);
   typename QPMatrices<TypeParam>::VectorX p(2);
   typename QPMatrices<TypeParam>::VectorX b(1);
   typename QPMatrices<TypeParam>::VectorX bl(1);
@@ -105,7 +104,6 @@ TYPED_TEST(QPSolverTest, testSolverWithConstraint)
   m.Q = Q;
   m.p = p;
   m.A = A;
-  m.At = A.transpose();
   m.bl = bl;
   m.bu = b;
   m.xl = xl;
@@ -124,8 +122,8 @@ TEST(QPOasesTest, testSolverWithConstraint)
 
   QPMatrices<float> m;
 
-  QPMatrices<float>::MatrixX Q(2, 2);
-  QPMatrices<float>::MatrixX A(1, 2);
+  QPMatrices<float>::MatrixXrm Q(2, 2);
+  QPMatrices<float>::MatrixXrm A(1, 2);
   QPMatrices<float>::VectorX p(2);
   QPMatrices<float>::VectorX b(1);
   QPMatrices<float>::VectorX bl(1);
@@ -150,7 +148,6 @@ TEST(QPOasesTest, testSolverWithConstraint)
   m.Q = Q;
   m.p = p;
   m.A = A;
-  m.At = A.transpose();
   m.bl = bl;
   m.bu = b;
   m.xl = xl;
@@ -161,7 +158,7 @@ TEST(QPOasesTest, testSolverWithConstraint)
   int ittMax = 10000;
   qpRaw->init(Q.data(),
               p.data(),
-              m.At.data(),
+              m.A.data(),
               m.xl.data(),
               m.xu.data(),
               m.bl.data(),

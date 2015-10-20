@@ -697,13 +697,10 @@ void ZebulonWalkgen<Scalar>::computeConstantPart()
   computeNormalizationFactor(qpMatrix_.Q, qpMatrix_.A);
   qpMatrix_.Q *= invObjNormFactor_;
   qpMatrix_.A *= invCtrNormFactor_;
-
-  qpMatrix_.At = qpMatrix_.A.transpose();
-
 }
 
 template <typename Scalar>
-void ZebulonWalkgen<Scalar>::computeNormalizationFactor(MatrixX& Q, MatrixX& A)
+void ZebulonWalkgen<Scalar>::computeNormalizationFactor(MatrixXrm& Q, MatrixXrm& A)
 {
   int Qr = Q.rows();
   int Qc = Q.cols();

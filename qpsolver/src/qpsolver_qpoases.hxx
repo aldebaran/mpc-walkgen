@@ -53,11 +53,8 @@ bool QPOasesSolver<Scalar>::solve(const QPMatrices<Scalar>& m,
   assert(m.Q.rows() == m.Q.cols());
   assert(m.Q.rows() == m.p.size());
   assert(m.Q.rows() == m.A.cols());
-  assert(m.Q.rows() == m.At.rows());
   assert(m.A.rows() == m.bl.rows());
   assert(m.A.rows() == m.bu.rows());
-  assert(m.At.cols() == m.bl.rows());
-  assert(m.At.cols() == m.bu.rows());
   assert(m.Q.rows() == m.xl.rows());
   assert(m.Q.rows() == m.xu.rows());
   assert(m.Q.rows() == sol.size());
@@ -66,7 +63,7 @@ bool QPOasesSolver<Scalar>::solve(const QPMatrices<Scalar>& m,
 
   qp_.setPrintLevel(qpOASES::PL_NONE);
 
-  //The number of itterations can be high in the init phase (approximatively equals to the
+  //The number of iterations can be high in the init phase (approximatively equals to the
   //number of constraints, aka 250).
   int ittMax = 10000;
   ::qpOASES::returnValue ret;
@@ -78,7 +75,7 @@ bool QPOasesSolver<Scalar>::solve(const QPMatrices<Scalar>& m,
   }
   else
   {
-    ret = qp_.init(m.Q.data(), m.p.data(), m.At.data(),
+    ret = qp_.init(m.Q.data(), m.p.data(), m.A.data(),
                    m.xl.data(), m.xu.data(), m.bl.data(), m.bu.data(),
                    ittMax, 0);
     qpIsInitialized_ = true;

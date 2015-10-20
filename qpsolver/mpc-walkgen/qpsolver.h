@@ -15,12 +15,23 @@
 
 namespace MPCWalkgen
 {
+
+  // matrices which describe a QP
+  // x = argmin 0.5 * x' * Q * x + p'*x
+  //
+  // such that
+  //    xl <= x <= xu
+  //    bl <= A*x <= bu
+  // Q is called the hessian
+  // p is called the gradient
+  //
+  // The QP solver we use expects matrices in row-major order.
+  // Note that this does not matter for the Q matrix, which is symmetric.
   template <typename Scalar>
   class QPMatrices
   {
   public:
-
-    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> MatrixX;
+    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> MatrixXrm;
     typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> VectorX;
 
     /// \brief Normalize all QP matrices except xu and xl using two normalization
@@ -28,14 +39,13 @@ namespace MPCWalkgen
     void normalizeMatrices(Scalar epsilon);
     /// \brief If the smallest element m of mat is smaller than 1,
     ///        this function returns 1/m. Otherwise it returns 1
-    static Scalar getNormalizationFactor(const MatrixX& mat, Scalar epsilon);
+    static Scalar getNormalizationFactor(const MatrixXrm& mat, Scalar epsilon);
 
   public:
-    MatrixX Q;
+    MatrixXrm Q;
     VectorX p;
 
-    MatrixX A;
-    MatrixX At;
+    MatrixXrm A;
     VectorX bu;
     VectorX bl;
     VectorX xl;
@@ -71,7 +81,7 @@ void QPMatrices<Scalar>::normalizeMatrices(Scalar epsilon)
 }
 
 template <typename Scalar>
-Scalar QPMatrices<Scalar>::getNormalizationFactor(const MatrixX& mat,
+Scalar QPMatrices<Scalar>::getNormalizationFactor(const MatrixXrm& mat,
                                                   Scalar epsilon)
 {
   Scalar normalizationFactor = 1.0;
