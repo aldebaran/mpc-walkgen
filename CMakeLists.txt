@@ -118,7 +118,6 @@ qi_use_lib(mpc-walkgen
            mpc-walkgen_qpsolver_qpoases_float)
 qi_stage_lib(mpc-walkgen)
 
-qi_install_header(${mpc-walkgen_PUBLIC_HEADERS} SUBFOLDER mpc-walkgen)
+qi_install_header(${mpc-walkgen_PUBLIC_HEADERS} KEEP_RELATIVE_PATHS)
 
 add_subdirectory(test)
-
