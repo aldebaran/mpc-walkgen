@@ -41,7 +41,7 @@ At some stage, the lib might be split in two in order to separate the humanoid
 and zebulon parts (the public and currently secret parts).
 The common pieces used by these two might go in a third "common" library.
 
-In this spirit it was decided that most fo the header could be kept public
+In this spirit it was decided that most of the header could be kept public.
 
 
 ### Template instantiations
