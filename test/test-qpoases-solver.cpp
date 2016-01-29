@@ -29,7 +29,6 @@ TYPED_TEST_CASE(QPSolverTest, MyTypes);
 
 using namespace MPCWalkgen;
 
-const int maxNbIterations = 10000;
 
 TYPED_TEST(QPSolverTest, testSolver)
 {
@@ -65,7 +64,7 @@ TYPED_TEST(QPSolverTest, testSolver)
   m.xl = xl;
   m.xu = xu;
 
-  qp->solve(m, maxNbIterations, x);
+  qp->solve(m, x);
 
   ASSERT_NEAR(x(0), -1, Constant<TypeParam>::EPSILON);
   ASSERT_NEAR(x(1), 1, Constant<TypeParam>::EPSILON);
@@ -110,7 +109,7 @@ TYPED_TEST(QPSolverTest, testSolverWithConstraint)
   m.xl = xl;
   m.xu = xu;
 
-  qp->solve(m, maxNbIterations, x);
+  qp->solve(m, x);
 
   ASSERT_NEAR(x(0), -2.0f, Constant<TypeParam>::EPSILON);
   ASSERT_NEAR(x(1), 1.8f, Constant<TypeParam>::EPSILON);
@@ -156,7 +155,7 @@ TEST(QPOasesTest, testSolverWithConstraint)
 
   boost::scoped_ptr<qpOASES::QProblem> qpRaw(new qpOASES::QProblem(2, 1));
   qpRaw->setPrintLevel(qpOASES::PL_NONE);
-  int nbIterations = maxNbIterations;
+  int ittMax = 10000;
   qpRaw->init(Q.data(),
               p.data(),
               m.A.data(),
@@ -164,7 +163,7 @@ TEST(QPOasesTest, testSolverWithConstraint)
               m.xu.data(),
               m.bl.data(),
               m.bu.data(),
-              nbIterations,
+              ittMax,
               NULL);
   qpRaw->getPrimalSolution(x.data());
   ASSERT_NEAR(x(0), -2.0f, Constant<float>::EPSILON);

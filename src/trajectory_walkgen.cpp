@@ -186,10 +186,7 @@ bool TrajectoryWalkgen<Scalar>::solve(Scalar feedBackPeriod)
 
   }
 
-  //The number of iterations can be high in the init phase (approximatively equals to the
-  //number of constraints, aka 250).
-  const int maxNbIterations = 10000;
-  bool solutionFound = qpoasesSolver_->solve(qpMatrix_, maxNbIterations, dX_, true);
+  bool solutionFound = qpoasesSolver_->solve(qpMatrix_, dX_, true);
 
   if (!solutionFound)
   {
