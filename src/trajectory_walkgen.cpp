@@ -270,6 +270,9 @@ void TrajectoryWalkgen<Scalar>::computeConstantPart()
   {
     qpMatrix_.A.block(0, 0, M1, N) = motionConstraint_.getGradient();
   }
+
+  qpMatrix_.At = qpMatrix_.A.transpose();
+
 }
 
 
