@@ -12,6 +12,7 @@
 #define MPC_WALKGEN_QPSOLVER_H
 
 #include <Eigen/Core>
+#include <iosfwd>
 
 namespace MPCWalkgen
 {
@@ -34,6 +35,8 @@ namespace MPCWalkgen
     typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> MatrixXrm;
     typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> VectorX;
 
+    bool dimensionsAreConsistent(int nbVar, int nbCtr) const;
+
     /// \brief Normalize all QP matrices except xu and xl using two normalization
     ///        factors computed from Q and A
     void normalizeMatrices(Scalar epsilon);
@@ -45,11 +48,12 @@ namespace MPCWalkgen
     MatrixXrm Q;
     VectorX p;
 
+    VectorX xl;
+    VectorX xu;
+
     MatrixXrm A;
     VectorX bu;
     VectorX bl;
-    VectorX xl;
-    VectorX xu;
   };
 
   template <typename Scalar>
@@ -58,14 +62,32 @@ namespace MPCWalkgen
 
   public:
     virtual ~QPSolver() {}
+    // Return true if a solution is found. In such a case, the solution is
+    // written to sol. If no solution is found, sol may still be written to.
+    //
+    // if useWarmStart==true, and the solver was already initialized,
+    // then m.Q and m.A won't be used.
+    //
+    // If no solution is found and os != nullptr, then debug information may
+    // be written to *os.
     virtual bool solve(const QPMatrices<Scalar>& m,
+                       int maxNbIterations,
                        typename QPMatrices<Scalar>::VectorX& sol,
-                       bool useWarmStart = false) = 0;
+                       bool useWarmStart = false,
+                       std::ostream *os = nullptr) = 0;
     virtual int getNbVar() const = 0;
     virtual int getNbCtr() const = 0;
   };
 
 ///QPMatrices
+template <typename Scalar>
+bool QPMatrices<Scalar>::dimensionsAreConsistent(int nbVar, int nbCtr) const {
+  return (Q.rows() == nbVar) && (Q.cols() == nbVar) && (p.size() == nbVar) &&
+      (xl.size() == nbVar) && (xu.size() == nbVar) &&
+      (A.cols() == nbVar) && (A.rows() == nbCtr) &&
+      (bl.size() == nbCtr) && (bu.size() == nbCtr);
+}
+
 template <typename Scalar>
 void QPMatrices<Scalar>::normalizeMatrices(Scalar epsilon)
 {
