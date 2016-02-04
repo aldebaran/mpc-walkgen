@@ -102,7 +102,7 @@ namespace MPCWalkgen
   private:
     void computeConstantPart();
 
-    void computeNormalizationFactor(MatrixX& Q, MatrixX& A);
+    void computeNormalizationFactor(MatrixXrm& Q, MatrixXrm& A);
 
   private:
     LIPModel<Scalar> lipModel_;

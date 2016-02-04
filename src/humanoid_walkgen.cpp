@@ -425,9 +425,6 @@ namespace MPCWalkgen
     //Normalization of the matrices. The smallest element value of the QP matrices is at least one.
     qpMatrices.normalizeMatrices(Constant<Scalar>::EPSILON);
 
-    //Setting matrix At
-    qpMatrices.At = qpMatrices.A.transpose();
-
     dX_.resize(sizeVec);
 
     bool solutionFound = qpoasesSolverVec_[index].solve(qpMatrices, dX_, false);
