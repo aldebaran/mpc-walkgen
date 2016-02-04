@@ -1,6 +1,6 @@
 #include <mpc-walkgen/zebulon_walkgen.h>
 #include <iostream>
-#include <qi/os.hpp>
+#include <qi/clock.hpp>
 #include <iomanip>
 
 using namespace MPCWalkgen;
@@ -197,16 +197,9 @@ int main(void)
 
     walkgen.setBaseStatePitch(baseState);
 
-    qi::os::timeval t1, t2;
-    qi::os::gettimeofday(&t1);
-
+    qi::SteadyClock::time_point t1 = qi::SteadyClock::now();
     bool s = walkgen.solve(samplingFeedback);
-
-    qi::os::gettimeofday(&t2);
-    //double total =
-    //  (static_cast<double>(t2.tv_sec-t1.tv_sec)
-    //   +0.000001*static_cast<double>((t2.tv_usec-t1.tv_usec)))
-    //  /static_cast<double>(1);
+    //qi::MilliSeconds total = qi::durationSince<qi::MilliSeconds>(t1);
 
     if (t<5.0f){
         baseState.fill(0.0);
@@ -238,7 +231,7 @@ int main(void)
       break;
     }
 
-    //std::cout << "Solving time : " << floor(1000000*total)/1000 << " ms" << std::endl;
+    //std::cout << "Solving time : " << qi::to_string(total) << std::endl;
   }
 
   return 0;
