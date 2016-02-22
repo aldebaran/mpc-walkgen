@@ -523,7 +523,10 @@ bool ZebulonWalkgen<Scalar>::solve(Scalar feedBackPeriod)
   qpMatrix_.bu *= invCtrNormFactor_;
   qpMatrix_.bl *= invCtrNormFactor_;
 
-  bool solutionFound = qpoasesSolver_->solve(qpMatrix_, dX_, true);
+  //The number of iterations can be high in the init phase (approximatively equals to the
+  //number of constraints, aka 250).
+  const int maxNbIterations = 10000;
+  bool solutionFound = qpoasesSolver_->solve(qpMatrix_, maxNbIterations, dX_, true);
 
   if (!solutionFound)
   {
@@ -697,13 +700,10 @@ void ZebulonWalkgen<Scalar>::computeConstantPart()
   computeNormalizationFactor(qpMatrix_.Q, qpMatrix_.A);
   qpMatrix_.Q *= invObjNormFactor_;
   qpMatrix_.A *= invCtrNormFactor_;
-
-  qpMatrix_.At = qpMatrix_.A.transpose();
-
 }
 
 template <typename Scalar>
-void ZebulonWalkgen<Scalar>::computeNormalizationFactor(MatrixX& Q, MatrixX& A)
+void ZebulonWalkgen<Scalar>::computeNormalizationFactor(MatrixXrm& Q, MatrixXrm& A)
 {
   int Qr = Q.rows();
   int Qc = Q.cols();

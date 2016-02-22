@@ -186,7 +186,10 @@ bool TrajectoryWalkgen<Scalar>::solve(Scalar feedBackPeriod)
 
   }
 
-  bool solutionFound = qpoasesSolver_->solve(qpMatrix_, dX_, true);
+  //The number of iterations can be high in the init phase (approximatively equals to the
+  //number of constraints, aka 250).
+  const int maxNbIterations = 10000;
+  bool solutionFound = qpoasesSolver_->solve(qpMatrix_, maxNbIterations, dX_, true);
 
   if (!solutionFound)
   {
@@ -270,9 +273,6 @@ void TrajectoryWalkgen<Scalar>::computeConstantPart()
   {
     qpMatrix_.A.block(0, 0, M1, N) = motionConstraint_.getGradient();
   }
-
-  qpMatrix_.At = qpMatrix_.A.transpose();
-
 }
 
 

@@ -15,8 +15,10 @@ public:
   QPOasesSolver(int nbVar, int nbCtr);
 
   bool solve(const QPMatrices<Scalar>& m,
+             int maxNbIterations,
              typename QPMatrices<Scalar>::VectorX& sol,
-             bool useWarmStart = false);
+             bool useWarmStart = false,
+             std::ostream *os = nullptr);
 
   inline int getNbVar() const
   {return nbVar_;}
@@ -47,46 +49,38 @@ QPOasesSolver<Scalar>::QPOasesSolver(int nbVar, int nbCtr)
 
 template <typename Scalar>
 bool QPOasesSolver<Scalar>::solve(const QPMatrices<Scalar>& m,
+                                  int maxNbIterations,
                                   typename QPMatrices<Scalar>::VectorX& sol,
-                                  bool useWarmStart)
+                                  bool useWarmStart,
+                                  std::ostream *os)
 {
-  assert(m.Q.rows() == m.Q.cols());
-  assert(m.Q.rows() == m.p.size());
-  assert(m.Q.rows() == m.A.cols());
-  assert(m.Q.rows() == m.At.rows());
-  assert(m.A.rows() == m.bl.rows());
-  assert(m.A.rows() == m.bu.rows());
-  assert(m.At.cols() == m.bl.rows());
-  assert(m.At.cols() == m.bu.rows());
-  assert(m.Q.rows() == m.xl.rows());
-  assert(m.Q.rows() == m.xu.rows());
-  assert(m.Q.rows() == sol.size());
-  assert(m.Q.rows() == nbVar_);
-  assert(m.A.rows() == nbCtr_);
+  assert(m.dimensionsAreConsistent(nbVar_, nbCtr_));
 
   qp_.setPrintLevel(qpOASES::PL_NONE);
 
-  //The number of itterations can be high in the init phase (approximatively equals to the
-  //number of constraints, aka 250).
-  int ittMax = 10000;
   ::qpOASES::returnValue ret;
-  if (qpIsInitialized_ && useWarmStart)
+  const bool doWarmStart = qpIsInitialized_ && useWarmStart;
+  if (doWarmStart)
   {
-    ret = qp_.hotstart(m.p.data(), m.xl.data(), m.xu.data(),
-                                            m.bl.data(), m.bu.data(),
-                                            ittMax, 0);
+    ret = qp_.hotstart(m.p.data(), m.xl.data(), m.xu.data(), m.bl.data(),
+                       m.bu.data(), maxNbIterations, 0);
   }
   else
   {
-    ret = qp_.init(m.Q.data(), m.p.data(), m.At.data(),
+    ret = qp_.init(m.Q.data(), m.p.data(), m.A.data(),
                    m.xl.data(), m.xu.data(), m.bl.data(), m.bu.data(),
-                   ittMax, 0);
+                   maxNbIterations, 0);
     qpIsInitialized_ = true;
   }
+  // we write the result even if qpOASES did report an error:
+  // the "non-solution" might be useful: it is optimal but unfeasible with
+  // respect to some constraints.
   qp_.getPrimalSolution(sol.data());
-
-  if (ret!=::qpOASES::SUCCESSFUL_RETURN){
-    std::cout << "[ERROR] MPC-Walkgen infeasible. QPOases error code " << ret << std::endl;
+  if ((ret != ::qpOASES::SUCCESSFUL_RETURN) && (os != nullptr))
+  {
+    *os << "QP unfeasible. QPOases error code: " << ret
+        << ". Number of working set recalculations: " << maxNbIterations
+        << ". Was warm start: " << doWarmStart << ".\n";
     return false;
   }
 
