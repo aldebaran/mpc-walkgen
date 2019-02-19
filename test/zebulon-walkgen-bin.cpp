@@ -197,9 +197,7 @@ int main(void)
 
     walkgen.setBaseStatePitch(baseState);
 
-    qi::SteadyClock::time_point t1 = qi::SteadyClock::now();
     bool s = walkgen.solve(samplingFeedback);
-    //qi::MilliSeconds total = qi::durationSince<qi::MilliSeconds>(t1);
 
     if (t<5.0f){
         baseState.fill(0.0);
