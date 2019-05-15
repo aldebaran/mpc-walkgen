@@ -137,7 +137,10 @@ void TrajectoryWalkgen<Scalar>::setConfig(const TrajectoryWalkgenConfig<Scalar>&
 template <typename Scalar>
 bool TrajectoryWalkgen<Scalar>::solve(Scalar feedBackPeriod)
 {
+#ifndef NDEBUG
+  // Only used in following asserts
   int N = noDynModel_.getNbSamples();
+#endif
   int M = config_.withMotionConstraints? motionConstraint_.getNbConstraints() : 0;
 
   assert(velTrackingObj_.getGradient(X_).size() == N);
